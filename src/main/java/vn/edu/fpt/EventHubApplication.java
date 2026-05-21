@@ -12,6 +12,7 @@ public class EventHubApplication {
         SpringApplication.run(EventHubApplication.class, args);
         System.out.println("Hello world");
         System.out.println("Nguyễn Phúc Anh Tuấn");
+        System.out.println("Khổng Thị Thu Trà");
 	}
 
 }
