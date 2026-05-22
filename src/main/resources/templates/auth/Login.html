@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EventHub — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+          height: 100%;
+          width: 100%;
+          overflow: hidden;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          color-scheme: light;
+        }
+
+        body {
+          background: #0e0618;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* ─── BACKGROUND ─── */
+        .bg-layer {
+          position: fixed; inset: 0; z-index: 0; overflow: hidden;
+          background: linear-gradient(135deg, #0e0618 0%, #1a0a2e 50%, #0f0820 100%);
+        }
+        .bg-blob {
+          position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35;
+          animation: blobDrift 12s ease-in-out infinite alternate;
+        }
+        .bg-blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, #a76cff, transparent 70%); top: -200px; left: -150px; animation-delay: 0s; }
+        .bg-blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, #ff78b4, transparent 70%); bottom: -150px; right: -100px; animation-delay: -4s; }
+        .bg-blob-3 { width: 350px; height: 350px; background: radial-gradient(circle, #ff9a6c, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -8s; }
+        @keyframes blobDrift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px, -20px) scale(1.08); } }
+
+        /* Subtle grid */
+        .bg-grid {
+          position: absolute; inset: 0;
+          background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+          background-size: 48px 48px;
+        }
+
+        /* ─── CARD ─── */
+        .lp-root {
+          position: relative; z-index: 1;
+          width: 100%; height: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          animation: shellIn .6s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes shellIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+
+        /* ─── LEFT PANEL ─── */
+        .lp-left {
+          position: relative;
+          background: linear-gradient(160deg, rgba(167,108,255,.12) 0%, rgba(255,120,180,.08) 50%, rgba(255,154,108,.06) 100%);
+          border-right: 1px solid rgba(255,255,255,.08);
+          display: flex; flex-direction: column;
+          padding: clamp(2rem, 4vw, 3.5rem);
+          overflow: hidden;
+        }
+        .lp-left::before {
+          content: ''; position: absolute; inset: 0; pointer-events: none;
+          background:
+            radial-gradient(circle 400px at 10% 15%, rgba(167,108,255,.18) 0%, transparent 65%),
+            radial-gradient(circle 300px at 90% 80%, rgba(255,100,180,.14) 0%, transparent 60%);
+        }
+
+        /* Floating orbs */
+        .orb { position: absolute; border-radius: 50%; animation: orbF 7s ease-in-out infinite alternate; }
+        .orb-1 { width: 180px; height: 180px; background: rgba(167,108,255,.12); top: -60px; left: -60px; }
+        .orb-2 { width: 120px; height: 120px; background: rgba(255,120,180,.10); bottom: 80px; right: -30px; animation-delay: -3s; }
+        .orb-3 { width: 80px; height: 80px; background: rgba(255,180,60,.08); bottom: -30px; left: 40%; animation-delay: -5s; }
+        @keyframes orbF { from { transform: translate(0,0) scale(1); } to { transform: translate(12px,-14px) scale(1.08); } }
+
+        /* Brand */
+        .lp-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: .75rem; margin-bottom: auto; }
+        .lp-logo {
+          width: 44px; height: 44px; border-radius: 12px;
+          background: linear-gradient(135deg, #a76cff, #ff78b4);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 6px 20px rgba(167,108,255,.35);
+        }
+        .lp-logo svg { width: 20px; height: 20px; }
+        .lp-logo-name {
+          font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem; letter-spacing: -.03em;
+          background: linear-gradient(135deg, #c4a0ff, #ff9fd4);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        /* Hero */
+        .lp-hero {
+          position: relative; z-index: 1;
+          flex: 1; display: flex; flex-direction: column; justify-content: center;
+          padding: 2rem 0;
+        }
+        .lp-tag {
+          display: inline-flex; align-items: center; gap: 6px;
+          background: rgba(167,108,255,.15); border: 1px solid rgba(167,108,255,.25);
+          border-radius: 999px; padding: 5px 14px;
+          font-size: .7rem; font-weight: 700; color: #c4a0ff;
+          text-transform: uppercase; letter-spacing: .08em;
+          margin-bottom: 1.5rem; width: fit-content;
+        }
+        .lp-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: #a76cff; animation: dp 2s ease-in-out infinite; }
+        @keyframes dp { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:.4;transform:scale(1.5); } }
+
+        .lp-hero h2 {
+          font-family: 'Outfit', sans-serif;
+          font-size: clamp(1.8rem, 3vw, 2.75rem);
+          font-weight: 900; line-height: 1.1; letter-spacing: -.05em;
+          color: #fff; margin-bottom: 1rem;
+        }
+        .lp-hero h2 em {
+          font-style: normal;
+          background: linear-gradient(135deg, #c4a0ff 0%, #ff9fd4 50%, #ffb97a 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .lp-hero p { font-size: .875rem; color: rgba(255,255,255,.5); line-height: 1.7; max-width: 280px; }
+
+        /* Stats row */
+        .lp-stats {
+          position: relative; z-index: 1;
+          display: flex; gap: 1.5rem; margin: 2rem 0;
+        }
+        .stat-item { display: flex; flex-direction: column; gap: 2px; }
+        .stat-num {
+          font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800;
+          background: linear-gradient(135deg, #c4a0ff, #ff9fd4);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stat-label { font-size: .7rem; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .06em; }
+
+        /* Event cards */
+        .lp-cards { position: relative; z-index: 1; display: flex; flex-direction: column; gap: .625rem; }
+        .mini-card {
+          background: rgba(255,255,255,.06);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(255,255,255,.1);
+          border-radius: 14px; padding: .75rem 1rem;
+          display: flex; align-items: center; gap: .75rem;
+          transition: background .2s, border-color .2s, transform .2s;
+          cursor: pointer;
+          animation: cs .5s cubic-bezier(.22,1,.36,1) both;
+        }
+        .mini-card:nth-child(1) { animation-delay: .2s; }
+        .mini-card:nth-child(2) { animation-delay: .32s; }
+        .mini-card:nth-child(3) { animation-delay: .44s; opacity: .8; }
+        .mini-card:hover { background: rgba(255,255,255,.1); border-color: rgba(167,108,255,.4); transform: translateX(4px); }
+        @keyframes cs { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:translateX(0); } }
+
+        .mc-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .mc-icon.p { background: rgba(167,108,255,.2); }
+        .mc-icon.k { background: rgba(255,120,180,.2); }
+        .mc-icon.a { background: rgba(251,191,36,.2); }
+        .mc-body { flex: 1; }
+        .mc-t { font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.9); }
+        .mc-s { font-size: .68rem; color: rgba(255,255,255,.4); margin-top: 2px; }
+        .mc-badge { font-size: .62rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+        .live { background: rgba(16,185,129,.15); color: #34d399; border: 1px solid rgba(52,211,153,.2); }
+        .soon { background: rgba(167,108,255,.15); color: #c4a0ff; border: 1px solid rgba(196,160,255,.2); }
+
+        /* ─── RIGHT PANEL ─── */
+        .lp-right {
+          background: #ffffff;
+          display: flex; flex-direction: column; justify-content: center; align-items: center;
+          padding: clamp(2rem, 4vw, 4rem);
+          overflow-y: auto;
+        }
+
+        .form-inner {
+          width: 100%;
+          max-width: 400px;
+        }
+
+        /* Header */
+        .form-head { margin-bottom: 2rem; }
+        .form-head h1 {
+          font-family: 'Outfit', sans-serif; font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+          font-weight: 800; letter-spacing: -.04em; color: #1a0a2e; margin-bottom: .4rem;
+        }
+        .form-head p { font-size: .8375rem; color: #9b8bb0; }
+
+        /* Social buttons */
+        .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1.375rem; }
+        .btn-social {
+          display: flex; align-items: center; justify-content: center; gap: .5rem;
+          height: 46px;
+          border: 1.5px solid #ede8f8; border-radius: 12px;
+          font-family: 'Plus Jakarta Sans', sans-serif; font-size: .8rem; font-weight: 600; color: #3d2c6e;
+          background: #faf8ff; cursor: pointer; text-decoration: none;
+          transition: border-color .2s, background .2s, box-shadow .2s, transform .15s;
+        }
+        .btn-social:hover { border-color: #a76cff; background: #fff; box-shadow: 0 4px 16px rgba(167,108,255,.15); transform: translateY(-1px); }
+        .btn-social:active { transform: scale(.97); }
+        .g-pill { width: 22px; height: 22px; border-radius: 5px; background: #fff; border: 1px solid #ede8f8; display: flex; align-items: center; justify-content: center; }
+        .g-pill svg { width: 13px; height: 13px; display: block; }
+
+        /* OR divider */
+        .divider { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, transparent, #e8e0f5, transparent); }
+        .divider span { font-size: .68rem; font-weight: 700; color: #c4b8d8; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+
+        /* Input fields */
+        .field { position: relative; margin-bottom: .875rem; color-scheme: light; }
+        .field input {
+          display: block; width: 100%;
+          padding: 1.4rem 1rem .5rem;
+          border: 1.5px solid #ede8f8;
+          border-radius: 12px;
+          font-size: .875rem; font-family: 'Plus Jakarta Sans', sans-serif;
+          color: #2d1b5e; background: #faf8ff;
+          outline: none;
+          transition: border-color .22s, box-shadow .22s, background .22s;
+          -webkit-text-fill-color: #2d1b5e;
+        }
+        .field input:focus {
+          border-color: #a76cff; background: #fff;
+          box-shadow: 0 0 0 4px rgba(167,108,255,.1);
+        }
+        .field label {
+          position: absolute; left: 1rem;
+          top: 50%; transform: translateY(-50%);
+          font-size: .8375rem; color: #b8afd0;
+          pointer-events: none;
+          transition: all .2s cubic-bezier(.4,0,.2,1);
+          transform-origin: left center;
+        }
+        .field input:focus + label,
+        .field input:not(:placeholder-shown) + label,
+        .field input:-webkit-autofill + label {
+          top: .55rem; transform: translateY(0) scale(.76);
+          color: #a76cff; font-weight: 700;
+        }
+        .field input:-webkit-autofill,
+        .field input:-webkit-autofill:hover,
+        .field input:-webkit-autofill:focus {
+          -webkit-box-shadow: 0 0 0 60px #faf8ff inset !important;
+          -webkit-text-fill-color: #2d1b5e !important;
+          transition: background-color 9999s;
+        }
+
+        /* Password eye */
+        .field-pw .eye-btn {
+          position: absolute; right: .875rem; top: 50%; transform: translateY(-50%);
+          background: none; border: none; outline: none; box-shadow: none;
+          cursor: pointer; color: #c4b8d8; padding: 2px; line-height: 0;
+          transition: color .2s;
+        }
+        .field-pw .eye-btn:hover { color: #a76cff; }
+        .field-pw .eye-btn svg { width: 18px; height: 18px; }
+
+        /* Row */
+        .field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.375rem; }
+        .check-wrap { display: flex; align-items: center; gap: .4rem; font-size: .775rem; color: #9b8bb0; cursor: pointer; user-select: none; }
+        .check-wrap input { accent-color: #a76cff; width: 14px; height: 14px; }
+        .text-btn {
+          background: none; border: none; cursor: pointer;
+          font-family: 'Plus Jakarta Sans', sans-serif; font-size: .775rem; font-weight: 700;
+          color: #a76cff; padding: 0;
+          transition: opacity .2s;
+        }
+        .text-btn:hover { opacity: .65; }
+
+        /* Primary button */
+        .btn-primary {
+          width: 100%; height: 52px;
+          background: linear-gradient(135deg, #a76cff 0%, #e879b4 55%, #ff9a6c 100%);
+          color: #fff;
+          font-family: 'Outfit', sans-serif; font-size: .9375rem; font-weight: 700;
+          border: none; border-radius: 12px; cursor: pointer;
+          box-shadow: 0 6px 28px rgba(167,108,255,.3);
+          position: relative; overflow: hidden;
+          transition: filter .2s, transform .15s, box-shadow .2s;
+          display: flex; align-items: center; justify-content: center; gap: .5rem;
+        }
+        .btn-primary::after {
+          content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+          transition: left .55s ease;
+        }
+        .btn-primary:hover::after { left: 160%; }
+        .btn-primary:hover { filter: brightness(.92); box-shadow: 0 10px 36px rgba(167,108,255,.4); }
+        .btn-primary:active { transform: scale(.97); }
+
+        /* Register link */
+        .reg-link { text-align: center; font-size: .8rem; color: #9b8bb0; margin-top: 1.375rem; }
+        .reg-link a { color: #a76cff; font-weight: 700; text-decoration: none; transition: opacity .2s; }
+        .reg-link a:hover { opacity: .75; text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Terms */
+        .terms { text-align: center; font-size: .7rem; color: #c4b8d8; margin-top: .875rem; line-height: 1.6; }
+        .terms a { color: #a76cff; text-decoration: none; font-weight: 600; }
+        .terms a:hover { text-decoration: underline; }
+
+        /* Forgot panel */
+        .panel-forgot { display: none; }
+        .panel-forgot.active { display: block; animation: si .35s cubic-bezier(.22,1,.36,1); }
+        .panel-login.gone { display: none; }
+        @keyframes si { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+          .lp-root { grid-template-columns: 1fr; }
+          .lp-left { display: none; }
+          .lp-right { padding: 2rem 1.5rem; }
+        }
+        @media (max-height: 600px) {
+          .lp-right { justify-content: flex-start; padding-top: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-layer">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="bg-grid"></div>
+</div>
+
+<div class="lp-root">
+
+    <!-- bên left -->
+    <div class="lp-left">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+
+        <div class="lp-brand">
+            <div class="lp-logo">
+                <svg fill="none" stroke="#fff" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="lp-logo-name">EventHub</span>
+        </div>
+
+        <div class="lp-hero">
+            <div class="lp-tag"><span class="dot"></span>Live events near you</div>
+            <h2>Discover <em>Amazing</em><br/>Events Around You</h2>
+            <p>Book tickets, connect with people, and create memories that last a lifetime.</p>
+
+            <div class="lp-stats">
+                <div class="stat-item">
+                    <span class="stat-num">2.4K+</span>
+                    <span class="stat-label">Events</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">180K</span>
+                    <span class="stat-label">Attendees</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">98%</span>
+                    <span class="stat-label">Satisfaction</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lp-cards">
+            <div class="mini-card">
+                <div class="mc-icon p">🎵</div>
+                <div class="mc-body">
+                    <div class="mc-t">Indie Music Night</div>
+                    <div class="mc-s">Tonight · Hanoi Opera House</div>
+                </div>
+                <span class="mc-badge live">● Live</span>
+            </div>
+            <div class="mini-card">
+                <div class="mc-icon k">🎨</div>
+                <div class="mc-body">
+                    <div class="mc-t">Digital Art Expo</div>
+                    <div class="mc-s">Sat 24 May · VCCA Gallery</div>
+                </div>
+                <span class="mc-badge soon">Soon</span>
+            </div>
+            <div class="mini-card">
+                <div class="mc-icon a">🍜</div>
+                <div class="mc-body">
+                    <div class="mc-t">Street Food Festival</div>
+                    <div class="mc-s">Sun 25 May · West Lake</div>
+                </div>
+                <span class="mc-badge soon">Soon</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="lp-right">
+        <div class="form-inner">
+
+            <div class="panel-login" id="pLogin">
+                <div class="form-head">
+                    <h1>Welcome back 👋</h1>
+                    <p>Sign in to your EventHub account to continue</p>
+                </div>
+
+                <div class="social-row">
+                    <a href="#" class="btn-social">
+            <span class="g-pill">
+              <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </span>
+                        Google
+                    </a>
+                    <a href="#" class="btn-social">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        Facebook
+                    </a>
+                </div>
+
+                <div class="divider"><span>or sign in with email</span></div>
+
+                <div class="field">
+                    <input type="email" id="email" placeholder=" " autocomplete="email"/>
+                    <label for="email">Email Address</label>
+                </div>
+
+                <div class="field field-pw">
+                    <input type="password" id="pw" placeholder=" " autocomplete="current-password"/>
+                    <label for="pw">Password</label>
+                    <button class="eye-btn" type="button" id="eyeBtn" aria-label="Toggle password">
+                        <svg id="eShow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        <svg id="eHide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                    </button>
+                </div>
+
+                <div class="field-row">
+                    <label class="check-wrap"><input type="checkbox"/> Remember me</label>
+                    <button class="text-btn" type="button" id="showForgot">Forgot password?</button>
+                </div>
+
+                <button class="btn-primary" type="button">
+                    Sign In
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </button>
+
+                <p class="reg-link">New to EventHub? <a href="#">Create an account</a></p>
+                <p class="terms">By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+            </div>
+
+            <div class="panel-forgot" id="pForgot">
+                <div class="form-head">
+                    <h1>Reset password 🔑</h1>
+                    <p>Enter your email and we'll send you a verification code</p>
+                </div>
+                <div class="field">
+                    <input type="email" id="fEmail" placeholder=" " autocomplete="email"/>
+                    <label for="fEmail">Email Address</label>
+                </div>
+                <button class="btn-primary" type="button">
+                    Send OTP Code
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                </button>
+                <p class="reg-link" style="margin-top:1.125rem;">
+                    <a href="#" id="backBtn" style="color:#9b8bb0;font-weight:500;">← Back to sign in</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle password visibility
+    var pw = document.getElementById('pw');
+    var es = document.getElementById('eShow');
+    var eh = document.getElementById('eHide');
+    document.getElementById('eyeBtn').onclick = function() {
+      var t = pw.type === 'text';
+      pw.type = t ? 'password' : 'text';
+      es.style.display = t ? '' : 'none';
+      eh.style.display = t ? 'none' : '';
+    };
+
+    // Show forgot panel
+    document.getElementById('showForgot').onclick = function() {
+      document.getElementById('pLogin').classList.add('gone');
+      document.getElementById('pForgot').classList.add('active');
+    };
+
+    // Back to login
+    document.getElementById('backBtn').onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('pForgot').classList.remove('active');
+      document.getElementById('pLogin').classList.remove('gone');
+    };
+
+    // Fix autofill label float
+    setTimeout(function() {
+      ['email','pw','fEmail'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.setAttribute('placeholder', '\u00A0');
+      });
+    }, 300);
+</script>
+</body>
+</html>
