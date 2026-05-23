@@ -1,7 +1,37 @@
 package vn.edu.fpt.model;
 
-public class User {
-    public void email() {
-        System.out.println("Hello world");
-    }
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor @AllArgsConstructor
+public class User extends BaseAuditEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+    @Column(name = "phone", length = 20)
+    private String phone;
+    @Column(name = "gender", length = 10)
+    private String gender;
+    @Column(name = "dob")
+    private LocalDate dob;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+    ;
 }
