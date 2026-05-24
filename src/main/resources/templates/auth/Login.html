@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -437,7 +437,7 @@
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                 </button>
 
-                <p class="reg-link">New to EventHub? <a href="#">Create an account</a></p>
+                <p class="reg-link">New to EventHub? <a th:href = "@{/auth/register}">Create an account</a></p>
                 <p class="terms">By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
             </div>
 
@@ -455,7 +455,7 @@
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 </button>
                 <p class="reg-link" style="margin-top:1.125rem;">
-                    <a href="#" id="backBtn" style="color:#9b8bb0;font-weight:500;">← Back to sign in</a>
+                    <a th:href = "@{/auth/login}" id="backBtn" style="color:#9b8bb0;font-weight:500;">← Back to sign in</a>
                 </p>
             </div>
 
