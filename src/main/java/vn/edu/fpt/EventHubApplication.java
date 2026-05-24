@@ -15,7 +15,7 @@ public class EventHubApplication {
         System.out.println("Khổng Thị Thu Trà");
         System.out.println("Nguyễn Hoàng Anh");
         System.out.println("Nguyễn Vũ Hoàng Phúc");
-        System.out.println("Nguyễn Hoàng Longg");
+        System.out.println("Nguyễn Hoàng Long");
 	}
 
 }
