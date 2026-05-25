@@ -1,10 +1,1553 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHub – Bảng Điều Khiển</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+    />
+    <!-- Material Symbols -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+            rel="stylesheet"
+    />
+
+    <style>
+        /* ── Base ────────────────────────────────────────── */
+        :root {
+            --pink: #f43f5e;
+            --purple: #a855f7;
+            --coral: #fda4af;
+            --muted: #94a3b8;
+            --card-bg: rgba(22, 17, 43, 0.55);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #070510;
+            background-image:
+                    radial-gradient(
+                            circle at 10% 20%,
+                            rgba(168, 85, 247, 0.08) 0%,
+                            transparent 40%
+                    ),
+                    radial-gradient(
+                            circle at 90% 80%,
+                            rgba(244, 63, 94, 0.08) 0%,
+                            transparent 40%
+                    ),
+                    radial-gradient(
+                            circle at 50% 50%,
+                            rgba(99, 102, 241, 0.04) 0%,
+                            transparent 50%
+                    ),
+                    linear-gradient(rgba(255, 255, 255, 0.006) 1px, transparent 1px),
+                    linear-gradient(
+                            90deg,
+                            rgba(255, 255, 255, 0.006) 1px,
+                            transparent 1px
+                    );
+            background-size:
+                    100% 100%,
+                    100% 100%,
+                    100% 100%,
+                    48px 48px,
+                    48px 48px;
+            background-attachment: fixed;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .font-display {
+            font-family: "Outfit", sans-serif;
+        }
+        .font-mono {
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        /* ── Scrollbar ───────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(7, 5, 16, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(244, 63, 94, 0.4);
+        }
+
+        /* ── Sidebar ─────────────────────────────────────── */
+        #sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: rgba(14, 11, 28, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 20px;
+            z-index: 1050;
+            box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #a855f7, #f43f5e, #f472b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(244, 63, 94, 0.4);
+        }
+
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-family: "Outfit", sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .nav-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+            border-left: 3.5px solid var(--pink);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .nav-btn.active .material-symbols-outlined {
+            color: var(--pink);
+        }
+        .nav-btn .material-symbols-outlined {
+            font-size: 20px;
+            color: var(--muted);
+        }
+
+        .btn-create {
+            width: 100%;
+            background: linear-gradient(135deg, #a855f7, #f43f5e, #f472b6);
+            color: #fff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-family: "Outfit", sans-serif;
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 6px 20px rgba(244, 63, 94, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-create:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 6px 24px rgba(244, 63, 94, 0.45);
+        }
+
+        /* ── Header ──────────────────────────────────────── */
+        #topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+            height: 70px;
+            background: rgba(7, 5, 16, 0.55);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+        }
+
+        .glass-input {
+            background: rgba(15, 12, 33, 0.6);
+            border: 1px solid var(--border);
+            color: #f8fafc;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px 8px 40px;
+            outline: none;
+            transition: all 0.2s;
+            width: 260px;
+        }
+        .glass-input:focus {
+            background: rgba(20, 16, 43, 0.82);
+            border-color: rgba(244, 63, 94, 0.5);
+            box-shadow: 0 0 16px rgba(244, 63, 94, 0.15);
+        }
+        .glass-input::placeholder {
+            color: #64748b;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #1f0914;
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--pink);
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.06);
+            letter-spacing: 0.08em;
+        }
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pink);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.85);
+            }
+        }
+
+        .notif-btn {
+            background: transparent;
+            border: none;
+            padding: 10px;
+            color: var(--muted);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .notif-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 10px;
+            height: 10px;
+            background: var(--pink);
+            border: 2px solid #070510;
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--pink);
+        }
+        .notif-panel {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            width: 340px;
+            background: #0f0c24;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            padding: 16px;
+            z-index: 200;
+            display: none;
+        }
+        .notif-panel.show {
+            display: block;
+        }
+
+        .avatar-ring {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(244, 63, 94, 0.4);
+            object-fit: cover;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+        }
+
+        /* ── Main layout ─────────────────────────────────── */
+        #main-wrap {
+            margin-left: 260px;
+        }
+
+        /* ── Glass cards ─────────────────────────────────── */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px) saturate(120%);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+        }
+        .glass-card-interactive {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px) saturate(120%);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-interactive:hover {
+            background: rgba(30, 24, 58, 0.6);
+            border-color: rgba(244, 63, 94, 0.3);
+            box-shadow: 0 12px 40px -10px rgba(168, 85, 247, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ── Hero Banner ─────────────────────────────────── */
+        #hero-banner {
+            background: #0d0921;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(244, 63, 94, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        #hero-banner:hover {
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 16px 50px rgba(244, 63, 94, 0.22);
+        }
+        .hero-blur-pink {
+            position: absolute;
+            left: -80px;
+            bottom: -80px;
+            width: 320px;
+            height: 320px;
+            background: rgba(244, 63, 94, 0.1);
+            border-radius: 50%;
+            filter: blur(72px);
+            pointer-events: none;
+        }
+        .hero-blur-purple {
+            position: absolute;
+            top: 40px;
+            right: 80px;
+            width: 384px;
+            height: 384px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 50%;
+            filter: blur(72px);
+            pointer-events: none;
+        }
+        .hero-circle-wrap {
+            position: absolute;
+            right: -5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .orbit1 {
+            position: absolute;
+            width: 530px;
+            height: 530px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .orbit2 {
+            position: absolute;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            border: 1px solid rgba(168, 85, 247, 0.1);
+        }
+        .orbit3 {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-circle-img {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.18);
+            position: relative;
+        }
+        .hero-circle-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s;
+        }
+        #hero-banner:hover .hero-circle-img img {
+            transform: scale(1.08);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            padding: 40px 40px 20px;
+            max-width: 58%;
+        }
+        .badge-sale {
+            background: linear-gradient(135deg, #f43f5e, #fda4af);
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 900;
+            padding: 6px 14px;
+            border-radius: 999px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .badge-live {
+            background: rgba(21, 13, 36, 0.6);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--pink);
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 6px 12px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hero-footer {
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* gradient text */
+        .text-gradient {
+            background: linear-gradient(135deg, #c084fc, #f43f5e, #fda4af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── KPI cards ───────────────────────────────────── */
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pink);
+        }
+        .tag-green {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 8px;
+        }
+        .tag-pink {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            color: var(--coral);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 8px;
+        }
+
+        /* ── Chart ───────────────────────────────────────── */
+        #chart-area {
+            height: 210px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+        }
+        .bar-tooltip {
+            position: absolute;
+            bottom: 100%;
+            margin-bottom: 8px;
+            padding: 4px 10px;
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .bar-col:hover .bar-tooltip,
+        .bar-col.selected .bar-tooltip {
+            opacity: 1;
+        }
+        .bar-rect {
+            width: 24px;
+            border-radius: 6px 6px 0 0;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .bar-col.selected .bar-rect,
+        .bar-col:hover .bar-rect {
+            background: linear-gradient(135deg, #a855f7, #f43f5e, #f472b6);
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+        }
+        .bar-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            margin-top: 10px;
+            transition: color 0.2s;
+        }
+        .bar-col.selected .bar-label {
+            color: var(--pink);
+        }
+        .insight-box {
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #fff;
+        }
+
+        /* ── Alert panel ─────────────────────────────────── */
+        .alert-item {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+        }
+        .btn-orders {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            color: #e9effe;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-orders:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ── Event cards ─────────────────────────────────── */
+        .event-card {
+            background: rgba(15, 15, 40, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .event-card:hover {
+            border-color: rgba(244, 63, 94, 0.3);
+            box-shadow: 0 8px 30px rgba(244, 63, 94, 0.12);
+        }
+        .event-card-img {
+            height: 120px;
+            overflow: hidden;
+            background: #15112c;
+            position: relative;
+        }
+        .event-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .event-card:hover .event-card-img img {
+            transform: scale(1.05);
+        }
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fff;
+        }
+        .status-ongoing {
+            background: #059669;
+        }
+        .status-sale {
+            background: #4f46e5;
+        }
+        .progress-bar-custom {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #a855f7, #f43f5e, #f472b6);
+        }
+
+        /* ── Responsive ──────────────────────────────────── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 12, 38, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1045;
+        }
+        @media (max-width: 991px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+            #main-wrap {
+                margin-left: 0;
+            }
+            .hero-circle-wrap {
+                display: none !important;
+            }
+            .hero-content {
+                max-width: 100%;
+                padding: 28px 24px 16px;
+            }
+            .hero-footer {
+                padding: 10px 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-Nguyen HOàng  ANh
+<!-- Sidebar overlay for mobile -->
+<div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        onclick="toggleSidebar()"
+></div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside id="sidebar">
+    <!-- Brand -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="brand-icon">
+            <span
+                    class="material-symbols-outlined text-white"
+                    style="font-size: 22px"
+            >calendar_month</span
+            >
+            </div>
+            <div>
+                <div
+                        class="font-display text-white fw-black"
+                        style="font-size: 20px; line-height: 1"
+                >
+                    EventHub
+                </div>
+                <div
+                        class="text-uppercase fw-bold font-mono"
+                        style="
+                font-size: 10px;
+                color: var(--pink);
+                letter-spacing: 0.15em;
+                margin-top: 6px;
+              "
+                >
+                    Portal Ban Tổ Chức
+                </div>
+            </div>
+        </div>
+        <button
+                class="d-lg-none btn p-0 text-secondary"
+                onclick="toggleSidebar()"
+        >
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-grow-1 d-flex flex-column gap-1 overflow-auto pe-1">
+        <button class="nav-btn active" data-tab="dashboard">
+            <span class="material-symbols-outlined">dashboard</span> Bảng Điều
+            Khiển
+        </button>
+        <button class="nav-btn" data-tab="organizer">
+            <span class="material-symbols-outlined">account_circle</span> Tài
+            Khoản BTC
+        </button>
+        <button class="nav-btn" data-tab="events">
+            <span class="material-symbols-outlined">calendar_today</span> Quản Lý
+            Sự Kiện
+        </button>
+        <button class="nav-btn" data-tab="tickets">
+            <span class="material-symbols-outlined">confirmation_number</span> Cấu
+            Hình Vé
+        </button>
+        <button class="nav-btn" data-tab="vouchers">
+            <span class="material-symbols-outlined">local_offer</span> Mã Giảm Giá
+        </button>
+        <button class="nav-btn" data-tab="orders">
+            <span class="material-symbols-outlined">shopping_basket</span> Đơn
+            Hàng & Vé
+        </button>
+        <button class="nav-btn" data-tab="staff">
+            <span class="material-symbols-outlined">groups</span> Phân Quyền Nhân
+            Sự
+        </button>
+    </nav>
+
+    <!-- Footer -->
+    <div
+            class="mt-auto pt-3 border-top"
+            style="border-color: var(--border) !important"
+    >
+        <button class="btn-create mb-2">
+          <span class="material-symbols-outlined" style="font-size: 18px"
+          >add</span
+          >
+            Tạo Sự Kiện Mới
+        </button>
+        <button class="nav-btn" data-tab="settings">
+            <span class="material-symbols-outlined">settings</span> Cài Đặt
+        </button>
+        <button class="nav-btn" data-tab="help">
+            <span class="material-symbols-outlined">help</span> Trợ Giúp
+        </button>
+    </div>
+</aside>
+
+<!-- ═══════════════ MAIN WRAP ═══════════════ -->
+<div id="main-wrap" class="d-flex flex-column" style="min-height: 100vh">
+    <!-- ── Topbar ── -->
+    <header id="topbar">
+        <!-- Hamburger (mobile) -->
+        <button
+                class="d-lg-none btn p-2 text-secondary me-2"
+                onclick="toggleSidebar()"
+        >
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <!-- Search -->
+        <div class="position-relative">
+          <span
+                  class="material-symbols-outlined position-absolute text-secondary"
+                  style="
+              left: 12px;
+              top: 50%;
+              transform: translateY(-50%);
+              font-size: 20px;
+            "
+          >search</span
+          >
+            <input
+                    id="searchInput"
+                    type="text"
+                    class="glass-input"
+                    placeholder="Tìm kiếm..."
+            />
+        </div>
+
+        <!-- Right utilities -->
+        <div class="d-flex align-items-center gap-3 ms-auto">
+            <!-- Live badge -->
+            <div class="live-badge d-none d-sm-flex">
+                <span class="pulse-dot"></span> Hỗ Trợ 24/7
+            </div>
+
+            <!-- Notifications -->
+            <div class="position-relative">
+                <button class="notif-btn" id="notifBtn" onclick="toggleNotif()">
+              <span class="material-symbols-outlined" style="font-size: 23px"
+              >notifications</span
+              >
+                    <span class="notif-dot" id="notifDot"></span>
+                </button>
+
+                <div class="notif-panel" id="notifPanel">
+                    <div
+                            class="d-flex align-items-center justify-content-between pb-2 mb-2"
+                            style="border-bottom: 1px solid var(--border)"
+                    >
+                <span class="text-white fw-bold" style="font-size: 13.5px"
+                >Thông Báo Mới Nhất</span
+                >
+                        <button
+                                onclick="clearNotifs()"
+                                class="btn p-0 text-danger"
+                                style="font-size: 11px; font-weight: 700"
+                        >
+                            Xóa tất cả
+                        </button>
+                    </div>
+                    <div
+                            id="notifList"
+                            style="max-height: 250px; overflow-y: auto"
+                            class="d-flex flex-column gap-2"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Avatar -->
+            <div
+                    class="d-flex align-items-center gap-3 ps-3"
+                    style="border-left: 1px solid var(--border)"
+            >
+                <img
+                        class="avatar-ring"
+                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
+                        alt="Avatar"
+                        referrerpolicy="no-referrer"
+                />
+                <div class="d-none d-md-block text-start">
+                    <div
+                            class="text-white font-display fw-black"
+                            style="font-size: 13px; line-height: 1"
+                    >
+                        Minh Event Corp
+                    </div>
+                    <div
+                            class="fw-semibold"
+                            style="font-size: 11px; color: var(--muted); margin-top: 4px"
+                    >
+                        Administrator
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Dashboard Content ── -->
+    <main class="flex-grow-1 p-3 p-sm-4 p-lg-5">
+        <div class="mx-auto" style="max-width: 1280px">
+            <!-- ①  Hero Banner -->
+            <div
+                    id="hero-banner"
+                    class="mb-4"
+                    onclick="alert('Xem chi tiết sự kiện: Summer Music Fest 2024')"
+            >
+                <div class="hero-blur-pink"></div>
+                <div class="hero-blur-purple"></div>
+
+                <!-- Circle image (desktop only) -->
+                <div class="hero-circle-wrap d-none d-md-flex">
+                    <div class="orbit1"></div>
+                    <div class="orbit2"></div>
+                    <div class="orbit3"></div>
+                    <div class="hero-circle-img">
+                        <img
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4eS1ChxTB17daDwUhc-1cQVzlJWTJpu15fzW4Kl6QZVLJoUpFPkGpGks4wGKM4dBsMRe9U3eAnHVq1l6G0fg7rytXuOIxwNi_T4MnvLgdctLF5iQsTa8q8UhQYXKRCfWUVWAanxLVk32h8zwf8iHmLLjJGeTjcNHrAot5HBfN5meHWsYnGfUXYjl4EdGR6-cn120kWu0HAHrw6z9Ct76O02iohOu2GLvn9D25Uwcb1siOLgX9huePzMmabSnl-Rg20844dnRbdKMj"
+                                alt="Summer Music Fest"
+                                referrerpolicy="no-referrer"
+                        />
+                    </div>
+                </div>
+
+                <!-- Left content -->
+                <div class="hero-content">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                <span class="badge-sale"
+                >⭐ BANNER QUẢNG CÁO SỰ KIỆN NỔI BẬT</span
+                >
+                        <span class="badge-live">
+                  <span class="pulse-dot"></span> ĐANG BÁN VÉ CHÍNH THỨC
+                </span>
+                    </div>
+
+                    <div
+                            class="font-mono text-uppercase fw-bold mb-1"
+                            style="
+                  font-size: 11px;
+                  color: rgba(244, 63, 94, 0.8);
+                  letter-spacing: 0.15em;
+                "
+                    >
+                        Entertainment
+                    </div>
+                    <h2
+                            class="font-display fw-black text-white mb-3"
+                            style="font-size: clamp(24px, 3vw, 36px); line-height: 1.1"
+                    >
+                        Summer Music Fest 2024
+                    </h2>
+
+                    <div
+                            class="d-flex flex-wrap gap-4 mb-3 text-white fw-semibold"
+                            style="font-size: 12.5px"
+                    >
+                <span class="d-flex align-items-center gap-1">
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 16px; color: var(--pink)"
+                  >calendar_today</span
+                  >
+                  15 Aug 2024
+                </span>
+                        <span class="d-flex align-items-center gap-1">
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 16px; color: var(--pink)"
+                  >location_on</span
+                  >
+                  Hanoi Stadium, Mỹ Đình
+                </span>
+                    </div>
+
+                    <p
+                            class="text-white fw-medium"
+                            style="
+                  font-size: 13px;
+                  line-height: 1.6;
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
+                "
+                    >
+                        Chào đón sự kiện âm nhạc lớn nhất mùa hè 2024! Summer Music Fest
+                        mang đến trải nghiệm âm nhạc đỉnh cao với sự góp mặt của các
+                        nghệ sĩ hàng đầu trong và ngoài nước.
+                    </p>
+                </div>
+
+                <!-- Footer bar -->
+                <div class="hero-footer">
+              <span class="d-flex align-items-center gap-2">
+                <span
+                        class="material-symbols-outlined"
+                        style="font-size: 14px; color: #34d399"
+                >trending_up</span
+                >
+                Lượng tương tác tăng mạnh:
+                <strong class="text-white ms-1"
+                >+1,240 khách hàng quan tâm hôm nay</strong
+                >
+              </span>
+                    <span
+                            class="d-none d-sm-block font-mono"
+                            style="color: #475569; letter-spacing: 0.05em"
+                    >Hệ thống xử lý vé tự động 24/7 ổn định</span
+                    >
+                </div>
+            </div>
+
+            <!-- ② KPI Row -->
+            <div class="row g-3 mb-4">
+                <!-- Total Revenue -->
+                <div class="col-12 col-md-4">
+                    <div
+                            class="glass-card-interactive p-4 d-flex align-items-center justify-content-between"
+                    >
+                        <div>
+                            <div
+                                    class="text-uppercase fw-bold"
+                                    style="
+                      font-size: 11px;
+                      color: var(--muted);
+                      letter-spacing: 0.12em;
+                    "
+                            >
+                                Tổng Doanh Thu
+                            </div>
+                            <div
+                                    class="font-display fw-black text-white mt-1"
+                                    style="font-size: clamp(22px, 2.5vw, 30px)"
+                            >
+                                4.13 tỷ ₫
+                            </div>
+                            <span class="tag-green mt-2">
+                    <span
+                            class="material-symbols-outlined"
+                            style="font-size: 13px"
+                    >trending_up</span
+                    >
+                    +18.4% tháng này
+                  </span>
+                        </div>
+                        <div class="kpi-icon">
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 24px"
+                  >account_balance_wallet</span
+                  >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Tickets -->
+                <div class="col-12 col-md-4">
+                    <div
+                            class="glass-card-interactive p-4 d-flex align-items-center justify-content-between"
+                    >
+                        <div>
+                            <div
+                                    class="text-uppercase fw-bold"
+                                    style="
+                      font-size: 11px;
+                      color: var(--muted);
+                      letter-spacing: 0.12em;
+                    "
+                            >
+                                Tổng Vé Đã Bán
+                            </div>
+                            <div
+                                    class="font-display fw-black text-white mt-1"
+                                    style="font-size: clamp(22px, 2.5vw, 30px)"
+                            >
+                                15,850 vé
+                            </div>
+                            <span class="tag-green mt-2">
+                    <span
+                            class="material-symbols-outlined"
+                            style="font-size: 13px"
+                    >confirmation_number</span
+                    >
+                    85% hiệu suất lắp đầy
+                  </span>
+                        </div>
+                        <div class="kpi-icon">
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 24px"
+                  >local_activity</span
+                  >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversion -->
+                <div class="col-12 col-md-4">
+                    <div
+                            class="glass-card-interactive p-4 d-flex align-items-center justify-content-between"
+                    >
+                        <div>
+                            <div
+                                    class="text-uppercase fw-bold"
+                                    style="
+                      font-size: 11px;
+                      color: var(--muted);
+                      letter-spacing: 0.12em;
+                    "
+                            >
+                                Tỷ Lệ Chuyển Đổi
+                            </div>
+                            <div
+                                    class="font-display fw-black text-white mt-1"
+                                    style="font-size: clamp(22px, 2.5vw, 30px)"
+                            >
+                                88.5%
+                            </div>
+                            <span class="tag-pink mt-2">
+                    <span
+                            class="material-symbols-outlined"
+                            style="font-size: 13px"
+                    >bolt</span
+                    >
+                    Chiến dịch Sôi Động
+                  </span>
+                        </div>
+                        <div class="kpi-icon">
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 24px"
+                  >analytics</span
+                  >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ③ Chart + Alerts -->
+            <div class="row g-3 mb-4">
+                <!-- Bar Chart -->
+                <div class="col-12 col-lg-8">
+                    <div class="glass-card p-4 h-100">
+                        <div
+                                class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2"
+                        >
+                            <div>
+                                <div
+                                        class="font-display fw-black text-white"
+                                        style="font-size: 15px"
+                                >
+                                    Doanh Thu Chi Tiết Theo Tuần
+                                </div>
+                                <div
+                                        style="
+                        font-size: 11px;
+                        color: var(--muted);
+                        margin-top: 4px;
+                      "
+                                >
+                                    Phân tích dòng tiền trực quan theo đơn vị Triệu Đồng (VND)
+                                </div>
+                            </div>
+                            <div
+                                    class="d-flex align-items-center gap-1 px-3 py-2 text-white fw-bold"
+                                    style="
+                      background: rgba(255, 255, 255, 0.05);
+                      border: 1px solid var(--border);
+                      border-radius: 12px;
+                      font-size: 11px;
+                    "
+                            >
+                    <span
+                            class="material-symbols-outlined"
+                            style="font-size: 14px"
+                    >calendar_today</span
+                    >
+                                Tuần 24 (Hiện tại)
+                            </div>
+                        </div>
+
+                        <!-- Bars -->
+                        <div id="chart-area">
+                            <!-- bars injected by JS -->
+                        </div>
+
+                        <!-- Insight -->
+                        <div class="insight-box mt-3 flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                    <span
+                            class="material-symbols-outlined fw-bold"
+                            style="color: var(--pink)"
+                    >insights</span
+                    >
+                                <span
+                                >Lượt mua đạt đỉnh vào <strong>Thứ Tư (T4)</strong> nhờ
+                      đợt mở bán vé VIP độc quyền.</span
+                                >
+                            </div>
+                            <button
+                                    class="btn p-0 text-white fw-black ms-auto"
+                                    style="font-size: 12px; white-space: nowrap"
+                                    onclick="alert('Chuyển sang trang Voucher')"
+                            >
+                                Xem Voucher →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="col-12 col-lg-4">
+                    <div class="glass-card p-4 h-100 d-flex flex-column">
+                        <div
+                                class="d-flex align-items-center justify-content-between mb-4"
+                        >
+                            <div
+                                    class="font-display fw-black text-white"
+                                    style="font-size: 15px"
+                            >
+                                Cảnh báo & Hoạt Động
+                            </div>
+                            <span
+                                    class="text-uppercase fw-black"
+                                    style="
+                      font-size: 10px;
+                      background: rgba(244, 63, 94, 0.15);
+                      border: 1px solid rgba(244, 63, 94, 0.2);
+                      color: var(--pink);
+                      padding: 3px 10px;
+                      border-radius: 8px;
+                      letter-spacing: 0.08em;
+                    "
+                            >Mạng Lưới</span
+                            >
+                        </div>
+
+                        <div
+                                class="d-flex flex-column gap-2 flex-grow-1"
+                                id="alertsList"
+                        ></div>
+
+                        <button
+                                class="btn-orders mt-4"
+                                onclick="alert('Chuyển sang trang Đơn Hàng')"
+                        >
+                            Quản Lý Toàn Bộ Giao Dịch
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ④ Active Event Cards -->
+            <div class="glass-card p-4">
+                <div
+                        class="d-flex align-items-start justify-content-between mb-4 flex-wrap gap-2"
+                >
+                    <div>
+                        <div
+                                class="font-display fw-black text-white"
+                                style="font-size: 15px"
+                        >
+                            Chiến dịch Đang Hoạt Động
+                        </div>
+                        <div
+                                style="font-size: 11px; color: var(--muted); margin-top: 4px"
+                        >
+                            Danh sách các đại nhạc hội & sự kiện đang mở bán
+                        </div>
+                    </div>
+                    <button
+                            class="btn p-0 fw-black"
+                            style="font-size: 12px; color: var(--pink)"
+                            onclick="alert('Xem tất cả sự kiện')"
+                    >
+                        Xem tất cả (6) →
+                    </button>
+                </div>
+
+                <div class="row g-3" id="eventsGrid"></div>
+            </div>
+        </div>
+    </main>
+</div>
+<!-- /main-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    /* ════════════════════════════════════════════
+ DATA
+════════════════════════════════════════════ */
+    const events = [
+        {
+            id: "evt-1",
+            name: "Summer Music Fest 2024",
+            category: "Entertainment",
+            status: "On Sale",
+            date: "15 Aug 2024",
+            location: "Hanoi Stadium, Mỹ Đình",
+            ticketsSold: 1200,
+            capacity: 15000,
+            bannerImage:
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuC4eS1ChxTB17daDwUhc-1cQVzlJWTJpu15fzW4Kl6QZVLJoUpFPkGpGks4wGKM4dBsMRe9U3eAnHVq1l6G0fg7rytXuOIxwNi_T4MnvLgdctLF5iQsTa8q8UhQYXKRCfWUVWAanxLVk32h8zwf8iHmLLjJGeTjcNHrAot5HBfN5meHWsYnGfUXYjl4EdGR6-cn120kWu0HAHrw6z9Ct76O02iohOu2GLvn9D25Uwcb1siOLgX9huePzMmabSnl-Rg20844dnRbdKMj",
+        },
+        {
+            id: "evt-2",
+            name: "Tech Innovators Workshop",
+            category: "Technology",
+            status: "On Sale",
+            date: "22 Sep 2024",
+            location: "Gem Center, HCMC",
+            ticketsSold: 450,
+            capacity: 500,
+            bannerImage:
+                "https://plus.unsplash.com/premium_photo-1661284827255-a0bc81d451a3?q=80&w=600&auto=format&fit=crop",
+        },
+        {
+            id: "evt-5",
+            name: "Hanoi Indie Music Festival",
+            category: "Entertainment",
+            status: "Ongoing",
+            date: "Today, 14:00 - 23:00",
+            location: "Thong Nhat Park, Hanoi",
+            ticketsSold: 2000,
+            capacity: 2000,
+            bannerImage:
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuC4eS1ChxTB17daDwUhc-1cQVzlJWTJpu15fzW4Kl6QZVLJoUpFPkGpGks4wGKM4dBsMRe9U3eAnHVq1l6G0fg7rytXuOIxwNi_T4MnvLgdctLF5iQsTa8q8UhQYXKRCfWUVWAanxLVk32h8zwf8iHmLLjJGeTjcNHrAot5HBfN5meHWsYnGfUXYjl4EdGR6-cn120kWu0HAHrw6z9Ct76O02iohOu2GLvn9D25Uwcb1siOLgX9huePzMmabSnl-Rg20844dnRbdKMj",
+        },
+    ];
+
+    const notifications = [
+        {
+            id: "n1",
+            type: "sale",
+            title: "Large Ticket Purchase",
+            description:
+                "User 'Nguyen Van A' purchased 10 VIP tickets for 'Summer Music Fest 2024'.",
+            time: "10 mins ago",
+        },
+        {
+            id: "n2",
+            type: "warning",
+            title: "Capacity Warning",
+            description:
+                '"Tech Innovators Workshop" has reached 90% of its seating capacity.',
+            time: "1 hour ago",
+        },
+        {
+            id: "n3",
+            type: "payment",
+            title: "Payout Processed",
+            description:
+                "Your recent payout of ₫45.0M has been processed successfully.",
+            time: "Yesterday",
+        },
+    ];
+
+    const weeklyRevenue = [
+        { day: "T2", amount: 25 },
+        { day: "T3", amount: 48 },
+        { day: "T4", amount: 125 },
+        { day: "T5", amount: 62 },
+        { day: "T6", amount: 88 },
+        { day: "T7", amount: 40 },
+        { day: "CN", amount: 112 },
+    ];
+
+    let selectedDay = "T4";
+    let notifList = [...notifications];
+
+    /* ════════════════════════════════════════════
+ RENDER CHART
+════════════════════════════════════════════ */
+    function renderChart() {
+        const area = document.getElementById("chart-area");
+        const peak = Math.max(...weeklyRevenue.map((r) => r.amount));
+        area.innerHTML = weeklyRevenue
+            .map((item) => {
+                const barH = Math.round((item.amount / peak) * 140);
+                const isSelected = item.day === selectedDay;
+                return `
+      <div class="bar-col ${isSelected ? "selected" : ""}" onclick="selectDay('${item.day}')">
+        <div style="position:relative;width:100%;display:flex;justify-content:center;">
+          <div class="bar-tooltip">${item.amount} Triệu ₫</div>
+          <div class="bar-rect" style="height:${barH}px;"></div>
+        </div>
+        <span class="bar-label">${item.day}</span>
+      </div>`;
+            })
+            .join("");
+    }
+
+    function selectDay(day) {
+        selectedDay = day;
+        renderChart();
+    }
+
+    /* ════════════════════════════════════════════
+ RENDER ALERTS
+════════════════════════════════════════════ */
+    function iconForType(t) {
+        if (t === "sale") return { icon: "bolt", color: "var(--pink)" };
+        if (t === "warning") return { icon: "error_outline", color: "#fbbf24" };
+        return { icon: "receipt_long", color: "#818cf8" };
+    }
+
+    function renderAlerts() {
+        const el = document.getElementById("alertsList");
+        const dot = document.getElementById("notifDot");
+        dot.style.display = notifList.length ? "block" : "none";
+        if (!notifList.length) {
+            el.innerHTML =
+                '<div class="text-center py-4 text-secondary" style="font-size:12px;">Không có thông báo mới.</div>';
+            return;
+        }
+        el.innerHTML = notifList
+            .slice(0, 3)
+            .map((n) => {
+                const { icon, color } = iconForType(n.type);
+                return `
+      <div class="alert-item">
+        <span class="material-symbols-outlined mt-1" style="font-size:19px;color:${color};flex-shrink:0;">${icon}</span>
+        <div>
+          <div class="text-white fw-bold" style="font-size:12px;">${n.title}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:4px;line-height:1.5;">${n.description}</div>
+          <span style="font-size:9px;color:rgba(255,255,255,.5);display:block;margin-top:6px;font-weight:600;">${n.time}</span>
+        </div>
+      </div>`;
+            })
+            .join("");
+    }
+
+    /* ════════════════════════════════════════════
+ RENDER NOTIFICATION PANEL
+════════════════════════════════════════════ */
+    function renderNotifPanel() {
+        const el = document.getElementById("notifList");
+        if (!notifList.length) {
+            el.innerHTML =
+                '<div class="text-center py-4 text-secondary" style="font-size:12px;">Không có thông báo mới.</div>';
+            return;
+        }
+        el.innerHTML = notifList
+            .map((n) => {
+                const { icon, color } = iconForType(n.type);
+                return `
+      <div class="d-flex gap-3 p-2 rounded-3" style="transition:background .2s;" onmouseenter="this.style.background='rgba(255,255,255,.04)'" onmouseleave="this.style.background='transparent'">
+        <span class="material-symbols-outlined mt-1" style="font-size:18px;color:${color};flex-shrink:0;">${icon}</span>
+        <div>
+          <div class="text-white fw-bold" style="font-size:12px;">${n.title}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px;">${n.description}</div>
+          <span style="font-size:9px;color:#64748b;display:block;margin-top:4px;">${n.time}</span>
+        </div>
+      </div>`;
+            })
+            .join("");
+    }
+
+    /* ════════════════════════════════════════════
+ RENDER EVENTS GRID
+════════════════════════════════════════════ */
+    function renderEvents() {
+        const grid = document.getElementById("eventsGrid");
+        grid.innerHTML = events
+            .map((evt) => {
+                const pct = Math.round((evt.ticketsSold / evt.capacity) * 100);
+                const isOngoing = evt.status === "Ongoing";
+                return `
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="event-card" onclick="alert('Xem chi tiết: ${evt.name}')">
+          <div class="event-card-img">
+            <img src="${evt.bannerImage}" alt="${evt.name}" referrerpolicy="no-referrer" />
+            <span class="status-badge ${isOngoing ? "status-ongoing" : "status-sale"}">
+              ${isOngoing ? "Đang diễn ra" : "On Sale"}
+            </span>
+          </div>
+          <div class="p-3" style="space-y:12px;">
+            <div class="text-uppercase fw-bold" style="font-size:10px;color:var(--pink);letter-spacing:.08em;">${evt.category}</div>
+            <div class="text-white fw-black font-display mt-1" style="font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${evt.name}</div>
+            <div class="d-flex align-items-center gap-1 mt-1" style="font-size:11px;color:#64748b;">
+              <span class="material-symbols-outlined" style="font-size:14px;">location_on</span>
+              <span>${evt.location}</span>
+            </div>
+            <div class="mt-3 pt-2" style="border-top:1px solid rgba(255,255,255,.05);">
+              <div class="d-flex justify-content-between mb-1" style="font-size:11px;color:var(--muted);">
+                <span>Đã bán: <strong class="text-white fw-black">${evt.ticketsSold.toLocaleString("vi-VN")}</strong> / ${evt.capacity.toLocaleString("vi-VN")} vé</span>
+                <span class="fw-bold" style="color:var(--pink);">${pct}%</span>
+              </div>
+              <div class="progress-bar-custom">
+                <div class="progress-fill" style="width:${pct}%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+            })
+            .join("");
+    }
+
+    /* ════════════════════════════════════════════
+ NOTIFICATIONS UI
+════════════════════════════════════════════ */
+    function toggleNotif() {
+        const panel = document.getElementById("notifPanel");
+        panel.classList.toggle("show");
+        if (panel.classList.contains("show")) renderNotifPanel();
+    }
+
+    function clearNotifs() {
+        notifList = [];
+        renderAlerts();
+        renderNotifPanel();
+        document.getElementById("notifPanel").classList.remove("show");
+    }
+
+    // Close notif panel when clicking outside
+    document.addEventListener("click", (e) => {
+        const panel = document.getElementById("notifPanel");
+        const btn = document.getElementById("notifBtn");
+        if (!panel.contains(e.target) && !btn.contains(e.target)) {
+            panel.classList.remove("show");
+        }
+    });
+
+    /* ════════════════════════════════════════════
+ SIDEBAR TOGGLE (mobile)
+════════════════════════════════════════════ */
+    function toggleSidebar() {
+        const sb = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        const isOpen = sb.classList.toggle("open");
+        overlay.style.display = isOpen ? "block" : "none";
+    }
+
+    /* ════════════════════════════════════════════
+ NAV TABS
+════════════════════════════════════════════ */
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            document
+                .querySelectorAll(".nav-btn")
+                .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            // Close sidebar on mobile after selection
+            const sb = document.getElementById("sidebar");
+            if (sb.classList.contains("open")) toggleSidebar();
+        });
+    });
+
+    /* ════════════════════════════════════════════
+ INIT
+════════════════════════════════════════════ */
+    renderChart();
+    renderAlerts();
+    renderEvents();
+</script>
 </body>
 </html>
