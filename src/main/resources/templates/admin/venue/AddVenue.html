@@ -1,10 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Add Venue</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#090014;
+            color:white;
+            min-height:100vh;
+            padding:30px;
+        }
+
+        .top-bar{
+            display:flex;
+            align-items:center;
+            gap:15px;
+            margin-bottom:30px;
+        }
+
+        .back-btn{
+            width:45px;
+            height:45px;
+            border:none;
+            border-radius:12px;
+            background:#140021;
+            color:#d1d5db;
+            cursor:pointer;
+            transition:0.3s;
+            font-size:18px;
+        }
+
+        .back-btn:hover{
+            background:#ff1b8d;
+            color:white;
+        }
+
+        .top-bar h1{
+            font-size:32px;
+            margin-bottom:5px;
+        }
+
+        .top-bar p{
+            color:#9ca3af;
+        }
+
+        .form-container{
+            max-width:850px;
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:20px;
+            padding:30px;
+        }
+
+        .form-title{
+            font-size:22px;
+            margin-bottom:25px;
+        }
+
+        .form-group{
+            margin-bottom:25px;
+        }
+
+        .form-group label{
+            display:block;
+            margin-bottom:10px;
+            font-weight:bold;
+        }
+
+        .form-control{
+            width:100%;
+            padding:14px 16px;
+            background:#090014;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:12px;
+            color:white;
+            outline:none;
+            transition:0.3s;
+        }
+
+        .form-control:focus{
+            border-color:#ff1b8d;
+        }
+
+        textarea.form-control{
+            resize:none;
+            height:150px;
+        }
+
+        .upload-box{
+            border:2px dashed rgba(236,72,153,0.4);
+            border-radius:18px;
+            padding:50px 20px;
+            text-align:center;
+            background:rgba(255,255,255,0.02);
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .upload-box:hover{
+            border-color:#ff1b8d;
+        }
+
+        .upload-box i{
+            font-size:55px;
+            color:#9ca3af;
+            margin-bottom:15px;
+        }
+
+        .upload-box p{
+            margin-bottom:8px;
+            color:#d1d5db;
+        }
+
+        .upload-box span{
+            color:#6b7280;
+            font-size:14px;
+        }
+
+        .button-group{
+            display:flex;
+            gap:15px;
+            margin-top:20px;
+        }
+
+        .btn{
+            padding:14px 24px;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .btn-save{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+        }
+
+        .btn-save:hover{
+            opacity:0.9;
+            transform:scale(1.03);
+        }
+
+        .btn-cancel{
+            background:transparent;
+            border:1px solid rgba(236,72,153,0.4);
+            color:white;
+        }
+
+        .btn-cancel:hover{
+            background:rgba(236,72,153,0.1);
+        }
+
+    </style>
 </head>
+
 <body>
+
+<!-- Header -->
+<div class="top-bar">
+
+    <button class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div>
+        <h1>Add New Venue</h1>
+        <p>Create a new venue for hosting events</p>
+    </div>
+
+</div>
+
+<!-- Form -->
+<div class="form-container">
+
+    <h2 class="form-title">Venue Information</h2>
+
+    <form>
+
+        <!-- Upload -->
+        <div class="form-group">
+
+            <label>Venue Image</label>
+
+            <div class="upload-box">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                <p>Click to upload or drag and drop</p>
+
+                <span>PNG, JPG up to 10MB</span>
+            </div>
+
+        </div>
+
+        <!-- Venue Name -->
+        <div class="form-group">
+            <label>Venue Name</label>
+
+            <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Enter venue name"
+            >
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+            <label>Location</label>
+
+            <input
+                    type="text"
+                    class="form-control"
+                    placeholder="City, State"
+            >
+        </div>
+
+        <!-- Capacity -->
+        <div class="form-group">
+            <label>Capacity</label>
+
+            <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Maximum capacity"
+            >
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea
+                    class="form-control"
+                    placeholder="Describe the venue, amenities, and features..."
+            ></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+
+            <button type="submit" class="btn btn-save">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save Venue
+            </button>
+
+            <button type="button" class="btn btn-cancel">
+                Cancel
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
 
 </body>
 </html>

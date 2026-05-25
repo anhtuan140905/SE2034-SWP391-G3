@@ -1,10 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edit Venue</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#090014;
+            color:white;
+            min-height:100vh;
+            padding:30px;
+        }
+
+        .top-bar{
+            display:flex;
+            align-items:center;
+            gap:15px;
+            margin-bottom:30px;
+        }
+
+        .back-btn{
+            width:45px;
+            height:45px;
+            border:none;
+            border-radius:12px;
+            background:#140021;
+            color:#d1d5db;
+            cursor:pointer;
+            transition:0.3s;
+            font-size:18px;
+        }
+
+        .back-btn:hover{
+            background:#ff1b8d;
+            color:white;
+        }
+
+        .top-bar h1{
+            font-size:32px;
+            margin-bottom:5px;
+        }
+
+        .top-bar p{
+            color:#9ca3af;
+        }
+
+        .form-container{
+            max-width:850px;
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:20px;
+            padding:30px;
+        }
+
+        .form-title{
+            font-size:22px;
+            margin-bottom:25px;
+        }
+
+        .form-group{
+            margin-bottom:25px;
+        }
+
+        .form-group label{
+            display:block;
+            margin-bottom:10px;
+            font-weight:bold;
+        }
+
+        .form-control{
+            width:100%;
+            padding:14px 16px;
+            background:#090014;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:12px;
+            color:white;
+            outline:none;
+            transition:0.3s;
+        }
+
+        .form-control:focus{
+            border-color:#ff1b8d;
+        }
+
+        textarea.form-control{
+            resize:none;
+            height:150px;
+        }
+
+        .upload-box{
+            border:2px dashed rgba(236,72,153,0.4);
+            border-radius:18px;
+            padding:20px;
+            text-align:center;
+            background:rgba(255,255,255,0.02);
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .upload-box:hover{
+            border-color:#ff1b8d;
+        }
+
+        .upload-box img{
+            width:100%;
+            max-height:250px;
+            object-fit:cover;
+            border-radius:15px;
+            margin-bottom:20px;
+        }
+
+        .upload-box i{
+            font-size:40px;
+            color:#9ca3af;
+            margin-bottom:10px;
+        }
+
+        .upload-box p{
+            color:#d1d5db;
+        }
+
+        .button-group{
+            display:flex;
+            gap:15px;
+            margin-top:20px;
+        }
+
+        .btn{
+            padding:14px 24px;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .btn-update{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+        }
+
+        .btn-update:hover{
+            opacity:0.9;
+            transform:scale(1.03);
+        }
+
+        .btn-cancel{
+            background:transparent;
+            border:1px solid rgba(236,72,153,0.4);
+            color:white;
+        }
+
+        .btn-cancel:hover{
+            background:rgba(236,72,153,0.1);
+        }
+
+    </style>
 </head>
+
 <body>
+
+<!-- Header -->
+<div class="top-bar">
+
+    <button class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div>
+        <h1>Edit Venue</h1>
+        <p>Update venue information</p>
+    </div>
+
+</div>
+
+<!-- Form -->
+<div class="form-container">
+
+    <h2 class="form-title">Venue Information</h2>
+
+    <form>
+
+        <!-- Upload -->
+        <div class="form-group">
+
+            <label>Venue Image</label>
+
+            <div class="upload-box">
+
+                <img
+                        src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200"
+                        alt="Venue Image"
+                >
+
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                <p>Click to change image</p>
+
+            </div>
+
+        </div>
+
+        <!-- Venue Name -->
+        <div class="form-group">
+            <label>Venue Name</label>
+
+            <input
+                    type="text"
+                    class="form-control"
+                    value="Central Park Arena"
+            >
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+            <label>Location</label>
+
+            <input
+                    type="text"
+                    class="form-control"
+                    value="New York, NY"
+            >
+        </div>
+
+        <!-- Capacity -->
+        <div class="form-group">
+            <label>Capacity</label>
+
+            <input
+                    type="number"
+                    class="form-control"
+                    value="5000"
+            >
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label>Description</label>
+
+            <textarea class="form-control">A premier outdoor venue in the heart of Central Park, perfect for large-scale events and concerts.</textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+
+            <button type="submit" class="btn btn-update">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Update Venue
+            </button>
+
+            <button type="button" class="btn btn-cancel">
+                Cancel
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
 
 </body>
 </html>

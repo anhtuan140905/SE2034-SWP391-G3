@@ -1,10 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Event Category Detail</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- DataLabels -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#0b0217;
+            color:white;
+            padding:30px;
+        }
+
+        /* HEADER */
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+        }
+
+        .btn{
+            background:linear-gradient(90deg,#ff1b8d,#ec4899);
+            border:none;
+            padding:10px 18px;
+            color:white;
+            border-radius:10px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        /* CARDS */
+        .card{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:16px;
+            padding:20px;
+            margin-bottom:20px;
+        }
+
+        /* CATEGORY */
+        .category{
+            display:flex;
+            gap:15px;
+            align-items:center;
+        }
+
+        .category-icon{
+            width:60px;
+            height:60px;
+            border-radius:16px;
+            background:linear-gradient(135deg,#ff1b8d,#a855f7);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:24px;
+        }
+
+        /* STATS */
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:15px;
+            margin:20px 0;
+        }
+
+        .stat{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:14px;
+            padding:18px;
+        }
+
+        .icon-box{
+            width:52px;
+            height:52px;
+            border-radius:14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:12px;
+            color:white;
+            font-size:20px;
+        }
+
+        .pink{background:linear-gradient(135deg,#ff1b8d,#ec4899);}
+        .purple{background:linear-gradient(135deg,#8b5cf6,#a855f7);}
+        .violet{background:linear-gradient(135deg,#ec4899,#c026d3);}
+        .mix{background:linear-gradient(135deg,#a855f7,#ff1b8d);}
+
+        .stat h3{
+            margin:5px 0;
+            color:#ccc;
+        }
+
+        .stat h2{
+            margin:0;
+        }
+
+        /* GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:2fr 1fr;
+            gap:20px;
+        }
+
+        /* TABLE */
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th,td{
+            padding:12px;
+            border-bottom:1px solid rgba(255,255,255,0.1);
+        }
+
+        th{color:#aaa;}
+
+        .badge{
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+        }
+
+        .active{background:rgba(0,255,120,0.15); color:#00ff99;}
+        .upcoming{background:rgba(0,140,255,0.15); color:#4da6ff;}
+
+        @media(max-width:900px){
+            .stats{grid-template-columns:1fr 1fr;}
+            .grid{grid-template-columns:1fr;}
+        }
+    </style>
 </head>
+
 <body>
+
+<!-- HEADER -->
+<div class="header">
+    <div>
+        <h1>Category Details</h1>
+        <p>Complete category analytics and events</p>
+    </div>
+    <button class="btn"><i class="fa fa-pen"></i> Edit Category</button>
+</div>
+
+<!-- CATEGORY -->
+<div class="card">
+    <div class="category">
+        <div class="category-icon">
+            <i class="fa fa-music"></i>
+        </div>
+        <div>
+            <h2>Music & Concerts</h2>
+            <p>Live music events, concerts, and festivals</p>
+        </div>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+
+    <div class="stat">
+        <div class="icon-box pink"><i class="fa fa-calendar"></i></div>
+        <h3>Total Events</h3>
+        <h2>142</h2>
+    </div>
+
+    <div class="stat">
+        <div class="icon-box purple"><i class="fa fa-bolt"></i></div>
+        <h3>Active Events</h3>
+        <h2>28</h2>
+    </div>
+
+    <div class="stat">
+        <div class="icon-box violet"><i class="fa fa-users"></i></div>
+        <h3>Total Attendees</h3>
+        <h2>48.5K</h2>
+    </div>
+
+    <div class="stat">
+        <div class="icon-box mix"><i class="fa fa-dollar-sign"></i></div>
+        <h3>Revenue</h3>
+        <h2>$842K</h2>
+    </div>
+
+</div>
+
+<!-- CHARTS -->
+<div class="grid">
+
+    <div class="card">
+        <h3>Monthly Event Trends</h3>
+        <canvas id="lineChart"></canvas>
+    </div>
+
+    <div class="card">
+        <h3>Event Status Distribution</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+</div>
+
+<!-- TABLE -->
+<div class="card">
+    <h3>Events in this Category</h3>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>Tickets</th>
+            <th>Status</th>
+        </tr>
+
+        <tr>
+            <td>Summer Music Festival</td>
+            <td>2026-06-15</td>
+            <td>Central Park</td>
+            <td>2500</td>
+            <td><span class="badge active">Active</span></td>
+        </tr>
+
+        <tr>
+            <td>Rock Concert</td>
+            <td>2026-07-20</td>
+            <td>Riverside</td>
+            <td>1200</td>
+            <td><span class="badge active">Active</span></td>
+        </tr>
+
+        <tr>
+            <td>Jazz Night</td>
+            <td>2026-08-10</td>
+            <td>City Gallery</td>
+            <td>800</td>
+            <td><span class="badge upcoming">Upcoming</span></td>
+        </tr>
+
+    </table>
+</div>
+
+<script>
+    Chart.register(ChartDataLabels);
+
+    /* LINE CHART */
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            datasets: [{
+                label: 'Events',
+                data: [8,12,16,14,22,28],
+                borderColor: '#ff1b8d',
+                backgroundColor: 'rgba(255,27,141,0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options:{
+            plugins:{legend:{labels:{color:'#fff'}}},
+            scales:{
+                x:{ticks:{color:'#aaa'}},
+                y:{ticks:{color:'#aaa'}}
+            }
+        }
+    });
+
+    /* PIE CHART + % */
+    new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Sold Out','Active','Upcoming'],
+            datasets: [{
+                data: [45,35,20],
+                backgroundColor:['#ff1b8d','#8b5cf6','#3b82f6']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position:'bottom',
+                    labels:{color:'#fff'}
+                },
+                datalabels: {
+                    color:'#fff',
+                    font:{weight:'bold',size:14},
+                    formatter:(value,ctx)=>{
+                        let total = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+                        return Math.round((value/total)*100) + '%';
+                    }
+                }
+            }
+        },
+        plugins:[ChartDataLabels]
+    });
+</script>
 
 </body>
 </html>

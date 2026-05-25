@@ -2,6 +2,7 @@ package vn.edu.fpt.modelview.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class RegisterOrgDTO {
     @NotBlank(message = "Họ tên không được để trống!")
+    @Size(min = 2, max = 30, message = "Full name phải từ 2-30 ký tự")
     private String fullName;
     @NotBlank(message = "Số điện thoại không được để trống!")
     private String phone;

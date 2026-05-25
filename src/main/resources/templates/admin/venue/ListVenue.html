@@ -1,10 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>List Venue</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#090014;
+            color:white;
+            min-height:100vh;
+            padding:30px;
+        }
+
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:30px;
+        }
+
+        .header h1{
+            font-size:32px;
+            margin-bottom:5px;
+        }
+
+        .header p{
+            color:#9ca3af;
+        }
+
+        .btn-add{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+            border:none;
+            padding:14px 20px;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .btn-add:hover{
+            opacity:0.9;
+            transform:scale(1.03);
+        }
+
+        .table-box{
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:18px;
+            padding:20px;
+        }
+
+        .table-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+        }
+
+        .search-box{
+            width:300px;
+            background:#090014;
+            border:1px solid rgba(236,72,153,0.3);
+            padding:12px 15px;
+            border-radius:10px;
+            color:white;
+            outline:none;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        table th{
+            text-align:left;
+            padding:15px;
+            color:#9ca3af;
+            border-bottom:1px solid rgba(236,72,153,0.2);
+        }
+
+        table td{
+            padding:15px;
+            border-bottom:1px solid rgba(236,72,153,0.1);
+        }
+
+        tr:hover{
+            background:rgba(236,72,153,0.05);
+        }
+
+        .venue-info{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .venue-info img{
+            width:55px;
+            height:55px;
+            border-radius:12px;
+            object-fit:cover;
+        }
+
+        .location,
+        .capacity{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            color:#d1d5db;
+        }
+
+        .badge{
+            padding:6px 14px;
+            border-radius:20px;
+            font-size:13px;
+            font-weight:bold;
+        }
+
+        .active{
+            background:rgba(34,197,94,0.2);
+            color:#4ade80;
+        }
+
+        .maintenance{
+            background:rgba(234,179,8,0.2);
+            color:#facc15;
+        }
+
+        .actions{
+            display:flex;
+            justify-content:flex-end;
+            gap:10px;
+        }
+
+        .action-btn{
+            width:38px;
+            height:38px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            color:white;
+            transition:0.3s;
+        }
+
+        .view-btn{
+            background:rgba(139,92,246,0.2);
+            color:#a855f7;
+        }
+
+        .edit-btn{
+            background:rgba(255,27,141,0.2);
+            color:#ff1b8d;
+        }
+
+        .action-btn:hover{
+            transform:scale(1.1);
+        }
+
+    </style>
 </head>
+
 <body>
+
+<!-- Header -->
+<div class="header">
+
+    <div>
+        <h1>Manage Venues</h1>
+        <p>View and manage all event venues</p>
+    </div>
+
+    <button class="btn-add">
+        <i class="fa-solid fa-plus"></i>
+        Add Venue
+    </button>
+
+</div>
+
+<!-- Table -->
+<div class="table-box">
+
+    <div class="table-top">
+        <h2>All Venues</h2>
+
+        <input type="text" class="search-box" placeholder="Search venues...">
+    </div>
+
+    <table>
+
+        <thead>
+        <tr>
+            <th>Venue</th>
+            <th>Location</th>
+            <th>Capacity</th>
+            <th>Events</th>
+            <th>Status</th>
+            <th style="text-align:right;">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+
+            <td>
+                <div class="venue-info">
+                    <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=200">
+
+                    <div>
+                        <strong>Central Park Arena</strong>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    New York, NY
+                </div>
+            </td>
+
+            <td>
+                <div class="capacity">
+                    <i class="fa-solid fa-users"></i>
+                    5,000
+                </div>
+            </td>
+
+            <td>24 events</td>
+
+            <td>
+                <span class="badge active">Active</span>
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <button class="action-btn view-btn">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+
+                    <button class="action-btn edit-btn">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <div class="venue-info">
+                    <img src="https://images.unsplash.com/photo-1519167758481-83f29da8c2b8?w=200">
+
+                    <div>
+                        <strong>Convention Center</strong>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    San Francisco, CA
+                </div>
+            </td>
+
+            <td>
+                <div class="capacity">
+                    <i class="fa-solid fa-users"></i>
+                    3,500
+                </div>
+            </td>
+
+            <td>18 events</td>
+
+            <td>
+                <span class="badge active">Active</span>
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <button class="action-btn view-btn">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+
+                    <button class="action-btn edit-btn">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <div class="venue-info">
+                    <img src="https://images.unsplash.com/photo-1577648188599-291bb8b831c3?w=200">
+
+                    <div>
+                        <strong>City Gallery</strong>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Los Angeles, CA
+                </div>
+            </td>
+
+            <td>
+                <div class="capacity">
+                    <i class="fa-solid fa-users"></i>
+                    800
+                </div>
+            </td>
+
+            <td>12 events</td>
+
+            <td>
+                <span class="badge maintenance">Maintenance</span>
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <button class="action-btn view-btn">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+
+                    <button class="action-btn edit-btn">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <div class="venue-info">
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=200">
+
+                    <div>
+                        <strong>Downtown Plaza</strong>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Chicago, IL
+                </div>
+            </td>
+
+            <td>
+                <div class="capacity">
+                    <i class="fa-solid fa-users"></i>
+                    2,000
+                </div>
+            </td>
+
+            <td>31 events</td>
+
+            <td>
+                <span class="badge active">Active</span>
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    <button class="action-btn view-btn">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+
+                    <button class="action-btn edit-btn">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
 
 </body>
 </html>
