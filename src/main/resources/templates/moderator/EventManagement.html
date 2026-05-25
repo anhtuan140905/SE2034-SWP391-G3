@@ -1,10 +1,583 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #02010d;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #04162d 0%, #021427 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+        }
+
+        .logo {
+            padding: 0 24px 35px;
+        }
+
+        .logo h1 {
+            font-size: 34px;
+            font-weight: 700;
+            background: linear-gradient(to right, #ff9cf7, #b084ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #d5d5d5;
+        }
+
+        .menu {
+            margin-top: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 20px 24px;
+            text-decoration: none;
+            color: #c8c8d0;
+            border-left: 3px solid transparent;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #ff8df7;
+            color: #ffb6ff;
+        }
+
+        .menu-item i {
+            width: 20px;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+
+        .main-content {
+            flex: 1;
+            background: radial-gradient(circle at top, #070b2b 0%, #020014 65%);
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            height: 82px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            background: rgba(5, 15, 40, 0.9);
+        }
+
+        .topbar-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffb6ff;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .notification {
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .profile {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #ff8df7;
+        }
+
+        .profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 28px;
+        }
+
+        /* ================= SEARCH PANEL ================= */
+
+        .search-panel {
+            background: rgba(16, 24, 55, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 28px;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns:1fr 220px;
+            gap: 18px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d7d7e8;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8a8fa7;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 50px;
+            background: #0d1432;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0 18px 0 42px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: #7e8399;
+        }
+
+        .status-select {
+            width: 100%;
+            height: 50px;
+            background: #0d1432;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0 15px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            background: rgba(11, 20, 52, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            min-height: 650px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #081730;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d6d9e8;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            transition: 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        tbody td {
+            padding: 22px 20px;
+            color: #e8ebff;
+            font-size: 16px;
+        }
+
+        .event-id {
+            color: #9ca3bf;
+            font-weight: 600;
+        }
+
+        .event-title {
+            color: #ffb6ff;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pending {
+            background: rgba(130, 160, 255, 0.15);
+            color: #cfe0ff;
+        }
+
+        .approved {
+            background: rgba(255, 141, 247, 0.15);
+            color: #ffb6ff;
+        }
+
+        .view-btn {
+            text-decoration: none;
+            color: #ffb6ff;
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .view-btn:hover {
+            color: #ffffff;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+
+            .search-grid {
+                grid-template-columns:1fr;
+            }
+
+            table {
+                min-width: 900px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+        }
+
+    </style>
 </head>
 <body>
+
+<div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h1>EventHub</h1>
+            <span>MODERATOR PORTAL</span>
+        </div>
+
+        <nav class="menu">
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-table-cells-large"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#" class="menu-item active">
+                <i class="fa-regular fa-calendar"></i>
+                <span>Event Management</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-shield-heart"></i>
+                <span>Organizer Approvals</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Venue Management</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-regular fa-user"></i>
+                <span>My Profile</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <h2 class="topbar-title">
+                Event Management
+            </h2>
+
+            <div class="topbar-right">
+
+                <i class="fa-regular fa-bell notification"></i>
+
+                <div class="profile">
+                    <img th:src="@{/images/avatar.jpg}"
+                         src="https://i.pravatar.cc/100"
+                         alt="avatar">
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+            <!-- SEARCH -->
+
+            <div class="search-panel">
+
+                <form th:action="@{/moderator/events}"
+                      method="get">
+
+                    <div class="search-grid">
+
+                        <div class="field-group">
+
+                            <label>Search</label>
+
+                            <div class="search-box">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                <label>
+                                    <input type="text"
+                                           name="keyword"
+                                           placeholder="Search event title..."
+                                           th:value="${keyword}">
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="field-group">
+
+                            <label>Status</label>
+
+                            <label>
+                                <select class="status-select"
+                                        name="status">
+
+                                    <option value="PENDING">
+                                        Pending
+                                    </option>
+
+                                    <option value="APPROVED">
+                                        Approved
+                                    </option>
+
+                                    <option value="REJECTED">
+                                        Rejected
+                                    </option>
+
+                                </select>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- TABLE -->
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Event Title</th>
+                        <th>Organizer</th>
+                        <th>Start Time</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    <!-- EVENT ITEM -->
+
+                    <tr th:each="event : ${events}">
+
+                        <td class="event-id"
+                            th:text="${event.id}">
+                            #EVT-0992
+                        </td>
+
+                        <td class="event-title"
+                            th:text="${event.title}">
+                            CyberSec Summit 2024
+                        </td>
+
+                        <td th:text="${event.organizer}">
+                            Nexus Corp
+                        </td>
+
+                        <td th:text="${event.startTime}">
+                            Oct 12, 09:00 AM
+                        </td>
+
+                        <td>
+              <span class="status-badge approved"
+                    th:if="${event.status == 'APPROVED'}">
+                                Approved
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a th:href="@{/moderator/events/{id}(id=${event.id})}"
+                               class="view-btn">
+                                VIEW DETAILS
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <!-- DEMO ROW -->
+
+                    <tr>
+
+                        <td class="event-id">
+                            #EVT-0991
+                        </td>
+
+                        <td class="event-title">
+                            Neon Nights Festival
+                        </td>
+
+                        <td>
+                            Pulse Events
+                        </td>
+
+                        <td>
+                            Oct 15, 20:00 PM
+                        </td>
+
+                        <td>
+
+                            <span class="status-badge approved">
+                                Approved
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a href="#"
+                               class="view-btn">
+                                VIEW DETAILS
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
 </html>
