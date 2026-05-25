@@ -1,10 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>View Venue</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#090014;
+            color:white;
+            min-height:100vh;
+            padding:30px;
+        }
+
+        .top-bar{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            margin-bottom:30px;
+        }
+
+        .top-left{
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+
+        .back-btn{
+            width:45px;
+            height:45px;
+            border:none;
+            border-radius:12px;
+            background:#140021;
+            color:#d1d5db;
+            cursor:pointer;
+            transition:0.3s;
+            font-size:18px;
+        }
+
+        .back-btn:hover{
+            background:#ff1b8d;
+            color:white;
+        }
+
+        .top-left h1{
+            font-size:32px;
+            margin-bottom:5px;
+        }
+
+        .top-left p{
+            color:#9ca3af;
+        }
+
+        .edit-btn{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+            border:none;
+            padding:14px 22px;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .edit-btn:hover{
+            opacity:0.9;
+            transform:scale(1.03);
+        }
+
+        .banner{
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:22px;
+            overflow:hidden;
+            margin-bottom:30px;
+        }
+
+        .banner img{
+            width:100%;
+            height:350px;
+            object-fit:cover;
+        }
+
+        .banner-content{
+            padding:25px;
+        }
+
+        .venue-name{
+            font-size:36px;
+            margin-bottom:15px;
+        }
+
+        .venue-info{
+            display:flex;
+            gap:30px;
+            flex-wrap:wrap;
+            color:#d1d5db;
+        }
+
+        .venue-info div{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .status{
+            display:inline-block;
+            margin-top:20px;
+            padding:8px 18px;
+            border-radius:20px;
+            background:rgba(34,197,94,0.2);
+            color:#4ade80;
+            font-weight:bold;
+        }
+
+        .stats{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+            margin-bottom:30px;
+        }
+
+        .stat-card{
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:18px;
+            padding:25px;
+        }
+
+        .stat-icon{
+            width:55px;
+            height:55px;
+            border-radius:15px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-bottom:15px;
+            font-size:22px;
+            color:white;
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+        }
+
+        .stat-title{
+            color:#9ca3af;
+            margin-bottom:10px;
+        }
+
+        .stat-value{
+            font-size:30px;
+            font-weight:bold;
+        }
+
+        .content-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:25px;
+            margin-bottom:30px;
+        }
+
+        .card{
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:20px;
+            padding:25px;
+        }
+
+        .card h2{
+            margin-bottom:20px;
+        }
+
+        .card p{
+            color:#d1d5db;
+            line-height:1.8;
+        }
+
+        .feature{
+            display:flex;
+            justify-content:space-between;
+            margin-top:18px;
+            padding-bottom:12px;
+            border-bottom:1px solid rgba(236,72,153,0.1);
+        }
+
+        .feature:last-child{
+            border-bottom:none;
+        }
+
+        .yes{
+            color:#4ade80;
+            font-weight:bold;
+        }
+
+        .table-card{
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:20px;
+            padding:25px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+
+        table th{
+            text-align:left;
+            padding:15px;
+            color:#9ca3af;
+            border-bottom:1px solid rgba(236,72,153,0.2);
+        }
+
+        table td{
+            padding:15px;
+            border-bottom:1px solid rgba(236,72,153,0.1);
+        }
+
+        tr:hover{
+            background:rgba(236,72,153,0.05);
+        }
+
+        .revenue{
+            color:#4ade80;
+            font-weight:bold;
+        }
+
+        @media(max-width:900px){
+            .content-grid{
+                grid-template-columns:1fr;
+            }
+
+            .top-bar{
+                flex-direction:column;
+                align-items:flex-start;
+                gap:20px;
+            }
+        }
+
+    </style>
 </head>
+
 <body>
+
+<!-- Top -->
+<div class="top-bar">
+
+    <div class="top-left">
+
+        <button class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div>
+            <h1>Venue Details</h1>
+            <p>Complete venue information and analytics</p>
+        </div>
+
+    </div>
+
+    <button class="edit-btn">
+        <i class="fa-solid fa-pen"></i>
+        Edit Venue
+    </button>
+
+</div>
+
+<!-- Banner -->
+<div class="banner">
+
+    <img
+            src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200"
+            alt="Venue Banner"
+    >
+
+    <div class="banner-content">
+
+        <div class="venue-name">
+            Central Park Arena
+        </div>
+
+        <div class="venue-info">
+
+            <div>
+                <i class="fa-solid fa-location-dot"></i>
+                New York, NY
+            </div>
+
+            <div>
+                <i class="fa-solid fa-users"></i>
+                Capacity: 5,000
+            </div>
+
+        </div>
+
+        <div class="status">
+            Active
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Stats -->
+<div class="stats">
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-calendar"></i>
+        </div>
+
+        <div class="stat-title">Total Events</div>
+
+        <div class="stat-value">24</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="stat-title">Total Attendees</div>
+
+        <div class="stat-value">94.2K</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <div class="stat-title">Revenue Generated</div>
+
+        <div class="stat-value">$1.2M</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fa-solid fa-percent"></i>
+        </div>
+
+        <div class="stat-title">Avg. Occupancy</div>
+
+        <div class="stat-value">87%</div>
+    </div>
+
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+
+    <!-- About -->
+    <div class="card">
+
+        <h2>About Venue</h2>
+
+        <p>
+            A premier outdoor venue in the heart of Central Park, perfect for large-scale
+            events and concerts. The arena features state-of-the-art sound systems,
+            excellent acoustics, and stunning views of the surrounding park.
+        </p>
+
+        <div class="feature">
+            <span>Parking Available</span>
+            <span class="yes">Yes</span>
+        </div>
+
+        <div class="feature">
+            <span>Wheelchair Accessible</span>
+            <span class="yes">Yes</span>
+        </div>
+
+        <div class="feature">
+            <span>Catering Services</span>
+            <span class="yes">Available</span>
+        </div>
+
+    </div>
+
+    <!-- Performance -->
+    <div class="card">
+
+        <h2>Monthly Performance</h2>
+
+        <img
+                src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue',data:[45,52,68,71,55]}]}}"
+                alt="Chart"
+                style="width:100%; border-radius:15px;"
+        >
+
+    </div>
+
+</div>
+
+<!-- Event History -->
+<div class="table-card">
+
+    <h2>Event History</h2>
+
+    <table>
+
+        <thead>
+        <tr>
+            <th>Event Name</th>
+            <th>Date</th>
+            <th>Attendees</th>
+            <th>Revenue</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td>Summer Music Festival</td>
+            <td>2026-06-15</td>
+            <td>4,800</td>
+            <td class="revenue">$48,000</td>
+        </tr>
+
+        <tr>
+            <td>Food & Wine Fair</td>
+            <td>2026-05-22</td>
+            <td>3,200</td>
+            <td class="revenue">$32,000</td>
+        </tr>
+
+        <tr>
+            <td>Tech Summit 2026</td>
+            <td>2026-04-10</td>
+            <td>4,500</td>
+            <td class="revenue">$67,500</td>
+        </tr>
+
+        <tr>
+            <td>Spring Concert Series</td>
+            <td>2026-03-15</td>
+            <td>4,200</td>
+            <td class="revenue">$42,000</td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
 
 </body>
 </html>
