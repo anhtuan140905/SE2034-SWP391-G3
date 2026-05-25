@@ -1,6 +1,7 @@
 package vn.edu.fpt.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class User extends BaseAuditEntity{
     @Column(name = "full_name", nullable = false)
     private String fullName;
     @Column(name = "email", nullable = false, unique = true)
+    @Email
     private String email;
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
@@ -28,6 +30,7 @@ public class User extends BaseAuditEntity{
     private String gender;
     @Column(name = "dob")
     private LocalDate dob;
+    private String avatar;
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
     @ManyToOne(fetch = FetchType.LAZY)
