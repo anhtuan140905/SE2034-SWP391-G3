@@ -16,66 +16,218 @@
         }
 
         body{
+            display:flex;
+            min-height:100vh;
             background:#090014;
             color:white;
-            min-height:100vh;
-            padding:30px;
         }
 
-        .top-bar{
+        /* ================= SIDEBAR ================= */
+        .sidebar{
+            width:260px;
+            background:#140021;
+            border-right:1px solid rgba(236,72,153,0.3);
+            padding:20px;
+            position:fixed;
+            top:0;
+            left:0;
+            height:100vh;
+            z-index:100;
+        }
+
+        .logo-section{ margin-bottom:40px; }
+
+        .logo{
+            font-size:28px;
+            font-weight:bold;
+            margin-bottom:5px;
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .portal-text{
+            font-size:13px;
+            color:#9ca3af;
+            letter-spacing:1px;
+        }
+
+        .menu a{
             display:flex;
             align-items:center;
-            gap:15px;
-            margin-bottom:30px;
+            gap:12px;
+            text-decoration:none;
+            color:#d1d5db;
+            padding:14px 16px;
+            border-radius:12px;
+            margin-bottom:10px;
+            transition:0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+        }
+
+        /* ================= WRAPPER ================= */
+        .wrapper{
+            margin-left:260px;
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:90;
+            background:#0d001a;
+            border-bottom:1px solid rgba(236,72,153,0.2);
+            padding:12px 25px;
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+
+        .search-wrap{
+            position:relative;
+            flex:1;
+            max-width:500px;
+        }
+
+        .search-wrap i{
+            position:absolute;
+            left:14px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#9ca3af;
+            font-size:14px;
+        }
+
+        .search-box-top{
+            width:100%;
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.25);
+            border-radius:10px;
+            padding:10px 15px 10px 40px;
+            color:white;
+            outline:none;
+            font-size:14px;
+        }
+
+        .search-box-top::placeholder{ color:#9ca3af; }
+
+        .topbar-right{
+            margin-left:auto;
+            display:flex;
+            align-items:center;
+            gap:18px;
+        }
+
+        .notif-btn{
+            position:relative;
+            background:none;
+            border:none;
+            color:#d1d5db;
+            font-size:20px;
+            cursor:pointer;
+        }
+
+        .notif-btn .dot{
+            position:absolute;
+            top:0;
+            right:0;
+            width:9px;
+            height:9px;
+            background:#ff1b8d;
+            border-radius:50%;
+            border:2px solid #0d001a;
+        }
+
+        .profile{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            cursor:pointer;
+        }
+
+        .profile img{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            border:2px solid #ff1b8d;
+            object-fit:cover;
+        }
+
+        .profile-info{ line-height:1.3; }
+        .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
+        .profile-info .role{ font-size:12px; color:#9ca3af; }
+
+        /* ================= MAIN ================= */
+        .main{ flex:1; padding:25px; }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:25px;
         }
 
         .back-btn{
-            width:45px;
-            height:45px;
-            border:none;
-            border-radius:12px;
-            background:#140021;
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(236,72,153,0.25);
             color:#d1d5db;
+            display:flex;
+            align-items:center;
+            justify-content:center;
             cursor:pointer;
-            transition:0.3s;
-            font-size:18px;
+            font-size:15px;
+            transition:0.2s;
+            flex-shrink:0;
         }
 
         .back-btn:hover{
-            background:#ff1b8d;
-            color:white;
+            background:rgba(255,27,141,0.15);
+            color:#ff1b8d;
         }
 
-        .top-bar h1{
-            font-size:32px;
-            margin-bottom:5px;
-        }
+        .page-header h1{ font-size:26px; font-weight:bold; }
+        .page-header p{ color:#9ca3af; margin-top:5px; font-size:14px; }
 
-        .top-bar p{
-            color:#9ca3af;
-        }
-
+        /* ================= FORM CARD ================= */
         .form-container{
-            max-width:850px;
             background:#140021;
-            border:1px solid rgba(236,72,153,0.3);
+            border:1px solid rgba(236,72,153,0.25);
             border-radius:20px;
             padding:30px;
+            box-shadow:0 0 25px rgba(255,27,141,0.08);
+            max-width:850px;
         }
 
         .form-title{
-            font-size:22px;
+            font-size:18px;
+            font-weight:bold;
             margin-bottom:25px;
+            color:#e5e7eb;
         }
 
         .form-group{
-            margin-bottom:25px;
+            margin-bottom:22px;
         }
 
         .form-group label{
             display:block;
             margin-bottom:10px;
             font-weight:bold;
+            font-size:14px;
+            color:#e5e7eb;
         }
 
         .form-control{
@@ -86,21 +238,26 @@
             border-radius:12px;
             color:white;
             outline:none;
+            font-size:14px;
             transition:0.3s;
         }
 
         .form-control:focus{
             border-color:#ff1b8d;
+            box-shadow:0 0 10px rgba(255,27,141,0.15);
         }
+
+        .form-control::placeholder{ color:#6b7280; }
 
         textarea.form-control{
             resize:none;
             height:150px;
         }
 
+        /* ================= UPLOAD BOX ================= */
         .upload-box{
             border:2px dashed rgba(236,72,153,0.4);
-            border-radius:18px;
+            border-radius:16px;
             padding:20px;
             text-align:center;
             background:rgba(255,255,255,0.02);
@@ -110,39 +267,48 @@
 
         .upload-box:hover{
             border-color:#ff1b8d;
+            background:rgba(255,27,141,0.04);
         }
 
         .upload-box img{
             width:100%;
             max-height:250px;
             object-fit:cover;
-            border-radius:15px;
-            margin-bottom:20px;
+            border-radius:12px;
+            margin-bottom:16px;
+            display:block;
         }
 
         .upload-box i{
-            font-size:40px;
+            font-size:36px;
             color:#9ca3af;
             margin-bottom:10px;
+            display:block;
         }
 
         .upload-box p{
             color:#d1d5db;
+            font-size:14px;
         }
 
+        /* ================= BUTTONS ================= */
         .button-group{
             display:flex;
-            gap:15px;
-            margin-top:20px;
+            gap:14px;
+            margin-top:10px;
         }
 
         .btn{
-            padding:14px 24px;
+            padding:13px 24px;
             border:none;
             border-radius:12px;
             cursor:pointer;
             font-weight:bold;
+            font-size:14px;
             transition:0.3s;
+            display:flex;
+            align-items:center;
+            gap:8px;
         }
 
         .btn-update{
@@ -151,123 +317,155 @@
         }
 
         .btn-update:hover{
-            opacity:0.9;
-            transform:scale(1.03);
+            transform:translateY(-2px);
+            box-shadow:0 8px 20px rgba(236,72,153,0.3);
         }
 
         .btn-cancel{
             background:transparent;
-            border:1px solid rgba(236,72,153,0.4);
-            color:white;
+            border:1px solid rgba(236,72,153,0.35);
+            color:#d1d5db;
         }
 
         .btn-cancel:hover{
-            background:rgba(236,72,153,0.1);
+            background:rgba(236,72,153,0.08);
+            color:white;
         }
 
+        /* ================= RESPONSIVE ================= */
+        @media(max-width:900px){
+            .sidebar{ width:220px; }
+            .wrapper{ margin-left:220px; }
+        }
+
+        @media(max-width:600px){
+            .sidebar{ display:none; }
+            .wrapper{ margin-left:0; }
+        }
     </style>
 </head>
 
 <body>
 
-<!-- Header -->
-<div class="top-bar">
+<!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
 
-    <button class="back-btn">
-        <i class="fa-solid fa-arrow-left"></i>
-    </button>
+    <div class="logo-section">
+        <div class="logo">EventHub</div>
+        <div class="portal-text">Admin Portal</div>
+    </div>
 
-    <div>
-        <h1>Edit Venue</h1>
-        <p>Update venue information</p>
+    <div class="menu">
+        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
+        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
+        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
     </div>
 
 </div>
 
-<!-- Form -->
-<div class="form-container">
+<!-- ================= WRAPPER ================= -->
+<div class="wrapper">
 
-    <h2 class="form-title">Venue Information</h2>
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
+        </div>
 
-    <form>
-
-        <!-- Upload -->
-        <div class="form-group">
-
-            <label>Venue Image</label>
-
-            <div class="upload-box">
-
-                <img
-                        src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200"
-                        alt="Venue Image"
-                >
-
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-
-                <p>Click to change image</p>
-
+        <div class="topbar-right">
+            <button class="notif-btn" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="dot"></span>
+            </button>
+            <div class="profile">
+                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
+                <div class="profile-info">
+                    <div class="name">Admin User</div>
+                    <div class="role">Super Admin</div>
+                </div>
             </div>
-
         </div>
+    </div>
 
-        <!-- Venue Name -->
-        <div class="form-group">
-            <label>Venue Name</label>
+    <!-- MAIN -->
+    <div class="main">
 
-            <input
-                    type="text"
-                    class="form-control"
-                    value="Central Park Arena"
-            >
-        </div>
-
-        <!-- Location -->
-        <div class="form-group">
-            <label>Location</label>
-
-            <input
-                    type="text"
-                    class="form-control"
-                    value="New York, NY"
-            >
-        </div>
-
-        <!-- Capacity -->
-        <div class="form-group">
-            <label>Capacity</label>
-
-            <input
-                    type="number"
-                    class="form-control"
-                    value="5000"
-            >
-        </div>
-
-        <!-- Description -->
-        <div class="form-group">
-            <label>Description</label>
-
-            <textarea class="form-control">A premier outdoor venue in the heart of Central Park, perfect for large-scale events and concerts.</textarea>
-        </div>
-
-        <!-- Buttons -->
-        <div class="button-group">
-
-            <button type="submit" class="btn btn-update">
-                <i class="fa-solid fa-floppy-disk"></i>
-                Update Venue
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <button class="back-btn" aria-label="Back">
+                <i class="fa-solid fa-arrow-left"></i>
             </button>
+            <div>
+                <h1>Edit Venue</h1>
+                <p>Update venue information</p>
+            </div>
+        </div>
 
-            <button type="button" class="btn btn-cancel">
-                Cancel
-            </button>
+        <!-- FORM -->
+        <div class="form-container">
+
+            <h2 class="form-title">Venue Information</h2>
+
+            <form>
+
+                <!-- Upload -->
+                <div class="form-group">
+                    <label>Venue Image</label>
+                    <div class="upload-box">
+                        <img
+                                src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200"
+                                alt="Venue Image"
+                        />
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Click to change image</p>
+                    </div>
+                </div>
+
+                <!-- Venue Name -->
+                <div class="form-group">
+                    <label>Venue Name</label>
+                    <input type="text" class="form-control" value="Central Park Arena"/>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" class="form-control" value="New York, NY"/>
+                </div>
+
+                <!-- Capacity -->
+                <div class="form-group">
+                    <label>Capacity</label>
+                    <input type="number" class="form-control" value="5000"/>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="form-control">A premier outdoor venue in the heart of Central Park, perfect for large-scale events and concerts.</textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-update">
+                       Update Venue
+                    </button>
+                    <button type="button" class="btn btn-cancel" onclick="history.back()">
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
 
         </div>
 
-    </form>
+    </div><!-- /main -->
 
-</div>
+</div><!-- /wrapper -->
 
 </body>
 </html>

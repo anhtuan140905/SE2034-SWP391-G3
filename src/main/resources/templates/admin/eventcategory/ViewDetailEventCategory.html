@@ -5,82 +5,283 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Event Category Detail</title>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
-    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- DataLabels -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <style>
-        body{
+        *{
             margin:0;
-            font-family:Arial;
-            background:#0b0217;
-            color:white;
-            padding:30px;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
         }
 
-        /* HEADER */
-        .header{
+        body{
             display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:20px;
+            min-height:100vh;
+            background:#090014;
+            color:white;
         }
 
-        .btn{
-            background:linear-gradient(90deg,#ff1b8d,#ec4899);
-            border:none;
-            padding:10px 18px;
-            color:white;
-            border-radius:10px;
+        /* ================= SIDEBAR ================= */
+        .sidebar{
+            width:260px;
+            background:#140021;
+            border-right:1px solid rgba(236,72,153,0.3);
+            padding:20px;
+            position:fixed;
+            top:0;
+            left:0;
+            height:100vh;
+            z-index:100;
+        }
+
+        .logo-section{ margin-bottom:40px; }
+
+        .logo{
+            font-size:28px;
             font-weight:bold;
+            margin-bottom:5px;
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .portal-text{
+            font-size:13px;
+            color:#9ca3af;
+            letter-spacing:1px;
+        }
+
+        .menu a{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            text-decoration:none;
+            color:#d1d5db;
+            padding:14px 16px;
+            border-radius:12px;
+            margin-bottom:10px;
+            transition:0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            color:white;
+        }
+
+        /* ================= WRAPPER ================= */
+        .wrapper{
+            margin-left:260px;
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            min-height:100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:90;
+            background:#0d001a;
+            border-bottom:1px solid rgba(236,72,153,0.2);
+            padding:12px 25px;
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+
+        .topbar .search-box-top{
+            flex:1;
+            max-width:500px;
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.25);
+            border-radius:10px;
+            padding:10px 15px 10px 40px;
+            color:white;
+            outline:none;
+            font-size:14px;
+        }
+
+        .topbar .search-box-top::placeholder{ color:#9ca3af; }
+
+        .search-wrap{
+            position:relative;
+            flex:1;
+            max-width:500px;
+        }
+
+        .search-wrap i{
+            position:absolute;
+            left:14px;
+            top:50%;
+            transform:translateY(-50%);
+            color:#9ca3af;
+            font-size:14px;
+        }
+
+        .topbar-right{
+            margin-left:auto;
+            display:flex;
+            align-items:center;
+            gap:18px;
+        }
+
+        .notif-btn{
+            position:relative;
+            background:none;
+            border:none;
+            color:#d1d5db;
+            font-size:20px;
             cursor:pointer;
         }
 
-        /* CARDS */
+        .notif-btn .dot{
+            position:absolute;
+            top:0;
+            right:0;
+            width:9px;
+            height:9px;
+            background:#ff1b8d;
+            border-radius:50%;
+            border:2px solid #0d001a;
+        }
+
+        .profile{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            cursor:pointer;
+        }
+
+        .profile img{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            border:2px solid #ff1b8d;
+            object-fit:cover;
+        }
+
+        .profile-info{ line-height:1.3; }
+        .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
+        .profile-info .role{ font-size:12px; color:#9ca3af; }
+
+        /* ================= MAIN ================= */
+        .main{ flex:1; padding:25px; }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:25px;
+        }
+
+        .page-header-left{
+            display:flex;
+            align-items:center;
+            gap:14px;
+        }
+
+        .back-btn{
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(236,72,153,0.25);
+            color:#d1d5db;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            font-size:15px;
+            transition:0.2s;
+        }
+
+        .back-btn:hover{
+            background:rgba(255,27,141,0.15);
+            color:#ff1b8d;
+        }
+
+        .page-header h1{ font-size:26px; font-weight:bold; }
+        .page-header p{ color:#9ca3af; margin-top:5px; font-size:14px; }
+
+        .edit-btn{
+            background:linear-gradient(to right,#ff1b8d,#ec4899);
+            border:none;
+            padding:12px 20px;
+            border-radius:10px;
+            color:white;
+            font-size:14px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+            white-space:nowrap;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .edit-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 20px rgba(236,72,153,0.3);
+        }
+
+        /* ================= CARD ================= */
         .card{
-            background:rgba(255,255,255,0.05);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:16px;
-            padding:20px;
+            background:#140021;
+            border:1px solid rgba(236,72,153,0.25);
+            border-radius:20px;
+            padding:25px;
+            box-shadow:0 0 25px rgba(255,27,141,0.08);
             margin-bottom:20px;
         }
 
-        /* CATEGORY */
-        .category{
+        /* ================= CATEGORY INFO ================= */
+        .category-info{
             display:flex;
-            gap:15px;
             align-items:center;
+            gap:18px;
         }
 
         .category-icon{
-            width:60px;
-            height:60px;
+            width:64px;
+            height:64px;
             border-radius:16px;
             background:linear-gradient(135deg,#ff1b8d,#a855f7);
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:24px;
+            font-size:26px;
+            flex-shrink:0;
         }
 
-        /* STATS */
+        .category-info h2{
+            font-size:22px;
+            margin-bottom:6px;
+        }
+
+        .category-info p{
+            color:#9ca3af;
+            font-size:14px;
+        }
+
+        /* ================= STATS ================= */
         .stats{
             display:grid;
             grid-template-columns:repeat(4,1fr);
-            gap:15px;
-            margin:20px 0;
+            gap:16px;
+            margin-bottom:20px;
         }
 
         .stat{
-            background:rgba(255,255,255,0.05);
+            background:#140021;
             border:1px solid rgba(255,255,255,0.1);
-            border-radius:14px;
-            padding:18px;
+            border-radius:16px;
+            padding:20px;
         }
 
         .icon-box{
@@ -90,168 +291,257 @@
             display:flex;
             align-items:center;
             justify-content:center;
-            margin-bottom:12px;
+            margin-bottom:14px;
             color:white;
             font-size:20px;
         }
 
-        .pink{background:linear-gradient(135deg,#ff1b8d,#ec4899);}
-        .purple{background:linear-gradient(135deg,#8b5cf6,#a855f7);}
-        .violet{background:linear-gradient(135deg,#ec4899,#c026d3);}
-        .mix{background:linear-gradient(135deg,#a855f7,#ff1b8d);}
+        .pink   { background:linear-gradient(135deg,#ff1b8d,#ec4899); }
+        .purple { background:linear-gradient(135deg,#8b5cf6,#a855f7); }
+        .violet { background:linear-gradient(135deg,#ec4899,#c026d3); }
+        .mix    { background:linear-gradient(135deg,#a855f7,#ff1b8d); }
 
-        .stat h3{
-            margin:5px 0;
-            color:#ccc;
+        .stat-label{
+            font-size:13px;
+            color:#9ca3af;
+            margin-bottom:6px;
         }
 
-        .stat h2{
-            margin:0;
+        .stat-value{
+            font-size:26px;
+            font-weight:bold;
         }
 
-        /* GRID */
-        .grid{
+        /* ================= CHARTS GRID ================= */
+        .charts-grid{
             display:grid;
             grid-template-columns:2fr 1fr;
             gap:20px;
+            margin-bottom:20px;
         }
 
-        /* TABLE */
+        .card h3{
+            font-size:16px;
+            margin-bottom:18px;
+            color:#e5e7eb;
+        }
+
+        /* ================= TABLE ================= */
         table{
             width:100%;
             border-collapse:collapse;
         }
 
-        th,td{
-            padding:12px;
-            border-bottom:1px solid rgba(255,255,255,0.1);
+        th{
+            text-align:left;
+            padding:14px 12px;
+            color:#9ca3af;
+            border-bottom:1px solid rgba(236,72,153,0.2);
+            font-size:14px;
+            font-weight:600;
         }
 
-        th{color:#aaa;}
+        td{
+            padding:16px 12px;
+            border-bottom:1px solid rgba(236,72,153,0.08);
+            font-size:14px;
+        }
+
+        td:first-child{ font-weight:600; }
+
+        tr:last-child td{ border-bottom:none; }
+        tr:hover td{ background:rgba(236,72,153,0.04); }
 
         .badge{
-            padding:5px 10px;
+            padding:6px 14px;
             border-radius:20px;
             font-size:12px;
+            font-weight:bold;
+            display:inline-block;
         }
 
-        .active{background:rgba(0,255,120,0.15); color:#00ff99;}
-        .upcoming{background:rgba(0,140,255,0.15); color:#4da6ff;}
+        .badge.active   { background:rgba(0,255,120,0.12);  color:#4ade80; }
+        .badge.upcoming { background:rgba(59,130,246,0.15);  color:#60a5fa; }
+
+        /* ================= RESPONSIVE ================= */
+        @media(max-width:1100px){
+            .stats{ grid-template-columns:1fr 1fr; }
+            .charts-grid{ grid-template-columns:1fr; }
+        }
 
         @media(max-width:900px){
-            .stats{grid-template-columns:1fr 1fr;}
-            .grid{grid-template-columns:1fr;}
+            .sidebar{ width:220px; }
+            .wrapper{ margin-left:220px; }
+        }
+
+        @media(max-width:600px){
+            .sidebar{ display:none; }
+            .wrapper{ margin-left:0; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <div>
-        <h1>Category Details</h1>
-        <p>Complete category analytics and events</p>
+<!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
+
+    <div class="logo-section">
+        <div class="logo">EventHub</div>
+        <div class="portal-text">Admin Portal</div>
     </div>
-    <button class="btn"><i class="fa fa-pen"></i> Edit Category</button>
+
+    <div class="menu">
+        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a href="#"><i class="fa-solid fa-building"></i> Manage Venues</a>
+        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
+        <a href="#" class="active"><i class="fa-solid fa-tags"></i> Event Categories</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+    </div>
+
 </div>
 
-<!-- CATEGORY -->
-<div class="card">
-    <div class="category">
-        <div class="category-icon">
-            <i class="fa fa-music"></i>
+<!-- ================= WRAPPER ================= -->
+<div class="wrapper">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
         </div>
-        <div>
-            <h2>Music & Concerts</h2>
-            <p>Live music events, concerts, and festivals</p>
+
+        <div class="topbar-right">
+            <button class="notif-btn" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="dot"></span>
+            </button>
+            <div class="profile">
+                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
+                <div class="profile-info">
+                    <div class="name">Admin User</div>
+                    <div class="role">Super Admin</div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- STATS -->
-<div class="stats">
+    <!-- MAIN -->
+    <div class="main">
 
-    <div class="stat">
-        <div class="icon-box pink"><i class="fa fa-calendar"></i></div>
-        <h3>Total Events</h3>
-        <h2>142</h2>
-    </div>
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <button class="back-btn" aria-label="Back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h1>Category Details</h1>
+                    <p>Complete category analytics and events</p>
+                </div>
+            </div>
+            <button class="edit-btn">
+                <i class="fa-solid fa-pen"></i> Edit Category
+            </button>
+        </div>
 
-    <div class="stat">
-        <div class="icon-box purple"><i class="fa fa-bolt"></i></div>
-        <h3>Active Events</h3>
-        <h2>28</h2>
-    </div>
+        <!-- CATEGORY INFO CARD -->
+        <div class="card">
+            <div class="category-info">
 
-    <div class="stat">
-        <div class="icon-box violet"><i class="fa fa-users"></i></div>
-        <h3>Total Attendees</h3>
-        <h2>48.5K</h2>
-    </div>
+                <div>
+                    <h2>Music &amp; Concerts</h2>
+                    <p>Live music events, concerts, and festivals</p>
+                </div>
+            </div>
+        </div>
 
-    <div class="stat">
-        <div class="icon-box mix"><i class="fa fa-dollar-sign"></i></div>
-        <h3>Revenue</h3>
-        <h2>$842K</h2>
-    </div>
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat">
+                <div class="icon-box pink"><i class="fa-solid fa-calendar"></i></div>
+                <div class="stat-label">Total Events</div>
+                <div class="stat-value">142</div>
+            </div>
+            <div class="stat">
+                <div class="icon-box purple"><i class="fa-solid fa-bolt"></i></div>
+                <div class="stat-label">Active Events</div>
+                <div class="stat-value">28</div>
+            </div>
+            <div class="stat">
+                <div class="icon-box violet"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-label">Total Attendees</div>
+                <div class="stat-value">48.5K</div>
+            </div>
+            <div class="stat">
+                <div class="icon-box mix"><i class="fa-solid fa-dollar-sign"></i></div>
+                <div class="stat-label">Revenue</div>
+                <div class="stat-value">$842K</div>
+            </div>
+        </div>
 
-</div>
+        <!-- CHARTS -->
+        <div class="charts-grid">
+            <div class="card">
+                <h3>Monthly Event Trends</h3>
+                <canvas id="lineChart" height="120"></canvas>
+            </div>
+            <div class="card">
+                <h3>Event Status Distribution</h3>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
 
-<!-- CHARTS -->
-<div class="grid">
+        <!-- EVENTS TABLE -->
+        <div class="card">
+            <h3>Events in this Category</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                    <th>Venue</th>
+                    <th>Tickets</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Summer Music Festival</td>
+                    <td>2026-06-15</td>
+                    <td>Central Park Arena</td>
+                    <td>2500</td>
+                    <td><span class="badge active">Active</span></td>
+                </tr>
+                <tr>
+                    <td>Rock Concert Series</td>
+                    <td>2026-07-20</td>
+                    <td>Riverside Theater</td>
+                    <td>1200</td>
+                    <td><span class="badge active">Active</span></td>
+                </tr>
+                <tr>
+                    <td>Jazz Night Live</td>
+                    <td>2026-08-10</td>
+                    <td>City Gallery</td>
+                    <td>800</td>
+                    <td><span class="badge upcoming">Upcoming</span></td>
+                </tr>
+                <tr>
+                    <td>Electronic Dance Party</td>
+                    <td>2026-09-05</td>
+                    <td>Downtown Plaza</td>
+                    <td>2000</td>
+                    <td><span class="badge upcoming">Upcoming</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div class="card">
-        <h3>Monthly Event Trends</h3>
-        <canvas id="lineChart"></canvas>
-    </div>
+    </div><!-- /main -->
 
-    <div class="card">
-        <h3>Event Status Distribution</h3>
-        <canvas id="pieChart"></canvas>
-    </div>
-
-</div>
-
-<!-- TABLE -->
-<div class="card">
-    <h3>Events in this Category</h3>
-
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Venue</th>
-            <th>Tickets</th>
-            <th>Status</th>
-        </tr>
-
-        <tr>
-            <td>Summer Music Festival</td>
-            <td>2026-06-15</td>
-            <td>Central Park</td>
-            <td>2500</td>
-            <td><span class="badge active">Active</span></td>
-        </tr>
-
-        <tr>
-            <td>Rock Concert</td>
-            <td>2026-07-20</td>
-            <td>Riverside</td>
-            <td>1200</td>
-            <td><span class="badge active">Active</span></td>
-        </tr>
-
-        <tr>
-            <td>Jazz Night</td>
-            <td>2026-08-10</td>
-            <td>City Gallery</td>
-            <td>800</td>
-            <td><span class="badge upcoming">Upcoming</span></td>
-        </tr>
-
-    </table>
-</div>
+</div><!-- /wrapper -->
 
 <script>
     Chart.register(ChartDataLabels);
@@ -265,39 +555,45 @@
                 label: 'Events',
                 data: [8,12,16,14,22,28],
                 borderColor: '#ff1b8d',
-                backgroundColor: 'rgba(255,27,141,0.2)',
+                backgroundColor: 'rgba(255,27,141,0.15)',
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
+                pointBackgroundColor: '#ff1b8d',
+                pointRadius: 5
             }]
         },
         options:{
-            plugins:{legend:{labels:{color:'#fff'}}},
+            plugins:{
+                legend:{ labels:{ color:'#fff' } },
+                datalabels:{ display:false }
+            },
             scales:{
-                x:{ticks:{color:'#aaa'}},
-                y:{ticks:{color:'#aaa'}}
+                x:{ ticks:{ color:'#9ca3af' }, grid:{ color:'rgba(255,255,255,0.05)' } },
+                y:{ ticks:{ color:'#9ca3af' }, grid:{ color:'rgba(255,255,255,0.05)' } }
             }
         }
     });
 
-    /* PIE CHART + % */
+    /* PIE CHART */
     new Chart(document.getElementById('pieChart'), {
         type: 'pie',
         data: {
             labels: ['Sold Out','Active','Upcoming'],
             datasets: [{
                 data: [45,35,20],
-                backgroundColor:['#ff1b8d','#8b5cf6','#3b82f6']
+                backgroundColor:['#ff1b8d','#8b5cf6','#3b82f6'],
+                borderWidth: 0
             }]
         },
         options: {
             plugins: {
                 legend: {
                     position:'bottom',
-                    labels:{color:'#fff'}
+                    labels:{ color:'#fff', padding:16 }
                 },
                 datalabels: {
                     color:'#fff',
-                    font:{weight:'bold',size:14},
+                    font:{ weight:'bold', size:13 },
                     formatter:(value,ctx)=>{
                         let total = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
                         return Math.round((value/total)*100) + '%';
