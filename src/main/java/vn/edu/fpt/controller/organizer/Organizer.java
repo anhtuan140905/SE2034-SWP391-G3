@@ -12,4 +12,11 @@ public class Organizer {
     public String getDashboard(){
         return "organizer/DashboardOrganizer";
     }
+    @GetMapping("/create/event")
+    public String Create(){
+        return "organizer/event/CreateOrganizerEvent";
+    }
+
+
+
 }
