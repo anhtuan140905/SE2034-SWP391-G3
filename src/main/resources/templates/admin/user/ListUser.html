@@ -1,467 +1,642 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>List Users</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        body{
-            background:#090014;
-            color:white;
-            display:flex;
-            min-height:100vh;
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #090014;
+            color: white;
         }
 
-        /* Sidebar */
-        .sidebar{
-            width:260px;
-            background:rgba(20,0,33,0.95);
-            border-right:1px solid rgba(236,72,153,0.3);
-            padding:25px;
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 260px;
+            background: #140021;
+            border-right: 1px solid rgba(236, 72, 153, 0.3);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
         }
 
-        .logo{
-            font-size:28px;
-            font-weight:bold;
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-            margin-bottom:40px;
+        .logo-section {
+            margin-bottom: 40px;
         }
 
-        .menu a{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            padding:14px 16px;
-            margin-bottom:10px;
-            text-decoration:none;
-            color:#d1d5db;
-            border-radius:12px;
-            transition:0.3s;
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portal-text {
+            font-size: 13px;
+            color: #9ca3af;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #d1d5db;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
         }
 
         .menu a:hover,
-        .menu a.active{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            color:white;
+        .menu a.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
         }
 
-        /* Main */
-        .main{
-            flex:1;
-            padding:30px;
+        /* ================= WRAPPER ================= */
+
+        .wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        .topbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:30px;
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            background: #0d001a;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .topbar h1{
-            font-size:32px;
-            margin-bottom:8px;
+        .topbar .search-box-top {
+            flex: 1;
+            max-width: 500px;
+            background: #140021;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            outline: none;
+            font-size: 14px;
         }
 
-        .topbar p{
-            color:#9ca3af;
+        .topbar .search-box-top::placeholder {
+            color: #9ca3af;
         }
 
-        .btn{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            color:white;
-            border:none;
-            padding:12px 22px;
-            border-radius:12px;
-            cursor:pointer;
-            font-weight:bold;
-            text-decoration:none;
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
 
-        /* Card */
-        .card{
-            background:rgba(20,0,33,0.6);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:20px;
-            padding:25px;
+        .notif-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #d1d5db;
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        .card-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:25px;
+        .notif-btn .dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 9px;
+            height: 9px;
+            background: #ff1b8d;
+            border-radius: 50%;
+            border: 2px solid #0d001a;
         }
 
-        .card-header h2{
-            font-size:22px;
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
         }
 
-        .search-box{
-            position:relative;
-            width:300px;
+        .profile img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff1b8d;
+            object-fit: cover;
         }
 
-        .search-box input{
-            width:100%;
-            padding:12px 15px 12px 42px;
-            background:rgba(255,255,255,0.05);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:12px;
-            color:white;
-            outline:none;
+        .profile-info {
+            line-height: 1.3;
         }
 
-        .search-box i{
-            position:absolute;
-            left:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:#9ca3af;
+        .profile-info .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
         }
 
-        /* Table */
-        table{
-            width:100%;
-            border-collapse:collapse;
+        .profile-info .role {
+            font-size: 12px;
+            color: #9ca3af;
         }
 
-        th{
-            text-align:left;
-            padding:15px;
-            color:#9ca3af;
-            border-bottom:1px solid rgba(236,72,153,0.2);
+        /* ================= MAIN ================= */
+
+        .main {
+            flex: 1;
+            padding: 25px;
         }
 
-        td{
-            padding:18px 15px;
-            border-bottom:1px solid rgba(236,72,153,0.1);
+        /* ================= PAGE HEADER ================= */
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        tr:hover{
-            background:rgba(236,72,153,0.05);
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: bold;
         }
 
-        .user{
-            display:flex;
-            align-items:center;
-            gap:14px;
+        .page-header p {
+            color: #9ca3af;
+            margin-top: 5px;
         }
 
-        .user img{
-            width:50px;
-            height:50px;
-            border-radius:50%;
-            object-fit:cover;
+        .add-btn {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
         }
 
-        .user-info h4{
-            margin-bottom:4px;
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
         }
 
-        .user-info span{
-            color:#9ca3af;
-            font-size:14px;
+        /* ================= CARD ================= */
+
+        .card {
+            background: #140021;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(255, 27, 141, 0.08);
         }
 
-        .badge{
-            padding:6px 14px;
-            border-radius:30px;
-            font-size:13px;
-            font-weight:bold;
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        .active{
-            background:rgba(34,197,94,0.2);
-            color:#22c55e;
+        .card-header h2 {
+            font-size: 18px;
         }
 
-        .inactive{
-            background:rgba(239,68,68,0.2);
-            color:#ef4444;
+        .search-inline {
+            position: relative;
+            width: 280px;
         }
 
-        .role{
-            background:rgba(139,92,246,0.2);
-            color:#a855f7;
-            padding:6px 14px;
-            border-radius:30px;
-            font-size:13px;
+        .search-inline input {
+            width: 100%;
+            padding: 10px 15px 10px 38px;
+            border-radius: 10px;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            background: #090014;
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
         }
 
-        .actions{
-            display:flex;
-            justify-content:flex-end;
-            gap:10px;
+        .search-inline input:focus {
+            border-color: #ff1b8d;
+            box-shadow: 0 0 10px rgba(255, 27, 141, 0.2);
         }
 
-        .icon-btn{
-            width:38px;
-            height:38px;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-            color:white;
-            transition:0.3s;
+        .search-inline input::placeholder {
+            color: #9ca3af;
         }
 
-        .view-btn{
-            background:rgba(139,92,246,0.2);
+        .search-inline i {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 13px;
         }
 
-        .view-btn:hover{
-            background:#8b5cf6;
+        /* ================= TABLE ================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .edit-btn{
-            background:rgba(236,72,153,0.2);
+        th {
+            text-align: left;
+            padding: 14px;
+            color: #9ca3af;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+            font-size: 14px;
         }
 
-        .edit-btn:hover{
-            background:#ec4899;
+        td {
+            padding: 16px 14px;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.1);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        .venue-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .venue-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* 1. Class bọc ngoài: chỉ dùng để căn chỉnh hàng lối và màu chữ */
+        .email {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+        }
+
+
+        .email i {
+            color: #ff2a85 ;
+            font-size: 16px;
+        }
+        .status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .status.inactive {
+            color: #ff4d4d;
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #d1d5db;
+            background: rgba(255, 255, 255, 0.06);
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .view-btn:hover {
+            background: rgba(139, 92, 246, 0.3);
+            color: #a855f7;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255, 27, 141, 0.3);
+            color: #ff1b8d;
+        }
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .user img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .wrapper {
+                margin-left: 220px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+
+            .wrapper {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<!-- Sidebar -->
+<!-- ================= SIDEBAR ================= -->
 <div class="sidebar">
-    <div class="logo">EventHub</div>
+
+    <div class="logo-section">
+        <div class="logo">EventHub</div>
+        <div class="portal-text">Admin Portal</div>
+    </div>
 
     <div class="menu">
-        <a href="DashboardAdmin.html">
-            <i class="fa-solid fa-chart-line"></i>
-            Dashboard
-        </a>
-
-        <a href="ListVenue.html">
-            <i class="fa-solid fa-building"></i>
-            Manage Venues
-        </a>
-
-        <a href="ListUser.html" class="active">
-            <i class="fa-solid fa-users"></i>
-            Manage Users
-        </a>
-
-        <a href="List Event category.html">
-            <i class="fa-solid fa-tags"></i>
-            Event Categories
-        </a>
+        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
+        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
+        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
     </div>
+
 </div>
 
-<!-- Main -->
-<div class="main">
+<!-- ================= WRAPPER ================= -->
+<div class="wrapper">
 
-    <!-- Top -->
+    <!-- TOPBAR -->
     <div class="topbar">
-        <div>
-            <h1>Manage Users</h1>
-            <p>View and manage all system users</p>
-        </div>
 
-        <a href="#" class="btn">
-            <i class="fa-solid fa-user-plus"></i>
-            Add User
-        </a>
-    </div>
+        <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
 
-    <!-- Card -->
-    <div class="card">
+        <div class="topbar-right">
 
-        <div class="card-header">
-            <h2>All Users</h2>
+            <button class="notif-btn" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="dot"></span>
+            </button>
 
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search users...">
+            <div class="profile">
+                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
+                <div class="profile-info">
+                    <div class="name">Admin User</div>
+                    <div class="role">Super Admin</div>
+                </div>
             </div>
+
         </div>
-
-        <!-- Table -->
-        <table>
-
-            <thead>
-            <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Joined Date</th>
-                <th style="text-align:right;">Actions</th>
-            </tr>
-            </thead>
-
-            <tbody>
-
-            <tr>
-                <td>
-                    <div class="user">
-                        <img src="https://i.pravatar.cc/150?img=1">
-
-                        <div class="user-info">
-                            <h4>John Smith</h4>
-                            <span>ID: US001</span>
-                        </div>
-                    </div>
-                </td>
-
-                <td>johnsmith@gmail.com</td>
-
-                <td>
-                    <span class="role">Admin</span>
-                </td>
-
-                <td>
-                    <span class="badge active">Active</span>
-                </td>
-
-                <td>2026-01-15</td>
-
-                <td>
-                    <div class="actions">
-                        <button class="icon-btn view-btn">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                        <button class="icon-btn edit-btn">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user">
-                        <img src="https://i.pravatar.cc/150?img=2">
-
-                        <div class="user-info">
-                            <h4>Emma Watson</h4>
-                            <span>ID: US002</span>
-                        </div>
-                    </div>
-                </td>
-
-                <td>emma@gmail.com</td>
-
-                <td>
-                    <span class="role">Organizer</span>
-                </td>
-
-                <td>
-                    <span class="badge active">Active</span>
-                </td>
-
-                <td>2026-02-10</td>
-
-                <td>
-                    <div class="actions">
-                        <button class="icon-btn view-btn">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                        <button class="icon-btn edit-btn">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user">
-                        <img src="https://i.pravatar.cc/150?img=3">
-
-                        <div class="user-info">
-                            <h4>Michael Lee</h4>
-                            <span>ID: US003</span>
-                        </div>
-                    </div>
-                </td>
-
-                <td>michael@gmail.com</td>
-
-                <td>
-                    <span class="role">Customer</span>
-                </td>
-
-                <td>
-                    <span class="badge inactive">Inactive</span>
-                </td>
-
-                <td>2026-03-05</td>
-
-                <td>
-                    <div class="actions">
-                        <button class="icon-btn view-btn">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                        <button class="icon-btn edit-btn">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user">
-                        <img src="https://i.pravatar.cc/150?img=4">
-
-                        <div class="user-info">
-                            <h4>Sophia Brown</h4>
-                            <span>ID: US004</span>
-                        </div>
-                    </div>
-                </td>
-
-                <td>sophia@gmail.com</td>
-
-                <td>
-                    <span class="role">Organizer</span>
-                </td>
-
-                <td>
-                    <span class="badge active">Active</span>
-                </td>
-
-                <td>2026-04-20</td>
-
-                <td>
-                    <div class="actions">
-                        <button class="icon-btn view-btn">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-
-                        <button class="icon-btn edit-btn">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            </tbody>
-
-        </table>
 
     </div>
 
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Manage Users</h1>
+                <p>View and manage all platform users</p>
+            </div>
+            <button class="add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Venue
+            </button>
+        </div>
+
+        <!-- CARD -->
+        <div class="card">
+
+            <div class="card-header">
+                <h2>All Users</h2>
+                <div class="search-inline">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search venues..."/>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <table>
+
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined Date</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr>
+                    <td>
+                        <div class="user">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="John Smith">
+                            <strong>John Smith</strong>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="email">
+                            <i class="fa-solid fa-envelope"></i>
+                            johnsmith@gmail.com
+                    </div>
+                        </td>
+
+                    <td>
+                        <span class="role">Admin</span>
+                    </td>
+
+                    <td>
+                        <span class="status active">Active</span>
+                    </td>
+
+                    <td>2026-01-15</td>
+
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
+                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="user">
+                            <img src="https://i.pravatar.cc/150?img=2" alt="Emma Watson">
+
+                            <strong>Emma Watson</strong>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="email">
+                            <i class="fa-solid fa-envelope"></i>
+                            emma@gmail.com
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="role">Organizer</span>
+                    </td>
+
+                    <td>
+                        <span class="status active">Active</span>
+                    </td>
+
+                    <td>2026-02-10</td>
+
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
+                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="user">
+                            <img src="https://i.pravatar.cc/150?img=3" alt="Michael Lee">
+                            <strong>Michael Lee</strong>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="email">
+                            <i class="fa-solid fa-envelope"></i>
+                            michael@gmail.com
+                        </div>
+                        </td>
+
+                    <td>
+                        <span class="role">Customer</span>
+                    </td>
+
+                    <td>
+                        <span class="status inactive">Inactive</span>
+                    </td>
+
+                    <td>2026-03-05</td>
+
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
+                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="user">
+                            <img src="https://i.pravatar.cc/150?img=4" alt="Sophia Brown">
+                            <strong>Sophia Brown</strong>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="email">
+                            <i class="fa-solid fa-envelope"></i>
+                            sophia@gmail.com
+                        </div>
+                        </td>
+
+                    <td>
+                        <span class="role">Organizer</span>
+                    </td>
+
+                    <td>
+                        <span class="status active">Active</span>
+                    </td>
+
+                    <td>2026-04-20</td>
+
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
+                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 </div>
 
 </body>
