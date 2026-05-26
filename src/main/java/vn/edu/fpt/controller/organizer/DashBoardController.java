@@ -6,10 +6,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/organizer")
-public class Organizer {
+public class DashBoardController {
 
     @GetMapping //
     public String getDashboard(){
         return "organizer/DashboardOrganizer";
     }
+    @GetMapping("/create/event")
+    public String Create(){
+        return "organizer/event/CreateOrganizerEvent";
+    }
+
+
+
+
+
 }
