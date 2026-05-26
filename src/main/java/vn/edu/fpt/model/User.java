@@ -17,8 +17,12 @@ public class User extends BaseAuditEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+    @Column(name = "middle_name")
+    private String middleName;
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
     @Column(name = "email", nullable = false, unique = true)
     @Email
     private String email;
@@ -36,5 +40,8 @@ public class User extends BaseAuditEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    ;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
 }
