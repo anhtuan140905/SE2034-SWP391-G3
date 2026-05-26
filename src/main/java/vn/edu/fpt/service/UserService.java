@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
-import vn.edu.fpt.modelview.request.RegisterOrgDTO;
-import vn.edu.fpt.modelview.request.RegisterUserDTO;
+
+import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
+import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
 
