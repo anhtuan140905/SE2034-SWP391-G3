@@ -76,4 +76,17 @@ public class UserService {
         this.organizerProfileRepository.save(op);
         return u;
     }
+
+    public User handleUpdateProfile(String email, String firstName, String lastName, String phone, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) return null;
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhone(phone);
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+        }
+        return userRepository.save(user);
+    }
 }
+
