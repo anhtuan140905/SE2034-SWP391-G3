@@ -7,8 +7,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import vn.edu.fpt.modelview.request.RegisterOrgDTO;
-import vn.edu.fpt.modelview.request.RegisterUserDTO;
+import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
+import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.service.UserService;
 
 @Controller
