@@ -15,8 +15,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterOrgDTO {
-    @NotBlank(message = "Họ tên không được để trống!")
-    private String fullName;
+    @NotBlank(message = "First name không được để trống!")
+    private String firstName;
+    @NotBlank(message = "Middle name không được để trống!")
+    private String middleName;
+    @NotBlank(message = "Last name không được để trống!")
+    private String lastName;
     @NotBlank(message = "Số điện thoại không được để trống!")
     private String phone;
     @NotBlank(message = "Email không được để trống!")
@@ -26,6 +30,7 @@ public class RegisterOrgDTO {
     private String password;
     @NotBlank(message = "Confirm password không được để trống!")
     private String confirmPassword;
+    @NotBlank(message = "Vui lòng chọn gender")
     private String gender;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;

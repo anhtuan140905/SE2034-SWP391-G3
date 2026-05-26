@@ -1,5 +1,6 @@
 package vn.edu.fpt.modelview.request.admin;
 
+import jakarta.persistence.Column;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,14 +16,14 @@ public class CreateVenueDTO {
     @NotBlank(message = "Tên venue không được để trống!")
     private String venueName;
 
-    @NotBlank(message = "Địa chỉ cụ thể không được để trống")
-    private String address;
-
-    @NotBlank(message = "Thành phố không được để trống")
-    public String city;
-
+    @NotBlank(message = "StreetAddress không được để trống")
+    private String streetAddress;
+    @NotBlank(message = "Ward không được để trống")
+    private String ward;
+    @NotBlank(message = "City không được để trống")
+    private String city;
+    @NotBlank(message = "Description không dược để trống")
     public String description;
-
     public String imageUrl;
 
     @NotEmpty(message = "Venue cần có ZOne")

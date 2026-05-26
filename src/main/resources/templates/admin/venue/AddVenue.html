@@ -411,7 +411,7 @@
 
                 <!-- Upload -->
                 <div class="form-group">
-                    <label>Venue Image</label>
+                    <label>Venue Image:</label>
                     <div class="upload-box">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                         <p>Click to upload or drag and drop</p>
@@ -421,25 +421,31 @@
 
                 <!-- Venue Name -->
                 <div class="form-group">
-                    <label>Venue Name</label>
+                    <label>Venue Name:</label>
                     <input type="text" class="form-control" placeholder="Enter venue name" th:field="*{venueName}"/>
                 </div>
 
                 <!-- Location -->
                 <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" class="form-control" placeholder="City, State" th:field="*{city}"/>
+                    <label>Street Address:</label>
+                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{streetAddress}"/>
                 </div>
 
                 <!-- Location -->
                 <div class="form-group">
-                    <label>Address</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{address}"/>
+                    <label>Ward:</label>
+                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{ward}"/>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label>City:</label>
+                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{city}"/>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>Description:</label>
                     <textarea class="form-control" placeholder="Describe the venue, amenities, and features..." th:field="*{description}"></textarea>
                 </div>
                 <!-- ================= ZONES ================= -->

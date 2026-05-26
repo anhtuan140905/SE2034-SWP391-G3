@@ -25,11 +25,9 @@ public class Venue extends BaseAuditEntity {
     @Column(name = "venue_name", nullable = false)
     private String venueName;
 
-    @Column(name = "city", nullable = false)
-    private String city;
-
-    @Column(name = "address", nullable = false)
-    private String address;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @Column(name = "capacity", nullable = false)
     private Integer capacity; // Tính động = SUM(rows × seats_per_row) của tất cả Zone
