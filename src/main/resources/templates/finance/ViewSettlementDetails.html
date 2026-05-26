@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finance Portal – Completed Events</title>
+    <title>Finance Portal – Settlement Details</title>
     <style>
         :root{--background:#0C061E;--foreground:#ffffff;--card:rgba(30,20,50,0.6);--primary:#E91E63;--secondary:rgba(50,30,80,0.8);--muted-foreground:#A5A5B8;--border:rgba(233,30,99,0.15);--input-bg:rgba(30,20,50,0.5);--sidebar:rgba(20,12,40,0.95);--sidebar-border:rgba(233,30,99,0.2);--sidebar-accent:rgba(233,30,99,0.1);--radius:0.75rem}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -143,21 +143,43 @@
         ::-webkit-scrollbar-thumb{background:rgba(233,30,99,.3);border-radius:3px}
     </style>
     <style>
-        .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
-        .stat-mini{background:var(--card);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);padding:16px 20px;display:flex;align-items:center;gap:12px}
-        .stat-mini-icon{width:36px;height:36px;border-radius:var(--radius);background:rgba(233,30,99,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .stat-mini-icon svg{width:18px;height:18px}
-        .stat-mini-label{font-size:.75rem;color:var(--muted-foreground)}
-        .stat-mini-value{font-size:1.1rem;font-weight:700}
-        .settlement-status{display:inline-block;padding:3px 10px;border-radius:9999px;font-size:.7rem;font-weight:600;border:1px solid}
-        .settlement-status.settled{background:rgba(34,197,94,.15);color:#4ade80;border-color:rgba(34,197,94,.3)}
-        .settlement-status.unsettled{background:rgba(249,115,22,.15);color:#fb923c;border-color:rgba(249,115,22,.3)}
-        .btn-action{padding:6px 14px;border-radius:var(--radius);font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
-        .btn-action.primary{background:linear-gradient(135deg,var(--primary),#9C27B0);color:#fff;box-shadow:0 2px 10px rgba(233,30,99,.3)}
-        .btn-action.primary:hover{box-shadow:0 4px 20px rgba(233,30,99,.5);transform:translateY(-1px)}
-        .btn-action.ghost{background:rgba(50,30,80,.4);color:var(--muted-foreground);border:1px solid var(--border)}
-        .btn-action.ghost:hover{color:#fff;background:rgba(50,30,80,.8)}
-        .action-cell{display:flex;gap:8px;align-items:center;justify-content:center}
+        .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+        .detail-section{background:var(--card);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);overflow:hidden}
+        .detail-section-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+        .detail-section-header svg{width:20px;height:20px;color:var(--primary)}
+        .detail-section-header h3{font-size:1rem;font-weight:600}
+        .detail-rows{padding:8px 0}
+        .detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;border-bottom:1px solid rgba(233,30,99,.06)}
+        .detail-row:last-child{border-bottom:none}
+        .detail-row .dr-label{font-size:.8rem;color:var(--muted-foreground)}
+        .detail-row .dr-value{font-size:.875rem;font-weight:600;text-align:right}
+        .payout-hero{background:linear-gradient(135deg,rgba(233,30,99,.15),rgba(156,39,176,.15));border:1px solid rgba(233,30,99,.3);border-radius:calc(var(--radius) + 2px);padding:28px 32px;display:flex;align-items:center;justify-content:space-between;margin-top:32px}
+        .payout-hero .ph-left h2{font-size:.875rem;color:var(--muted-foreground);margin-bottom:8px}
+        .payout-hero .ph-left .ph-amount{font-size:2.75rem;font-weight:700}
+        .payout-hero .ph-right{display:flex;gap:12px}
+        .btn-approve{padding:12px 28px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border:none;border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;box-shadow:0 4px 15px rgba(34,197,94,.3);transition:all .2s;display:flex;align-items:center;gap:8px}
+        .btn-approve:hover{box-shadow:0 6px 25px rgba(34,197,94,.5);transform:translateY(-1px)}
+        .btn-approve svg{width:18px;height:18px}
+        .btn-reject{padding:12px 28px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s;display:flex;align-items:center;gap:8px}
+        .btn-reject:hover{background:rgba(239,68,68,.25)}
+        .btn-reject svg{width:18px;height:18px}
+        .timeline{padding:24px}
+        .tl-item{display:flex;gap:16px;position:relative;padding-bottom:20px}
+        .tl-item:last-child{padding-bottom:0}
+        .tl-item:not(:last-child)::before{content:'';position:absolute;left:15px;top:30px;bottom:0;width:2px;background:rgba(233,30,99,.15)}
+        .tl-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid}
+        .tl-dot.done{background:rgba(34,197,94,.15);border-color:#22c55e}
+        .tl-dot.done svg{width:14px;height:14px;color:#22c55e}
+        .tl-dot.active{background:rgba(233,30,99,.15);border-color:var(--primary)}
+        .tl-dot.active svg{width:14px;height:14px;color:var(--primary)}
+        .tl-dot.pending{background:rgba(50,30,80,.3);border-color:rgba(233,30,99,.2)}
+        .tl-dot.pending svg{width:14px;height:14px;color:var(--muted-foreground)}
+        .tl-content .tl-title{font-size:.875rem;font-weight:600}
+        .tl-content .tl-time{font-size:.75rem;color:var(--muted-foreground);margin-top:3px}
+        .back-btn{display:flex;align-items:center;gap:8px;color:var(--muted-foreground);background:none;border:none;cursor:pointer;font-size:.875rem;font-weight:500;transition:color .2s;margin-bottom:8px;padding:0}
+        .back-btn:hover{color:#fff}
+        .back-btn svg{width:18px;height:18px}
+        .full-width{grid-column:1/-1}
     </style>
 </head>
 <body>
@@ -172,7 +194,7 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item active" href="ListEndedEvents.html">
+            <a class="nav-item" href="ListEndedEvents.html">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
@@ -180,7 +202,7 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item" href="ListSettlement.html">
+            <a class="nav-item active" href="ListSettlement.html">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
@@ -203,129 +225,134 @@
     </aside>
 
     <main class="main">
-        <div>
-            <h1 class="page-title">Completed Events</h1>
-            <p class="page-desc">Browse and manage ended events — initiate or track settlements</p>
+        <button class="back-btn" onclick="history.back()">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Back to Settlement List
+        </button>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+                <h1 class="page-title" id="detail-title">Settlement #SET-9821</h1>
+                <p class="page-desc" id="detail-subtitle">Tech Summit 2026 · TechCorp Inc.</p>
+            </div>
+            <span class="badge approved" id="detail-badge" style="font-size:.875rem;padding:6px 20px">Approved</span>
         </div>
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-mini">
-                <div class="stat-mini-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                <div><div class="stat-mini-label">Total Completed Events</div><div class="stat-mini-value">8</div></div>
+        <!-- Payout Hero -->
+        <div class="payout-hero">
+            <div class="ph-left">
+                <h2>Net Payout Amount</h2>
+                <div class="ph-amount" id="detail-net">$112,500</div>
             </div>
-            <div class="stat-mini">
-                <div class="stat-mini-icon"><svg fill="none" stroke="#fb923c" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                <div><div class="stat-mini-label">Awaiting Settlement</div><div class="stat-mini-value" id="stat-unsettled">—</div></div>
-            </div>
-            <div class="stat-mini">
-                <div class="stat-mini-icon"><svg fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                <div><div class="stat-mini-label">Total Gross Revenue</div><div class="stat-mini-value" id="stat-revenue">—</div></div>
+            <div class="ph-right" id="action-buttons">
+                <button class="btn-approve" onclick="approveSettlement()">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Mark as Paid
+                </button>
+                <button class="btn-reject" onclick="rejectSettlement()">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Reject
+                </button>
             </div>
         </div>
 
-        <div class="filter-row">
-            <div class="search-wrap">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input class="search-input" type="text" id="eventSearch" placeholder="Search by event name, ID or organizer..." oninput="filterEvents()" />
+        <div class="detail-grid">
+            <!-- Event Info -->
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <h3>Event Information</h3>
+                </div>
+                <div class="detail-rows">
+                    <div class="detail-row"><span class="dr-label">Event ID</span><span class="dr-value mono">EVT-8821</span></div>
+                    <div class="detail-row"><span class="dr-label">Event Name</span><span class="dr-value">Tech Summit 2026</span></div>
+                    <div class="detail-row"><span class="dr-label">Organizer</span><span class="dr-value">TechCorp Inc.</span></div>
+                    <div class="detail-row"><span class="dr-label">End Date</span><span class="dr-value">May 15, 2026</span></div>
+                    <div class="detail-row"><span class="dr-label">Tickets Sold</span><span class="dr-value">1,250</span></div>
+                </div>
             </div>
-            <select class="filter-btn" id="filterStatus" onchange="filterEvents()" style="cursor:pointer">
-                <option value="All">All Status</option>
-                <option value="Unsettled">Unsettled</option>
-                <option value="Settled">Settled</option>
-            </select>
-            <button class="filter-btn">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Date Range
-            </button>
-        </div>
 
-        <div class="card mt-32" style="padding:0">
-            <div class="section-header" style="display:flex;align-items:center;justify-content:space-between">
-                <h2>Ended Events Awaiting Settlement</h2>
-                <span id="result-count" style="font-size:.8rem;color:var(--muted-foreground)"></span>
+            <!-- Financial Breakdown -->
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <h3>Financial Breakdown</h3>
+                </div>
+                <div class="detail-rows">
+                    <div class="detail-row"><span class="dr-label">Gross Revenue</span><span class="dr-value">$125,000</span></div>
+                    <div class="detail-row"><span class="dr-label">System Fee (10%)</span><span class="dr-value" style="color:#fb923c">- $12,500</span></div>
+                    <div class="detail-row"><span class="dr-label">Refund Deductions</span><span class="dr-value" style="color:#fb923c">- $0</span></div>
+                    <div class="detail-row" style="background:rgba(233,30,99,.05)"><span class="dr-label" style="font-weight:600;color:#fff">Net Payout</span><span class="dr-value" style="color:var(--primary);font-size:1rem">$112,500</span></div>
+                </div>
             </div>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Event ID</th>
-                        <th>Event Title</th>
-                        <th>Organizer</th>
-                        <th>End Date</th>
-                        <th class="right">Tickets Sold</th>
-                        <th class="right">Gross Revenue</th>
-                        <th class="center">Settlement</th>
-                        <th class="center">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody id="eventsTableBody"></tbody>
-                </table>
-                <div id="eventsEmpty" class="empty" style="display:none">No events found matching your search.</div>
+
+            <!-- Settlement Info -->
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <h3>Settlement Record</h3>
+                </div>
+                <div class="detail-rows">
+                    <div class="detail-row"><span class="dr-label">Settlement ID</span><span class="dr-value mono">#SET-9821</span></div>
+                    <div class="detail-row"><span class="dr-label">Generated Date</span><span class="dr-value">May 20, 2026</span></div>
+                    <div class="detail-row"><span class="dr-label">Payment Method</span><span class="dr-value">Bank Transfer</span></div>
+                    <div class="detail-row"><span class="dr-label">Processed By</span><span class="dr-value">Sarah Anderson</span></div>
+                    <div class="detail-row"><span class="dr-label">Current Status</span><span class="dr-value"><span class="badge approved" style="font-size:.7rem;padding:3px 12px">Approved</span></span></div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <h3>Settlement Timeline</h3>
+                </div>
+                <div class="timeline">
+                    <div class="tl-item">
+                        <div class="tl-dot done"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="tl-content"><div class="tl-title">Settlement Created</div><div class="tl-time">May 20, 2026 · 10:14 AM</div></div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot done"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="tl-content"><div class="tl-title">Under Review</div><div class="tl-time">May 20, 2026 · 11:30 AM</div></div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot active"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg></div>
+                        <div class="tl-content"><div class="tl-title" style="color:var(--primary)">Approved</div><div class="tl-time">May 21, 2026 · 09:00 AM</div></div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-dot pending"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                        <div class="tl-content"><div class="tl-title" style="color:var(--muted-foreground)">Payment Processed</div><div class="tl-time">Pending</div></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 </div>
 
 <script>
-    const completedEventsData = [
-        {id:'EVT-8821',title:'Tech Summit 2026',organizer:'TechCorp Inc.',endDate:'2026-05-15',ticketsSold:1250,grossRevenue:125000,settled:true},
-        {id:'EVT-8812',title:'Music Festival Spring',organizer:'EventPro Ltd.',endDate:'2026-05-10',ticketsSold:3500,grossRevenue:245000,settled:true},
-        {id:'EVT-8805',title:'Business Conference 2026',organizer:'BizEvents Co.',endDate:'2026-05-08',ticketsSold:850,grossRevenue:102000,settled:false},
-        {id:'EVT-8798',title:'Art Exhibition Gala',organizer:'Creative Studios',endDate:'2026-05-05',ticketsSold:450,grossRevenue:67500,settled:true},
-        {id:'EVT-8789',title:'Sports Championship Finals',organizer:'Sports League Inc.',endDate:'2026-05-01',ticketsSold:5200,grossRevenue:520000,settled:true},
-        {id:'EVT-8776',title:'Food & Wine Festival',organizer:'Culinary Events',endDate:'2026-04-28',ticketsSold:2100,grossRevenue:157500,settled:false},
-        {id:'EVT-8765',title:'Developer Meetup',organizer:'DevCommunity',endDate:'2026-04-25',ticketsSold:320,grossRevenue:19200,settled:false},
-        {id:'EVT-8752',title:'Fashion Week Showcase',organizer:'Fashion Forward',endDate:'2026-04-20',ticketsSold:980,grossRevenue:147000,settled:false},
-    ];
+    // Load settlement data from URL param or default to #SET-9821
+    const allSettlements = {
+        '#SET-9821':{title:'#SET-9821',subtitle:'Tech Summit 2026 · TechCorp Inc.',badge:'approved',badgeText:'Approved',net:'$112,500',showActions:true},
+        '#SET-9812':{title:'#SET-9812',subtitle:'Music Festival Spring · EventPro Ltd.',badge:'paid',badgeText:'Paid',net:'$220,500',showActions:false},
+        '#SET-9805':{title:'#SET-9805',subtitle:'Business Conference 2026 · BizEvents Co.',badge:'pending',badgeText:'Pending',net:'$91,800',showActions:true},
+    };
 
-    // Compute stats
-    document.getElementById('stat-unsettled').textContent = completedEventsData.filter(e=>!e.settled).length;
-    const totalRev = completedEventsData.reduce((s,e)=>s+e.grossRevenue,0);
-    document.getElementById('stat-revenue').textContent = '$' + totalRev.toLocaleString();
-
-    function renderEvents(items) {
-        const tbody = document.getElementById('eventsTableBody');
-        const empty = document.getElementById('eventsEmpty');
-        document.getElementById('result-count').textContent = items.length + ' event(s)';
-        if (items.length === 0) { tbody.innerHTML = ''; empty.style.display = ''; return; }
-        empty.style.display = 'none';
-        tbody.innerHTML = items.map(e => `
-    <tr>
-      <td><span class="mono">${e.id}</span></td>
-      <td style="font-weight:500">${e.title}</td>
-      <td class="text-muted">${e.organizer}</td>
-      <td class="text-muted">${e.endDate}</td>
-      <td class="right">${e.ticketsSold.toLocaleString()}</td>
-      <td class="right" style="font-weight:600">$${e.grossRevenue.toLocaleString()}</td>
-      <td class="center">
-        <span class="settlement-status ${e.settled ? 'settled' : 'unsettled'}">
-          ${e.settled ? 'Settled' : 'Unsettled'}
-        </span>
-      </td>
-      <td class="center">
-        <div class="action-cell">
-          ${!e.settled
-            ? `<a href="CreateSettlement.html" class="btn-action primary">Create Settlement</a>`
-            : `<button class="btn-action ghost" onclick="alert('Settlement already created for ${e.id}')">View Settlement</button>`
-        }
-        </div>
-      </td>
-    </tr>`).join('');
+    const params = new URLSearchParams(window.location.search);
+    const sid = params.get('id') || '#SET-9821';
+    const d = allSettlements[sid];
+    if (d) {
+        document.getElementById('detail-title').textContent = 'Settlement ' + d.title;
+        document.getElementById('detail-subtitle').textContent = d.subtitle;
+        const badge = document.getElementById('detail-badge');
+        badge.className = 'badge ' + d.badge;
+        badge.style.cssText = 'font-size:.875rem;padding:6px 20px';
+        badge.textContent = d.badgeText;
+        document.getElementById('detail-net').textContent = d.net;
+        if (!d.showActions) document.getElementById('action-buttons').style.display = 'none';
     }
 
-    function filterEvents() {
-        const q = (document.getElementById('eventSearch').value || '').toLowerCase();
-        const statusFilter = document.getElementById('filterStatus').value;
-        let filtered = completedEventsData.filter(e =>
-            e.title.toLowerCase().includes(q) || e.organizer.toLowerCase().includes(q) || e.id.toLowerCase().includes(q)
-        );
-        if (statusFilter === 'Settled') filtered = filtered.filter(e => e.settled);
-        if (statusFilter === 'Unsettled') filtered = filtered.filter(e => !e.settled);
-        renderEvents(filtered);
-    }
-
-    window.addEventListener('load', () => renderEvents(completedEventsData));
+    function approveSettlement() { alert('Settlement marked as Paid successfully!'); }
+    function rejectSettlement() { if (confirm('Are you sure you want to reject this settlement?')) alert('Settlement rejected.'); }
 </script>
 </body>
 </html>
