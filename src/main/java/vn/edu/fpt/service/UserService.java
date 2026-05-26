@@ -1,13 +1,10 @@
 package vn.edu.fpt.service;
 
-import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
-
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
@@ -15,10 +12,12 @@ import vn.edu.fpt.repository.UserRepository;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final OrganizerProfileRepository organizerProfileRepository;
+
     public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, OrganizerProfileRepository organizerProfileRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
@@ -36,7 +35,9 @@ public class UserService {
             return null;
         }
         User user = new User();
-        user.setFullName(dto.getFullName());
+        user.setFirstName(dto.getFirstName());
+        user.setMiddleName(dto.getMiddleName());
+        user.setLastName(dto.getLastName());
         user.setEmail(dto.getUsername());
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
@@ -44,7 +45,7 @@ public class UserService {
         user.setPhone(dto.getPhone());
         Role role = this.roleService.getRoleByName("ROLE_ATTENDEE");
         user.setRole(role);
-        String hashedPassword = passwordEncoder.encode(dto.getPassword());
+        String hashedPassword = this.passwordEncoder.encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
         return this.userRepository.save(user);
     }
@@ -53,7 +54,9 @@ public class UserService {
             return null;
         }
         User user = new User();
-        user.setFullName(dto.getFullName());
+        user.setFirstName(dto.getFirstName());
+        user.setMiddleName(dto.getMiddleName());
+        user.setLastName(dto.getLastName());
         user.setEmail(dto.getUsername());
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
