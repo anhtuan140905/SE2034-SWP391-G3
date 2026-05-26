@@ -1,10 +1,2331 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create New Event – TicketBox Portal</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+            rel="stylesheet"
+    />
+    <!-- Material Symbols -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+            rel="stylesheet"
+    />
+
+    <style>
+        :root {
+            --pink: #f43f5e;
+            --purple: #a855f7;
+            --coral: #fda4af;
+            --bg: #070510;
+            --card: rgba(22, 17, 43, 0.55);
+            --border: rgba(255, 255, 255, 0.09);
+            --muted: rgba(255, 255, 255, 0.45);
+            --solid: #15112c;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Outfit", sans-serif;
+            background-color: var(--bg);
+            background-image:
+                    radial-gradient(
+                            circle at 15% 20%,
+                            rgba(168, 85, 247, 0.09) 0%,
+                            transparent 45%
+                    ),
+                    radial-gradient(
+                            circle at 85% 80%,
+                            rgba(244, 63, 94, 0.09) 0%,
+                            transparent 45%
+                    ),
+                    linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+                    linear-gradient(
+                            90deg,
+                            rgba(255, 255, 255, 0.005) 1px,
+                            transparent 1px
+                    );
+            background-size:
+                    100% 100%,
+                    100% 100%,
+                    48px 48px,
+                    48px 48px;
+            background-attachment: fixed;
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(7, 5, 16, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(244, 63, 94, 0.4);
+        }
+
+        /* ─── Utilities ─── */
+        .font-mono {
+            font-family: "JetBrains Mono", monospace;
+        }
+        .text-pink {
+            color: var(--pink) !important;
+        }
+        .text-muted-custom {
+            color: var(--muted) !important;
+        }
+
+        .gradient-text {
+            background: linear-gradient(
+                    135deg,
+                    #c084fc 0%,
+                    #f43f5e 50%,
+                    #fda4af 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-gradient {
+            background: linear-gradient(
+                    135deg,
+                    #a855f7 0%,
+                    #f43f5e 50%,
+                    #f472b6 100%
+            );
+            border: none;
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            transition:
+                    filter 0.2s,
+                    transform 0.15s;
+        }
+        .btn-gradient:hover {
+            filter: brightness(1.12);
+            color: #fff;
+        }
+        .btn-gradient:active {
+            transform: scale(0.97);
+            color: #fff;
+        }
+
+        /* ─── Glass card ─── */
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(18px) saturate(130%);
+            -webkit-backdrop-filter: blur(18px) saturate(130%);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        /* ─── Input ─── */
+        .glass-input {
+            background: rgba(15, 12, 33, 0.65) !important;
+            border: 1px solid var(--border) !important;
+            color: #f8fafc !important;
+            border-radius: 12px !important;
+            transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+            font-family: "Outfit", sans-serif;
+        }
+        .glass-input:focus {
+            background: rgba(20, 16, 43, 0.85) !important;
+            border-color: rgba(244, 63, 94, 0.55) !important;
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.12) !important;
+            outline: none !important;
+            color: #f8fafc !important;
+        }
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .glass-input option {
+            background: #15112c;
+            color: #fff;
+        }
+
+        textarea.glass-input {
+            resize: vertical;
+        }
+
+        /* ─── Upload zone ─── */
+        .upload-zone {
+            border: 1.5px dashed var(--border);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.018);
+            cursor: pointer;
+            min-height: 190px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition:
+                    border-color 0.2s,
+                    background 0.2s;
+        }
+        .upload-zone:hover {
+            border-color: rgba(244, 63, 94, 0.5);
+            background: rgba(255, 255, 255, 0.035);
+        }
+        .upload-zone img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .upload-zone:hover img {
+            transform: scale(1.04);
+        }
+        .upload-zone .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .upload-zone:hover .overlay {
+            opacity: 1;
+        }
+
+        /* ─── Progress strip ─── */
+        #progress-strip {
+            height: 2.5px;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #f43f5e, #f472b6);
+            transition: width 0.4s ease;
+        }
+
+        /* ─── Step pill ─── */
+        .step-pill {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            transition: all 0.25s;
+        }
+        .step-pill.active {
+            background: var(--pink);
+            box-shadow: 0 0 10px rgba(244, 63, 94, 0.35);
+        }
+        .step-pill.done {
+            background: var(--pink);
+        }
+        .step-pill.idle {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ─── Venue info card ─── */
+        .venue-card {
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px solid rgba(168, 85, 247, 0.22);
+            border-radius: 14px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        /* ─── Showtime tab button ─── */
+        .showtime-tab {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .showtime-tab:hover {
+            color: #fff;
+        }
+        .showtime-tab.active {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: var(--pink);
+            color: var(--pink);
+            box-shadow: 0 4px 14px rgba(244, 63, 94, 0.14);
+        }
+
+        /* ─── Ticket tier card ─── */
+        .ticket-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+        .ticket-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        /* ─── Backdrop modal ─── */
+        .modal-backdrop-custom {
+            position: fixed;
+            inset: 0;
+            z-index: 1055;
+            background: rgba(5, 3, 20, 0.82);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-panel {
+            background: rgba(18, 14, 38, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 28px;
+            width: 100%;
+            animation: scaleIn 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8);
+        }
+        .modal-panel.sm {
+            max-width: 400px;
+        }
+        .modal-panel.md {
+            max-width: 500px;
+        }
+
+        /* ─── Empty state ─── */
+        .empty-state {
+            background: rgba(255, 255, 255, 0.018);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        /* ─── Label uppercase ─── */
+        .field-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .section-label {
+            font-size: 10.5px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0;
+        }
+
+        /* ─── Alert error ─── */
+        .error-alert {
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.22);
+            color: #fb7185;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* ─── Toolbar fake ─── */
+        .editor-toolbar {
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2px;
+        }
+        .editor-toolbar .sep {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+        .toolbar-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.15s;
+        }
+        .toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ─── Gallery item ─── */
+        .gallery-item {
+            aspect-ratio: 3/4;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-item .del-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: background 0.15s;
+        }
+        .gallery-item .del-btn:hover {
+            background: var(--pink);
+        }
+
+        /* ─── Neon spheres bg ─── */
+        .sphere {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .sphere-1 {
+            top: 8%;
+            left: 18%;
+            width: 420px;
+            height: 420px;
+            background: rgba(168, 85, 247, 0.08);
+            filter: blur(100px);
+        }
+        .sphere-2 {
+            bottom: 15%;
+            right: 8%;
+            width: 500px;
+            height: 500px;
+            background: rgba(244, 63, 94, 0.08);
+            filter: blur(130px);
+        }
+
+        /* ─── Btn ghost ─── */
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 12px;
+            transition:
+                    background 0.2s,
+                    color 0.2s;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-danger-soft {
+            background: rgba(244, 63, 94, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fb7185;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-danger-soft:hover {
+            background: rgba(244, 63, 94, 0.22);
+        }
+
+        .badge-tier {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        .badge-free {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--pink);
+        }
+        .badge-zone {
+            background: rgba(168, 85, 247, 0.18);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.28);
+        }
+        .badge-label {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* ─── Animations ─── */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.93);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-in {
+            animation: fadeIn 0.3s ease both;
+        }
+
+        /* Wizard wrapper */
+        #wizard {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        #scroll-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 24px 96px;
+        }
+        @media (min-width: 768px) {
+            #scroll-body {
+                padding: 36px 48px 96px;
+            }
+        }
+
+        /* Footer CTA bar */
+        #footer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(7, 5, 16, 0.9);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
+<!-- Ambient neon spheres -->
+<div class="sphere sphere-1"></div>
+<div class="sphere sphere-2"></div>
 
+<!-- ═══════════════════════════════════════════════════════ WIZARD ROOT -->
+<div id="wizard">
+    <!-- ─── TOP HEADER BAR ─── -->
+    <header
+            style="
+          background: rgba(7, 5, 16, 0.85);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--border);
+          padding: 12px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-shrink: 0;
+          position: relative;
+          z-index: 10;
+        "
+    >
+        <!-- Left: Logo + Steps -->
+        <div class="d-flex align-items-center gap-4">
+            <!-- Logo -->
+            <div class="d-flex align-items-center gap-2">
+                <div
+                        class="btn-gradient d-flex align-items-center justify-content-center rounded-3"
+                        style="width: 34px; height: 34px"
+                >
+              <span class="material-symbols-outlined" style="font-size: 17px"
+              >calendar_month</span
+              >
+                </div>
+                <strong
+                        style="
+                font-size: 13px;
+                font-weight: 900;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                font-family: &quot;Outfit&quot;, sans-serif;
+              "
+                >TICKETBOX PORTAL</strong
+                >
+            </div>
+
+            <!-- Step nav -->
+            <nav
+                    class="d-none d-lg-flex align-items-center gap-3"
+                    style="font-size: 12px; font-weight: 700"
+            >
+                <!-- Step 1 -->
+                <button
+                        type="button"
+                        id="nav-step1"
+                        onclick="goToStep(1)"
+                        class="d-flex align-items-center gap-2 border-0 bg-transparent p-0"
+                        style="cursor: pointer; outline: none"
+                >
+                    <span id="pill-1" class="step-pill active">1</span>
+                    <span id="label-1" class="text-pink">Event Info</span>
+                </button>
+
+                <span
+                        style="
+                color: rgba(255, 255, 255, 0.12);
+                font-size: 18px;
+                font-weight: 100;
+              "
+                >/</span
+                >
+
+                <!-- Step 2 -->
+                <button
+                        type="button"
+                        id="nav-step2"
+                        onclick="goToStep(2)"
+                        class="d-flex align-items-center gap-2 border-0 bg-transparent p-0"
+                        style="cursor: pointer; outline: none"
+                >
+                    <span id="pill-2" class="step-pill idle">2</span>
+                    <span id="label-2" style="color: rgba(255, 255, 255, 0.5)"
+                    >Showtimes &amp; Tickets</span
+                    >
+                </button>
+            </nav>
+        </div>
+
+        <!-- Right: Action buttons -->
+        <div class="d-flex align-items-center gap-2">
+            <button
+                    type="button"
+                    class="btn btn-ghost d-flex align-items-center gap-1 px-3 py-2"
+                    onclick="closeWizard()"
+            >
+            <span class="material-symbols-outlined" style="font-size: 15px"
+            >close</span
+            >
+                Exit
+            </button>
+
+            <button
+                    type="button"
+                    id="btn-back"
+                    class="btn btn-ghost px-3 py-2"
+                    onclick="handleBack()"
+                    style="display: none !important"
+            >
+                Back
+            </button>
+
+            <button
+                    type="button"
+                    class="btn btn-ghost px-3 py-2"
+                    onclick="handleSaveDraft()"
+            >
+                Save Draft
+            </button>
+
+            <button
+                    type="button"
+                    id="btn-continue"
+                    class="btn btn-gradient px-4 py-2 d-flex align-items-center gap-1"
+                    onclick="handleNext()"
+            >
+                Continue
+                <span class="material-symbols-outlined" style="font-size: 14px"
+                >arrow_forward</span
+                >
+            </button>
+
+            <button
+                    type="button"
+                    id="btn-publish"
+                    class="btn btn-gradient px-4 py-2 d-flex align-items-center gap-1"
+                    style="display: none !important"
+                    onclick="handleSubmit()"
+            >
+            <span class="material-symbols-outlined" style="font-size: 15px"
+            >celebration</span
+            >
+                Publish Event
+            </button>
+        </div>
+    </header>
+
+    <!-- Progress strip -->
+    <div id="progress-strip">
+        <div id="progress-bar" style="width: 50%"></div>
+    </div>
+
+    <!-- ─── SCROLL BODY ─── -->
+    <div id="scroll-body">
+        <div style="max-width: 880px; margin: 0 auto">
+            <!-- Validation error -->
+            <div id="error-box" class="error-alert mb-4" style="display: none">
+            <span class="material-symbols-outlined" style="font-size: 16px"
+            >error</span
+            >
+                <span id="error-msg"></span>
+            </div>
+
+            <!-- ══════════════════ STEP 1 ══════════════════ -->
+            <div id="step1" class="animate-in">
+                <!-- BLOCK 1: Upload Images -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+                    <div
+                            class="d-flex justify-content-between align-items-center mb-3"
+                    >
+                <span class="section-label"
+                ><span class="text-pink me-1">*</span>Upload Images</span
+                >
+                        <button
+                                type="button"
+                                class="border-0 bg-transparent text-pink d-flex align-items-center gap-1"
+                                style="font-size: 12px; font-weight: 700; cursor: pointer"
+                                onclick="
+                    alert(
+                      'Portrait Poster (3:4 ratio) displays in catalog. Horizontal Banner (16:9 ratio) displays on the home page.',
+                    )
+                  "
+                        >
+                            View image placement details
+                            <span
+                                    class="material-symbols-outlined"
+                                    style="font-size: 13px"
+                            >open_in_new</span
+                            >
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Portrait upload -->
+                        <div class="col-12 col-md-5">
+                            <div
+                                    class="upload-zone"
+                                    id="zone-vertical"
+                                    onclick="document.getElementById('file-vertical').click()"
+                            >
+                                <input
+                                        type="file"
+                                        id="file-vertical"
+                                        accept="image/*"
+                                        class="d-none"
+                                        onchange="handleFileUpload(this, 'vertical')"
+                                />
+                                <div id="zone-vertical-placeholder">
+                                    <div class="d-flex justify-content-center mb-2">
+                                        <div
+                                                style="
+                            width: 44px;
+                            height: 44px;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.05);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                          "
+                                        >
+                          <span class="material-symbols-outlined text-pink"
+                          >add_photo_alternate</span
+                          >
+                                        </div>
+                                    </div>
+                                    <p
+                                            style="
+                          font-size: 12px;
+                          font-weight: 800;
+                          margin-bottom: 2px;
+                        "
+                                    >
+                                        Add portrait poster
+                                    </p>
+                                    <span
+                                            style="
+                          font-size: 10px;
+                          color: rgba(255, 255, 255, 0.35);
+                        "
+                                    >(3:4 ratio – e.g., 720×958)</span
+                                    >
+                                </div>
+                                <div class="overlay">
+                      <span
+                              class="material-symbols-outlined"
+                              style="font-size: 24px"
+                      >cloud_upload</span
+                      >
+                                    <span
+                                            style="
+                          font-size: 10px;
+                          font-weight: 700;
+                          margin-top: 4px;
+                        "
+                                    >Change Portrait Poster</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Horizontal upload -->
+                        <div class="col-12 col-md-7">
+                            <div
+                                    class="upload-zone"
+                                    id="zone-horizontal"
+                                    onclick="document.getElementById('file-horizontal').click()"
+                            >
+                                <input
+                                        type="file"
+                                        id="file-horizontal"
+                                        accept="image/*"
+                                        class="d-none"
+                                        onchange="handleFileUpload(this, 'horizontal')"
+                                />
+                                <div id="zone-horizontal-placeholder">
+                                    <div class="d-flex justify-content-center mb-2">
+                                        <div
+                                                style="
+                            width: 44px;
+                            height: 44px;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.05);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                          "
+                                        >
+                          <span class="material-symbols-outlined text-pink"
+                          >landscape</span
+                          >
+                                        </div>
+                                    </div>
+                                    <p
+                                            style="
+                          font-size: 12px;
+                          font-weight: 800;
+                          margin-bottom: 2px;
+                        "
+                                    >
+                                        Add horizontal banner
+                                    </p>
+                                    <span
+                                            style="
+                          font-size: 10px;
+                          color: rgba(255, 255, 255, 0.35);
+                        "
+                                    >(16:9 ratio – e.g., 1280×720)</span
+                                    >
+                                </div>
+                                <div class="overlay">
+                      <span
+                              class="material-symbols-outlined"
+                              style="font-size: 24px"
+                      >cloud_upload</span
+                      >
+                                    <span
+                                            style="
+                          font-size: 10px;
+                          font-weight: 700;
+                          margin-top: 4px;
+                        "
+                                    >Change Horizontal Banner</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paste URL helpers -->
+                    <div
+                            class="row g-3 mt-2 pt-3"
+                            style="border-top: 1px solid rgba(255, 255, 255, 0.06)"
+                    >
+                        <div class="col-12 col-md-6">
+                            <span class="field-label">OR QUICKLY PASTE PORTRAIT URL</span>
+                            <input
+                                    type="text"
+                                    id="url-vertical"
+                                    class="form-control glass-input"
+                                    placeholder="Paste portrait poster URL…"
+                                    oninput="handleUrlInput(this, 'vertical')"
+                            />
+                        </div>
+                        <div class="col-12 col-md-6">
+                  <span class="field-label"
+                  >OR QUICKLY PASTE HORIZONTAL BANNER URL</span
+                  >
+                            <input
+                                    type="text"
+                                    id="url-horizontal"
+                                    class="form-control glass-input"
+                                    placeholder="Paste horizontal banner URL…"
+                                    oninput="handleUrlInput(this, 'horizontal')"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOCK 1.5: Photo Gallery -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+                    <div
+                            class="d-flex justify-content-between align-items-center mb-1"
+                    >
+                        <span class="section-label">Detailed Event Photo Gallery</span>
+                        <span
+                                class="font-mono"
+                                style="font-size: 10px; color: rgba(255, 255, 255, 0.35)"
+                                id="gallery-count"
+                        >0 images added</span
+                        >
+                    </div>
+                    <p
+                            style="
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.45);
+                  margin-bottom: 16px;
+                  line-height: 1.6;
+                "
+                    >
+                        Upload multiple detailed photos so users get a better overview
+                        (e.g., promotional posters, staging diagrams, live photos, guest
+                        artists).
+                    </p>
+
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-md-4">
+                            <button
+                                    type="button"
+                                    class="w-100 upload-zone py-4 border-0"
+                                    style="
+                      min-height: 80px;
+                      flex-direction: column;
+                      gap: 6px;
+                      font-size: 12px;
+                      font-weight: 800;
+                      color: rgba(255, 255, 255, 0.7);
+                    "
+                                    onclick="document.getElementById('file-gallery').click()"
+                            >
+                    <span
+                            class="material-symbols-outlined text-pink"
+                            style="font-size: 20px"
+                    >add_photo_alternate</span
+                    >
+                                Select photos from device
+                            </button>
+                            <input
+                                    type="file"
+                                    id="file-gallery"
+                                    accept="image/*"
+                                    multiple
+                                    class="d-none"
+                                    onchange="handleGalleryUpload(this)"
+                            />
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <span class="field-label">OR PASTE IMAGE URL HERE</span>
+                            <div class="d-flex gap-2">
+                                <input
+                                        type="text"
+                                        id="temp-image-url"
+                                        class="form-control glass-input flex-1 font-mono"
+                                        placeholder="https://images.unsplash.com/photo-..."
+                                        style="font-size: 12px"
+                                />
+                                <button
+                                        type="button"
+                                        class="btn btn-gradient px-3"
+                                        onclick="addGalleryUrl()"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery grid -->
+                    <div
+                            id="gallery-grid"
+                            class="row g-2 mt-3 pt-3"
+                            style="
+                  border-top: 1px solid rgba(255, 255, 255, 0.05);
+                  display: none !important;
+                "
+                    ></div>
+                </div>
+
+                <!-- BLOCK 2: Event Name -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+                    <div
+                            class="d-flex justify-content-between align-items-center mb-2"
+                    >
+                <span class="section-label"
+                ><span class="text-pink me-1">*</span>Event Name</span
+                >
+                        <span
+                                class="font-mono"
+                                style="font-size: 10px; color: rgba(255, 255, 255, 0.35)"
+                                id="name-counter"
+                        >0 / 100</span
+                        >
+                    </div>
+                    <input
+                            type="text"
+                            id="event-name"
+                            maxlength="100"
+                            class="form-control glass-input py-3"
+                            placeholder="Enter a catchy title to grab attention…"
+                            style="font-size: 14px; font-weight: 600"
+                            oninput="
+                  document.getElementById('name-counter').textContent =
+                    this.value.length + ' / 100'
+                "
+                    />
+                </div>
+
+                <!-- BLOCK 3: Venue -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+              <span class="section-label"
+              ><span class="text-pink me-1">*</span>Event Hosting Venue
+                (Offline)</span
+              >
+                    <p
+                            style="
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.38);
+                  margin-top: 4px;
+                  margin-bottom: 16px;
+                "
+                    >
+                        Select from the list of verified, standard venues linked with
+                        our system.
+                    </p>
+
+                    <select
+                            id="venue-select"
+                            class="form-select glass-input py-3 mb-3"
+                            style="font-size: 13px; font-weight: 600"
+                            onchange="handleVenueChange(this)"
+                    >
+                        <option value="">-- Please select hosting venue --</option>
+                        <option value="secc">
+                            Saigon Exhibition and Convention Center (SECC) - Hall A (Ho
+                            Chi Minh City)
+                        </option>
+                        <option value="phutho">
+                            Phu Tho Indoor Stadium (Ho Chi Minh City)
+                        </option>
+                        <option value="hoabinh">
+                            Hoa Binh Theatre (Ho Chi Minh City)
+                        </option>
+                        <option value="national-convention">
+                            National Convention Center (NCC) (Hanoi)
+                        </option>
+                        <option value="hanoi-opera">Hanoi Opera House (Hanoi)</option>
+                        <option value="mydinh">My Dinh National Stadium (Hanoi)</option>
+                        <option value="tienson">
+                            Tien Son Sports Complex (Da Nang)
+                        </option>
+                    </select>
+
+                    <!-- Venue info card -->
+                    <div
+                            id="venue-card"
+                            class="venue-card p-3"
+                            style="display: none !important"
+                    >
+                        <div
+                                class="d-flex align-items-center gap-1 mb-3"
+                                style="
+                    font-size: 11px;
+                    font-weight: 900;
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                    color: var(--pink);
+                  "
+                        >
+                  <span
+                          class="material-symbols-outlined"
+                          style="font-size: 15px"
+                  >verified_user</span
+                  >
+                            Verified Venue Selected
+                        </div>
+                        <div class="row g-2" style="font-size: 11.5px">
+                            <div class="col-6">
+                    <span class="field-label">Venue Name</span
+                    ><span id="vc-name" style="font-weight: 800"></span>
+                            </div>
+                            <div class="col-6">
+                    <span class="field-label">Detailed Address</span
+                    ><span
+                                    id="vc-street"
+                                    style="font-weight: 600; color: rgba(255, 255, 255, 0.85)"
+                            ></span>
+                            </div>
+                            <div class="col-6">
+                    <span class="field-label">District</span
+                    ><span
+                                    id="vc-district"
+                                    style="font-weight: 600; color: rgba(255, 255, 255, 0.85)"
+                            ></span>
+                            </div>
+                            <div class="col-6">
+                    <span class="field-label">Province / City</span
+                    ><span
+                                    id="vc-province"
+                                    style="font-weight: 600; color: rgba(255, 255, 255, 0.85)"
+                            ></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No venue placeholder -->
+                    <div
+                            id="venue-empty"
+                            class="text-center py-4"
+                            style="
+                  border: 1px solid rgba(255, 255, 255, 0.05);
+                  border-radius: 12px;
+                  font-size: 12px;
+                  color: rgba(255, 255, 255, 0.28);
+                "
+                    >
+                        No venue selected. Please select an official venue in the
+                        dropdown above.
+                    </div>
+                </div>
+
+                <!-- BLOCK 4: Category -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+              <span class="section-label d-block mb-2"
+              ><span class="text-pink me-1">*</span>Event Category</span
+              >
+                    <select
+                            id="event-category"
+                            class="form-select glass-input py-3"
+                            style="font-size: 13px; font-weight: 600"
+                    >
+                        <option value="">-- Select Event Category --</option>
+                        <option value="Entertainment">
+                            Entertainment (Concerts, Major Live Shows)
+                        </option>
+                        <option value="Technology">
+                            Technology (Tech Talk, Summit Series)
+                        </option>
+                        <option value="Art">
+                            Art (Exhibitions, Galleries &amp; Fairs)
+                        </option>
+                        <option value="Workshop">
+                            Workshop (Education, Classes &amp; Training)
+                        </option>
+                    </select>
+                </div>
+
+                <!-- BLOCK 5: Description -->
+                <div class="glass-card p-4 p-md-5 mb-4">
+              <span class="section-label d-block mb-3"
+              ><span class="text-pink me-1">*</span>Event Content</span
+              >
+
+                    <div
+                            style="
+                  border: 1px solid var(--border);
+                  border-radius: 14px;
+                  overflow: hidden;
+                  background: rgba(12, 9, 29, 0.5);
+                "
+                    >
+                        <!-- Fake toolbar -->
+                        <div class="editor-toolbar">
+                  <span
+                          style="
+                      padding: 3px 10px;
+                      background: rgba(255, 255, 255, 0.06);
+                      border-radius: 6px;
+                      font-size: 12px;
+                      color: rgba(255, 255, 255, 0.75);
+                      cursor: pointer;
+                      font-weight: 600;
+                    "
+                  >Paragraph ▾</span
+                  >
+                            <div class="sep"></div>
+                            <div class="d-flex gap-1 align-items-center mx-1">
+                    <span
+                            style="
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 50%;
+                        background: #facc15;
+                        cursor: pointer;
+                        display: block;
+                      "
+                    ></span>
+                                <span
+                                        style="
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 50%;
+                        background: #f43f5e;
+                        cursor: pointer;
+                        display: block;
+                      "
+                                ></span>
+                                <span
+                                        style="
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 50%;
+                        background: #a855f7;
+                        cursor: pointer;
+                        display: block;
+                      "
+                                ></span>
+                                <span
+                                        style="
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 50%;
+                        background: #3b82f6;
+                        cursor: pointer;
+                        display: block;
+                      "
+                                ></span>
+                            </div>
+                            <div class="sep"></div>
+                            <button type="button" class="toolbar-btn">
+                                <span class="material-symbols-outlined">format_bold</span>
+                            </button>
+                            <button type="button" class="toolbar-btn">
+                                <span class="material-symbols-outlined">format_italic</span>
+                            </button>
+                            <button type="button" class="toolbar-btn">
+                    <span class="material-symbols-outlined"
+                    >format_underlined</span
+                    >
+                            </button>
+                            <div class="sep"></div>
+                            <button type="button" class="toolbar-btn">
+                    <span class="material-symbols-outlined"
+                    >format_align_left</span
+                    >
+                            </button>
+                            <button type="button" class="toolbar-btn">
+                    <span class="material-symbols-outlined"
+                    >format_align_center</span
+                    >
+                            </button>
+                            <button type="button" class="toolbar-btn">
+                    <span class="material-symbols-outlined"
+                    >format_list_bulleted</span
+                    >
+                            </button>
+                            <div class="sep"></div>
+                            <button type="button" class="toolbar-btn">
+                                <span class="material-symbols-outlined">image</span>
+                            </button>
+                            <button type="button" class="toolbar-btn">
+                                <span class="material-symbols-outlined">link</span>
+                            </button>
+                        </div>
+                        <textarea
+                                id="event-description"
+                                rows="12"
+                                style="
+                    width: 100%;
+                    background: transparent;
+                    color: rgba(255, 255, 255, 0.9);
+                    padding: 16px;
+                    font-size: 12.5px;
+                    font-family: &quot;Outfit&quot;, sans-serif;
+                    line-height: 1.7;
+                    border: none;
+                    outline: none;
+                    resize: vertical;
+                  "
+                                placeholder="Enter event description here…"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+            <!-- /step1 -->
+
+            <!-- ══════════════════ STEP 2 ══════════════════ -->
+            <div id="step2" style="display: none !important" class="animate-in">
+                <div
+                        class="d-flex justify-content-between align-items-start pb-4 mb-4"
+                        style="border-bottom: 1px solid var(--border)"
+                >
+                    <div>
+                        <h2
+                                style="
+                    font-size: 16px;
+                    font-weight: 900;
+                    font-family: &quot;Outfit&quot;, sans-serif;
+                    margin-bottom: 4px;
+                  "
+                        >
+                            Showtimes &amp; Ticket Tiers
+                        </h2>
+                        <p
+                                style="
+                    font-size: 11.5px;
+                    color: rgba(255, 255, 255, 0.45);
+                    margin: 0;
+                  "
+                        >
+                            Configure showtime slots and design appropriate ticket
+                            categories.
+                        </p>
+                    </div>
+                    <button
+                            type="button"
+                            class="btn d-flex align-items-center gap-2"
+                            style="
+                  background: rgba(7, 5, 16, 0.5);
+                  border: 1px solid var(--pink);
+                  color: var(--pink);
+                  font-size: 12px;
+                  font-weight: 900;
+                  border-radius: 12px;
+                  padding: 8px 16px;
+                  white-space: nowrap;
+                "
+                            onclick="openShowtimeModal()"
+                    >
+                        Create New Showtime
+                        <span class="material-symbols-outlined" style="font-size: 16px"
+                        >add_circle</span
+                        >
+                    </button>
+                </div>
+
+                <!-- Empty state -->
+                <div
+                        id="showtimes-empty"
+                        class="empty-state d-flex flex-column align-items-center justify-content-center text-center py-5 px-4"
+                >
+                    <svg
+                            viewBox="0 0 100 80"
+                            style="width: 150px; height: 115px; margin-bottom: 8px"
+                            class="text-white"
+                    >
+                        <path
+                                d="M 15,65 Q 10,50 15,40 Q 25,25 50,30 Q 75,25 85,40 Q 90,50 85,65 Z"
+                                fill="#22113c"
+                                opacity="0.5"
+                        />
+                        <ellipse cx="50" cy="65" rx="35" ry="12" fill="#0f0920" />
+                        <rect
+                                x="25"
+                                y="45"
+                                width="50"
+                                height="20"
+                                rx="6"
+                                fill="#1b1236"
+                        />
+                        <circle
+                                cx="50"
+                                cy="40"
+                                r="15"
+                                fill="none"
+                                stroke="#f43f5e"
+                                stroke-width="1"
+                        />
+                        <ellipse
+                                cx="50"
+                                cy="40"
+                                rx="16"
+                                ry="16"
+                                fill="rgba(244,63,94,0.08)"
+                        />
+                        <rect
+                                x="37"
+                                y="34"
+                                width="26"
+                                height="5.5"
+                                rx="1"
+                                fill="#f43f5e"
+                        />
+                        <ellipse
+                                cx="50"
+                                cy="44"
+                                rx="4.5"
+                                ry="3.5"
+                                fill="rgba(241,245,249,0.25)"
+                        />
+                        <path
+                                d="M 48.5,45.5 Q 50,47 51.5,45.5"
+                                stroke="#fff"
+                                stroke-width="0.8"
+                                fill="none"
+                        />
+                        <path
+                                d="M 40,48 Q 50,56 60,48"
+                                stroke="#f43f5e"
+                                stroke-width="1.2"
+                                fill="none"
+                        />
+                    </svg>
+                    <strong
+                            style="
+                  font-size: 14px;
+                  font-weight: 900;
+                  color: rgba(255, 255, 255, 0.5);
+                "
+                    >No showtimes configured yet!</strong
+                    >
+                    <p
+                            style="
+                  font-size: 11px;
+                  color: rgba(255, 255, 255, 0.35);
+                  margin-top: 6px;
+                  max-width: 280px;
+                "
+                    >
+                        Click "Create New Showtime" above to design ticket tiers and
+                        sale schedules.
+                    </p>
+                </div>
+
+                <!-- Showtime tabs -->
+                <div
+                        id="showtime-tabs"
+                        class="d-flex flex-wrap gap-2 mb-4"
+                        style="display: none !important"
+                ></div>
+
+                <!-- Active showtime detail -->
+                <div
+                        id="showtime-detail"
+                        class="glass-card p-4 p-md-5"
+                        style="display: none !important"
+                ></div>
+            </div>
+            <!-- /step2 -->
+        </div>
+    </div>
+    <!-- /scroll-body -->
+
+    <!-- Footer action bar (mobile CTA repeat) -->
+    <div id="footer-bar">
+        <span
+                style="
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-right: auto;
+          "
+                id="footer-label"
+        >Step 1 of 2 — Event Info</span
+        >
+        <button
+                type="button"
+                id="footer-back"
+                class="btn btn-ghost px-3 py-2"
+                onclick="handleBack()"
+                style="display: none !important"
+        >
+            ← Back
+        </button>
+        <button
+                type="button"
+                id="footer-continue"
+                class="btn btn-gradient px-4 py-2"
+                onclick="handleNext()"
+        >
+            Continue →
+        </button>
+        <button
+                type="button"
+                id="footer-publish"
+                class="btn btn-gradient px-4 py-2"
+                onclick="handleSubmit()"
+                style="display: none !important"
+        >
+            🎉 Publish Event
+        </button>
+    </div>
+</div>
+<!-- /wizard -->
+
+<!-- ═══════════ MODAL: Add Showtime ═══════════ -->
+<div
+        id="modal-showtime"
+        class="modal-backdrop-custom"
+        style="display: none !important"
+>
+    <div class="modal-panel sm">
+        <h3
+                class="d-flex align-items-center gap-2 mb-4"
+                style="font-size: 14px; font-weight: 900"
+        >
+          <span
+                  class="material-symbols-outlined text-pink"
+                  style="font-size: 18px"
+          >new_window</span
+          >
+            Create New Showtime Slot
+        </h3>
+
+        <div class="mb-3">
+            <label class="field-label">Show Date</label>
+            <input
+                    type="date"
+                    id="m-date"
+                    class="form-control glass-input py-2"
+                    style="font-size: 12px; font-weight: 700"
+            />
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <label class="field-label">Start Time</label>
+                <input
+                        type="text"
+                        id="m-start"
+                        class="form-control glass-input py-2"
+                        placeholder="18:00"
+                        style="font-size: 12px; font-weight: 700"
+                />
+            </div>
+            <div class="col-6">
+                <label class="field-label">End Time</label>
+                <input
+                        type="text"
+                        id="m-end"
+                        class="form-control glass-input py-2"
+                        placeholder="23:00"
+                        style="font-size: 12px; font-weight: 700"
+                />
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <button
+                    type="button"
+                    class="btn btn-ghost px-3 py-2"
+                    onclick="closeShowtimeModal()"
+            >
+                Cancel
+            </button>
+            <button
+                    type="button"
+                    class="btn btn-gradient px-4 py-2"
+                    onclick="handleAddShowtime()"
+            >
+                Create
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ MODAL: Add Ticket ═══════════ -->
+<div
+        id="modal-ticket"
+        class="modal-backdrop-custom"
+        style="display: none !important"
+>
+    <div class="modal-panel md">
+        <h3
+                class="d-flex align-items-center gap-2 mb-4"
+                style="font-size: 14px; font-weight: 900"
+        >
+          <span
+                  class="material-symbols-outlined text-pink"
+                  style="font-size: 18px"
+          >confirmation_number</span
+          >
+            Register New Ticket Tier
+        </h3>
+
+        <div class="mb-3">
+            <label class="field-label">Ticket Tier Name</label>
+            <input
+                    type="text"
+                    id="t-name"
+                    class="form-control glass-input py-2"
+                    style="font-size: 12px; font-weight: 700"
+            />
+        </div>
+
+        <div class="mb-3">
+            <label class="field-label"
+            >Zone Allocation (pre-configured venue zones)</label
+            >
+            <select
+                    id="t-zone"
+                    class="form-select glass-input py-2"
+                    style="font-size: 12px; font-weight: 700"
+            >
+                <option value="">-- Please select zone --</option>
+            </select>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-6">
+                <label class="field-label">Ticket Price (₫)</label>
+                <input
+                        type="number"
+                        id="t-price"
+                        class="form-control glass-input py-2"
+                        style="font-size: 12px; font-weight: 700"
+                />
+                <div class="form-check mt-2">
+                    <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="t-free"
+                            onchange="toggleFreeTicket(this)"
+                    />
+                    <label
+                            class="form-check-label text-pink"
+                            for="t-free"
+                            style="font-size: 10px; font-weight: 800; cursor: pointer"
+                    >Free Admission Ticket</label
+                    >
+                </div>
+            </div>
+            <div class="col-6">
+                <label class="field-label">Release Quantity</label>
+                <input
+                        type="number"
+                        id="t-qty"
+                        class="form-control glass-input py-2"
+                        style="font-size: 12px; font-weight: 700"
+                />
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="field-label">Tier Benefits &amp; Description</label>
+            <textarea
+                    id="t-desc"
+                    rows="2"
+                    class="form-control glass-input py-2"
+                    style="font-size: 12px; font-weight: 700"
+                    placeholder="Ticket includes special gift set, complimentary drinks, priority lane…"
+            ></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <button
+                    type="button"
+                    class="btn btn-ghost px-3 py-2"
+                    onclick="closeTicketModal()"
+            >
+                Cancel
+            </button>
+            <button
+                    type="button"
+                    class="btn btn-gradient px-4 py-2"
+                    onclick="handleAddTicket()"
+            >
+                Confirm
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    /* ══════════════════════════════════════════
+ STATE
+══════════════════════════════════════════ */
+    const LOCATIONS = {
+        secc: {
+            placeName: "Saigon Exhibition and Convention Center (SECC) - Hall A",
+            street: "799 Nguyen Van Linh",
+            district: "District 7",
+            province: "Ho Chi Minh City",
+            zones: [
+                "Standee Area A (VIP)",
+                "Standee Area B",
+                "Standard Standee Area",
+                "Gold Zone Pit",
+            ],
+        },
+        phutho: {
+            placeName: "Phu Tho Indoor Stadium",
+            street: "1 Lu Gia",
+            district: "District 11",
+            province: "Ho Chi Minh City",
+            zones: [
+                "VIP Floor Seats",
+                "Stand A (Ground floor)",
+                "Stand B (1st Floor)",
+                "Stand C (2nd Floor)",
+            ],
+        },
+        hoabinh: {
+            placeName: "Hoa Binh Theatre",
+            street: "240 3 Thang 2 Street",
+            district: "District 10",
+            province: "Ho Chi Minh City",
+            zones: [
+                "VIP Seats 1st Floor",
+                "Standard Seats 1st Floor",
+                "Auditorium Level 2 - Front",
+                "Auditorium Level 2 - Back",
+            ],
+        },
+        "national-convention": {
+            placeName: "National Convention Center (NCC)",
+            street: "Gate 1, Thang Long Boulevard",
+            district: "Nam Tu Liem District",
+            province: "Hanoi",
+            zones: [
+                "VIP Stage Front",
+                "Stand 1st Floor Center",
+                "Stand 2nd Floor",
+                "Left/Right Wings",
+            ],
+        },
+        "hanoi-opera": {
+            placeName: "Hanoi Opera House",
+            street: "1 Trang Tien",
+            district: "Hoan Kiem District",
+            province: "Hanoi",
+            zones: [
+                "VIP Center Seats",
+                "Mezzanine Royal Box",
+                "Wing Premium Seats",
+                "Level 3 General Admission",
+            ],
+        },
+        mydinh: {
+            placeName: "My Dinh National Stadium",
+            street: "Le Duc Tho Street",
+            district: "Nam Tu Liem District",
+            province: "Hanoi",
+            zones: [
+                "VIP Stand A - Center",
+                "A-Standard Seats",
+                "Stand B - Standee",
+                "Stand C/D",
+            ],
+        },
+        tienson: {
+            placeName: "Tien Son Sports Complex",
+            street: "Phan Dang Luu",
+            district: "District of Hai Chau",
+            province: "Da Nang",
+            zones: ["VIP Field Area", "1st Floor Stands", "2nd Floor Stands"],
+        },
+    };
+
+    let state = {
+        currentStep: 1,
+        bannerVertical: "",
+        bannerHorizontal: "",
+        additionalImages: [],
+        selectedVenueId: "",
+        showtimes: [],
+        selectedShowtimeId: null,
+    };
+
+    /* ══════════════════════════════════════════
+ STEP NAVIGATION
+══════════════════════════════════════════ */
+    function goToStep(n) {
+        if (n === 2 && !document.getElementById("event-name").value.trim())
+            return;
+        state.currentStep = n;
+        renderStep();
+    }
+
+    function handleNext() {
+        const name = document.getElementById("event-name").value.trim();
+        if (!name) {
+            showError("Please enter the event name before proceeding!");
+            return;
+        }
+        const venueId = document.getElementById("venue-select").value;
+        if (!venueId) {
+            showError("Please select the event venue before proceeding!");
+            return;
+        }
+        clearError();
+        state.currentStep = 2;
+        renderStep();
+    }
+
+    function handleBack() {
+        if (state.currentStep > 1) {
+            state.currentStep--;
+            renderStep();
+        }
+    }
+
+    function renderStep() {
+        const s1 = document.getElementById("step1");
+        const s2 = document.getElementById("step2");
+        const btnBack = document.getElementById("btn-back");
+        const btnContinue = document.getElementById("btn-continue");
+        const btnPublish = document.getElementById("btn-publish");
+        const fBack = document.getElementById("footer-back");
+        const fContinue = document.getElementById("footer-continue");
+        const fPublish = document.getElementById("footer-publish");
+        const footerLabel = document.getElementById("footer-label");
+        const pill1 = document.getElementById("pill-1");
+        const pill2 = document.getElementById("pill-2");
+        const label1 = document.getElementById("label-1");
+        const label2 = document.getElementById("label-2");
+
+        if (state.currentStep === 1) {
+            show(s1);
+            hide(s2);
+            hide(btnBack);
+            show(btnContinue);
+            hide(btnPublish);
+            hide(fBack);
+            show(fContinue);
+            hide(fPublish);
+            document.getElementById("progress-bar").style.width = "50%";
+            footerLabel.textContent = "Step 1 of 2 — Event Info";
+            pill1.className = "step-pill active";
+            pill1.textContent = "1";
+            pill2.className = "step-pill idle";
+            pill2.textContent = "2";
+            label1.style.color = "var(--pink)";
+            label1.style.fontWeight = "900";
+            label2.style.color = "rgba(255,255,255,.5)";
+            label2.style.fontWeight = "700";
+        } else {
+            hide(s1);
+            show(s2);
+            show(btnBack);
+            hide(btnContinue);
+            show(btnPublish);
+            show(fBack);
+            hide(fContinue);
+            show(fPublish);
+            document.getElementById("progress-bar").style.width = "100%";
+            footerLabel.textContent = "Step 2 of 2 — Showtimes & Tickets";
+            pill1.className = "step-pill done";
+            pill1.textContent = "✓";
+            pill2.className = "step-pill active";
+            pill2.textContent = "2";
+            label1.style.color = "rgba(255,255,255,.5)";
+            label1.style.fontWeight = "700";
+            label2.style.color = "var(--pink)";
+            label2.style.fontWeight = "900";
+            renderShowtimes();
+        }
+    }
+
+    /* ══════════════════════════════════════════
+ FILE UPLOADS
+══════════════════════════════════════════ */
+    function handleFileUpload(input, target) {
+        const file = input.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        setImageToZone(url, target);
+    }
+
+    function handleUrlInput(input, target) {
+        setImageToZone(input.value.trim(), target);
+    }
+
+    function setImageToZone(url, target) {
+        if (!url) return;
+        if (target === "vertical") {
+            state.bannerVertical = url;
+            document.getElementById("url-vertical").value = url;
+        } else {
+            state.bannerHorizontal = url;
+            document.getElementById("url-horizontal").value = url;
+        }
+
+        const zoneId =
+            target === "vertical" ? "zone-vertical" : "zone-horizontal";
+        const phId =
+            target === "vertical"
+                ? "zone-vertical-placeholder"
+                : "zone-horizontal-placeholder";
+        const zone = document.getElementById(zoneId);
+        hide(document.getElementById(phId));
+
+        let img = zone.querySelector("img.preview-img");
+        if (!img) {
+            img = document.createElement("img");
+            img.className = "preview-img";
+            zone.insertBefore(img, zone.firstChild);
+        }
+        img.src = url;
+    }
+
+    function handleGalleryUpload(input) {
+        const files = input.files;
+        for (const file of files) {
+            state.additionalImages.push(URL.createObjectURL(file));
+        }
+        renderGallery();
+    }
+
+    function addGalleryUrl() {
+        const val = document.getElementById("temp-image-url").value.trim();
+        if (!val) return;
+        state.additionalImages.push(val);
+        document.getElementById("temp-image-url").value = "";
+        renderGallery();
+    }
+
+    function removeGalleryImage(idx) {
+        state.additionalImages.splice(idx, 1);
+        renderGallery();
+    }
+
+    function renderGallery() {
+        const grid = document.getElementById("gallery-grid");
+        const count = document.getElementById("gallery-count");
+        count.textContent = state.additionalImages.length + " images added";
+
+        if (state.additionalImages.length === 0) {
+            hide(grid);
+            return;
+        }
+        show(grid);
+        grid.innerHTML = state.additionalImages
+            .map(
+                (src, i) => `
+    <div class="col-4 col-sm-3 col-md-2">
+      <div class="gallery-item">
+        <img src="${src}" alt="Gallery ${i + 1}">
+        <button type="button" class="del-btn" onclick="removeGalleryImage(${i})">
+          <span class="material-symbols-outlined" style="font-size:13px;">close</span>
+        </button>
+      </div>
+    </div>
+  `,
+            )
+            .join("");
+    }
+
+    /* ══════════════════════════════════════════
+ VENUE
+══════════════════════════════════════════ */
+    function handleVenueChange(sel) {
+        state.selectedVenueId = sel.value;
+        const venueCard = document.getElementById("venue-card");
+        const venueEmpty = document.getElementById("venue-empty");
+
+        if (!sel.value) {
+            hide(venueCard);
+            show(venueEmpty);
+            return;
+        }
+        const loc = LOCATIONS[sel.value];
+        document.getElementById("vc-name").textContent = loc.placeName;
+        document.getElementById("vc-street").textContent = loc.street;
+        document.getElementById("vc-district").textContent = loc.district;
+        document.getElementById("vc-province").textContent = loc.province;
+        show(venueCard);
+        hide(venueEmpty);
+    }
+
+    /* ══════════════════════════════════════════
+ SHOWTIMES
+══════════════════════════════════════════ */
+    function openShowtimeModal() {
+        document.getElementById("m-date").value = "";
+        document.getElementById("m-start").value = "";
+        document.getElementById("m-end").value = "";
+        show(document.getElementById("modal-showtime"));
+    }
+    function closeShowtimeModal() {
+        hide(document.getElementById("modal-showtime"));
+    }
+
+    function handleAddShowtime() {
+        const d = document.getElementById("m-date").value;
+        const s = document.getElementById("m-start").value;
+        const e = document.getElementById("m-end").value;
+        if (!d || !s || !e) {
+            alert("Please fill in all showtime fields.");
+            return;
+        }
+
+        const slot = {
+            id: "slot-" + Date.now(),
+            date: d,
+            startTime: s,
+            endTime: e,
+            ticketTiers: [],
+        };
+        state.showtimes.push(slot);
+        state.selectedShowtimeId = slot.id;
+        closeShowtimeModal();
+        renderShowtimes();
+    }
+
+    function deleteShowtime(slotId) {
+        state.showtimes = state.showtimes.filter((s) => s.id !== slotId);
+        if (state.selectedShowtimeId === slotId) {
+            state.selectedShowtimeId =
+                state.showtimes.length > 0 ? state.showtimes[0].id : null;
+        }
+        renderShowtimes();
+    }
+
+    function selectShowtime(slotId) {
+        state.selectedShowtimeId = slotId;
+        renderShowtimes();
+    }
+
+    function renderShowtimes() {
+        const empty = document.getElementById("showtimes-empty");
+        const tabs = document.getElementById("showtime-tabs");
+        const detail = document.getElementById("showtime-detail");
+
+        if (state.showtimes.length === 0) {
+            show(empty);
+            hide(tabs);
+            hide(detail);
+            return;
+        }
+        hide(empty);
+        show(tabs);
+        show(detail);
+
+        // Tabs
+        tabs.innerHTML = state.showtimes
+            .map(
+                (slot, i) => `
+    <button type="button" class="showtime-tab ${slot.id === state.selectedShowtimeId ? "active" : ""}"
+      onclick="selectShowtime('${slot.id}')">
+      <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;margin-right:4px;">calendar_month</span>
+      Show #${i + 1}: ${slot.date} (${slot.startTime})
+    </button>
+  `,
+            )
+            .join("");
+
+        // Detail
+        const slot = state.showtimes.find(
+            (s) => s.id === state.selectedShowtimeId,
+        );
+        if (!slot) {
+            hide(detail);
+            return;
+        }
+
+        detail.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center pb-3 mb-4" style="border-bottom:1px solid rgba(255,255,255,.06);">
+      <div class="d-flex align-items-center gap-2" style="color:rgba(255,255,255,.8);">
+        <span class="material-symbols-outlined text-pink" style="font-size:18px;">schedule</span>
+        <span style="font-size:10.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;">
+          Ticket Layout &amp; Pricing — ${slot.date} • ${slot.startTime} – ${slot.endTime}
+        </span>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-gradient px-3 py-1" style="font-size:11px;" onclick="openTicketModal('${slot.id}')">
+          Add Ticket +
+        </button>
+        <button type="button" class="btn-danger-soft" onclick="deleteShowtime('${slot.id}')" title="Delete showtime">
+          <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+        </button>
+      </div>
+    </div>
+
+    ${
+            slot.ticketTiers.length === 0
+                ? `<div class="text-center py-4" style="border:1px dashed var(--border);border-radius:12px;font-size:12px;color:rgba(255,255,255,.3);">
+           No tickets in this section. Click "Add Ticket +" to configure.
+         </div>`
+                : `<div class="row g-3">
+          ${slot.ticketTiers
+                    .map(
+                        (t) => `
+            <div class="col-12 col-md-6">
+              <div class="ticket-card">
+                <button type="button" class="btn-danger-soft" style="position:absolute;top:10px;right:10px;width:26px;height:26px;"
+                  onclick="deleteTicket('${slot.id}','${t.id}')" title="Delete ticket">
+                  <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+                </button>
+
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                  <span class="badge-tier badge-label">TICKET TIER</span>
+                  ${t.zone ? `<span class="badge-tier badge-zone"><span class="material-symbols-outlined" style="font-size:10px;vertical-align:middle;">layers</span> ${t.zone}</span>` : ""}
+                  ${t.isFree ? `<span class="badge-tier badge-free">FREE</span>` : ""}
+                </div>
+                <h4 style="font-size:13px;font-weight:800;margin-bottom:4px;">${t.name}</h4>
+                <p style="font-size:10px;color:rgba(255,255,255,.38);line-height:1.6;max-width:90%;margin-bottom:0;">${t.description}</p>
+
+                <div class="d-flex justify-content-between align-items-end mt-3 pt-2" style="border-top:1px solid rgba(255,255,255,.06);">
+                  <div>
+                    <span style="font-size:11px;color:rgba(255,255,255,.4);">Sale Price</span>
+                    <strong class="d-block font-mono text-pink" style="font-size:14px;">
+                      ${t.isFree ? "Free" : t.price.toLocaleString("vi-VN") + " ₫"}
+                    </strong>
+                  </div>
+                  <div class="text-end">
+                    <span style="font-size:11px;color:rgba(255,255,255,.4);">Allotted Qty</span>
+                    <strong class="d-block font-mono" style="font-size:13px;color:rgba(255,255,255,.8);">${t.totalQuantity} tickets</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `,
+                    )
+                    .join("")}
+         </div>`
+        }
+  `;
+    }
+
+    /* ══════════════════════════════════════════
+ TICKETS
+══════════════════════════════════════════ */
+    let _activeSlotForTicket = null;
+
+    function openTicketModal(slotId) {
+        _activeSlotForTicket = slotId;
+
+        // Populate zone options
+        const zoneSelect = document.getElementById("t-zone");
+        const loc = state.selectedVenueId
+            ? LOCATIONS[state.selectedVenueId]
+            : null;
+        const zones = loc
+            ? loc.zones
+            : ["VIP Zone", "Standard Zone", "General Admission"];
+        zoneSelect.innerHTML =
+            `<option value="">-- Please select zone --</option>` +
+            zones.map((z) => `<option value="${z}">${z}</option>`).join("");
+
+        // Reset fields
+        document.getElementById("t-name").value = "";
+        document.getElementById("t-price").value = "";
+        document.getElementById("t-qty").value = "";
+        document.getElementById("t-desc").value = "";
+        document.getElementById("t-free").checked = false;
+        document.getElementById("t-price").disabled = false;
+
+        show(document.getElementById("modal-ticket"));
+    }
+    function closeTicketModal() {
+        hide(document.getElementById("modal-ticket"));
+    }
+
+    function toggleFreeTicket(cb) {
+        document.getElementById("t-price").disabled = cb.checked;
+        if (cb.checked) document.getElementById("t-price").value = "";
+    }
+
+    function handleAddTicket() {
+        if (!_activeSlotForTicket) return;
+        const isFree = document.getElementById("t-free").checked;
+        const tier = {
+            id: "tkt-" + Date.now(),
+            name: document.getElementById("t-name").value || "Ticket Tier",
+            price: isFree
+                ? 0
+                : Number(document.getElementById("t-price").value) || 0,
+            isFree,
+            totalQuantity: Number(document.getElementById("t-qty").value) || 100,
+            description: document.getElementById("t-desc").value,
+            zone: document.getElementById("t-zone").value,
+        };
+
+        state.showtimes = state.showtimes.map((slot) => {
+            if (slot.id === _activeSlotForTicket) {
+                return { ...slot, ticketTiers: [...slot.ticketTiers, tier] };
+            }
+            return slot;
+        });
+
+        closeTicketModal();
+        renderShowtimes();
+    }
+
+    function deleteTicket(slotId, ticketId) {
+        state.showtimes = state.showtimes.map((slot) => {
+            if (slot.id === slotId)
+                return {
+                    ...slot,
+                    ticketTiers: slot.ticketTiers.filter((t) => t.id !== ticketId),
+                };
+            return slot;
+        });
+        renderShowtimes();
+    }
+
+    /* ══════════════════════════════════════════
+ SUBMIT / SAVE
+══════════════════════════════════════════ */
+    function handleSubmit() {
+        const name = document.getElementById("event-name").value.trim();
+        if (!name) {
+            showError(
+                "Event name is empty. Please return to Step 1 and fill in details.",
+            );
+            return;
+        }
+
+        let capacity = 0,
+            revenue = 0;
+        state.showtimes.forEach((slot) => {
+            slot.ticketTiers.forEach((t) => {
+                capacity += t.totalQuantity;
+                revenue += t.price * t.totalQuantity;
+            });
+        });
+        if (capacity === 0) capacity = 1500;
+
+        const firstShow = state.showtimes[0];
+        const displayDate = firstShow ? firstShow.date : "2026-05-28";
+        const displayTimeline = firstShow
+            ? `${firstShow.date} • ${firstShow.startTime} – ${firstShow.endTime}`
+            : "2026-05-28 • 18:00 – 23:00";
+        const venueId = document.getElementById("venue-select").value;
+        const loc = venueId ? LOCATIONS[venueId] : null;
+        const location = loc
+            ? `${loc.placeName}, ${loc.street}, ${loc.district}, ${loc.province}`
+            : "Online Event";
+
+        const newEvent = {
+            name,
+            category: document.getElementById("event-category").value,
+            status: "On Sale",
+            date: displayDate,
+            timeLine: displayTimeline,
+            location,
+            capacity,
+            totalTickets: capacity,
+            description: document.getElementById("event-description").value,
+            expectedRevenue:
+                revenue > 0
+                    ? `${(revenue / 1000000).toFixed(2)}M VND`
+                    : "350.00M VND",
+            organizerName: "Apolo Corp",
+            organizerPhone: "1900 6408",
+            bannerImage: state.bannerHorizontal || state.bannerVertical,
+            additionalImages: state.additionalImages,
+        };
+
+        console.log("New event to save:", newEvent);
+        alert(
+            `✅ Event "${name}" published successfully!\n\nThis wizard is a standalone HTML demo. In the real app, this data is passed to the parent via onSave().`,
+        );
+    }
+
+    function handleSaveDraft() {
+        const name =
+            document.getElementById("event-name").value.trim() || "Unnamed Event";
+        alert(`📝 Draft saved for "${name}".`);
+    }
+
+    function closeWizard() {
+        if (
+            confirm(
+                "Exit the event creation wizard? All unsaved changes will be lost.",
+            )
+        ) {
+            document.getElementById("wizard").style.display = "none";
+            alert("Wizard closed. In the real app, this calls onClose().");
+        }
+    }
+
+    /* ══════════════════════════════════════════
+ VALIDATION UI
+══════════════════════════════════════════ */
+    function showError(msg) {
+        const box = document.getElementById("error-box");
+        document.getElementById("error-msg").textContent = msg;
+        show(box);
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function clearError() {
+        hide(document.getElementById("error-box"));
+    }
+
+    /* ══════════════════════════════════════════
+ HELPERS
+══════════════════════════════════════════ */
+    function show(el) {
+        if (el) el.style.removeProperty("display");
+    }
+    function hide(el) {
+        if (el) el.style.setProperty("display", "none", "important");
+    }
+</script>
 </body>
 </html>
