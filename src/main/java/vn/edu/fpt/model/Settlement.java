@@ -34,6 +34,9 @@ public class Settlement extends BaseAuditEntity {
     @Column(name = "payout_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal payoutAmount;
 
+    @Column(name = "payment_method", length = 50)
+    private String paymentMethod;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private SettlementStatus status;
