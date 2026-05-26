@@ -1,6 +1,7 @@
 package vn.edu.fpt.service;
 
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.model.Address;
 import vn.edu.fpt.model.Seat;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.VenueZone;
@@ -28,8 +29,14 @@ public class VenueService {
         // 1. Tạo Venue
         Venue venue = new Venue();
         venue.setVenueName(request.getVenueName());
-        venue.setAddress(request.getAddress());
-        venue.setCity(request.getCity());
+        String streetAddress = request.getStreetAddress();
+        String city = request.getCity();
+        String ward = request.getWard();
+        Address address = new Address();
+        address.setStreetAddress(streetAddress);
+        address.setCity(city);
+        address.setWard(ward);
+        venue.setAddress(address);
         venue.setDescription(request.getDescription());
         venue.setImageUrl(request.getImageUrl());
 
