@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EventHub – Bảng Điều Khiển</title>
+    <title>EventHub – Dashboard</title>
 
     <!-- Bootstrap 5 -->
     <link
@@ -727,7 +727,7 @@
                 margin-top: 6px;
               "
                 >
-                    Portal Ban Tổ Chức
+                    Organizer Portal
                 </div>
             </div>
         </div>
@@ -742,31 +742,29 @@
     <!-- Nav -->
     <nav class="flex-grow-1 d-flex flex-column gap-1 overflow-auto pe-1">
         <button class="nav-btn active" data-tab="dashboard">
-            <span class="material-symbols-outlined">dashboard</span> Bảng Điều
-            Khiển
+            <span class="material-symbols-outlined">dashboard</span> Dashboard
         </button>
         <button class="nav-btn" data-tab="organizer">
-            <span class="material-symbols-outlined">account_circle</span> Tài
-            Khoản BTC
+            <span class="material-symbols-outlined">account_circle</span>
+            Organizer Account
         </button>
         <button class="nav-btn" data-tab="events">
-            <span class="material-symbols-outlined">calendar_today</span> Quản Lý
-            Sự Kiện
+            <span class="material-symbols-outlined">calendar_today</span> Event
+            Management
         </button>
         <button class="nav-btn" data-tab="tickets">
-            <span class="material-symbols-outlined">confirmation_number</span> Cấu
-            Hình Vé
+            <span class="material-symbols-outlined">confirmation_number</span>
+            Ticket Configuration
         </button>
         <button class="nav-btn" data-tab="vouchers">
-            <span class="material-symbols-outlined">local_offer</span> Mã Giảm Giá
+            <span class="material-symbols-outlined">local_offer</span> Vouchers
         </button>
         <button class="nav-btn" data-tab="orders">
-            <span class="material-symbols-outlined">shopping_basket</span> Đơn
-            Hàng & Vé
+            <span class="material-symbols-outlined">shopping_basket</span> Orders
+            & Tickets
         </button>
         <button class="nav-btn" data-tab="staff">
-            <span class="material-symbols-outlined">groups</span> Phân Quyền Nhân
-            Sự
+            <span class="material-symbols-outlined">groups</span> Staff Management
         </button>
     </nav>
 
@@ -779,13 +777,10 @@
           <span class="material-symbols-outlined" style="font-size: 18px"
           >add</span
           >
-            Tạo Sự Kiện Mới
+            Create New Event
         </button>
-        <button class="nav-btn" data-tab="settings">
-            <span class="material-symbols-outlined">settings</span> Cài Đặt
-        </button>
-        <button class="nav-btn" data-tab="help">
-            <span class="material-symbols-outlined">help</span> Trợ Giúp
+        <button class="nav-btn" data-tab="Logout ">
+            <span class="material-symbols-outlined">Logout</span> Logout
         </button>
     </div>
 </aside>
@@ -818,7 +813,7 @@
                     id="searchInput"
                     type="text"
                     class="glass-input"
-                    placeholder="Tìm kiếm..."
+                    placeholder="Search..."
             />
         </div>
 
@@ -826,7 +821,7 @@
         <div class="d-flex align-items-center gap-3 ms-auto">
             <!-- Live badge -->
             <div class="live-badge d-none d-sm-flex">
-                <span class="pulse-dot"></span> Hỗ Trợ 24/7
+                <span class="pulse-dot"></span> Support 24/7
             </div>
 
             <!-- Notifications -->
@@ -844,14 +839,14 @@
                             style="border-bottom: 1px solid var(--border)"
                     >
                 <span class="text-white fw-bold" style="font-size: 13.5px"
-                >Thông Báo Mới Nhất</span
+                >Latest Notifications</span
                 >
                         <button
                                 onclick="clearNotifs()"
                                 class="btn p-0 text-danger"
                                 style="font-size: 11px; font-weight: 700"
                         >
-                            Xóa tất cả
+                            Clear all
                         </button>
                     </div>
                     <div
@@ -898,7 +893,7 @@
             <div
                     id="hero-banner"
                     class="mb-4"
-                    onclick="alert('Xem chi tiết sự kiện: Summer Music Fest 2024')"
+                    onclick="alert('View event details: Summer Music Fest 2024')"
             >
                 <div class="hero-blur-pink"></div>
                 <div class="hero-blur-purple"></div>
@@ -920,11 +915,9 @@
                 <!-- Left content -->
                 <div class="hero-content">
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                <span class="badge-sale"
-                >⭐ BANNER QUẢNG CÁO SỰ KIỆN NỔI BẬT</span
-                >
+                        <span class="badge-sale">⭐ ⭐ FEATURED EVENT AD CAMPAIGN</span>
                         <span class="badge-live">
-                  <span class="pulse-dot"></span> ĐANG BÁN VÉ CHÍNH THỨC
+                  <span class="pulse-dot"></span> OFFICIAL TICKETS ON SALE
                 </span>
                     </div>
 
@@ -978,9 +971,9 @@
                   -webkit-box-orient: vertical;
                 "
                     >
-                        Chào đón sự kiện âm nhạc lớn nhất mùa hè 2024! Summer Music Fest
-                        mang đến trải nghiệm âm nhạc đỉnh cao với sự góp mặt của các
-                        nghệ sĩ hàng đầu trong và ngoài nước.
+                        Welcome to the biggest music event of Summer 2024! Summer Music
+                        Fest delivers a world-class experience featuring top local and
+                        international artists performing live.
                     </p>
                 </div>
 
@@ -992,15 +985,15 @@
                         style="font-size: 14px; color: #34d399"
                 >trending_up</span
                 >
-                Lượng tương tác tăng mạnh:
+                Engagement surge:
                 <strong class="text-white ms-1"
-                >+1,240 khách hàng quan tâm hôm nay</strong
+                >+1,240 prospective customers today</strong
                 >
               </span>
                     <span
                             class="d-none d-sm-block font-mono"
                             style="color: #475569; letter-spacing: 0.05em"
-                    >Hệ thống xử lý vé tự động 24/7 ổn định</span
+                    >Automated ticket engine running stably 24/7</span
                     >
                 </div>
             </div>
@@ -1021,13 +1014,13 @@
                       letter-spacing: 0.12em;
                     "
                             >
-                                Tổng Doanh Thu
+                                Total Revenue
                             </div>
                             <div
                                     class="font-display fw-black text-white mt-1"
                                     style="font-size: clamp(22px, 2.5vw, 30px)"
                             >
-                                4.13 tỷ ₫
+                                ₫4.13 Billion
                             </div>
                             <span class="tag-green mt-2">
                     <span
@@ -1035,7 +1028,7 @@
                             style="font-size: 13px"
                     >trending_up</span
                     >
-                    +18.4% tháng này
+                    +18.4% this month
                   </span>
                         </div>
                         <div class="kpi-icon">
@@ -1062,13 +1055,13 @@
                       letter-spacing: 0.12em;
                     "
                             >
-                                Tổng Vé Đã Bán
+                                Total Tickets Sold
                             </div>
                             <div
                                     class="font-display fw-black text-white mt-1"
                                     style="font-size: clamp(22px, 2.5vw, 30px)"
                             >
-                                15,850 vé
+                                15,850 tickets
                             </div>
                             <span class="tag-green mt-2">
                     <span
@@ -1076,7 +1069,7 @@
                             style="font-size: 13px"
                     >confirmation_number</span
                     >
-                    85% hiệu suất lắp đầy
+                    85% avg. fill rate
                   </span>
                         </div>
                         <div class="kpi-icon">
@@ -1103,7 +1096,7 @@
                       letter-spacing: 0.12em;
                     "
                             >
-                                Tỷ Lệ Chuyển Đổi
+                                Conversion Rate
                             </div>
                             <div
                                     class="font-display fw-black text-white mt-1"
@@ -1117,7 +1110,7 @@
                             style="font-size: 13px"
                     >bolt</span
                     >
-                    Chiến dịch Sôi Động
+                    Active Campaign
                   </span>
                         </div>
                         <div class="kpi-icon">
@@ -1144,7 +1137,7 @@
                                         class="font-display fw-black text-white"
                                         style="font-size: 15px"
                                 >
-                                    Doanh Thu Chi Tiết Theo Tuần
+                                    Weekly Revenue Breakdown
                                 </div>
                                 <div
                                         style="
@@ -1153,7 +1146,7 @@
                         margin-top: 4px;
                       "
                                 >
-                                    Phân tích dòng tiền trực quan theo đơn vị Triệu Đồng (VND)
+                                    Visual cash flow analysis in Million VND
                                 </div>
                             </div>
                             <div
@@ -1170,7 +1163,7 @@
                             style="font-size: 14px"
                     >calendar_today</span
                     >
-                                Tuần 24 (Hiện tại)
+                                Week 24 (Current)
                             </div>
                         </div>
 
@@ -1188,8 +1181,9 @@
                     >insights</span
                     >
                                 <span
-                                >Lượt mua đạt đỉnh vào <strong>Thứ Tư (T4)</strong> nhờ
-                      đợt mở bán vé VIP độc quyền.</span
+                                >Ticket purchases peaked on
+                      <strong>Wednesday (Wed)</strong> thanks to the exclusive
+                      VIP early-bird sale.</span
                                 >
                             </div>
                             <button
@@ -1197,7 +1191,7 @@
                                     style="font-size: 12px; white-space: nowrap"
                                     onclick="alert('Chuyển sang trang Voucher')"
                             >
-                                Xem Voucher →
+                                View Vouchers →
                             </button>
                         </div>
                     </div>
@@ -1213,7 +1207,7 @@
                                     class="font-display fw-black text-white"
                                     style="font-size: 15px"
                             >
-                                Cảnh báo & Hoạt Động
+                                Alerts & Activity
                             </div>
                             <span
                                     class="text-uppercase fw-black"
@@ -1226,7 +1220,7 @@
                       border-radius: 8px;
                       letter-spacing: 0.08em;
                     "
-                            >Mạng Lưới</span
+                            >Network</span
                             >
                         </div>
 
@@ -1237,9 +1231,9 @@
 
                         <button
                                 class="btn-orders mt-4"
-                                onclick="alert('Chuyển sang trang Đơn Hàng')"
+                                onclick="alert('Navigate to Orders page')"
                         >
-                            Quản Lý Toàn Bộ Giao Dịch
+                            Manage All Transactions
                         </button>
                     </div>
                 </div>
@@ -1255,20 +1249,20 @@
                                 class="font-display fw-black text-white"
                                 style="font-size: 15px"
                         >
-                            Chiến dịch Đang Hoạt Động
+                            Active Campaigns
                         </div>
                         <div
                                 style="font-size: 11px; color: var(--muted); margin-top: 4px"
                         >
-                            Danh sách các đại nhạc hội & sự kiện đang mở bán
+                            Overview of live concerts & events currently on sale
                         </div>
                     </div>
                     <button
                             class="btn p-0 fw-black"
                             style="font-size: 12px; color: var(--pink)"
-                            onclick="alert('Xem tất cả sự kiện')"
+                            onclick="alert('View all events')"
                     >
-                        Xem tất cả (6) →
+                        View all (6) →
                     </button>
                 </div>
 
@@ -1351,16 +1345,16 @@
     ];
 
     const weeklyRevenue = [
-        { day: "T2", amount: 25 },
-        { day: "T3", amount: 48 },
-        { day: "T4", amount: 125 },
-        { day: "T5", amount: 62 },
-        { day: "T6", amount: 88 },
-        { day: "T7", amount: 40 },
-        { day: "CN", amount: 112 },
+        { day: "Mon", amount: 25 },
+        { day: "Tue", amount: 48 },
+        { day: "Wed", amount: 125 },
+        { day: "Thu", amount: 62 },
+        { day: "Fri", amount: 88 },
+        { day: "Sat", amount: 40 },
+        { day: "Sun", amount: 112 },
     ];
 
-    let selectedDay = "T4";
+    let selectedDay = "Wed";
     let notifList = [...notifications];
 
     /* ════════════════════════════════════════════
@@ -1376,7 +1370,7 @@
                 return `
       <div class="bar-col ${isSelected ? "selected" : ""}" onclick="selectDay('${item.day}')">
         <div style="position:relative;width:100%;display:flex;justify-content:center;">
-          <div class="bar-tooltip">${item.amount} Triệu ₫</div>
+          <div class="bar-tooltip">${item.amount}M ₫</div>
           <div class="bar-rect" style="height:${barH}px;"></div>
         </div>
         <span class="bar-label">${item.day}</span>
@@ -1405,7 +1399,7 @@
         dot.style.display = notifList.length ? "block" : "none";
         if (!notifList.length) {
             el.innerHTML =
-                '<div class="text-center py-4 text-secondary" style="font-size:12px;">Không có thông báo mới.</div>';
+                '<div class="text-center py-4 text-secondary" style="font-size:12px;">No new notifications.</div>';
             return;
         }
         el.innerHTML = notifList
@@ -1432,7 +1426,7 @@
         const el = document.getElementById("notifList");
         if (!notifList.length) {
             el.innerHTML =
-                '<div class="text-center py-4 text-secondary" style="font-size:12px;">Không có thông báo mới.</div>';
+                '<div class="text-center py-4 text-secondary" style="font-size:12px;">No new notifications.</div>';
             return;
         }
         el.innerHTML = notifList
@@ -1462,11 +1456,11 @@
                 const isOngoing = evt.status === "Ongoing";
                 return `
       <div class="col-12 col-md-6 col-lg-4">
-        <div class="event-card" onclick="alert('Xem chi tiết: ${evt.name}')">
+        <div class="event-card" onclick="alert('View details: ${evt.name}')">
           <div class="event-card-img">
             <img src="${evt.bannerImage}" alt="${evt.name}" referrerpolicy="no-referrer" />
             <span class="status-badge ${isOngoing ? "status-ongoing" : "status-sale"}">
-              ${isOngoing ? "Đang diễn ra" : "On Sale"}
+              ${isOngoing ? "Ongoing" : "On Sale"}
             </span>
           </div>
           <div class="p-3" style="space-y:12px;">
@@ -1478,7 +1472,7 @@
             </div>
             <div class="mt-3 pt-2" style="border-top:1px solid rgba(255,255,255,.05);">
               <div class="d-flex justify-content-between mb-1" style="font-size:11px;color:var(--muted);">
-                <span>Đã bán: <strong class="text-white fw-black">${evt.ticketsSold.toLocaleString("vi-VN")}</strong> / ${evt.capacity.toLocaleString("vi-VN")} vé</span>
+                <span>Sold: <strong class="text-white fw-black">${evt.ticketsSold.toLocaleString("en-US")}</strong> / ${evt.capacity.toLocaleString("en-US")} tickets</span>
                 <span class="fw-bold" style="color:var(--pink);">${pct}%</span>
               </div>
               <div class="progress-bar-custom">
