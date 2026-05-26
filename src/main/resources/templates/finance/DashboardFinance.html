@@ -151,35 +151,35 @@
             <div class="sidebar-subtitle">Settlement Management</div>
         </div>
         <nav class="sidebar-nav">
-            <a class="nav-item active" href="DashboardFinance.html">
+            <a class="nav-item active" th:href="@{/finance/dashboard}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item" href="ListEndedEvents.html">
+            <a class="nav-item" th:href="@{/finance/events}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
-            <a class="nav-item" href="CreateSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlement/create}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item" href="ListSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlements}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
-            <a class="nav-item" href="UpdateProfileFinance.html">
+            <a class="nav-item" th:href="@{/finance/profile}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
         </nav>
         <div class="sidebar-footer">
-            <div class="user-info">
+            <div class="user-info" th:if="${activeUser != null}">
                 <div class="avatar">
                     <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name" th:text="${activeUser.firstName + ' ' + activeUser.lastName}">Sarah Anderson</div>
+                    <div class="user-role" th:text="${activeUser.role.description}">Finance Officer</div>
                 </div>
             </div>
         </div>
@@ -195,22 +195,22 @@
             <div class="metric-card">
                 <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
                 <div class="metric-label">Total Platform Revenue</div>
-                <div class="metric-row"><span class="metric-value">$2,847,392</span><span class="metric-change">+12.5%</span></div>
+                <div class="metric-row"><span class="metric-value" th:text="${'$' + #numbers.formatDecimal(stats.totalPlatformRevenue, 1, 'COMMA', 2, 'POINT')}">$0.00</span><span class="metric-change">+12.5%</span></div>
             </div>
             <div class="metric-card">
                 <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
                 <div class="metric-label">Platform Fees Collected</div>
-                <div class="metric-row"><span class="metric-value">$284,739</span><span class="metric-change">+8.2%</span></div>
+                <div class="metric-row"><span class="metric-value" th:text="${'$' + #numbers.formatDecimal(stats.platformFeesCollected, 1, 'COMMA', 2, 'POINT')}">$0.00</span><span class="metric-change">+8.2%</span></div>
             </div>
             <div class="metric-card">
                 <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
                 <div class="metric-label">Pending Settlements Amount</div>
-                <div class="metric-row"><span class="metric-value">$156,820</span><span class="metric-change">23 pending</span></div>
+                <div class="metric-row"><span class="metric-value" th:text="${'$' + #numbers.formatDecimal(stats.pendingSettlementsAmount, 1, 'COMMA', 2, 'POINT')}">$0.00</span><span class="metric-change" th:text="${stats.pendingSettlementsCount + ' pending'}">0 pending</span></div>
             </div>
             <div class="metric-card">
                 <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
                 <div class="metric-label">Successful Payouts</div>
-                <div class="metric-row"><span class="metric-value">$2,405,833</span><span class="metric-change">142 completed</span></div>
+                <div class="metric-row"><span class="metric-value" th:text="${'$' + #numbers.formatDecimal(stats.successfulPayouts, 1, 'COMMA', 2, 'POINT')}">$0.00</span><span class="metric-change" th:text="${stats.successfulPayoutsCount + ' completed'}">0 completed</span></div>
             </div>
         </div>
 
@@ -223,21 +223,26 @@
 
         <div class="two-col">
             <div class="card">
-                <div class="card-title">Recent Activities</div>
-                <div class="activity-item"><div class="activity-dot success"></div><div><div class="activity-text">Settlement #SET-9821 approved</div><div class="activity-time">2 hours ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot info"></div><div><div class="activity-text">New event completed: Tech Summit 2026</div><div class="activity-time">5 hours ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot success"></div><div><div class="activity-text">Payout processed for Organizer #ORG-445</div><div class="activity-time">1 day ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot pending"></div><div><div class="activity-text">Settlement #SET-9812 created</div><div class="activity-time">1 day ago</div></div></div>
-                <div class="activity-item" style="margin-bottom:0"><div class="activity-dot warning"></div><div><div class="activity-text">Refund issued for Event #EVT-7723</div><div class="activity-time">2 days ago</div></div></div>
+                <div class="card-title">Recent Settlements Activity</div>
+                <div th:each="s : ${recentSettlements}" class="activity-item">
+                    <div th:class="${s.status.name() == 'COMPLETED' ? 'activity-dot success' : 'activity-dot pending'}"></div>
+                    <div>
+                        <div class="activity-text">
+                            <span th:if="${s.status.name() == 'PENDING'}" th:text="${'Settlement #' + s.settlementId + ' created for ' + s.event.title + ' Awaiting Approval'}">Settlement created</span>
+                            <span th:if="${s.status.name() == 'COMPLETED'}" th:text="${'Payout processed for ' + s.event.organizer.firstName + ' ' + s.event.organizer.lastName + ' - $' + #numbers.formatDecimal(s.payoutAmount, 1, 'COMMA', 2, 'POINT')}">Payout processed</span>
+                        </div>
+                        <div class="activity-time" th:text="${s.createdAt != null ? #strings.toString(s.createdAt) : 'Just now'}">2 hours ago</div>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(recentSettlements)}" class="empty">No recent activity.</div>
             </div>
             <div class="card">
                 <div class="card-title">Pending Tasks Summary</div>
-                <div class="task-item orange"><span style="font-size:.875rem">Settlements Awaiting Approval</span><span class="task-count orange">23</span></div>
-                <div class="task-item blue"><span style="font-size:.875rem">Events Ready for Settlement</span><span class="task-count blue">47</span></div>
-                <div class="task-item purple" style="margin-bottom:0"><span style="font-size:.875rem">Approved Awaiting Payout</span><span class="task-count purple">12</span></div>
+                <div class="task-item orange"><span style="font-size:.875rem">Settlements Awaiting Approval</span><span class="task-count orange" th:text="${stats.pendingSettlementsCount}">0</span></div>
+                <div class="task-item blue"><span style="font-size:.875rem">Events Ready for Settlement</span><span class="task-count blue" th:text="${stats.eventsReadyCount}">0</span></div>
+                <div class="task-item purple" style="margin-bottom:0"><span style="font-size:.875rem">Approved Awaiting Payout</span><span class="task-count purple" th:text="${stats.successfulPayoutsCount}">0</span></div>
             </div>
         </div>
-    </main>
 </div>
 
 <script>

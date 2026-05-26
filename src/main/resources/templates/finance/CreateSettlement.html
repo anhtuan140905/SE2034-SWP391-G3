@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -151,23 +151,23 @@
             <div class="sidebar-subtitle">Settlement Management</div>
         </div>
         <nav class="sidebar-nav">
-            <a class="nav-item" href="DashboardFinance.html">
+            <a class="nav-item" th:href="@{/finance/dashboard}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item" href="ListEndedEvents.html">
+            <a class="nav-item" th:href="@{/finance/events}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
-            <a class="nav-item active" href="CreateSettlement.html">
+            <a class="nav-item active" th:href="@{/finance/settlement/create}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item" href="ListSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlements}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
-            <a class="nav-item" href="UpdateProfileFinance.html">
+            <a class="nav-item" th:href="@{/finance/profile}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
@@ -178,8 +178,8 @@
                     <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name" th:text="${activeUser != null ? activeUser.firstName + ' ' + activeUser.lastName : 'Finance Officer'}">Finance Officer</div>
+                    <div class="user-role">Finance Staff</div>
                 </div>
             </div>
         </div>
@@ -191,6 +191,9 @@
             <p class="page-desc">Create settlement records with automated calculations</p>
         </div>
 
+        <div th:if="${successMessage}" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);border-radius:12px;padding:14px 20px;margin-bottom:20px;color:#4ade80;" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:12px;padding:14px 20px;margin-bottom:20px;color:#f87171;" th:text="${errorMessage}"></div>
+        <form th:action="@{/finance/settlement/create}" method="post">
         <div class="form-grid">
             <div class="card" style="padding:24px">
                 <h2 class="card-title" style="display:flex;align-items:center;gap:8px">
@@ -199,34 +202,37 @@
                 </h2>
                 <div class="form-group">
                     <label class="form-label">Select Completed Event</label>
-                    <select class="form-control" id="eventSelect" onchange="updateCalc()">
+                    <select class="form-control" id="eventSelect" name="eventId" onchange="updateCalc()">
                         <option value="">-- Choose an event --</option>
-                        <option value="EVT-8821">EVT-8821 - Tech Summit 2026</option>
-                        <option value="EVT-8812">EVT-8812 - Music Festival Spring</option>
-                        <option value="EVT-8805">EVT-8805 - Business Conference 2026</option>
-                        <option value="EVT-8798">EVT-8798 - Art Exhibition Gala</option>
+                        <option th:each="ev : ${unsettledEvents}"
+                                th:value="${ev.event.eventId}"
+                                th:text="${ev.event.title}"
+                                th:selected="${selectedEvent != null and selectedEvent.event.eventId == ev.event.eventId}">Event</option>
                     </select>
                 </div>
-                <div id="eventDetails" style="display:none">
+                <div id="eventDetails" th:style="${selectedEvent != null ? '' : 'display:none'}">
                     <div class="form-group">
                         <label class="form-label">Organizer Name</label>
-                        <input class="form-control" id="organizerField" readonly />
+                        <input class="form-control" id="organizerField" readonly
+                               th:value="${selectedEvent?.event?.organizer?.firstName + ' ' + selectedEvent?.event?.organizer?.lastName}" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Total Ticket Revenue</label>
-                        <input class="form-control" id="revenueField" readonly />
+                        <input class="form-control" id="revenueField" readonly
+                               th:value="${selectedEvent != null ? '$' + #numbers.formatDecimal(selectedEvent.grossRevenue, 0, 'COMMA', 0, 'POINT') : ''}" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">System Fee Deductions (10%)</label>
-                        <input class="form-control" id="feeField" readonly />
+                        <input class="form-control" id="feeField" readonly
+                               th:value="${selectedEvent != null ? '$' + #numbers.formatDecimal(selectedEvent.platformFee, 0, 'COMMA', 0, 'POINT') : ''}" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Refund Deductions</label>
-                        <input class="form-control" id="refundInput" type="number" value="0" placeholder="Enter refund amount" oninput="updateCalc()" />
+                        <input class="form-control" id="refundInput" name="refundDeduction" type="number" value="0" placeholder="Enter refund amount" oninput="updateCalc()" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Payment Method</label>
-                        <select class="form-control" id="paymentMethod">
+                        <select class="form-control" id="paymentMethod" name="paymentMethod">
                             <option value="bank_transfer">Bank Transfer</option>
                             <option value="paypal">PayPal</option>
                             <option value="stripe">Stripe</option>
@@ -234,7 +240,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Notes (Optional)</label>
-                        <textarea class="form-control" id="notesField" rows="3" placeholder="Add any notes for this settlement..."></textarea>
+                        <textarea class="form-control" id="notesField" name="notes" rows="3" placeholder="Add any notes for this settlement..."></textarea>
                     </div>
                 </div>
             </div>
@@ -256,19 +262,29 @@
                     <div class="net-label">Net Payout Amount</div>
                     <div class="net-value" id="c-net">$0</div>
                 </div>
-                <button class="btn-generate" id="generateBtn" disabled onclick="generateSettlement()">Generate Settlement Record</button>
+                <button class="btn-generate" id="generateBtn" th:disabled="${selectedEvent == null}" type="submit">Generate Settlement Record</button>
             </div>
         </div>
+        </form>
     </main>
 </div>
 
-<script>
-    const eventDetails = {
-        'EVT-8821':{organizer:'TechCorp Inc.',revenue:125000},
-        'EVT-8812':{organizer:'EventPro Ltd.',revenue:245000},
-        'EVT-8805':{organizer:'BizEvents Co.',revenue:102000},
-        'EVT-8798':{organizer:'Creative Studios',revenue:67500},
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const eventDetails = {};
+    /*[# th:each="ev : ${unsettledEvents}"]*/
+    eventDetails[[${ev.event.eventId}]] = {
+        organizer: [[${ev.event.organizer.firstName + ' ' + ev.event.organizer.lastName}]],
+        revenue: [[${ev.grossRevenue}]]
     };
+    /*[/]*/
+    /*[# th:if="${selectedEvent != null}"]*/
+    eventDetails[[${selectedEvent.event.eventId}]] = {
+        organizer: [[${selectedEvent.event.organizer.firstName + ' ' + selectedEvent.event.organizer.lastName}]],
+        revenue: [[${selectedEvent.grossRevenue}]]
+    };
+    /*[/]*/
+    /*]]>*/
 
     function updateCalc() {
         const sel = document.getElementById('eventSelect').value;

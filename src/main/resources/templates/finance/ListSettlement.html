@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -151,23 +151,23 @@
             <div class="sidebar-subtitle">Settlement Management</div>
         </div>
         <nav class="sidebar-nav">
-            <a class="nav-item" href="DashboardFinance.html">
+            <a class="nav-item" th:href="@{/finance/dashboard}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item" href="ListEndedEvents.html">
+            <a class="nav-item" th:href="@{/finance/events}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
-            <a class="nav-item" href="CreateSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlement/create}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item active" href="ListSettlement.html">
+            <a class="nav-item active" th:href="@{/finance/settlements}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
-            <a class="nav-item" href="UpdateProfileFinance.html">
+            <a class="nav-item" th:href="@{/finance/profile}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
@@ -178,8 +178,8 @@
                     <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name" th:text="${activeUser != null ? activeUser.firstName + ' ' + activeUser.lastName : 'Finance Officer'}">Finance Officer</div>
+                    <div class="user-role">Finance Staff</div>
                 </div>
             </div>
         </div>
@@ -192,33 +192,61 @@
         </div>
 
         <div class="pills">
-            <button class="pill active" onclick="filterSettlements('All', this)">All <span style="opacity:.7;font-size:.75rem">(8)</span></button>
-            <button class="pill" onclick="filterSettlements('Pending', this)">Pending <span style="opacity:.7;font-size:.75rem">(2)</span></button>
-            <button class="pill" onclick="filterSettlements('Approved', this)">Approved <span style="opacity:.7;font-size:.75rem">(3)</span></button>
-            <button class="pill" onclick="filterSettlements('Paid', this)">Paid <span style="opacity:.7;font-size:.75rem">(3)</span></button>
+            <button class="pill active" onclick="filterSettlements('All', this)">All <span style="opacity:.7;font-size:.75rem" th:text="'(' + ${settlements.size()} + ')'"></span></button>
+            <button class="pill" onclick="filterSettlements('PENDING', this)">Pending</button>
+            <button class="pill" onclick="filterSettlements('COMPLETED', this)">Completed</button>
         </div>
 
+        <div th:if="${successMessage}" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);border-radius:12px;padding:14px 20px;margin-bottom:20px;color:#4ade80;" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:12px;padding:14px 20px;margin-bottom:20px;color:#f87171;" th:text="${errorMessage}"></div>
         <div class="card mt-32" style="padding:0">
             <div class="section-header"><h2>Settlement History</h2></div>
             <div class="table-wrapper">
                 <table>
                     <thead>
                     <tr>
-                        <th>Settlement ID</th><th>Organizer</th><th>Event Name</th>
-                        <th class="right">Net Payout Amount</th><th>Generated Date</th>
+                        <th>Settlement ID</th><th>Event Name</th><th>Organizer</th>
+                        <th class="right">Gross Revenue</th><th class="right">Net Payout</th>
                         <th class="center">Status</th><th class="center">Actions</th>
                     </tr>
                     </thead>
-                    <tbody id="settlementTableBody"></tbody>
+                    <tbody id="settlementTableBody">
+                        <tr th:if="${#lists.isEmpty(settlements)}">
+                            <td colspan="7" class="empty">No settlements found.</td>
+                        </tr>
+                        <tr th:each="s : ${settlements}" th:attr="data-status=${s.status}">
+                            <td><span class="mono" th:text="'#SET-' + ${s.settlementId}">#SET-1</span></td>
+                            <td th:text="${s.event.title}">Event Name</td>
+                            <td th:text="${s.event.organizer.firstName + ' ' + s.event.organizer.lastName}">Organizer</td>
+                            <td class="right" style="font-size:1.1rem;font-weight:700" th:text="${'$' + #numbers.formatDecimal(s.grossRevenue, 1, 'COMMA', 2, 'POINT')}">$0</td>
+                            <td class="right" style="font-size:1.1rem;font-weight:700;color:#4ade80" th:text="${'$' + #numbers.formatDecimal(s.payoutAmount, 1, 'COMMA', 2, 'POINT')}">$0</td>
+                            <td class="center">
+                                <span th:class="'badge ' + ${s.status.name().toLowerCase()}"
+                                      th:text="${s.status}">Status</span>
+                            </td>
+                            <td class="center">
+                                <a class="btn-link" th:href="@{/finance/settlement/{id}(id=${s.settlementId})}">
+                                    View Detail
+                                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
-                <div id="settlementEmpty" class="empty" style="display:none">No settlements found.</div>
             </div>
         </div>
     </main>
 </div>
 
 <script>
-    const settlementsData = [
+    function filterSettlements(status, btn) {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('#settlementTableBody tr[data-status]').forEach(row => {
+            row.style.display = (status === 'All' || row.dataset.status === status) ? '' : 'none';
+        });
+    }
+    const _unused = [
         {id:'#SET-9821',organizer:'TechCorp Inc.',eventName:'Tech Summit 2026',netPayout:112500,generatedDate:'2026-05-20',status:'Approved'},
         {id:'#SET-9812',organizer:'EventPro Ltd.',eventName:'Music Festival Spring',netPayout:220500,generatedDate:'2026-05-18',status:'Paid'},
         {id:'#SET-9805',organizer:'BizEvents Co.',eventName:'Business Conference 2026',netPayout:91800,generatedDate:'2026-05-16',status:'Pending'},
@@ -229,36 +257,7 @@
         {id:'#SET-9752',organizer:'Fashion Forward',eventName:'Fashion Week Showcase',netPayout:132300,generatedDate:'2026-05-05',status:'Approved'},
     ];
 
-    function renderSettlements(filter) {
-        const items = filter === 'All' ? settlementsData : settlementsData.filter(s => s.status === filter);
-        const tbody = document.getElementById('settlementTableBody');
-        const empty = document.getElementById('settlementEmpty');
-        if (items.length === 0) { tbody.innerHTML = ''; empty.style.display = ''; return; }
-        empty.style.display = 'none';
-        tbody.innerHTML = items.map(s => `
-    <tr>
-      <td><span class="mono">${s.id}</span></td>
-      <td>${s.organizer}</td>
-      <td class="text-muted">${s.eventName}</td>
-      <td class="right" style="font-size:1.1rem;font-weight:700">$${s.netPayout.toLocaleString()}</td>
-      <td class="text-muted">${s.generatedDate}</td>
-      <td class="center"><span class="badge ${s.status.toLowerCase()}">${s.status}</span></td>
-      <td class="center">
-        <a class="btn-link" href="ViewSettlementDetails.html?id=${encodeURIComponent(s.id)}">
-          View Detail
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
-      </td>
-    </tr>`).join('');
-    }
-
-    function filterSettlements(status, btn) {
-        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        renderSettlements(status);
-    }
-
-    window.addEventListener('load', () => renderSettlements('All'));
+    ];
 </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -190,23 +190,23 @@
             <div class="sidebar-subtitle">Settlement Management</div>
         </div>
         <nav class="sidebar-nav">
-            <a class="nav-item" href="DashboardFinance.html">
+            <a class="nav-item" th:href="@{/finance/dashboard}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item" href="ListEndedEvents.html">
+            <a class="nav-item" th:href="@{/finance/events}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
-            <a class="nav-item" href="CreateSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlement/create}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item active" href="ListSettlement.html">
+            <a class="nav-item active" th:href="@{/finance/settlements}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
-            <a class="nav-item" href="UpdateProfileFinance.html">
+            <a class="nav-item" th:href="@{/finance/profile}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
@@ -217,41 +217,42 @@
                     <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name" th:text="${activeUser != null ? activeUser.firstName + ' ' + activeUser.lastName : 'Finance Officer'}">Finance Officer</div>
+                    <div class="user-role">Finance Staff</div>
                 </div>
             </div>
         </div>
     </aside>
 
     <main class="main">
-        <button class="back-btn" onclick="history.back()">
+        <a class="back-btn" th:href="@{/finance/settlements}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             Back to Settlement List
-        </button>
+        </a>
+        <div th:if="${successMessage}" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);border-radius:12px;padding:14px 20px;margin-bottom:16px;color:#4ade80;" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:12px;padding:14px 20px;margin-bottom:16px;color:#f87171;" th:text="${errorMessage}"></div>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
-                <h1 class="page-title" id="detail-title">Settlement #SET-9821</h1>
-                <p class="page-desc" id="detail-subtitle">Tech Summit 2026 · TechCorp Inc.</p>
+                <h1 class="page-title" th:text="'Settlement #SET-' + ${settlement.settlementId}">Settlement #SET-1</h1>
+                <p class="page-desc" th:text="${settlement.event.title + ' · ' + settlement.event.organizer.firstName + ' ' + settlement.event.organizer.lastName}">Event · Organizer</p>
             </div>
-            <span class="badge approved" id="detail-badge" style="font-size:.875rem;padding:6px 20px">Approved</span>
+            <span th:class="'badge ' + ${settlement.status.name().toLowerCase()}"
+                  th:text="${settlement.status}"
+                  style="font-size:.875rem;padding:6px 20px">Status</span>
         </div>
 
-        <!-- Payout Hero -->
         <div class="payout-hero">
             <div class="ph-left">
                 <h2>Net Payout Amount</h2>
-                <div class="ph-amount" id="detail-net">$112,500</div>
+                <div class="ph-amount" th:text="${'$' + #numbers.formatDecimal(settlement.payoutAmount, 1, 'COMMA', 2, 'POINT')}">$0</div>
             </div>
-            <div class="ph-right" id="action-buttons">
-                <button class="btn-approve" onclick="approveSettlement()">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Mark as Paid
-                </button>
-                <button class="btn-reject" onclick="rejectSettlement()">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Reject
-                </button>
+            <div class="ph-right" th:if="${settlement.status.name() != 'COMPLETED'}">
+                <form th:action="@{/finance/settlement/{id}/pay(id=${settlement.settlementId})}" method="post" style="display:inline">
+                    <button class="btn-approve" type="submit">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Mark as Paid
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -263,11 +264,11 @@
                     <h3>Event Information</h3>
                 </div>
                 <div class="detail-rows">
-                    <div class="detail-row"><span class="dr-label">Event ID</span><span class="dr-value mono">EVT-8821</span></div>
-                    <div class="detail-row"><span class="dr-label">Event Name</span><span class="dr-value">Tech Summit 2026</span></div>
-                    <div class="detail-row"><span class="dr-label">Organizer</span><span class="dr-value">TechCorp Inc.</span></div>
-                    <div class="detail-row"><span class="dr-label">End Date</span><span class="dr-value">May 15, 2026</span></div>
-                    <div class="detail-row"><span class="dr-label">Tickets Sold</span><span class="dr-value">1,250</span></div>
+                    <div class="detail-row"><span class="dr-label">Event ID</span><span class="dr-value mono" th:text="'EVT-' + ${settlement.event.eventId}">EVT-1</span></div>
+                    <div class="detail-row"><span class="dr-label">Event Name</span><span class="dr-value" th:text="${settlement.event.title}">Event Name</span></div>
+                    <div class="detail-row"><span class="dr-label">Organizer</span><span class="dr-value" th:text="${settlement.event.organizer.firstName + ' ' + settlement.event.organizer.lastName}">Organizer</span></div>
+                    <div class="detail-row"><span class="dr-label">End Date</span><span class="dr-value" th:text="${#temporals.format(settlement.event.endTime, 'MMM dd, yyyy')}">End Date</span></div>
+                    <div class="detail-row"><span class="dr-label">Tickets Sold</span><span class="dr-value" th:text="${ticketsSold}">0</span></div>
                 </div>
             </div>
 
@@ -278,10 +279,10 @@
                     <h3>Financial Breakdown</h3>
                 </div>
                 <div class="detail-rows">
-                    <div class="detail-row"><span class="dr-label">Gross Revenue</span><span class="dr-value">$125,000</span></div>
-                    <div class="detail-row"><span class="dr-label">System Fee (10%)</span><span class="dr-value" style="color:#fb923c">- $12,500</span></div>
+                    <div class="detail-row"><span class="dr-label">Gross Revenue</span><span class="dr-value" th:text="${'$' + #numbers.formatDecimal(settlement.grossRevenue, 1, 'COMMA', 2, 'POINT')}">$0</span></div>
+                    <div class="detail-row"><span class="dr-label">System Fee (10%)</span><span class="dr-value" style="color:#fb923c" th:text="${'- $' + #numbers.formatDecimal(settlement.platformFee, 1, 'COMMA', 2, 'POINT')}">-$0</span></div>
                     <div class="detail-row"><span class="dr-label">Refund Deductions</span><span class="dr-value" style="color:#fb923c">- $0</span></div>
-                    <div class="detail-row" style="background:rgba(233,30,99,.05)"><span class="dr-label" style="font-weight:600;color:#fff">Net Payout</span><span class="dr-value" style="color:var(--primary);font-size:1rem">$112,500</span></div>
+                    <div class="detail-row" style="background:rgba(233,30,99,.05)"><span class="dr-label" style="font-weight:600;color:#fff">Net Payout</span><span class="dr-value" style="color:var(--primary);font-size:1rem" th:text="${'$' + #numbers.formatDecimal(settlement.payoutAmount, 1, 'COMMA', 2, 'POINT')}">$0</span></div>
                 </div>
             </div>
 
@@ -292,11 +293,11 @@
                     <h3>Settlement Record</h3>
                 </div>
                 <div class="detail-rows">
-                    <div class="detail-row"><span class="dr-label">Settlement ID</span><span class="dr-value mono">#SET-9821</span></div>
-                    <div class="detail-row"><span class="dr-label">Generated Date</span><span class="dr-value">May 20, 2026</span></div>
-                    <div class="detail-row"><span class="dr-label">Payment Method</span><span class="dr-value">Bank Transfer</span></div>
-                    <div class="detail-row"><span class="dr-label">Processed By</span><span class="dr-value">Sarah Anderson</span></div>
-                    <div class="detail-row"><span class="dr-label">Current Status</span><span class="dr-value"><span class="badge approved" style="font-size:.7rem;padding:3px 12px">Approved</span></span></div>
+                    <div class="detail-row"><span class="dr-label">Settlement ID</span><span class="dr-value mono" th:text="'#SET-' + ${settlement.settlementId}">#SET-1</span></div>
+                    <div class="detail-row"><span class="dr-label">Payment Method</span><span class="dr-value" th:text="${settlement.paymentMethod != null ? settlement.paymentMethod : 'Bank Transfer'}">Bank Transfer</span></div>
+                    <div class="detail-row"><span class="dr-label">Processed By</span><span class="dr-value" th:text="${settlement.createdBy}">Finance Staff</span></div>
+                    <div class="detail-row"><span class="dr-label">Bank Account</span><span class="dr-value" th:text="${organizerProfile != null ? organizerProfile.bankAccount : 'N/A'}">N/A</span></div>
+                    <div class="detail-row"><span class="dr-label">Current Status</span><span class="dr-value"><span th:class="'badge ' + ${settlement.status.name().toLowerCase()}" th:text="${settlement.status}" style="font-size:.7rem;padding:3px 12px">Status</span></span></div>
                 </div>
             </div>
 
@@ -330,29 +331,7 @@
 </div>
 
 <script>
-    // Load settlement data from URL param or default to #SET-9821
-    const allSettlements = {
-        '#SET-9821':{title:'#SET-9821',subtitle:'Tech Summit 2026 · TechCorp Inc.',badge:'approved',badgeText:'Approved',net:'$112,500',showActions:true},
-        '#SET-9812':{title:'#SET-9812',subtitle:'Music Festival Spring · EventPro Ltd.',badge:'paid',badgeText:'Paid',net:'$220,500',showActions:false},
-        '#SET-9805':{title:'#SET-9805',subtitle:'Business Conference 2026 · BizEvents Co.',badge:'pending',badgeText:'Pending',net:'$91,800',showActions:true},
-    };
-
-    const params = new URLSearchParams(window.location.search);
-    const sid = params.get('id') || '#SET-9821';
-    const d = allSettlements[sid];
-    if (d) {
-        document.getElementById('detail-title').textContent = 'Settlement ' + d.title;
-        document.getElementById('detail-subtitle').textContent = d.subtitle;
-        const badge = document.getElementById('detail-badge');
-        badge.className = 'badge ' + d.badge;
-        badge.style.cssText = 'font-size:.875rem;padding:6px 20px';
-        badge.textContent = d.badgeText;
-        document.getElementById('detail-net').textContent = d.net;
-        if (!d.showActions) document.getElementById('action-buttons').style.display = 'none';
-    }
-
-    function approveSettlement() { alert('Settlement marked as Paid successfully!'); }
-    function rejectSettlement() { if (confirm('Are you sure you want to reject this settlement?')) alert('Settlement rejected.'); }
+    // No client-side logic needed; page is fully server-rendered
 </script>
 </body>
 </html>

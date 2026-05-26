@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -151,23 +151,23 @@
             <div class="sidebar-subtitle">Settlement Management</div>
         </div>
         <nav class="sidebar-nav">
-            <a class="nav-item" href="DashboardFinance.html">
+            <a class="nav-item" th:href="@{/finance/dashboard}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                 Dashboard
             </a>
-            <a class="nav-item" href="ListEndedEvents.html">
+            <a class="nav-item" th:href="@{/finance/events}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Completed Events
             </a>
-            <a class="nav-item" href="CreateSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlement/create}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                 Create Settlement
             </a>
-            <a class="nav-item" href="ListSettlement.html">
+            <a class="nav-item" th:href="@{/finance/settlements}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 List Settlement
             </a>
-            <a class="nav-item active" href="UpdateProfileFinance.html">
+            <a class="nav-item active" th:href="@{/finance/profile}">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 My Profile
             </a>
@@ -178,8 +178,8 @@
                     <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
+                    <div class="user-name" th:text="${activeUser != null ? activeUser.firstName + ' ' + activeUser.lastName : 'Finance Officer'}">Finance Officer</div>
+                    <div class="user-role">Finance Staff</div>
                 </div>
             </div>
         </div>
@@ -199,54 +199,49 @@
                         <div class="online-dot"></div>
                     </div>
                     <div>
-                        <h2 style="font-size:1.5rem;font-weight:700">Finance Officer</h2>
-                        <p class="text-muted" style="margin-top:4px">Administrator</p>
+                        <h2 style="font-size:1.5rem;font-weight:700" th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Finance Officer'}">Finance Officer</h2>
+                        <p class="text-muted" style="margin-top:4px" th:text="${user?.role?.roleName}">Finance Staff</p>
                     </div>
                 </div>
+                <form th:action="@{/finance/profile}" method="post">
                 <div class="profile-grid">
                     <h3 style="grid-column:1/-1;font-size:1.1rem;font-weight:600;margin-bottom:8px">Personal Details</h3>
-                    <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" id="p-name" value="Sarah Anderson" /></div>
-                    <div class="form-group"><label class="form-label">Employee ID</label><input class="form-control" id="p-id" value="FIN-2045" /></div>
-                    <div class="form-group"><label class="form-label">Work Email Address</label><input class="form-control" id="p-email" type="email" value="sarah.anderson@financeportal.com" /></div>
-                    <div class="form-group"><label class="form-label">Department</label><input class="form-control" id="p-dept" value="Finance Operations" /></div>
-                    <div class="form-group"><label class="form-label">Phone Number</label><input class="form-control" id="p-phone" value="+1 (555) 012-3456" /></div>
-                    <div class="form-group"><label class="form-label">Time Zone</label>
-                        <select class="form-control" id="p-tz">
-                            <option selected>UTC+7 (Indochina Time)</option>
-                            <option>UTC+0 (Greenwich Mean Time)</option>
-                            <option>UTC-5 (Eastern Standard Time)</option>
-                            <option>UTC+8 (Singapore Standard Time)</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label class="form-label">First Name</label><input class="form-control" name="firstName" th:value="${user?.firstName}" /></div>
+                    <div class="form-group"><label class="form-label">Last Name</label><input class="form-control" name="lastName" th:value="${user?.lastName}" /></div>
+                    <div class="form-group"><label class="form-label">Work Email Address</label><input class="form-control" type="email" readonly th:value="${user?.email}" /></div>
+                    <div class="form-group"><label class="form-label">Role</label><input class="form-control" readonly th:value="${user?.role?.roleName}" /></div>
+                    <div class="form-group"><label class="form-label">Phone Number</label><input class="form-control" name="phone" th:value="${user?.phone}" /></div>
+                    <div class="form-group"><label class="form-label">Gender</label><input class="form-control" readonly th:value="${user?.gender}" /></div>
                 </div>
 
                 <div style="padding:0 32px 24px">
                     <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:16px">Security</h3>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
                         <div class="form-group"><label class="form-label">Current Password</label><input class="form-control" type="password" placeholder="••••••••" /></div>
-                        <div class="form-group"><label class="form-label">New Password</label><input class="form-control" type="password" placeholder="Enter new password" /></div>
+                        <div class="form-group"><label class="form-label">New Password</label><input class="form-control" name="newPassword" type="password" placeholder="Enter new password" /></div>
                     </div>
                 </div>
 
                 <div class="profile-footer">
-                    <button class="btn-cancel" onclick="cancelProfile()">
+                    <a class="btn-cancel" th:href="@{/finance/profile}" style="text-decoration:none">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         Cancel
-                    </button>
-                    <button class="btn-save" onclick="saveProfile()">
+                    </a>
+                    <button class="btn-save" type="submit">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                         Save Changes
                     </button>
                 </div>
+                </form>
             </div>
 
             <div class="card" style="margin-top:24px">
                 <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:16px">Account Information</h3>
                 <div class="account-grid">
-                    <div class="account-item"><div class="a-label">Account Status</div><div class="a-value green">Active</div></div>
-                    <div class="account-item"><div class="a-label">Role</div><div class="a-value">Finance Administrator</div></div>
-                    <div class="account-item"><div class="a-label">Last Login</div><div class="a-value">2026-05-25 09:42 AM</div></div>
-                    <div class="account-item"><div class="a-label">Member Since</div><div class="a-value">January 2024</div></div>
+                    <div class="account-item"><div class="a-label">Account Status</div><div class="a-value green" th:text="${user?.isActive != null and user.isActive ? 'Active' : 'Inactive'}">Active</div></div>
+                    <div class="account-item"><div class="a-label">Role</div><div class="a-value" th:text="${user?.role?.roleName}">Finance</div></div>
+                    <div class="account-item"><div class="a-label">Email</div><div class="a-value" th:text="${user?.email}">—</div></div>
+                    <div class="account-item"><div class="a-label">Phone</div><div class="a-value" th:text="${user?.phone}">—</div></div>
                 </div>
             </div>
         </div>
@@ -254,14 +249,7 @@
 </div>
 
 <script>
-    const originalProfile = {name:'Sarah Anderson',id:'FIN-2045',email:'sarah.anderson@financeportal.com',dept:'Finance Operations'};
-    function cancelProfile() {
-        document.getElementById('p-name').value = originalProfile.name;
-        document.getElementById('p-id').value = originalProfile.id;
-        document.getElementById('p-email').value = originalProfile.email;
-        document.getElementById('p-dept').value = originalProfile.dept;
-    }
-    function saveProfile() { alert('Profile updated successfully!'); }
+    // Form is fully server-rendered; no client-side overrides needed
 </script>
 </body>
 </html>
