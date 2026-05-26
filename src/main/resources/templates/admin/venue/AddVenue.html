@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -407,7 +407,7 @@
 
             <h2 class="form-title">Venue Information</h2>
 
-            <form>
+            <form method="post" th:action = "@{/admin/addvenue}" th:object="${CreateVenueDTO}">
 
                 <!-- Upload -->
                 <div class="form-group">
@@ -422,27 +422,83 @@
                 <!-- Venue Name -->
                 <div class="form-group">
                     <label>Venue Name</label>
-                    <input type="text" class="form-control" placeholder="Enter venue name"/>
+                    <input type="text" class="form-control" placeholder="Enter venue name" th:field="*{venueName}"/>
                 </div>
 
                 <!-- Location -->
                 <div class="form-group">
                     <label>Location</label>
-                    <input type="text" class="form-control" placeholder="City, State"/>
+                    <input type="text" class="form-control" placeholder="City, State" th:field="*{city}"/>
                 </div>
 
-                <!-- Capacity -->
+                <!-- Location -->
                 <div class="form-group">
-                    <label>Capacity</label>
-                    <input type="number" class="form-control" placeholder="Maximum capacity"/>
+                    <label>Address</label>
+                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{address}"/>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea class="form-control" placeholder="Describe the venue, amenities, and features..."></textarea>
+                    <textarea class="form-control" placeholder="Describe the venue, amenities, and features..." th:field="*{description}"></textarea>
                 </div>
+                <!-- ================= ZONES ================= -->
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                        <label style="margin-bottom:0">Khu vực (Zone)</label>
+                        <button type="button" class="btn btn-cancel" onclick="addZone()" style="padding:8px 16px; font-size:13px;">
+                            <i class="fa-solid fa-plus"></i> Thêm Zone
+                        </button>
+                    </div>
 
+                    <!-- Container chứa các zone -->
+                    <div id="zone-container"></div>
+
+                    <!-- Template zone ẩn — không submit vì disabled -->
+                    <div id="zone-template" style="display:none">
+                        <div class="zone-item" style="
+            background:#090014;
+            border:1px solid rgba(236,72,153,0.3);
+            border-radius:14px;
+            padding:20px;
+            margin-bottom:14px;
+        ">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                                <span class="zone-title" style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
+                                <button type="button" onclick="removeZone(this)"
+                                        style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+                                <div>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Tên Zone</label>
+                                    <input type="text" class="form-control zone-name"
+                                           placeholder="VD: VIP, Standard..."
+                                           name="PLACEHOLDER_NAME"/>
+                                </div>
+                                <div>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Số hàng</label>
+                                    <input type="number" class="form-control zone-rows"
+                                           placeholder="VD: 8" min="1"
+                                           name="PLACEHOLDER_ROWS"/>
+                                </div>
+                                <div>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Ghế / hàng</label>
+                                    <input type="number" class="form-control zone-seats"
+                                           placeholder="VD: 10" min="1"
+                                           name="PLACEHOLDER_SEATS"/>
+                                </div>
+                            </div>
+
+                            <!-- Hiển thị tổng ghế tự tính -->
+                            <div style="margin-top:12px; font-size:13px; color:#9ca3af;">
+                                Tổng ghế: <span class="total-seats" style="color:#ff1b8d; font-weight:bold;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-save">
@@ -461,5 +517,49 @@
 
 </div><!-- /wrapper -->
 
+<script>
+    let zoneCount = 0;
+
+    function addZone() {
+        const template = document.getElementById('zone-template').firstElementChild;
+        const clone = template.cloneNode(true);
+
+        clone.querySelector('.zone-name').name  = `zones[${zoneCount}].zoneName`;
+        clone.querySelector('.zone-rows').name  = `zones[${zoneCount}].rows`;
+        clone.querySelector('.zone-seats').name = `zones[${zoneCount}].seatsPerRow`;
+
+        clone.querySelector('.zone-title').textContent = `Zone ${zoneCount + 1}`;
+
+        clone.querySelector('.zone-rows').addEventListener('input',  () => updateTotal(clone));
+        clone.querySelector('.zone-seats').addEventListener('input', () => updateTotal(clone));
+
+        document.getElementById('zone-container').appendChild(clone);
+        zoneCount++;
+    }
+
+    function removeZone(btn) {
+        btn.closest('.zone-item').remove();
+        reindex();
+    }
+
+    function reindex() {
+        const items = document.querySelectorAll('#zone-container .zone-item');
+        zoneCount = items.length;
+        items.forEach((item, i) => {
+            item.querySelector('.zone-name').name  = `zones[${i}].zoneName`;
+            item.querySelector('.zone-rows').name  = `zones[${i}].rows`;
+            item.querySelector('.zone-seats').name = `zones[${i}].seatsPerRow`;
+            item.querySelector('.zone-title').textContent = `Zone ${i + 1}`;
+        });
+    }
+
+    function updateTotal(zoneItem) {
+        const rows  = parseInt(zoneItem.querySelector('.zone-rows').value)  || 0;
+        const seats = parseInt(zoneItem.querySelector('.zone-seats').value) || 0;
+        zoneItem.querySelector('.total-seats').textContent = rows * seats;
+    }
+
+    addZone();
+</script>
 </body>
 </html>

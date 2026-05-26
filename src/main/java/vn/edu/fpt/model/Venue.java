@@ -25,14 +25,20 @@ public class Venue extends BaseAuditEntity {
     @Column(name = "venue_name", nullable = false)
     private String venueName;
 
+    @Column(name = "city", nullable = false)
+    private String city;
+
     @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "capacity")
+    @Column(name = "capacity", nullable = false)
     private Integer capacity; // Tính động = SUM(rows × seats_per_row) của tất cả Zone
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "imageUrl")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("zoneName ASC")
