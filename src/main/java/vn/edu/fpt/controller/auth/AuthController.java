@@ -34,11 +34,28 @@ public class AuthController {
     @PostMapping("/register/user")
     public String registerUser(
             @Valid RegisterUserDTO dto,
-            BindingResult result) {
+            BindingResult result,
+            Model model) {
         if(result.hasErrors()) {
+            model.addAttribute("registerUserDTO", new  RegisterUserDTO());
+            model.addAttribute("activeRole", "user");
             return "auth/RegisterAccount";
         }
         this.userService.handleCreateUser(dto);
+        return "auth/Login";
+    }
+
+    @PostMapping("/register/organizer")
+    public String registerOrganizer(
+            @Valid RegisterOrgDTO dto,
+            BindingResult result,
+            Model model) {
+        if(result.hasErrors()) {
+            model.addAttribute("registerOrgDTO", new RegisterOrgDTO());
+            model.addAttribute("activeRole", "organizer");
+            return "auth/RegisterAccount";
+        }
+        this.userService.handleCreateOrganizer(dto);
         return "auth/Login";
     }
 

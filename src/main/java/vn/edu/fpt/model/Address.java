@@ -16,10 +16,10 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "street_address", nullable = false)
+    @Column(name = "street_address", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String streetAddress;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String ward;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String city;
 }
