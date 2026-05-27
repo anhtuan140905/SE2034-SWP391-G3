@@ -1,0 +1,89 @@
+<!-- Thymeleaf Fragment: Header -->
+<header th:fragment="header" xmlns:th="http://www.thymeleaf.org">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+        <div class="container">
+            <!-- Brand Logo with Pink-Orange Gradient Text -->
+            <a class="navbar-brand d-flex align-items-center" href="#" th:href="@{/home}">
+                <div class="brand-dots me-2">
+                    <span class="dot pink"></span>
+                    <span class="dot violet"></span>
+                    <span class="dot orange"></span>
+                </div>
+                <span class="brand-text">Event<span class="highlight">Hub</span></span>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#eventhubNavbar" aria-controls="eventhubNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="eventhubNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" th:href="@{/home}">
+                            <i class="fa-solid fa-house-chimney nav-icon"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" th:href="@{/events}">
+                            <i class="fa-solid fa-calendar-days nav-icon"></i> Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" th:href="@{/my-tickets}">
+                            <i class="fa-solid fa-ticket nav-icon"></i> My Tickets
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" th:href="@{/favorites}">
+                            <i class="fa-solid fa-heart nav-icon text-pink-glow"></i> Yêu thích
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Search Input Bar with Glassmorphism -->
+                <form class="d-flex navbar-search me-lg-3 my-2 my-lg-0" th:action="@{/events/search}" method="get">
+                    <div class="input-group">
+                        <span class="input-group-text search-icon-container"><i class="fa-solid fa-magnifying-glass search-icon"></i></span>
+                        <input name="query" class="form-control nav-search-input" type="search" placeholder="Search events..." aria-label="Search">
+                    </div>
+                </form>
+
+                <!-- User Account Profile Dropdown -->
+                <div class="nav-item dropdown ms-lg-2 profile-dropdown">
+                    <a class="nav-link dropdown-toggle profile-trigger d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar-wrap">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="User Profile" class="user-avatar">
+                            <span class="status-indicator online"></span>
+                        </div>
+                        <span class="d-none d-md-inline ms-2 username-text">Alex Rivera</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark glass-dropdown mt-2 border-gradient" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="#" th:href="@{/profile}">
+                                <i class="fa-regular fa-user dropdown-icon text-pink"></i> My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" th:href="@{/dashboard}">
+                                <i class="fa-solid fa-chart-line dropdown-icon text-violet"></i> Organizer Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" th:href="@{/settings}">
+                                <i class="fa-solid fa-sliders dropdown-icon text-orange"></i> Settings
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider border-secondary-subtle"></li>
+                        <li>
+                            <a class="dropdown-item text-danger-glowing" href="#" th:href="@{/logout}">
+                                <i class="fa-solid fa-arrow-right-from-bracket dropdown-icon text-danger"></i> Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
