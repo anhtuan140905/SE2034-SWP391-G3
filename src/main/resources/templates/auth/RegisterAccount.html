@@ -6,204 +6,7 @@
     <title>EventHub — Register</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; width: 100%; font-family: 'Plus Jakarta Sans', sans-serif; color-scheme: light; overflow: hidden; }
-        body { background: #0e0618; display: flex; align-items: center; justify-content: center; }
-
-        /* ── BACKGROUND ── */
-        .bg-layer { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: linear-gradient(135deg,#0e0618 0%,#1a0a2e 50%,#0f0820 100%); }
-        .bg-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .35; animation: blobDrift 12s ease-in-out infinite alternate; }
-        .bg-blob-1 { width:600px;height:600px;background:radial-gradient(circle,#a76cff,transparent 70%);top:-200px;left:-150px; }
-        .bg-blob-2 { width:500px;height:500px;background:radial-gradient(circle,#ff78b4,transparent 70%);bottom:-150px;right:-100px;animation-delay:-4s; }
-        .bg-blob-3 { width:350px;height:350px;background:radial-gradient(circle,#ff9a6c,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-8s; }
-        @keyframes blobDrift { from{transform:translate(0,0) scale(1);} to{transform:translate(30px,-20px) scale(1.08);} }
-        .bg-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px; }
-
-        /* ── LAYOUT ── */
-        .lp-root { position:relative;z-index:1;width:100%;height:100%;display:grid;grid-template-columns:1fr 1fr;animation:shellIn .6s cubic-bezier(.22,1,.36,1) both; }
-        @keyframes shellIn { from{opacity:0;transform:scale(.97);} to{opacity:1;transform:scale(1);} }
-
-        /* ── LEFT ── */
-        .lp-left {
-          position:relative;
-          background:linear-gradient(160deg,rgba(167,108,255,.12) 0%,rgba(255,120,180,.08) 50%,rgba(255,154,108,.06) 100%);
-          border-right:1px solid rgba(255,255,255,.08);
-          display:flex;flex-direction:column;
-          padding:clamp(2rem,4vw,3.5rem);
-          overflow:hidden;
-        }
-        .lp-left::before { content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 400px at 10% 15%,rgba(167,108,255,.18) 0%,transparent 65%),radial-gradient(circle 300px at 90% 80%,rgba(255,100,180,.14) 0%,transparent 60%); }
-        .orb{position:absolute;border-radius:50%;animation:orbF 7s ease-in-out infinite alternate;}
-        .orb-1{width:180px;height:180px;background:rgba(167,108,255,.12);top:-60px;left:-60px;}
-        .orb-2{width:120px;height:120px;background:rgba(255,120,180,.10);bottom:80px;right:-30px;animation-delay:-3s;}
-        .orb-3{width:80px;height:80px;background:rgba(255,180,60,.08);bottom:-30px;left:40%;animation-delay:-5s;}
-        @keyframes orbF{from{transform:translate(0,0) scale(1);}to{transform:translate(12px,-14px) scale(1.08);}}
-
-        .lp-brand{position:relative;z-index:1;display:flex;align-items:center;gap:.75rem;}
-        .lp-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#a76cff,#ff78b4);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(167,108,255,.35);}
-        .lp-logo svg{width:20px;height:20px;}
-        .lp-logo-name{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-.03em;background:linear-gradient(135deg,#c4a0ff,#ff9fd4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-
-        .lp-hero{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem 0;}
-        .lp-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(167,108,255,.15);border:1px solid rgba(167,108,255,.25);border-radius:999px;padding:5px 14px;font-size:.7rem;font-weight:700;color:#c4a0ff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem;width:fit-content;}
-        .lp-tag .dot{width:6px;height:6px;border-radius:50%;background:#a76cff;animation:dp 2s ease-in-out infinite;}
-        @keyframes dp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.5);}}
-        .lp-hero h2{font-family:'Outfit',sans-serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;line-height:1.1;letter-spacing:-.05em;color:#fff;margin-bottom:1rem;}
-        .lp-hero h2 em{font-style:normal;background:linear-gradient(135deg,#c4a0ff 0%,#ff9fd4 50%,#ffb97a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-        .lp-hero p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.7;max-width:280px;}
-
-        /* Role selector cards on left */
-        .role-cards{position:relative;z-index:1;display:flex;flex-direction:column;gap:.75rem;margin-top:2rem;}
-        .role-card{background:rgba(255,255,255,.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:.875rem 1rem;display:flex;align-items:center;gap:.875rem;cursor:pointer;transition:background .2s,border-color .25s,transform .2s;animation:cs .5s cubic-bezier(.22,1,.36,1) both;}
-        .role-card:nth-child(1){animation-delay:.15s;} .role-card:nth-child(2){animation-delay:.28s;}
-        .role-card:hover{background:rgba(255,255,255,.10);border-color:rgba(167,108,255,.4);transform:translateX(4px);}
-        .role-card.selected{border-color:#a76cff;background:rgba(167,108,255,.12);}
-        @keyframes cs{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
-        .rc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-        .rc-icon.user{background:rgba(167,108,255,.2);} .rc-icon.org{background:rgba(255,154,108,.2);}
-        .rc-body{flex:1;} .rc-t{font-size:.8rem;font-weight:700;color:rgba(255,255,255,.9);} .rc-s{font-size:.68rem;color:rgba(255,255,255,.4);margin-top:2px;}
-        .rc-check{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;transition:all .2s;}
-        .role-card.selected .rc-check{background:#a76cff;border-color:#a76cff;}
-        .rc-check svg{width:11px;height:11px;stroke:#fff;stroke-width:2.5;fill:none;opacity:0;transition:opacity .2s;}
-        .role-card.selected .rc-check svg{opacity:1;}
-
-        /* ── RIGHT ── */
-        .lp-right { background:#ffffff;display:flex;flex-direction:column;align-items:center;padding:clamp(1.5rem,3vw,3rem);overflow-y:auto; }
-        .form-inner { width:100%;max-width:420px;margin:auto; }
-
-        /* ── PANELS ── */
-        .panel{display:none;animation:panelIn .35s cubic-bezier(.22,1,.36,1);}
-        .panel.active{display:block;}
-        @keyframes panelIn{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
-
-        /* Form head */
-        .form-head{margin-bottom:1.5rem;}
-        .form-head h1{font-family:'Outfit',sans-serif;font-size:clamp(1.4rem,2.2vw,1.75rem);font-weight:800;letter-spacing:-.04em;color:#1a0a2e;margin-bottom:.35rem;}
-        .form-head p{font-size:.8rem;color:#9b8bb0;}
-
-        /* Role toggle */
-        .role-toggle{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#f3f0fb;border-radius:12px;padding:4px;margin-bottom:1.5rem;}
-        .role-tab{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;color:#9b8bb0;background:transparent;cursor:pointer;transition:all .22s;white-space:nowrap;}
-        .role-tab.active{background:#fff;color:#1a0a2e;box-shadow:0 2px 10px rgba(167,108,255,.15);}
-        .role-tab svg{width:14px;height:14px;flex-shrink:0;}
-
-        /* Fields */
-        .field{position:relative;margin-bottom:.75rem;color-scheme:light;}
-        .field input,.field select{display:block;width:100%;padding:1.35rem 1rem .45rem;border:1.5px solid #ede8f8;border-radius:12px;font-size:.8375rem;font-family:'Plus Jakarta Sans',sans-serif;color:#2d1b5e;background:#faf8ff;outline:none;transition:border-color .22s,box-shadow .22s,background .22s;-webkit-text-fill-color:#2d1b5e;appearance:none;}
-        .field input:focus,.field select:focus{border-color:#a76cff;background:#fff;box-shadow:0 0 0 4px rgba(167,108,255,.1);}
-        .field label{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#b8afd0;pointer-events:none;transition:all .2s cubic-bezier(.4,0,.2,1);transform-origin:left center;background:transparent;}
-        .field input:focus + label,.field input:not(:placeholder-shown) + label,.field input:-webkit-autofill + label,
-        .field select:focus + label,.field.has-val label{top:.52rem;transform:translateY(0) scale(.75);color:#a76cff;font-weight:700;}
-        .field input:-webkit-autofill,.field input:-webkit-autofill:hover,.field input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 60px #faf8ff inset !important;-webkit-text-fill-color:#2d1b5e !important;transition:background-color 9999s;}
-
-        /* Select arrow */
-        .field-select::after{content:'';position:absolute;right:1rem;top:50%;transform:translateY(-50%);width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:5px solid #b8afd0;pointer-events:none;}
-
-        /* Eye button */
-        .field-pw .eye-btn{position:absolute;right:.875rem;top:50%;transform:translateY(-50%);background:none;border:none;outline:none;box-shadow:none;cursor:pointer;color:#c4b8d8;padding:2px;line-height:0;transition:color .2s;}
-        .field-pw .eye-btn:hover{color:#a76cff;}
-        .field-pw .eye-btn svg{width:17px;height:17px;}
-
-        /* Two columns */
-        .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
-
-        /* Password strength */
-        .pw-strength{margin-top:.375rem;margin-bottom:.75rem;}
-        .strength-bars{display:flex;gap:4px;margin-bottom:.3rem;}
-        .strength-bar{height:3px;flex:1;border-radius:99px;background:#ede8f8;transition:background .3s;}
-        .strength-label{font-size:.68rem;font-weight:600;color:#b8afd0;transition:color .3s;}
-        .strength-0 .strength-bar{background:#ede8f8;}
-        .strength-1 .strength-bar:nth-child(1){background:#ef4444;}
-        .strength-2 .strength-bar:nth-child(-n+2){background:#f97316;}
-        .strength-3 .strength-bar:nth-child(-n+3){background:#eab308;}
-        .strength-4 .strength-bar{background:#22c55e;}
-        .strength-1 .strength-label{color:#ef4444;}
-        .strength-2 .strength-label{color:#f97316;}
-        .strength-3 .strength-label{color:#eab308;}
-        .strength-4 .strength-label{color:#22c55e;}
-
-        /* Section divider */
-        .section-sep{display:flex;align-items:center;gap:.625rem;margin:.875rem 0 .75rem;}
-        .section-sep::before,.section-sep::after{content:'';flex:1;height:1px;background:#f0ebff;}
-        .section-sep span{font-size:.67rem;font-weight:700;color:#c4b8d8;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
-
-        /* Organizer badge */
-        .org-badge{display:flex;align-items:center;gap:.5rem;background:#fff7f0;border:1px solid #ffe0c8;border-radius:10px;padding:.625rem .875rem;margin-bottom:1rem;}
-        .org-badge svg{width:16px;height:16px;color:#f97316;flex-shrink:0;}
-        .org-badge span{font-size:.74rem;color:#c2440a;font-weight:500;line-height:1.4;}
-
-        /* Buttons */
-        .btn-primary{width:100%;height:50px;background:linear-gradient(135deg,#a76cff 0%,#e879b4 55%,#ff9a6c 100%);color:#fff;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;border:none;border-radius:12px;cursor:pointer;box-shadow:0 6px 28px rgba(167,108,255,.28);position:relative;overflow:hidden;transition:filter .2s,transform .15s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
-        .btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:left .55s ease;}
-        .btn-primary:hover::after{left:160%;}
-        .btn-primary:hover{filter:brightness(.92);box-shadow:0 10px 36px rgba(167,108,255,.38);}
-        .btn-primary:active{transform:scale(.97);}
-
-        .btn-outline{width:100%;height:46px;background:transparent;color:#7c3aed;font-family:'Plus Jakarta Sans',sans-serif;font-size:.8375rem;font-weight:600;border:1.5px solid #ede8f8;border-radius:12px;cursor:pointer;transition:border-color .2s,background .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.625rem;}
-        .btn-outline:hover{border-color:#a76cff;background:#faf8ff;}
-
-        /* Divider */
-        .divider{display:flex;align-items:center;gap:.75rem;margin:.875rem 0;}
-        .divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#e8e0f5,transparent);}
-        .divider span{font-size:.68rem;font-weight:700;color:#c4b8d8;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
-
-        /* Social row */
-        .social-row{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem;}
-        .btn-social{display:flex;align-items:center;justify-content:center;gap:.5rem;height:44px;border:1.5px solid #ede8f8;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;color:#3d2c6e;background:#faf8ff;cursor:pointer;text-decoration:none;transition:border-color .2s,background .2s,box-shadow .2s,transform .15s;}
-        .btn-social:hover{border-color:#a76cff;background:#fff;box-shadow:0 4px 16px rgba(167,108,255,.15);transform:translateY(-1px);}
-        .g-pill{width:20px;height:20px;border-radius:4px;background:#fff;border:1px solid #ede8f8;display:flex;align-items:center;justify-content:center;}
-        .g-pill svg{width:12px;height:12px;display:block;}
-
-        .reg-link{text-align:center;font-size:.78rem;color:#9b8bb0;margin-top:1rem;}
-        .reg-link a{color:#a76cff;font-weight:700;text-decoration:none;transition:opacity .2s;}
-        .reg-link a:hover{opacity:.7;text-decoration:underline;text-underline-offset:3px;}
-        .terms{text-align:center;font-size:.68rem;color:#c4b8d8;margin-top:.625rem;line-height:1.6;}
-        .terms a{color:#a76cff;text-decoration:none;font-weight:600;}
-
-        /* ── OTP ── */
-        .otp-wrap{display:flex;gap:.625rem;justify-content:center;margin-bottom:1.25rem;}
-        .otp-input{width:52px;height:60px;text-align:center;font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:700;color:#1a0a2e;border:2px solid #ede8f8;border-radius:14px;background:#faf8ff;outline:none;transition:border-color .2s,box-shadow .2s,transform .15s;-webkit-text-fill-color:#1a0a2e;}
-        .otp-input:focus{border-color:#a76cff;background:#fff;box-shadow:0 0 0 4px rgba(167,108,255,.1);transform:scale(1.04);}
-        .otp-input.filled{border-color:#a76cff;}
-        .otp-hint{text-align:center;font-size:.78rem;color:#9b8bb0;margin-bottom:1.5rem;}
-        .otp-hint strong{color:#1a0a2e;}
-        .otp-resend{text-align:center;font-size:.75rem;color:#9b8bb0;margin-top:.875rem;}
-        .otp-resend button{background:none;border:none;cursor:pointer;font-size:.75rem;font-weight:700;color:#a76cff;padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .2s;}
-        .otp-resend button:hover{opacity:.7;}
-        #otpTimer{font-weight:600;color:#9b8bb0;}
-
-        /* New password strength */
-        .back-link{display:inline-flex;align-items:center;gap:.35rem;background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.775rem;font-weight:600;color:#9b8bb0;padding:0;margin-bottom:1.375rem;transition:color .2s;}
-        .back-link:hover{color:#a76cff;}
-        .back-link svg{width:15px;height:15px;}
-
-        /* Success state */
-        .success-screen{text-align:center;padding:1.5rem 0;}
-        .success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#a76cff,#ff78b4);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;}
-        .success-icon svg{width:32px;height:32px;stroke:#fff;fill:none;stroke-width:2.5;}
-        .success-screen h2{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#1a0a2e;margin-bottom:.5rem;}
-        .success-screen p{font-size:.825rem;color:#9b8bb0;line-height:1.6;max-width:300px;margin:0 auto 1.5rem;}
-
-        /* Step indicator */
-        .step-indicator{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1.75rem;}
-        .step-dot{width:8px;height:8px;border-radius:50%;background:#ede8f8;transition:all .3s;}
-        .step-dot.active{background:#a76cff;width:24px;border-radius:4px;}
-        .step-dot.done{background:#c4a0ff;}
-
-        /* Responsive */
-        @media(max-width:768px){.lp-root{grid-template-columns:1fr;}.lp-left{display:none;}.lp-right{padding:1.5rem;}}
-        @media(max-height:600px){.lp-right{justify-content:flex-start;padding-top:1rem;}}
-
-        .error-msg{
-            display:block;
-            margin-top:4px;
-            margin-left:4px;
-            font-size:.72rem;
-            font-weight:600;
-            color:#ef4444;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/auth/css/RegisterAccount.css}" />
 </head>
 <body>
 
@@ -215,8 +18,6 @@
 </div>
 
 <div class="lp-root">
-
-    <!-- ═══ LEFT ═══ -->
     <div class="lp-left">
         <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
 
@@ -302,12 +103,12 @@
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
                                 <input type="text" id="u_middlename" placeholder=" " autocomplete="name" th:field="*{middleName}"/>
-                                <label for="u_middlename">Full Name</label>
+                                <label for="u_middlename">Middle Name</label>
                             </div>
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
                                 <input type="text" id="u_lastname" placeholder=" " autocomplete="name" th:field="*{lastName}"/>
-                                <label for="u_lastname">Full Name</label>
+                                <label for="u_lastname">Last Name</label>
                             </div>
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
@@ -333,7 +134,9 @@
                                 <label for="u_gender">Gender</label>
                             </div>
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}"></span>
+                                <span th:if="${#fields.hasErrors('*{dob}')}"
+                                      th:errors="*{dob}">
+                                </span>
                                 <input type="date" id="u_dob" placeholder=" " onchange="this.setAttribute('placeholder',' ')" th:field="*{dob}"/>
                                 <label for="u_dob">Date of Birth</label>
                             </div>
@@ -395,9 +198,21 @@
                         <div class="field-grid">
 
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></span>
-                                <input type="text" id="o_fullname" placeholder=" " autocomplete="name" th:field="*{fullName}"/>
-                                <label for="o_fullname">Full Name</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+                                <input type="text" id="o_firstName" placeholder=" " autocomplete="name" th:field="*{firstName}"/>
+                                <label for="o_firstName">First Name</label>
+                            </div>
+
+                            <div class="field">
+                                <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
+                                <input type="text" id="o_middleName" placeholder=" " autocomplete="name" th:field="*{middleName}"/>
+                                <label for="o_middleName">Middle Name</label>
+                            </div>
+
+                            <div class="field">
+                                <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+                                <input type="text" id="o_lastName" placeholder=" " autocomplete="name" th:field="*{lastName}"/>
+                                <label for="o_lastName">Last Name</label>
                             </div>
 
                             <div class="field">
@@ -421,7 +236,9 @@
                         </div>
 
                         <div class="field">
-                            <span class="error-msg" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}"></span>
+                            <span th:if="${#fields.hasErrors('*{dob}')}"
+                                  th:errors="*{dob}">
+                            </span>
                             <input type="date" id="o_dob" placeholder=" " th:field="*{dob}"/>
                             <label for="o_dob">Date of Birth</label>
                         </div>
@@ -629,169 +446,6 @@
         <input type="hidden" id="activeRoleVal" th:value="${activeRole} ?: 'user'"/>
     </div><!-- /lp-right -->
 </div><!-- /lp-root -->
-
-<script>
-    var currentRole = 'user';
-    /* ── PANEL ROUTER ── */
-    function showPanel(id) {
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    /* ── ROLE SWITCH (left panel) ── */
-    function selectLeftRole(role, el) {
-      document.querySelectorAll('#leftRoleCards .role-card').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      switchRole(role);
-    }
-
-    /* ── ROLE TABS (right panel) ── */
-    function switchRole(role) {
-    currentRole = role;
-
-    const isOrg = role === 'organizer';
-
-    document.getElementById('tabUser')
-        .classList.toggle('active', !isOrg);
-
-    document.getElementById('tabOrg')
-        .classList.toggle('active', isOrg);
-
-    // HIDE/SHOW FORM
-    document.getElementById('formUserRaw').style.display =
-        isOrg ? 'none' : 'block';
-
-    document.getElementById('formOrgRaw').style.display =
-        isOrg ? 'block' : 'none';
-
-    // Sync left cards
-    document.querySelectorAll('#leftRoleCards .role-card')
-        .forEach(c => {
-            c.classList.toggle(
-                'selected',
-                c.dataset.role === role
-            );
-        });
-}
-
-    /* ── EYE TOGGLE ── */
-    function toggleEye(inputId, btn) {
-      var inp = document.getElementById(inputId);
-      var isText = inp.type === 'text';
-      inp.type = isText ? 'password' : 'text';
-      btn.querySelector('.eye-show').style.display = isText ? '' : 'none';
-      btn.querySelector('.eye-hide').style.display = isText ? 'none' : '';
-    }
-
-    /* ── PASSWORD STRENGTH ── */
-    var strengthLabels = ['', 'Too weak', 'Could be stronger', 'Almost there', 'Strong password!'];
-    function calcStrength(pw) {
-      if (!pw) return 0;
-      var s = 0;
-      if (pw.length >= 8) s++;
-      if (/[A-Z]/.test(pw)) s++;
-      if (/[0-9]/.test(pw)) s++;
-      if (/[^A-Za-z0-9]/.test(pw)) s++;
-      return s;
-    }
-    function applyStrength(wrapperId, labelId, level) {
-      var w = document.getElementById(wrapperId);
-      w.className = 'pw-strength strength-' + level;
-      document.getElementById(labelId).textContent = level === 0 ? 'Enter a password' : strengthLabels[level];
-    }
-    function checkStrength(v, wrapperId, labelId) {
-    applyStrength(wrapperId, labelId, calcStrength(v));
-}
-    function checkStrengthNew(v) { applyStrength('pwStrengthNew', 'strengthLabelNew', calcStrength(v)); }
-    document.getElementById('o_pw') && document.getElementById('o_pw').addEventListener('input', function(){ applyStrength('pwStrengthOrg','strengthLabelOrg',calcStrength(this.value)); });
-
-    /* ── SELECT LABEL FLOAT ── */
-    function handleSelect(el, fieldId) {
-      document.getElementById(fieldId).classList.toggle('has-val', el.value !== '');
-    }
-
-    /* ── OTP INPUTS ── */
-    var otpInputs = document.querySelectorAll('.otp-input');
-    otpInputs.forEach(function(inp, i) {
-      inp.addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9]/g,'');
-        if (this.value && i < 5) otpInputs[i+1].focus();
-        this.classList.toggle('filled', !!this.value);
-      });
-      inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && !this.value && i > 0) {
-          otpInputs[i-1].focus();
-          otpInputs[i-1].value = '';
-          otpInputs[i-1].classList.remove('filled');
-        }
-      });
-      inp.addEventListener('paste', function(e) {
-        e.preventDefault();
-        var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g,'').slice(0,6);
-        paste.split('').forEach(function(ch, idx) {
-          if (otpInputs[idx]) { otpInputs[idx].value = ch; otpInputs[idx].classList.add('filled'); }
-        });
-        var next = Math.min(paste.length, 5);
-        otpInputs[next].focus();
-      });
-    });
-
-    /* ── FORGOT FLOW ── */
-    function goOtp() {
-      var email = document.getElementById('f_email').value.trim() || 'your email';
-      document.getElementById('otpEmail').textContent = email;
-      showPanel('panelForgot2');
-      startOtpTimer(60);
-    }
-
-    function verifyOtp() {
-      showPanel('panelForgot3');
-    }
-
-    function resetDone() {
-      document.getElementById('successTitle').textContent = 'Password Reset! 🎉';
-      document.getElementById('successMsg').textContent = 'Your password has been updated successfully. You can now sign in with your new password.';
-      showPanel('panelSuccess');
-    }
-
-    /* ── OTP TIMER ── */
-    var timerInterval;
-    function startOtpTimer(seconds) {
-      clearInterval(timerInterval);
-      var timerEl = document.getElementById('otpTimer');
-      timerEl.textContent = '(' + seconds + 's)';
-      timerInterval = setInterval(function() {
-        seconds--;
-        if (seconds <= 0) { clearInterval(timerInterval); timerEl.textContent = ''; }
-        else timerEl.textContent = '(' + seconds + 's)';
-      }, 1000);
-    }
-
-    function resendOtp() {
-      otpInputs.forEach(function(inp) { inp.value = ''; inp.classList.remove('filled'); });
-      otpInputs[0].focus();
-      startOtpTimer(60);
-    }
-
-    /* ── REGISTER SUCCESS ── */
-    function goSuccess() {
-      document.getElementById('successTitle').textContent = 'Account Created! 🎉';
-      document.getElementById('successMsg').textContent = 'Welcome to EventHub! Your account is ready. Start exploring amazing events around you.';
-      showPanel('panelSuccess');
-    }
-
-    /* ── AUTOFILL PLACEHOLDER FIX ── */
-    setTimeout(function() {
-      document.querySelectorAll('input[type=email], input[type=password], input[type=text], input[type=tel]').forEach(function(el) {
-        el.setAttribute('placeholder', '\u00A0');
-      });
-    }, 300);
-
-    let activeRole = document.getElementById('activeRoleVal').value;
-
-window.onload = function () {
-    switchRole(activeRole);
-}
-</script>
+<script th:src="@{/auth/js/RegisterAccount.js}"></script>
 </body>
 </html>

@@ -22,7 +22,7 @@ public class Venue extends BaseAuditEntity {
     @Column(name = "venue_id")
     private Long venueId;
 
-    @Column(name = "venue_name", nullable = false)
+    @Column(name = "venue_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String venueName;
 
     @OneToOne(cascade = CascadeType.ALL)

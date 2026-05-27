@@ -17,11 +17,11 @@ public class User extends BaseAuditEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String firstName;
-    @Column(name = "middle_name")
+    @Column(name = "middle_name", columnDefinition = "NVARCHAR(255)")
     private String middleName;
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String lastName;
     @Column(name = "email", nullable = false, unique = true)
     @Email
