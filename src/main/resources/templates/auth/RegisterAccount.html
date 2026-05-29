@@ -126,7 +126,7 @@
                         <div class="field-grid">
                             <div class="field field-select" id="genderField">
                                 <select id="u_gender" onchange="handleSelect(this,'genderField')" th:field="*{gender}">
-                                    <option value="" disabled></option>
+                                    <option value="" selected></option>
                                     <option value="MALE">Male</option>
                                     <option value="FEMALE">Female</option>
                                     <option value="OTHER">Other</option>
@@ -198,27 +198,30 @@
                         <div class="field-grid">
 
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+
                                 <input type="text" id="o_firstName" placeholder=" " autocomplete="name" th:field="*{firstName}"/>
                                 <label for="o_firstName">First Name</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
                             </div>
 
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
                                 <input type="text" id="o_middleName" placeholder=" " autocomplete="name" th:field="*{middleName}"/>
                                 <label for="o_middleName">Middle Name</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
                             </div>
 
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+
                                 <input type="text" id="o_lastName" placeholder=" " autocomplete="name" th:field="*{lastName}"/>
                                 <label for="o_lastName">Last Name</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
                             </div>
 
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+
                                 <input type="tel" id="o_phone" placeholder=" " autocomplete="tel" th:field="*{phone}"/>
                                 <label for="o_phone">Phone Number</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
                             </div>
 
                         </div>
@@ -230,38 +233,70 @@
                             <span th:text="${errorMsg}"></span>
                         </div>
                         <div class="field">
-                            <span class="error-msg" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+
                             <input type="email" id="o_email" placeholder=" " autocomplete="email" th:field="*{username}"/>
                             <label for="o_email">Email Address</label>
+                            <span class="error-msg" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
                         </div>
 
                         <div class="field">
+
+                            <input type="date" id="o_dob" placeholder=" " th:field="*{dob}"/>
+                            <label for="o_dob">Date of Establishment</label>
                             <span th:if="${#fields.hasErrors('*{dob}')}"
                                   th:errors="*{dob}">
                             </span>
-                            <input type="date" id="o_dob" placeholder=" " th:field="*{dob}"/>
-                            <label for="o_dob">Date of Birth</label>
                         </div>
 
                         <div class="section-sep"><span>Business Info</span></div>
 
                         <div class="field">
-                            <span class="error-msg" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></span>
+
                             <input type="text" id="o_company" placeholder=" " th:field="*{companyName}"/>
                             <label for="o_company">Company Name</label>
+                            <span class="error-msg" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></span>
                         </div>
 
                         <div class="field-grid">
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('taxCode')}" th:errors="*{taxCode}"></span>
+
                                 <input type="text" id="o_tax" placeholder=" " th:field="*{taxCode}"/>
                                 <label for="o_tax">Tax Code</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('taxCode')}" th:errors="*{taxCode}"></span>
                             </div>
                             <div class="field">
-                                <span class="error-msg" th:if="${#fields.hasErrors('bankAccount')}" th:errors="*{bankAccount}"></span>
+
                                 <input type="text" id="o_bank" placeholder=" " th:field="*{bankAccount}"/>
                                 <label for="o_bank">Bank Account</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('bankAccount')}" th:errors="*{bankAccount}"></span>
                             </div>
+                        </div>
+
+                        <div class="field-grid">
+                            <div class="field field-select" id="cityField">
+                                <select id="u_city"  th:field="*{city}" onchange="handleSelect(this,'cityField')">
+                                    <option value=""></option>
+                                    <option th:each="city : ${cities}"
+                                            th:value="${city.id}"
+                                            th:text="${city.name}">
+                                    </option>
+                                </select>
+                                <label for="u_city">City</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+                            </div>
+                            <div class="field field-select" id="wardField">
+                                <select id="u_ward"
+                                        th:field="*{ward}" onchange="handleSelect(this,'wardField')">
+                                    <option value=""></option>
+                                </select>
+                                <label for="u_ward">Ward</label>
+                                <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
+                            <input type="text" id="u_specificAddress" placeholder="" autocomplete="email" th:field="*{specificAddress}"/>
+                            <label for="u_specificAddress">Specific Address</label>
                         </div>
 
                         <div class="section-sep"><span>Set Password</span></div>

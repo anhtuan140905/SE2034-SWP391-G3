@@ -159,3 +159,50 @@ var currentRole = 'user';
 window.onload = function () {
     switchRole(activeRole);
 }
+    const citySelect =
+        document.getElementById("u_city");
+
+    const wardSelect =
+        document.getElementById("u_ward");
+
+    citySelect.addEventListener("change", function () {
+
+        const cityId = this.value;
+
+        wardSelect.innerHTML =
+            '<option value=""></option>';
+
+        // reset label
+        handleSelect(wardSelect, 'wardField');
+
+        if (!cityId) {
+            return;
+        }
+
+        fetch(`/auth/api/wards?cityId=${cityId}`)
+            .then(response => response.json())
+            .then(data => {
+
+                data.forEach(ward => {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value = ward.id;
+
+                    option.textContent = ward.name;
+
+                    wardSelect.appendChild(option);
+
+                });
+
+                // update floating label
+                handleSelect(wardSelect, 'wardField');
+
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+    });
+

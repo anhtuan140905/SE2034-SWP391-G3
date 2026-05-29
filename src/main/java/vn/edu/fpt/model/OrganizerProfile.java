@@ -1,6 +1,8 @@
 package vn.edu.fpt.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,12 @@ public class OrganizerProfile {
     @Column(name = "company_name")
     private String companyName;
 
-    @Column(name = "tax_code", length = 20)
+    @Column(name = "tax_code", length = 20, unique = true)
+    @NotBlank(message = "Mã số thuế không được để trống")
+    @Pattern(
+            regexp = "^[0-9]{10}$",
+            message = "Mã số thuế phải bao gồm đúng 10 chữ số"
+    )
     private String taxCode;
 
     @Column(name = "bank_account")

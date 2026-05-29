@@ -80,7 +80,7 @@
         .role-tab svg{width:14px;height:14px;flex-shrink:0;}
 
         /* Fields */
-        .field{position:relative;margin-bottom:.75rem;color-scheme:light;}
+        .field{position:relative;margin-bottom:1.25rem;color-scheme:light;}
         .field input,.field select{display:block;width:100%;padding:1.35rem 1rem .45rem;border:1.5px solid #ede8f8;border-radius:12px;font-size:.8375rem;font-family:'Plus Jakarta Sans',sans-serif;color:#2d1b5e;background:#faf8ff;outline:none;transition:border-color .22s,box-shadow .22s,background .22s;-webkit-text-fill-color:#2d1b5e;appearance:none;}
         .field input:focus,.field select:focus{border-color:#a76cff;background:#fff;box-shadow:0 0 0 4px rgba(167,108,255,.1);}
         .field label{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:#b8afd0;pointer-events:none;transition:all .2s cubic-bezier(.4,0,.2,1);transform-origin:left center;background:transparent;}
@@ -186,11 +186,13 @@
         @media(max-width:768px){.lp-root{grid-template-columns:1fr;}.lp-left{display:none;}.lp-right{padding:1.5rem;}}
         @media(max-height:600px){.lp-right{justify-content:flex-start;padding-top:1rem;}}
 
-        .error-msg{
-            display:block;
-            margin-top:4px;
-            margin-left:4px;
-            font-size:.72rem;
-            font-weight:600;
-            color:#ef4444;
+        .error-msg {
+            position: absolute;
+            bottom: -16px; /* Đẩy thông báo xuống dưới cùng của thẻ .field */
+            left: 4px;
+            font-size: .72rem;
+            font-weight: 600;
+            color: #ef4444;
+            z-index: 5;
+            line-height: 1;
         }
