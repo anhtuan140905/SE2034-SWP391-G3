@@ -6,4 +6,5 @@ import vn.edu.fpt.model.OrganizerProfile;
 
 @Repository
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile,Long> {
+    boolean existsByTaxCode(String taxCode);
 }
