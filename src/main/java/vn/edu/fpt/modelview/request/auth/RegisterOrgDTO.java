@@ -30,8 +30,6 @@ public class RegisterOrgDTO {
     private String password;
     @NotBlank(message = "Confirm password không được để trống!")
     private String confirmPassword;
-    @NotBlank(message = "Vui lòng chọn gender")
-    private String gender;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
     @NotBlank(message = "Tên công ty không được để trống")
@@ -40,4 +38,10 @@ public class RegisterOrgDTO {
     private String taxCode;
     @NotBlank(message = "Bank account không được để trống")
     private String bankAccount;
+    @NotBlank(message = "Thành phố không được để trống")
+    public String city;
+    @NotBlank(message = "Phường/Xã không được để trống")
+    public String ward;
+    @NotBlank(message = "Địa chỉ cụ thể không được để trống")
+    public String specificAddress;
 }

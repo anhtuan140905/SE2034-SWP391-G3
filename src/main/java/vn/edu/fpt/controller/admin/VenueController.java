@@ -17,31 +17,4 @@ import vn.edu.fpt.service.VenueService;
 @RequestMapping("/admin")
 public class VenueController {
 
-    private final VenueService venueService;
-
-    public VenueController(VenueService venueService) {
-        this.venueService = venueService;
-    }
-
-    @GetMapping("/addvenue")
-    public String getCreateVenuePage(Model model
-    ) {
-        model.addAttribute("CreateVenueDTO", new CreateVenueDTO());
-        return "admin/venue/AddVenue";
-    }
-
-    @PostMapping("/addvenue")
-    public String createVenue(
-            @Valid @ModelAttribute("createVenueDTO") CreateVenueDTO request,
-            BindingResult result,
-            Model model) {
-
-        if (result.hasErrors()) {
-            return "redirect:/admin/addvenue";
-        }
-
-        venueService.createVenue(request);
-        return "admin/DashboardAdmin";
-    }
-
 }
