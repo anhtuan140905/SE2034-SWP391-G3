@@ -1,5 +1,6 @@
 package vn.edu.fpt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,21 +8,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "wards")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class Ward {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ward_id", nullable = false)
-    private Ward ward;
+    @Column(name = "name", nullable = false, columnDefinition = "NVARCHAR(255)")
+    private String name;
 
-    @Column(name = "specific_address", nullable = false, columnDefinition = "NVARCHAR(500)")
-    private String specificAddress;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id", nullable = false)
+    @JsonIgnore
+    private City city;
 }

@@ -1,4 +1,4 @@
 package vn.edu.fpt.service;
 
-public class EventService {
+public interface EventService {
 }
