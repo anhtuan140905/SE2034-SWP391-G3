@@ -249,6 +249,12 @@
 
         .form-control::placeholder{ color:#6b7280; }
 
+        /* Style cho option trong select */
+        .form-control option{
+            background:#140021;
+            color:white;
+        }
+
         textarea.form-control{
             resize:none;
             height:150px;
@@ -286,6 +292,14 @@
         .upload-box span{
             color:#6b7280;
             font-size:13px;
+        }
+
+        /* ================= WARD LOADING ================= */
+        .ward-loading{
+            font-size:13px;
+            color:#9ca3af;
+            margin-top:8px;
+            display:none;
         }
 
         /* ================= BUTTONS ================= */
@@ -353,7 +367,7 @@
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
         <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
         <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
@@ -393,9 +407,11 @@
 
         <!-- PAGE HEADER -->
         <div class="page-header">
+            <a th:href="@{/admin/listvenue}">
             <button class="back-btn" aria-label="Back">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
+            </a>
             <div>
                 <h1>Add New Venue</h1>
                 <p>Create a new venue for hosting events</p>
@@ -407,7 +423,7 @@
 
             <h2 class="form-title">Venue Information</h2>
 
-            <form method="post" th:action = "@{/admin/addvenue}" th:object="${CreateVenueDTO}">
+            <form method="post" th:action="@{/admin/addvenue}" th:object="${CreateVenueDTO}">
 
                 <!-- Upload -->
                 <div class="form-group">
@@ -422,37 +438,67 @@
                 <!-- Venue Name -->
                 <div class="form-group">
                     <label>Venue Name:</label>
-                    <input type="text" class="form-control" placeholder="Enter venue name" th:field="*{venueName}"/>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Enter venue name"
+                           th:field="*{venueName}"/>
                 </div>
 
-                <!-- Location -->
-                <div class="form-group">
-                    <label>Street Address:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{streetAddress}"/>
-                </div>
-
-                <!-- Location -->
-                <div class="form-group">
-                    <label>Ward:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{ward}"/>
-                </div>
-
-                <!-- Location -->
+                <!-- City -->
                 <div class="form-group">
                     <label>City:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{city}"/>
+                    <select id="citySelect"
+                            class="form-control"
+                            th:field="*{city}">
+
+                        <option value="">-- Select City --</option>
+
+                        <option th:each="city : ${cities}"
+                                th:value="${city.id}"
+                                th:text="${city.name}">
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- Ward — load động bằng JS -->
+                <div class="form-group">
+                    <label>Ward:</label>
+                    <select id="wardSelect"
+                            class="form-control"
+                            th:field="*{ward}">
+                        <option value="" >-- Select ward -- </option>
+                    </select>
+                    <!-- Spinner hiển thị khi đang load -->
+                    <div class="ward-loading" id="wardLoading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách ward...
+                    </div>
+                </div>
+
+                <!-- Street Address -->
+                <div class="form-group">
+                    <label>Street Address:</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Specific address"
+                           th:field="*{streetAddress}"/>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label>Description:</label>
-                    <textarea class="form-control" placeholder="Describe the venue, amenities, and features..." th:field="*{description}"></textarea>
+                    <textarea class="form-control"
+                              placeholder="Describe the venue, amenities, and features..."
+                              th:field="*{description}"></textarea>
                 </div>
+
                 <!-- ================= ZONES ================= -->
                 <div class="form-group">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
                         <label style="margin-bottom:0">Khu vực (Zone)</label>
-                        <button type="button" class="btn btn-cancel" onclick="addZone()" style="padding:8px 16px; font-size:13px;">
+                        <button type="button" class="btn btn-cancel"
+                                onclick="addZone()"
+                                style="padding:8px 16px; font-size:13px;">
                             <i class="fa-solid fa-plus"></i> Thêm Zone
                         </button>
                     </div>
@@ -463,14 +509,15 @@
                     <!-- Template zone ẩn — không submit vì disabled -->
                     <div id="zone-template" style="display:none">
                         <div class="zone-item" style="
-            background:#090014;
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:14px;
-            padding:20px;
-            margin-bottom:14px;
-        ">
+                            background:#090014;
+                            border:1px solid rgba(236,72,153,0.3);
+                            border-radius:14px;
+                            padding:20px;
+                            margin-bottom:14px;">
+
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                                <span class="zone-title" style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
+                                <span class="zone-title"
+                                      style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
                                 <button type="button" onclick="removeZone(this)"
                                         style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px;">
                                     <i class="fa-solid fa-xmark"></i>
@@ -498,17 +545,18 @@
                                 </div>
                             </div>
 
-                            <!-- Hiển thị tổng ghế tự tính -->
                             <div style="margin-top:12px; font-size:13px; color:#9ca3af;">
-                                Tổng ghế: <span class="total-seats" style="color:#ff1b8d; font-weight:bold;">0</span>
+                                Tổng ghế: <span class="total-seats"
+                                                style="color:#ff1b8d; font-weight:bold;">0</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-save">
-                         Save Venue
+                        Save Venue
                     </button>
                     <button type="button" class="btn btn-cancel" onclick="history.back()">
                         Cancel
@@ -524,16 +572,18 @@
 </div><!-- /wrapper -->
 
 <script>
+    // ============================================================
+    // ZONE MANAGEMENT
+    // ============================================================
     let zoneCount = 0;
 
     function addZone() {
         const template = document.getElementById('zone-template').firstElementChild;
-        const clone = template.cloneNode(true);
+        const clone    = template.cloneNode(true);
 
         clone.querySelector('.zone-name').name  = `zones[${zoneCount}].zoneName`;
         clone.querySelector('.zone-rows').name  = `zones[${zoneCount}].rows`;
         clone.querySelector('.zone-seats').name = `zones[${zoneCount}].seatsPerRow`;
-
         clone.querySelector('.zone-title').textContent = `Zone ${zoneCount + 1}`;
 
         clone.querySelector('.zone-rows').addEventListener('input',  () => updateTotal(clone));
@@ -550,7 +600,7 @@
 
     function reindex() {
         const items = document.querySelectorAll('#zone-container .zone-item');
-        zoneCount = items.length;
+        zoneCount   = items.length;
         items.forEach((item, i) => {
             item.querySelector('.zone-name').name  = `zones[${i}].zoneName`;
             item.querySelector('.zone-rows').name  = `zones[${i}].rows`;
@@ -565,7 +615,58 @@
         zoneItem.querySelector('.total-seats').textContent = rows * seats;
     }
 
+    // Thêm zone đầu tiên mặc định khi load trang
     addZone();
+
+
+    // ============================================================
+    // LOAD WARD THEO CITY — gọi GET /admin/wards/{cityId}
+    // ============================================================
+    const citySelect  = document.getElementById('citySelect');
+    const wardSelect  = document.getElementById('wardSelect');
+    const wardLoading = document.getElementById('wardLoading');
+
+    citySelect.addEventListener('change', function () {
+        const cityId = this.value;
+
+        // Reset ward select về trạng thái ban đầu
+        wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+
+        // Nếu chưa chọn city thì dừng
+        if (!cityId) return;
+
+        // Hiện spinner loading
+        wardLoading.style.display = 'block';
+        wardSelect.disabled = true;
+
+        fetch(`/admin/wards/${cityId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách ward. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(wards => {
+                // Render từng ward vào select
+                wards.forEach(ward => {
+                    const option       = document.createElement('option');
+                    option.value       = ward.id;      // Long ID → submit lên server
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error('Lỗi load ward:', err);
+                wardSelect.innerHTML =
+                    '<option value="">-- Lỗi tải ward, thử lại --</option>';
+            })
+            .finally(() => {
+                // Ẩn spinner, mở lại select dù thành công hay lỗi
+                wardLoading.style.display = 'none';
+                wardSelect.disabled = false;
+            });
+    });
 </script>
+
 </body>
 </html>

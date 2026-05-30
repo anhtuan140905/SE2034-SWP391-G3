@@ -18,10 +18,12 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ward_id", nullable = false)
-    private Ward ward;
+    @Column(name = "city", columnDefinition = "VARCHAR(255)")
+    private String city;
 
-    @Column(name = "specific_address", nullable = false, columnDefinition = "NVARCHAR(500)")
-    private String specificAddress;
+    @Column(name = "street_address", columnDefinition = "NVARCHAR(500)")
+    private String streetAddress;
+
+    @Column(name = "ward", columnDefinition = "VARCHAR(255)")
+    private String ward;
 }
