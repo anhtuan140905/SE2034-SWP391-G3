@@ -7,8 +7,11 @@ import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
+import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
+
+import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -16,4 +19,7 @@ public interface UserService {
     public User handleCreateUser(RegisterUserDTO dto);
     public User findByUsername(String username);
     public User handleCreateOrganizer(RegisterOrgDTO dto);
+    public Optional<User> findByEmailWithRoles(String username);
+    public User getUserById(Long id);
+    public User handleUpdateUser(UpdateAttendeeProfileDTO dto);
 }
