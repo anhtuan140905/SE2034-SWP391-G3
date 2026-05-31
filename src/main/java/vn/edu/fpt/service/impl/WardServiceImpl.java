@@ -17,12 +17,17 @@ public class WardServiceImpl implements WardService {
     }
 
     public Ward findByNameAndCity(String name, City city) {
-        return findByNameAndCity(name, city);
+        return this.wardRepository.findByNameAndCity(name, city);
     }
 
     @Override
     public List<Ward> findByCityId(Long cityId) {
         return this.wardRepository.findByCityId(cityId);
+    }
+
+    @Override
+    public Ward findById(Long id) {
+        return this.wardRepository.findById(id).orElse(null);
     }
 
 }

@@ -8,7 +8,7 @@ import vn.edu.fpt.model.Ward;
 import java.util.List;
 
 @Repository
-public interface WardRepository extends JpaRepository<Ward, Integer> {
+public interface WardRepository extends JpaRepository<Ward, Long> {
     Ward findByNameAndCity(String name, City city);
 
     List<Ward> findByCityId(Long cityId);

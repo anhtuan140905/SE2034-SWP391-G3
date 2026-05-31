@@ -9,4 +9,6 @@ public interface WardService {
     public Ward findByNameAndCity(String name, City city);
 
     public List<Ward> findByCityId(Long cityId);
+
+    Ward findById(Long id);
 }
