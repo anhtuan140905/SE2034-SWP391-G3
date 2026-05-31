@@ -1,44 +1,49 @@
 package vn.edu.fpt.service.impl;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.common.error.CheckDuplicateException;
-import vn.edu.fpt.model.OrganizerProfile;
-import vn.edu.fpt.model.Role;
-import vn.edu.fpt.model.User;
+import vn.edu.fpt.configuration.PasswordEncoderConfig;
+import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrganizerStatus;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
+import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
-import vn.edu.fpt.service.OrganizerProfileService;
-import vn.edu.fpt.service.RoleService;
-import vn.edu.fpt.service.UserService;
+import vn.edu.fpt.service.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service("UserService")
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoderConfig passwordEncoderConfig;
     private final OrganizerProfileRepository organizerProfileRepository;
     private final OrganizerProfileService organizerProfileService;
+    private final WardService wardService;
+    private final CityService cityService;
+    private final CloudinaryService cloudinaryService;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
-                           PasswordEncoder passwordEncoder,
+                           PasswordEncoderConfig passwordEncoderConfig,
                            OrganizerProfileRepository organizerProfileRepository,
-                           OrganizerProfileService organizerProfileService) {
+                           OrganizerProfileService organizerProfileService,
+                           WardService wardService,
+                           CityService cityService,
+                           CloudinaryService cloudinaryService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoderConfig = passwordEncoderConfig;
         this.organizerProfileRepository = organizerProfileRepository;
         this.organizerProfileService = organizerProfileService;
+        this.wardService = wardService;
+        this.cityService = cityService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     public User findByUsername(String username) {
@@ -63,7 +68,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
-        String hashedPassword = this.passwordEncoder.encode(dto.getPassword());
+        String hashedPassword = this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
         return this.userRepository.save(user);
     }
@@ -87,7 +92,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
-        String hashedPassword = passwordEncoder.encode(dto.getPassword());
+        String hashedPassword = this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
         User u =  this.userRepository.save(user);
         OrganizerProfile op = new OrganizerProfile();
@@ -98,5 +103,44 @@ public class UserServiceImpl implements UserService {
         op.setTaxCode(dto.getTaxCode());
         this.organizerProfileRepository.save(op);
         return u;
+    }
+
+    @Override
+    public Optional<User> findByEmailWithRoles(String username) {
+        return this.userRepository.findByEmailWithRoles(username);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return this.userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public User handleUpdateUser(UpdateAttendeeProfileDTO dto) {
+        User user = this.findByUsername(dto.getEmail());
+        if(user == null){
+            return null;
+        }
+        user.setFirstName(dto.getFirstName());
+        user.setMiddleName(dto.getMiddleName());
+        user.setLastName(dto.getLastName());
+        user.setDob(dto.getDob());
+        user.setGender(dto.getGender());
+        user.setPhone(dto.getPhone());
+        Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
+        Address address = user.getAddress();
+        if(address != null){
+            address.setWard(ward);
+            address.setSpecificAddress(dto.getSpecificAddress());
+        } else {
+            address = new Address();
+            address.setWard(ward);
+            address.setSpecificAddress(dto.getSpecificAddress());
+        }
+        user.setAddress(address);
+        if(dto.getAvatar() != null) {
+            user.setAvatar(dto.getAvatar());
+        }
+        return this.userRepository.save(user);
     }
 }

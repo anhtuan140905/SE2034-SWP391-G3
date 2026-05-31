@@ -1,10 +1,267 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - My Settings & Profile</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" th:href="@{/homepage/css/profile.css}" />
 </head>
 <body>
 
+<div class="background-glows">
+    <div class="glow-blob glow-blob-1"></div>
+    <div class="glow-blob glow-blob-2" style="background: radial-gradient(circle, var(--color-violet) 0%, rgba(0,0,0,0) 70%);"></div>
+    <div class="glow-blob glow-blob-3"></div>
+</div>
+
+<div th:replace="~{homepage/fragments/header :: header}">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="brand-dots me-2">
+                    <span class="dot pink"></span>
+                    <span class="dot violet"></span>
+                    <span class="dot orange"></span>
+                </div>
+                <span class="brand-text text-white">Event<span class="highlight">Hub</span></span>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<main class="container profile-container py-5 my-4">
+
+    <div class="row align-items-stretch g-5">
+
+        <div class="col-lg-4 col-md-5">
+            <div class="glass-profile-card text-center d-flex flex-column justify-content-between h-100 anim-fade-in-up">
+                <div class="w-100">
+                    <div class="mb-3">
+                            <span class="tier-pill-badge">
+                                <i class="fa-solid fa-gem text-pink-glow animate-pulse"></i> VIP PREMIUM MEMBER
+                            </span>
+                    </div>
+
+                    <div class="avatar-preview-container">
+                        <div class="avatar-preview-wrapper" id="avatarPreviewContainer">
+                            <img th:src="${user != null ? user.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}"
+                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                                 alt="Profile Avatar"
+                                 class="avatar-preview-image"
+                                 id="avatarPreviewImage">
+                        </div>
+
+                        <button type="button" class="avatar-upload-trigger" id="avatarUploadTrigger" title="Tải ảnh đại diện lên">
+                            <i class="fa-solid fa-camera text-sm"></i>
+                        </button>
+
+                        <input type="file" id="avatarFileInput" name="avatarFile" form="profileForm" accept="image/*" class="d-none">
+                    </div>
+
+                    <h3 class="text-white font-heading font-extrabold h4 mb-1 username-text" th:text="${user != null ? user.fullName : 'Alex Rivera'}">Alex Rivera</h3>
+                    <p class="text-secondary-light font-mono text-xs d-flex align-items-center justify-content-center gap-1 mb-4" style="letter-spacing: 0.05em;">
+                        <span class="opacity-70">@</span><span th:text="${user != null ? user.username : 'alex_rivera'}">alex_rivera</span>
+                    </p>
+
+                    <div class="bg-black/20 rounded-4 p-3 border border-white/5 my-4 text-start font-sans">
+                        <div class="row text-center g-2">
+                            <div class="col-4 border-end border-white/5">
+                                <span class="text-white font-extrabold font-heading d-block fs-5">06</span>
+                                <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Lễ hội đi</span>
+                            </div>
+                            <div class="col-4 border-end border-white/5">
+                                <span class="text-pink d-block font-extrabold font-heading fs-5" th:text="${favCount != null ? favCount : '3'}">03</span>
+                                <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Yêu thích</span>
+                            </div>
+                            <div class="col-4">
+                                <span class="text-brand-orange d-block font-extrabold font-heading fs-5" th:text="${ticketCount != null ? ticketCount : '1'}">01</span>
+                                <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Vé đã mua</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-100 border-top border-white/5 pt-3 mt-auto">
+                    <div class="d-flex flex-column gap-2 text-start">
+                        <a th:href="@{/my-tickets}" href="/my-tickets" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5" style="border: 1px solid rgba(255,255,255,0.08);">
+                            <i class="fa-solid fa-wallet text-orange me-1"></i> Quản lý thẻ vé của tôi
+                        </a>
+                        <a th:href="@{/favorites}" href="/favorites" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5" style="border: 1px solid rgba(255,255,255,0.08);">
+                            <i class="fa-solid fa-heart text-pink me-1"></i> Sự kiện đã ghim yêu thích
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 col-md-7">
+            <div class="glass-profile-card h-100 anim-fade-in-up" style="animation-delay: 0.15s;">
+                <span class="section-label mb-2">My account management</span>
+                <h2 class="profile-heading mb-4">Cập nhật Hồ sơ cá nhân</h2>
+
+                <form id="profileForm"
+                      th:action="@{/attendee/update/profile}"
+                      method="post"
+                      th:object="${userUpdateDTO}"
+                      enctype="multipart/form-data">
+                    <div class="row g-4 text-start">
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="firstName" class="profile-input-label">First Name:</label>
+                                <input type="text"
+                                       class="profile-input-control"
+                                       id="firstName"
+                                       th:field="*{firstName}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="middleName" class="profile-input-label">Middle Name:</label>
+                                <input type="text"
+                                       class="profile-input-control"
+                                       id="middleName"
+                                       th:field="*{middleName}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="lastName" class="profile-input-label">Last Name:</label>
+                                <input type="text"
+                                       class="profile-input-control"
+                                       id="lastName"
+                                       th:field="*{lastName}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="emailInput" class="profile-input-label">Email:</label>
+                                <input type="text"
+                                       class="profile-input-control"
+                                       id="emailInput"
+                                       th:field="*{email}"
+                                       readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="phone" class="profile-input-label">Phone:</label>
+                                <input type="text"
+                                       class="profile-input-control"
+                                       id="phone"
+                                       th:field="*{phone}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="u_gender" class="profile-input-label">Gender</label>
+                                <select id="u_gender" class="profile-input-control" th:field="*{gender}" onchange="handleSelect(this,'genderField')">
+                                    <option th:value="MALE">Male</option>
+                                    <option th:value="FEMALE">Female</option>
+                                    <option th:value="OTHER">Other</option>
+                                </select>
+                                <span class="error-msg" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="u_city" class="profile-input-label">City</label>
+                                <select id="u_city" class="profile-input-control" th:field="*{city}" onchange="handleSelect(this,'cityField')">
+                                    <option value=""></option>
+                                    <option th:each="city : ${cities}"
+                                            th:value="${city.id}"
+                                            th:text="${city.name}">
+                                    </option>
+                                </select>
+                                <span class="error-msg" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="u_ward" class="profile-input-label">Ward</label>
+                                <select id="u_ward" class="profile-input-control" th:field="*{ward}" onchange="handleSelect(this,'wardField')">
+                                    <option value=""></option>
+                                </select>
+                                <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="u_specificAddress" class="profile-input-label">Specific Address</label>
+                                <input type="text" id="u_specificAddress" class="profile-input-control" placeholder="" autocomplete="email" th:field="*{specificAddress}"/>
+                                <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="password" class="profile-input-label">Password</label>
+                                <input type="password"
+                                       id="password"
+                                       class="profile-input-control"
+                                       th:field="*{password}"
+                                       placeholder="Leave blank to keep current password">
+                                <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="confirmPassword" class="profile-input-label">Confirm Password</label>
+                                <input type="password"
+                                       id="confirmPassword"
+                                       class="profile-input-control"
+                                       th:field="*{confirmPassword}"
+                                       placeholder="Re-enter your new password">
+                                <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
+                            </div>
+                        </div>
+
+                        <div class="border-top border-white/5 pt-4 mt-4 text-end">
+                            <button type="submit" class="btn btn-save-changes cursor-pointer" id="btnSaveChanges">
+                                <i class="fa-solid fa-floppy-disk me-1.5"></i> Lưu các thay đổi
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div th:if="${saveSuccess}" class="toast-success-bubble" id="profileSuccessToast">
+    <i class="fa-solid fa-circle-check text-cyan-glow fs-5" style="color: #00f0ff;"></i>
+    <div>
+        <strong class="d-block text-white" style="font-size: 13px;">Thành công!</strong>
+        <span class="text-secondary-light" style="font-size: 11px;">Hồ sơ của bạn đã được cập nhật thành công.</span>
+    </div>
+</div>
+
+<div th:replace="~{homepage/fragments/footer :: footer}">
+    <footer class="py-4 mt-5 text-center text-secondary border-top border-dark">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 EventHub. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/homepage/js/profile.js}"></script>
 </body>
 </html>
