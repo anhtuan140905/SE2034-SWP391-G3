@@ -47,7 +47,8 @@ public class Event extends BaseAuditEntity {
     // LocalDateTime vì đây là giờ hiển thị với user VN — không phải audit timestamp
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
-
+    @Column(name = "date",nullable = false)
+    private LocalDateTime date;
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
