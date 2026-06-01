@@ -14,10 +14,7 @@ public class DashBoardController {
         model.addAttribute("activeMenu", "dashboard");
         return "organizer/DashboardOrganizer";
     }
-    @GetMapping("/create/event")
-    public String Create(){
-        return "organizer/event/CreateOrganizerEvent";
-    }
+
 
 
 
