@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#moderator-profile-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
+<head>
+    <title>Profile — EventHub Moderator</title>
+    <!--/*@thymesVar id="moderator" type="com.example.dto.ModeratorProfileDTO"*/-->
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/moderator_profile.css}"/>
+</head>
+<body>
+
+<section id="moderator-profile-content" th:fragment="content">
+
+    <!-- Page Heading -->
+    <div class="mp-heading">
+        <h1 class="page-title">MODERATOR PROFILE DIRECTORY</h1>
+        <p class="page-subtitle">Manage your security identifiers, clearance level, and digital credentials for Metropol.</p>
+    </div>
+
+    <!-- 2-col body -->
+    <div class="mp-body">
+
+        <!-- ── LEFT: Identity Card ── -->
+        <div class="mp-id-card">
+            <!-- Purple top bar accent -->
+            <div class="mp-card-accent"></div>
+
+            <div class="mp-card-inner">
+                <!-- Avatar -->
+                <div class="mp-avatar-wrapper">
+                    <div class="mp-avatar">
+                        <img th:if="${moderator != null and moderator.avatarUrl != null}"
+                             th:src="${moderator.avatarUrl}"
+                             th:alt="${moderator.name}"/>
+                        <span th:if="${moderator == null or moderator.avatarUrl == null}"
+                              class="mp-avatar-fallback">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                    </div>
+                    <span class="mp-verified-badge">
+                        <i class="fa-solid fa-check"></i>
+                    </span>
+                </div>
+
+                <!-- Name + ID -->
+                <h2 class="mp-name" th:text="${moderator != null ? moderator.name : 'Alice'}">Alice</h2>
+                <p class="mp-mod-id" th:text="${'ID: ' + (moderator != null ? moderator.modId : 'MOD-8829-X')}">
+                    ID: MOD-8829-X
+                </p>
+
+                <!-- Meta rows -->
+                <div class="mp-meta-list">
+                    <div class="mp-meta-row">
+                        <span class="mp-meta-label">Clearance:</span>
+                        <span class="mp-clearance-badge"
+                              th:text="${moderator != null ? moderator.clearance : 'AUTHORIZED'}">AUTHORIZED</span>
+                    </div>
+                    <div class="mp-meta-row">
+                        <span class="mp-meta-label">Department:</span>
+                        <span class="mp-meta-value mp-mono"
+                              th:text="${moderator != null ? moderator.department : 'Events Security'}">Events Security</span>
+                    </div>
+                    <div class="mp-meta-row">
+                        <span class="mp-meta-label">District Zone:</span>
+                        <span class="mp-meta-value mp-mono"
+                              th:text="${moderator != null ? moderator.districtZone : 'Cyber Docklands'}">Cyber Docklands</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: Dossier Panel ── -->
+        <div class="mp-dossier">
+
+            <!-- Dossier header -->
+            <div class="mp-dossier-header">
+                <div class="mp-dossier-title">
+                    <i class="fa-solid fa-fingerprint"></i>
+                    <span>VETTED PROFILE DOSSIER</span>
+                </div>
+                <a th:href="@{/moderator/profile/edit}" class="btn-edit-profile">
+                    <i class="fa-solid fa-pen"></i>
+                    Edit Profile Details
+                </a>
+            </div>
+
+            <!-- Dossier grid -->
+            <div class="mp-dossier-grid">
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">FULL LEGAL NAME</span>
+                    <span class="mp-dossier-value"
+                          th:text="${moderator != null ? moderator.fullName : 'Moderator Alice'}">Moderator Alice</span>
+                </div>
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">CORPORATE EMAIL ADDRESS</span>
+                    <span class="mp-dossier-value mp-mono"
+                          th:text="${moderator != null ? moderator.email : 'alice@eventhub.local'}">alice@eventhub.local</span>
+                </div>
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">ASSIGNED ACCESS ROLE</span>
+                    <span class="mp-dossier-value"
+                          th:text="${moderator != null ? moderator.role : 'Sr. Moderator'}">Sr. Moderator</span>
+                </div>
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">ASSIGNED ID KEY</span>
+                    <span class="mp-dossier-value mp-id-key"
+                          th:text="${moderator != null ? moderator.modId : 'MOD-8829-X'}">MOD-8829-X</span>
+                </div>
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">DATE OF BIRTH</span>
+                    <span class="mp-dossier-value"
+                          th:text="${moderator != null ? moderator.dateOfBirth : '1994-08-12'}">1994-08-12</span>
+                </div>
+
+                <div class="mp-dossier-item">
+                    <span class="mp-dossier-label">CONTACT PHONE LINK</span>
+                    <span class="mp-dossier-value"
+                          th:text="${moderator != null ? moderator.phone : '+1 (555) 019-3821'}">+1 (555) 019-3821</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/moderator_profile.js}"></script>
+
+</body>
+</html>
