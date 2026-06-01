@@ -1,10 +1,52 @@
+<!--
+   Path: src/main/resources/templates/moderator/fragments/moderator_layout.html
+-->
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(title, content, pageStyle, pageScript)" lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:replace="${title}">EventHub Moderator</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <!-- Shared layout CSS -->
+    <link rel="stylesheet" th:href="@{/moderator/css/moderator_layout.css}"/>
+
+    <!-- Page-specific CSS -->
+    <!--<th:block th:replace="${pageStyle}"/>-->
+    <th:block th:replace="${pageStyle}"/>
 </head>
 <body>
+
+<div class="mod-wrapper">
+
+    <!-- Sidebar -->
+    <aside th:replace="~{moderator/fragments/moderator_sidebar :: sidebar}"></aside>
+
+    <!-- Main area -->
+    <div class="mod-main">
+
+        <!-- Header -->
+        <header th:replace="~{moderator/fragments/moderator_header :: header}"></header>
+
+        <!-- Page Content -->
+        <main class="mod-content">
+            <th:block th:replace="${content}"/>
+        </main>
+
+    </div>
+</div>
+
+<!-- Page-specific JS -->
+<th:block th:replace="${pageScript}"/>
 
 </body>
 </html>

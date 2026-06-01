@@ -356,7 +356,7 @@
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
         <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
         <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
@@ -396,9 +396,11 @@
 
         <!-- PAGE HEADER -->
         <div class="page-header">
-            <button class="back-btn" aria-label="Back">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            <a th:href="@{/admin/listvenue}">
+                <button class="back-btn" aria-label="Back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
             <div>
                 <h1>Edit Venue</h1>
                 <p>Update venue information</p>
@@ -452,7 +454,7 @@
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-update">
-                       Update Venue
+                        Update Venue
                     </button>
                     <button type="button" class="btn btn-cancel" onclick="history.back()">
                         Cancel
