@@ -1,343 +1,396 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Add Venue</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        body{
-            display:flex;
-            min-height:100vh;
-            background:#090014;
-            color:white;
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #090014;
+            color: white;
         }
 
         /* ================= SIDEBAR ================= */
-        .sidebar{
-            width:260px;
-            background:#140021;
-            border-right:1px solid rgba(236,72,153,0.3);
-            padding:20px;
-            position:fixed;
-            top:0;
-            left:0;
-            height:100vh;
-            z-index:100;
+        .sidebar {
+            width: 260px;
+            background: #140021;
+            border-right: 1px solid rgba(236, 72, 153, 0.3);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
         }
 
-        .logo-section{ margin-bottom:40px; }
-
-        .logo{
-            font-size:28px;
-            font-weight:bold;
-            margin-bottom:5px;
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
+        .logo-section {
+            margin-bottom: 40px;
         }
 
-        .portal-text{
-            font-size:13px;
-            color:#9ca3af;
-            letter-spacing:1px;
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .menu a{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            text-decoration:none;
-            color:#d1d5db;
-            padding:14px 16px;
-            border-radius:12px;
-            margin-bottom:10px;
-            transition:0.3s;
+        .portal-text {
+            font-size: 13px;
+            color: #9ca3af;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #d1d5db;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
         }
 
         .menu a:hover,
-        .menu a.active{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            color:white;
+        .menu a.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
         }
 
         /* ================= WRAPPER ================= */
-        .wrapper{
-            margin-left:260px;
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            min-height:100vh;
+        .wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* ================= TOPBAR ================= */
-        .topbar{
-            position:sticky;
-            top:0;
-            z-index:90;
-            background:#0d001a;
-            border-bottom:1px solid rgba(236,72,153,0.2);
-            padding:12px 25px;
-            display:flex;
-            align-items:center;
-            gap:16px;
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            background: #0d001a;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .search-wrap{
-            position:relative;
-            flex:1;
-            max-width:500px;
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 500px;
         }
 
-        .search-wrap i{
-            position:absolute;
-            left:14px;
-            top:50%;
-            transform:translateY(-50%);
-            color:#9ca3af;
-            font-size:14px;
+        .search-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
         }
 
-        .search-box-top{
-            width:100%;
-            background:#140021;
-            border:1px solid rgba(236,72,153,0.25);
-            border-radius:10px;
-            padding:10px 15px 10px 40px;
-            color:white;
-            outline:none;
-            font-size:14px;
+        .search-box-top {
+            width: 100%;
+            background: #140021;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 10px;
+            padding: 10px 15px 10px 40px;
+            color: white;
+            outline: none;
+            font-size: 14px;
         }
 
-        .search-box-top::placeholder{ color:#9ca3af; }
-
-        .topbar-right{
-            margin-left:auto;
-            display:flex;
-            align-items:center;
-            gap:18px;
+        .search-box-top::placeholder {
+            color: #9ca3af;
         }
 
-        .notif-btn{
-            position:relative;
-            background:none;
-            border:none;
-            color:#d1d5db;
-            font-size:20px;
-            cursor:pointer;
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
 
-        .notif-btn .dot{
-            position:absolute;
-            top:0;
-            right:0;
-            width:9px;
-            height:9px;
-            background:#ff1b8d;
-            border-radius:50%;
-            border:2px solid #0d001a;
+        .notif-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #d1d5db;
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        .profile{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            cursor:pointer;
+        .notif-btn .dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 9px;
+            height: 9px;
+            background: #ff1b8d;
+            border-radius: 50%;
+            border: 2px solid #0d001a;
         }
 
-        .profile img{
-            width:42px;
-            height:42px;
-            border-radius:50%;
-            border:2px solid #ff1b8d;
-            object-fit:cover;
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
         }
 
-        .profile-info{ line-height:1.3; }
-        .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
-        .profile-info .role{ font-size:12px; color:#9ca3af; }
+        .profile img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff1b8d;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            line-height: 1.3;
+        }
+
+        .profile-info .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .profile-info .role {
+            font-size: 12px;
+            color: #9ca3af;
+        }
 
         /* ================= MAIN ================= */
-        .main{ flex:1; padding:25px; }
+        .main {
+            flex: 1;
+            padding: 25px;
+        }
 
         /* ================= PAGE HEADER ================= */
-        .page-header{
-            display:flex;
-            align-items:center;
-            gap:14px;
-            margin-bottom:25px;
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 25px;
         }
 
-        .back-btn{
-            width:36px;
-            height:36px;
-            border-radius:10px;
-            background:rgba(255,255,255,0.06);
-            border:1px solid rgba(236,72,153,0.25);
-            color:#d1d5db;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            font-size:15px;
-            transition:0.2s;
-            flex-shrink:0;
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+            flex-shrink: 0;
         }
 
-        .back-btn:hover{
-            background:rgba(255,27,141,0.15);
-            color:#ff1b8d;
+        .back-btn:hover {
+            background: rgba(255, 27, 141, 0.15);
+            color: #ff1b8d;
         }
 
-        .page-header h1{ font-size:26px; font-weight:bold; }
-        .page-header p{ color:#9ca3af; margin-top:5px; font-size:14px; }
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            margin-top: 5px;
+            font-size: 14px;
+        }
 
         /* ================= FORM CARD ================= */
-        .form-container{
-            background:#140021;
-            border:1px solid rgba(236,72,153,0.25);
-            border-radius:20px;
-            padding:30px;
-            box-shadow:0 0 25px rgba(255,27,141,0.08);
-            max-width:850px;
+        .form-container {
+            background: #140021;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(255, 27, 141, 0.08);
+            max-width: 850px;
         }
 
-        .form-title{
-            font-size:18px;
-            font-weight:bold;
-            margin-bottom:25px;
-            color:#e5e7eb;
+        .form-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #e5e7eb;
         }
 
-        .form-group{
-            margin-bottom:22px;
+        .form-group {
+            margin-bottom: 22px;
         }
 
-        .form-group label{
-            display:block;
-            margin-bottom:10px;
-            font-weight:bold;
-            font-size:14px;
-            color:#e5e7eb;
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #e5e7eb;
         }
 
-        .form-control{
-            width:100%;
-            padding:14px 16px;
-            background:#090014;
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:12px;
-            color:white;
-            outline:none;
-            font-size:14px;
-            transition:0.3s;
+        .form-control {
+
+            width: 100%;
+            padding: 14px 16px;
+            background: #090014;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
         }
 
-        .form-control:focus{
-            border-color:#ff1b8d;
-            box-shadow:0 0 10px rgba(255,27,141,0.15);
+        .form-control:focus {
+            border-color: #ff1b8d;
+            box-shadow: 0 0 10px rgba(255, 27, 141, 0.15);
         }
 
-        .form-control::placeholder{ color:#6b7280; }
+        .form-control::placeholder {
+            color: #6b7280;
+        }
 
-        textarea.form-control{
-            resize:none;
-            height:150px;
+        /* Style cho option trong select */
+        .form-control option {
+            background: #140021;
+            color: white;
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 150px;
         }
 
         /* ================= UPLOAD BOX ================= */
-        .upload-box{
-            border:2px dashed rgba(236,72,153,0.4);
-            border-radius:16px;
-            padding:50px 20px;
-            text-align:center;
-            background:rgba(255,255,255,0.02);
-            cursor:pointer;
-            transition:0.3s;
+        .upload-box {
+            border: 2px dashed rgba(236, 72, 153, 0.4);
+            border-radius: 16px;
+            padding: 50px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .upload-box:hover{
-            border-color:#ff1b8d;
-            background:rgba(255,27,141,0.04);
+        .upload-box:hover {
+            border-color: #ff1b8d;
+            background: rgba(255, 27, 141, 0.04);
         }
 
-        .upload-box i{
-            font-size:52px;
-            color:#9ca3af;
-            margin-bottom:14px;
-            display:block;
+        .upload-box i {
+            font-size: 52px;
+            color: #9ca3af;
+            margin-bottom: 14px;
+            display: block;
         }
 
-        .upload-box p{
-            margin-bottom:6px;
-            color:#d1d5db;
-            font-size:14px;
+        .upload-box p {
+            margin-bottom: 6px;
+            color: #d1d5db;
+            font-size: 14px;
         }
 
-        .upload-box span{
-            color:#6b7280;
-            font-size:13px;
+        .upload-box span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* ================= WARD LOADING ================= */
+        .ward-loading {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 8px;
+            display: none;
         }
 
         /* ================= BUTTONS ================= */
-        .button-group{
-            display:flex;
-            gap:14px;
-            margin-top:10px;
+        .button-group {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
         }
 
-        .btn{
-            padding:13px 24px;
-            border:none;
-            border-radius:12px;
-            cursor:pointer;
-            font-weight:bold;
-            font-size:14px;
-            transition:0.3s;
-            display:flex;
-            align-items:center;
-            gap:8px;
+        .btn {
+            padding: 13px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-save{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            color:white;
+        .btn-save {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
         }
 
-        .btn-save:hover{
-            transform:translateY(-2px);
-            box-shadow:0 8px 20px rgba(236,72,153,0.3);
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
         }
 
-        .btn-cancel{
-            background:transparent;
-            border:1px solid rgba(236,72,153,0.35);
-            color:#d1d5db;
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(236, 72, 153, 0.35);
+            color: #d1d5db;
         }
 
-        .btn-cancel:hover{
-            background:rgba(236,72,153,0.08);
-            color:white;
+        .btn-cancel:hover {
+            background: rgba(236, 72, 153, 0.08);
+            color: white;
         }
 
         /* ================= RESPONSIVE ================= */
-        @media(max-width:900px){
-            .sidebar{ width:220px; }
-            .wrapper{ margin-left:220px; }
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .wrapper {
+                margin-left: 220px;
+            }
         }
 
-        @media(max-width:600px){
-            .sidebar{ display:none; }
-            .wrapper{ margin-left:0; }
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+
+            .wrapper {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -353,7 +406,7 @@
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
         <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
         <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
@@ -393,9 +446,11 @@
 
         <!-- PAGE HEADER -->
         <div class="page-header">
-            <button class="back-btn" aria-label="Back">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            <a th:href="@{/admin/listvenue}">
+                <button class="back-btn" aria-label="Back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
             <div>
                 <h1>Add New Venue</h1>
                 <p>Create a new venue for hosting events</p>
@@ -407,14 +462,22 @@
 
             <h2 class="form-title">Venue Information</h2>
 
-            <form method="post" th:action = "@{/admin/addvenue}" th:object="${CreateVenueDTO}">
+            <form method="post" enctype="multipart/form-data" th:action="@{/admin/addvenue}"
+                  th:object="${CreateVenueDTO}">
 
                 <!-- Upload -->
                 <div class="form-group">
                     <label>Venue Image:</label>
-                    <div class="upload-box">
+
+                    <input type="file"
+                           id="venueFile"
+                           name="venueFile"
+                           accept="image/*"
+                           style="display:none">
+
+                    <div class="upload-box" onclick="document.getElementById('venueFile').click()">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p>Click to upload or drag and drop</p>
+                        <p id="fileName">Click to upload or drag and drop</p>
                         <span>PNG, JPG up to 10MB</span>
                     </div>
                 </div>
@@ -422,37 +485,67 @@
                 <!-- Venue Name -->
                 <div class="form-group">
                     <label>Venue Name:</label>
-                    <input type="text" class="form-control" placeholder="Enter venue name" th:field="*{venueName}"/>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Enter venue name"
+                           th:field="*{venueName}"/>
                 </div>
 
-                <!-- Location -->
-                <div class="form-group">
-                    <label>Street Address:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{streetAddress}"/>
-                </div>
-
-                <!-- Location -->
-                <div class="form-group">
-                    <label>Ward:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{ward}"/>
-                </div>
-
-                <!-- Location -->
+                <!-- City -->
                 <div class="form-group">
                     <label>City:</label>
-                    <input type="text" class="form-control" placeholder="Specific address" th:field="*{city}"/>
+                    <select id="citySelect"
+                            class="form-control"
+                            th:field="*{city}">
+
+                        <option value="">-- Select City --</option>
+
+                        <option th:each="city : ${cities}"
+                                th:value="${city.id}"
+                                th:text="${city.name}">
+                        </option>
+
+                    </select>
+                </div>
+
+                <!-- Ward — load động bằng JS -->
+                <div class="form-group">
+                    <label>Ward:</label>
+                    <select id="wardSelect"
+                            class="form-control"
+                            th:field="*{ward}">
+                        <option value="">-- Select ward --</option>
+                    </select>
+                    <!-- Spinner hiển thị khi đang load -->
+                    <div class="ward-loading" id="wardLoading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách ward...
+                    </div>
+                </div>
+
+                <!-- Street Address -->
+                <div class="form-group">
+                    <label>Street Address:</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Specific address"
+                           th:field="*{streetAddress}"/>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label>Description:</label>
-                    <textarea class="form-control" placeholder="Describe the venue, amenities, and features..." th:field="*{description}"></textarea>
+                    <textarea class="form-control"
+                              placeholder="Describe the venue, amenities, and features..."
+                              th:field="*{description}"></textarea>
                 </div>
+
                 <!-- ================= ZONES ================= -->
                 <div class="form-group">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
                         <label style="margin-bottom:0">Khu vực (Zone)</label>
-                        <button type="button" class="btn btn-cancel" onclick="addZone()" style="padding:8px 16px; font-size:13px;">
+                        <button type="button" class="btn btn-cancel"
+                                onclick="addZone()"
+                                style="padding:8px 16px; font-size:13px;">
                             <i class="fa-solid fa-plus"></i> Thêm Zone
                         </button>
                     </div>
@@ -463,14 +556,15 @@
                     <!-- Template zone ẩn — không submit vì disabled -->
                     <div id="zone-template" style="display:none">
                         <div class="zone-item" style="
-            background:#090014;
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:14px;
-            padding:20px;
-            margin-bottom:14px;
-        ">
+                            background:#090014;
+                            border:1px solid rgba(236,72,153,0.3);
+                            border-radius:14px;
+                            padding:20px;
+                            margin-bottom:14px;">
+
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                                <span class="zone-title" style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
+                                <span class="zone-title"
+                                      style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
                                 <button type="button" onclick="removeZone(this)"
                                         style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px;">
                                     <i class="fa-solid fa-xmark"></i>
@@ -479,36 +573,40 @@
 
                             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Tên Zone</label>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Tên
+                                        Zone</label>
                                     <input type="text" class="form-control zone-name"
                                            placeholder="VD: VIP, Standard..."
                                            name="PLACEHOLDER_NAME"/>
                                 </div>
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Số hàng</label>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Số
+                                        hàng</label>
                                     <input type="number" class="form-control zone-rows"
                                            placeholder="VD: 8" min="1"
                                            name="PLACEHOLDER_ROWS"/>
                                 </div>
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Ghế / hàng</label>
+                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Ghế
+                                        / hàng</label>
                                     <input type="number" class="form-control zone-seats"
                                            placeholder="VD: 10" min="1"
                                            name="PLACEHOLDER_SEATS"/>
                                 </div>
                             </div>
 
-                            <!-- Hiển thị tổng ghế tự tính -->
                             <div style="margin-top:12px; font-size:13px; color:#9ca3af;">
-                                Tổng ghế: <span class="total-seats" style="color:#ff1b8d; font-weight:bold;">0</span>
+                                Tổng ghế: <span class="total-seats"
+                                                style="color:#ff1b8d; font-weight:bold;">0</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-save">
-                         Save Venue
+                        Save Venue
                     </button>
                     <button type="button" class="btn btn-cancel" onclick="history.back()">
                         Cancel
@@ -524,19 +622,21 @@
 </div><!-- /wrapper -->
 
 <script>
+    // ============================================================
+    // ZONE MANAGEMENT
+    // ============================================================
     let zoneCount = 0;
 
     function addZone() {
         const template = document.getElementById('zone-template').firstElementChild;
         const clone = template.cloneNode(true);
 
-        clone.querySelector('.zone-name').name  = `zones[${zoneCount}].zoneName`;
-        clone.querySelector('.zone-rows').name  = `zones[${zoneCount}].rows`;
+        clone.querySelector('.zone-name').name = `zones[${zoneCount}].zoneName`;
+        clone.querySelector('.zone-rows').name = `zones[${zoneCount}].rows`;
         clone.querySelector('.zone-seats').name = `zones[${zoneCount}].seatsPerRow`;
-
         clone.querySelector('.zone-title').textContent = `Zone ${zoneCount + 1}`;
 
-        clone.querySelector('.zone-rows').addEventListener('input',  () => updateTotal(clone));
+        clone.querySelector('.zone-rows').addEventListener('input', () => updateTotal(clone));
         clone.querySelector('.zone-seats').addEventListener('input', () => updateTotal(clone));
 
         document.getElementById('zone-container').appendChild(clone);
@@ -552,20 +652,71 @@
         const items = document.querySelectorAll('#zone-container .zone-item');
         zoneCount = items.length;
         items.forEach((item, i) => {
-            item.querySelector('.zone-name').name  = `zones[${i}].zoneName`;
-            item.querySelector('.zone-rows').name  = `zones[${i}].rows`;
+            item.querySelector('.zone-name').name = `zones[${i}].zoneName`;
+            item.querySelector('.zone-rows').name = `zones[${i}].rows`;
             item.querySelector('.zone-seats').name = `zones[${i}].seatsPerRow`;
             item.querySelector('.zone-title').textContent = `Zone ${i + 1}`;
         });
     }
 
     function updateTotal(zoneItem) {
-        const rows  = parseInt(zoneItem.querySelector('.zone-rows').value)  || 0;
+        const rows = parseInt(zoneItem.querySelector('.zone-rows').value) || 0;
         const seats = parseInt(zoneItem.querySelector('.zone-seats').value) || 0;
         zoneItem.querySelector('.total-seats').textContent = rows * seats;
     }
 
+    // Thêm zone đầu tiên mặc định khi load trang
     addZone();
+
+
+    // ============================================================
+    // LOAD WARD THEO CITY — gọi GET /admin/wards/{cityId}
+    // ============================================================
+    const citySelect = document.getElementById('citySelect');
+    const wardSelect = document.getElementById('wardSelect');
+    const wardLoading = document.getElementById('wardLoading');
+
+    citySelect.addEventListener('change', function () {
+        const cityId = this.value;
+
+        // Reset ward select về trạng thái ban đầu
+        wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+
+        // Nếu chưa chọn city thì dừng
+        if (!cityId) return;
+
+        // Hiện spinner loading
+        wardLoading.style.display = 'block';
+        wardSelect.disabled = true;
+
+        fetch(`/admin/wards/${cityId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách ward. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(wards => {
+                // Render từng ward vào select
+                wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.id;      // Long ID → submit lên server
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error('Lỗi load ward:', err);
+                wardSelect.innerHTML =
+                    '<option value="">-- Lỗi tải ward, thử lại --</option>';
+            })
+            .finally(() => {
+                // Ẩn spinner, mở lại select dù thành công hay lỗi
+                wardLoading.style.display = 'none';
+                wardSelect.disabled = false;
+            });
+    });
 </script>
+
 </body>
 </html>
