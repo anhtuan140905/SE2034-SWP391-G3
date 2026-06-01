@@ -60,7 +60,7 @@
             </thead>
             <tbody>
 
-            <th:block th:if="${organizers != null and !organizers.empty}">
+            <th:block th:if="${organizers != null and !organizers.isempty}">
                 <tr th:each="org : ${organizers}">
                     <td><span class="org-id" th:text="${'#ORG-' + org.id}">#ORG-000</span></td>
                     <td><span class="org-name" th:text="${org.name}">Organizer Name</span></td>
@@ -78,7 +78,7 @@
                 </tr>
             </th:block>
 
-            <th:block th:if="${organizers == null or organizers.empty}">
+            <th:block th:if="${organizers == null or organizers.isempty}">
                 <tr>
                     <td colspan="5" style="text-align: center; padding: 60px 20px;">
                         <div style="font-size: 48px; color: var(--border-color); margin-bottom: 16px;">
