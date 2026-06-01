@@ -34,12 +34,11 @@
             <div class="filter-group">
                 <label class="filter-label">FILTER STATUS</label>
                 <div class="select-wrapper">
-                    <select id="statusSelect">
-                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">All Statuses
-                        </option>
-                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">Pending</option>
-                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">Approved</option>
-                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">Rejected</option>
+                    <select id="statusSelect" name="status">
+                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">ALL STATUS</option>
+                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">PENDING</option>
+                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">APPROVED</option>
+                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">REJECTED</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-arrow"></i>
                 </div>
@@ -51,47 +50,59 @@
         <table class="om-table">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>FULL NAME</th>
                 <th>HOST NAME</th>
                 <th>EMAIL ADDRESS</th>
                 <th>STATUS</th>
                 <th>ACTION</th>
             </tr>
             </thead>
+
             <tbody>
+            <tr th:if="${organizers == null or organizers.isEmpty()}">
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fa-regular fa-folder-open"
+                       style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                    Không tìm thấy Organizer nào phù hợp.
+                </td>
+            </tr>
 
-            <th:block th:if="${organizers != null and !organizers.isempty}">
-                <tr th:each="org : ${organizers}">
-                    <td><span class="org-id" th:text="${'#ORG-' + org.id}">#ORG-000</span></td>
-                    <td><span class="org-name" th:text="${org.name}">Organizer Name</span></td>
-                    <td><span class="org-email" th:text="${org.email}">email@example.com</span></td>
-                    <td>
-                        <span class="org-badge"
-                              th:classappend="${org.status == 'APPROVED' ? 'badge-approved' : (org.status == 'PENDING' ? 'badge-pending' : 'badge-rejected')}"
-                              th:text="${org.status}">STATUS</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/moderator/organizers/{id}(id=${org.id})}" class="btn-view">
-                            View Detail Organizer
-                        </a>
-                    </td>
-                </tr>
-            </th:block>
-
-            <th:block th:if="${organizers == null or organizers.isempty}">
-                <tr>
-                    <td colspan="5" style="text-align: center; padding: 60px 20px;">
-                        <div style="font-size: 48px; color: var(--border-color); margin-bottom: 16px;">
-                            <i class="fa-regular fa-folder-open"></i>
+            <tr th:each="org : ${organizers.content}">
+                <td>
+                    <div class="om-user-info">
+                        <div class="om-user-details">
+                            <span class="om-user-name"
+                                  th:text="${org.user.firstName + ' ' + (org.user.middleName != null ? org.user.middleName + ' ' : '') + org.user.lastName}">Tên đầy đủ</span>
                         </div>
-                        <h3 style="color: var(--text-primary); margin-bottom: 8px; font-family: var(--font-display); font-size: 18px; font-weight: 700;">
-                            No organizers found</h3>
-                        <p style="color: var(--text-secondary); font-size: 14px; margin: 0;">We couldn't find any
-                            organizers matching your search or filter criteria.</p>
-                    </td>
-                </tr>
-            </th:block>
+                    </div>
+                </td>
 
+                <td>
+                    <span class="om-company"
+                          th:text="${org.companyName != null and !org.companyName.isEmpty() ? org.companyName : 'Cá nhân'}">Tên công ty</span>
+                </td>
+
+                <td>
+                    <span class="om-user-email" th:text="${org.user.email}">email@domain.com</span>
+                </td>
+
+                <td>
+            <span th:if="${org.status != null}"
+                  class="om-status-badge"
+                  th:classappend="${org.status.name() == 'APPROVED' ? 'approved' : (org.status.name() == 'REJECTED' ? 'rejected' : 'pending')}"
+                  th:text="${org.status.name()}">PENDING
+            </span>
+                    <span th:if="${org.status == null}" class="om-status-badge pending"
+                          style="opacity: 0.5;">UNKNOWN</span>
+                </td>
+
+                <td>
+                    <div class="om-actions">
+                        <a class="btn-review"
+                           th:href="@{/moderator/organizers/review/{id}(id=${org.userId})}">Review</a>
+                    </div>
+                </td>
+            </tr>
             </tbody>
         </table>
 
