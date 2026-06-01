@@ -83,12 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); }, 4000);
     }
 });
-
-// 4. LOGIC XỬ LÝ API AJAX CITY / WARD (Giữ nguyên cấu trúc hoạt động bình thường)
+// ✅ Khai báo đúng chỗ (ngoài DOMContentLoaded là được)
 const citySelect = document.getElementById("u_city");
 const wardSelect = document.getElementById("u_ward");
 
 if (citySelect && wardSelect) {
+    // Change event — giữ nguyên logic cũ của bạn, KHÔNG thay bằng comment
     citySelect.addEventListener("change", function () {
         const cityId = this.value;
         wardSelect.innerHTML = '<option value=""></option>';
@@ -113,10 +113,33 @@ if (citySelect && wardSelect) {
                     handleSelect(wardSelect, 'wardField');
                 }
             })
-            .catch(error => {
-                console.error("Lỗi lấy danh sách Phường/Xã:", error);
-            });
+            .catch(error => console.error("Lỗi lấy danh sách Phường/Xã:", error));
     });
+
+    const initialCityId = citySelect.value;
+    const initialWardId = wardSelect.getAttribute("data-selected-ward");
+
+    if (initialCityId) {
+        fetch(`/auth/api/wards?cityId=${initialCityId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(ward => {
+                    const option = document.createElement("option");
+                    option.value = ward.id;
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+
+                if (initialWardId) {
+                    wardSelect.value = initialWardId;
+                }
+
+                if (typeof handleSelect === "function") {
+                    handleSelect(wardSelect, 'wardField');
+                }
+            })
+            .catch(error => console.error("Lỗi load ward ban đầu:", error));
+    }
 }
 
 function handleSelect(element, fieldName) {

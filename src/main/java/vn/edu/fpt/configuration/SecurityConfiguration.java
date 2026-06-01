@@ -66,7 +66,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/auth/**", "/css/**",
-                                "/js/**"
+                                "/js/**", "/homepage/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")
@@ -87,7 +87,7 @@ public class SecurityConfiguration {
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
                         .successHandler(customSuccessHandler())
-                        .failureForwardUrl("/auth/login?error=true")
+                        .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
