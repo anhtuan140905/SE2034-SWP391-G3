@@ -17,5 +17,7 @@ public interface VenueRepository extends JpaRepository<Venue,Long> {
             ")")
     List<Venue> findAvailableVenuesByDate(@Param("targetDate") LocalDate targetDate);
 
+
+
     List<Venue> findByVenueNameContainingIgnoreCase(String keyword);
 }
