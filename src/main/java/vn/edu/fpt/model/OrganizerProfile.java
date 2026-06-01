@@ -39,7 +39,7 @@ public class OrganizerProfile {
     @Column(name = "bank_account")
     private String bankAccount;
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private OrganizerStatus status;
+    private String status;
 }

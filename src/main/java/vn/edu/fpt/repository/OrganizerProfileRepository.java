@@ -21,6 +21,6 @@ public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfi
             "LOWER(o.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<OrganizerProfile> searchAndFilterOrganizers(
             @Param("keyword") String keyword,
-            @Param("status") OrganizerStatus status,
+            @Param("status") String status,
             Pageable pageable);
 }

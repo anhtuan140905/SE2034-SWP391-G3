@@ -56,7 +56,7 @@ public class ModeratorController {
         Pageable pageable = PageRequest.of(page, 10);
 
         // 3. Gọi xuống tầng Repository đã gộp code ở bước trước để lấy dữ liệu phân trang
-        Page<OrganizerProfile> organizers = organizerProfileRepository.searchAndFilterOrganizers(keyword, organizerStatus, pageable);
+        Page<OrganizerProfile> organizers = organizerProfileRepository.searchAndFilterOrganizers(keyword, status, pageable);
 
         // 4. Đẩy chính xác các biến khớp 1:1 với Thymeleaf trong HTML của bạn
         model.addAttribute("organizers", organizers);
