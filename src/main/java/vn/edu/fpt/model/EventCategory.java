@@ -19,10 +19,10 @@ public class EventCategory extends BaseAuditEntity {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String categoryName;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @Column(name = "is_active", nullable = false)
