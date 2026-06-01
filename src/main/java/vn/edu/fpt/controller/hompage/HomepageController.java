@@ -1,7 +1,5 @@
 package vn.edu.fpt.controller.hompage;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -58,10 +56,10 @@ public class HomepageController {
         dto.setGender(user.getGender());
         dto.setPhone(user.getPhone());
         dto.setEmail(user.getEmail());
-
+        dto.setAvatar(user.getAvatar());
         if(user.getAddress() != null){
             dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
-            dto.setWard(String.valueOf(user.getAddress().getWard().getId())); // set ID để JS pre-select
+            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
             dto.setSpecificAddress(user.getAddress().getSpecificAddress());
         }
 
@@ -90,7 +88,7 @@ public class HomepageController {
             } else {
                 dto.setAvatar(null);
             }
-            this.userService.handleUpdateUser(dto);
+            this.userService.handleUpdateUser(dto, result);
         } catch (Exception e) {
             model.addAttribute("cities", this.cityService.getCityList());
             model.addAttribute("errorMsg", e.getMessage());

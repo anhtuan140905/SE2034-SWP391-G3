@@ -29,7 +29,13 @@ public class AuthController {
         this.cityService = cityService;
     }
     @GetMapping("/login")
-    public String getLoginPage() {
+    public String getLoginPage(
+            @RequestParam(value = "error", required = false) String error, Model model
+    ) {
+        if(error != null) {
+            model.addAttribute("loginError", "Tài khoản hoặc mật khẩu không đúng");
+        }
+
         return "auth/Login";
     }
 
