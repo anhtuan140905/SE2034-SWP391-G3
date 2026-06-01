@@ -1,6 +1,11 @@
 package vn.edu.fpt.service.impl;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import vn.edu.fpt.common.error.CheckDuplicateException;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
@@ -27,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final WardService wardService;
     private final CityService cityService;
     private final CloudinaryService cloudinaryService;
+    private final UserDetailsService userDetailsService;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
@@ -35,7 +41,8 @@ public class UserServiceImpl implements UserService {
                            OrganizerProfileService organizerProfileService,
                            WardService wardService,
                            CityService cityService,
-                           CloudinaryService cloudinaryService) {
+                           CloudinaryService cloudinaryService,
+                           @Lazy UserDetailsService userDetailsService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoderConfig = passwordEncoderConfig;
@@ -44,6 +51,7 @@ public class UserServiceImpl implements UserService {
         this.wardService = wardService;
         this.cityService = cityService;
         this.cloudinaryService = cloudinaryService;
+        this.userDetailsService = userDetailsService;
     }
 
     public User findByUsername(String username) {
@@ -116,10 +124,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User handleUpdateUser(UpdateAttendeeProfileDTO dto) {
+    public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result) {
         User user = this.findByUsername(dto.getEmail());
         if(user == null){
-            return null;
+            return;
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+                result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
+            }
+            if (dto.getPassword().length() < 8) {
+                result.rejectValue("password", "error.password", "Mật khẩu phải có ít nhất 8 ký tự");
+            }
+            if (result.hasErrors()) return;
+            user.setPasswordHash((this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword())));
+
         }
         user.setFirstName(dto.getFirstName());
         user.setMiddleName(dto.getMiddleName());
@@ -141,6 +160,6 @@ public class UserServiceImpl implements UserService {
         if(dto.getAvatar() != null) {
             user.setAvatar(dto.getAvatar());
         }
-        return this.userRepository.save(user);
+        this.userRepository.save(user);
     }
 }
