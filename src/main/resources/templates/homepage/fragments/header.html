@@ -5,7 +5,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
             <!-- Brand Logo with Pink-Orange Gradient Text -->
-            <a class="navbar-brand d-flex align-items-center" href="#" th:href="@{/home}">
+            <a class="navbar-brand d-flex align-items-center" href="#" th:href="@{/}">
                 <div class="brand-dots me-2">
                     <span class="dot pink"></span>
                     <span class="dot violet"></span>
@@ -23,7 +23,7 @@
             <div class="collapse navbar-collapse" id="eventhubNavbar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#" th:href="@{/home}">
+                        <a class="nav-link active" aria-current="page" href="#" th:href="@{/}">
                             <i class="fa-solid fa-house-chimney nav-icon"></i> Home
                         </a>
                     </li>
@@ -33,12 +33,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" th:href="@{/my-tickets}">
+                        <a sec:authorize="isAuthenticated()" class="nav-link" href="#" th:href="@{/my-tickets}">
                             <i class="fa-solid fa-ticket nav-icon"></i> My Tickets
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" th:href="@{/favorites}">
+                        <a sec:authorize="isAuthenticated()" class="nav-link" href="#" th:href="@{/favorites}">
                             <i class="fa-solid fa-heart nav-icon text-pink-glow"></i> Yêu thích
                         </a>
                     </li>

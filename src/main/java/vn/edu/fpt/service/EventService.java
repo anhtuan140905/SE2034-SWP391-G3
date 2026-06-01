@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface EventService {
     Event createEvent(Event event);
-    List<Venue> findByDateNotIn(LocalDate dates);
+    List<Venue> findByDateNot(LocalDate dates);
 
 }
