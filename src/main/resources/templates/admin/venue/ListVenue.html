@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>List Venue</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+          rel="stylesheet"/>
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Be Vietnam Pro', 'Segoe UI', Arial, sans-serif;
         }
 
         body {
@@ -107,6 +109,7 @@
             color: white;
             outline: none;
             font-size: 14px;
+            font-family: 'Be Vietnam Pro', sans-serif;
         }
 
         .topbar .search-box-top::placeholder {
@@ -204,6 +207,7 @@
             color: white;
             font-size: 14px;
             font-weight: bold;
+            font-family: 'Be Vietnam Pro', sans-serif;
             cursor: pointer;
             transition: 0.3s;
             white-space: nowrap;
@@ -249,6 +253,7 @@
             color: white;
             outline: none;
             font-size: 14px;
+            font-family: 'Be Vietnam Pro', sans-serif;
             transition: 0.2s;
         }
 
@@ -403,7 +408,7 @@
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
         <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
         <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
@@ -449,10 +454,12 @@
                 <h1>Manage Venues</h1>
                 <p>View and manage all event venues</p>
             </div>
-            <button class="add-btn">
-                <i class="fa-solid fa-plus"></i>
-                Add Venue
-            </button>
+            <a th:href="@{/admin/addvenue}">
+                <button class="add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Venue
+                </button>
+            </a>
         </div>
 
         <!-- CARD -->
@@ -462,10 +469,21 @@
                 <h2>All Venues</h2>
                 <div class="search-inline">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search venues..."/>
+                    <form id="searchForm"
+                          th:action="@{/admin/listvenue}"
+                          method="get">
+
+                        <input type="text"
+                               class="search-box-top"
+                               placeholder="Search venues..."
+                               id="searchInput"
+                               name="keyword"
+                               th:value="${keyword}"
+                        >
+                    </form>
                 </div>
             </div>
-<!--Table-->
+            <!--Table-->
             <table>
                 <thead>
                 <tr>
@@ -477,126 +495,88 @@
                     <th style="text-align:right;">Actions</th>
                 </tr>
                 </thead>
-                <tbody>
 
-                <tr>
-                    <td>
-                        <div class="venue-info">
-                            <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=200"
-                                 alt="Central Park Arena"/>
-                            <strong>Central Park Arena</strong>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="location">
-                            <i class="fa-solid fa-location-dot"></i>
-                            New York, NY
-                        </div>
-                    </td>
-                    <td>
-                        <div class="capacity">
-                            <i class="fa-solid fa-users"></i>
-                            5,000
-                        </div>
-                    </td>
-                    <td class="event-count">24 Events</td>
-                    <td><span class="status active">Active</span></td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
+                <tbody id="venueTableBody">
+
+                <!-- Empty state -->
+                <tr class="empty-row"
+                    th:if="${venues == null or #lists.isEmpty(venues)}">
+                    <td colspan="6">
+                        <i class="fa-solid fa-building"></i>
+                        No venues found. Click "Add Venue" to create one.
                     </td>
                 </tr>
 
-                <tr>
-                    <td>
-                        <div class="venue-info">
-                            <img src="https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-su-kien-o-sai-gon-6.jpg"
-                                 alt="Convention Center"/>
-                            <strong>Convention Center</strong>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="location">
-                            <i class="fa-solid fa-location-dot"></i>
-                            San Francisco, CA
-                        </div>
-                    </td>
-                    <td>
-                        <div class="capacity">
-                            <i class="fa-solid fa-users"></i>
-                            3,500
-                        </div>
-                    </td>
-                    <td class="event-count">18 Events</td>
-                    <td><span class="status active">Active</span></td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                <!-- Data từ DB -->
+                <tr th:each="venue : ${venues}">
 
-                <tr>
+                    <!-- Venue name + ảnh -->
                     <td>
                         <div class="venue-info">
-                            <img src="https://images.unsplash.com/photo-1577648188599-291bb8b831c3?w=200"
-                                 alt="City Gallery"/>
-                            <strong>City Gallery</strong>
+                            <img th:if="${venue.imageUrl != null and !venue.imageUrl.isEmpty()}"
+                                 th:src="${venue.imageUrl}"
+                                 th:alt="${venue.venueName}"
+                                 class="venue-thumb"/>
+                            <div th:unless="${venue.imageUrl != null and !venue.imageUrl.isEmpty()}"
+                                 class="venue-thumb-placeholder">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <strong th:text="${venue.venueName}">Venue Name</strong>
                         </div>
                     </td>
-                    <td>
-                        <div class="location">
-                            <i class="fa-solid fa-location-dot"></i>
-                            Los Angeles, CA
-                        </div>
-                    </td>
-                    <td>
-                        <div class="capacity">
-                            <i class="fa-solid fa-users"></i>
-                            800
-                        </div>
-                    </td>
-                    <td class="event-count">12 Events</td>
-                    <td><span class="status maintenance">Maintenance</span></td>
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </td>
-                </tr>
 
-                <tr>
-                    <td>
-                        <div class="venue-info">
-                            <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=200"
-                                 alt="Downtown Plaza"/>
-                            <strong>Downtown Plaza</strong>
-                        </div>
-                    </td>
+                    <!-- Location -->
                     <td>
                         <div class="location">
                             <i class="fa-solid fa-location-dot"></i>
-                            Chicago, IL
+                            <div th:if="${venue.address != null}"
+                                 th:text="${venue.address.specificAddress}">
+                            </div>
+                            <span th:unless="${venue.address != null}">N/A</span>
+                        </div>
+                        <div th:if="${venue.address != null and venue.address.specificAddress != null}"
+                             style="font-size:12px; color:#9ca3af; margin-top:3px; padding-left:20px;"
+                             th:text="${venue.address.specificAddress}">
                         </div>
                     </td>
+
+                    <!-- Capacity -->
                     <td>
                         <div class="capacity">
                             <i class="fa-solid fa-users"></i>
-                            2,000
+                            <span th:text="${#numbers.formatInteger(venue.capacity, 1, 'COMMA')}">0</span>
                         </div>
                     </td>
-                    <td class="event-count">31 Events</td>
+
+                    <!-- Số event đã tổ chức -->
+                    <td class="event-count"
+                        th:text="${venue.events != null ? #lists.size(venue.events) + ' Events' : '0 Events'}">
+                        0 Events
+                    </td>
+
+                    <!-- Status -->
                     <td><span class="status active">Active</span></td>
+
+                    <!-- Actions -->
                     <td>
                         <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                            <a th:href="@{/admin/viewdetailvenue(id=${venue.venueId})}">
+                                <button class="action-btn view-btn"
+
+                                        title="View">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </a>
+                            <a th:href="@{/admin/editvenue(id=${venue.venueId})}">
+                                <button class="action-btn edit-btn"
+
+                                        title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                            </a>
                         </div>
                     </td>
+
                 </tr>
 
                 </tbody>
@@ -607,6 +587,20 @@
     </div><!-- /main -->
 
 </div><!-- /wrapper -->
+<script>
+    const searchInput = document.getElementById("searchInput");
 
+    searchInput.addEventListener("input", function () {
+
+        const keyword = this.value;
+
+        history.replaceState(
+            null,
+            "",
+            "/admin/listvenue?keyword=" + encodeURIComponent(keyword)
+        );
+
+    });
+</script>
 </body>
 </html>
