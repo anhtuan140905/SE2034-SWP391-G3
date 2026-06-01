@@ -20,7 +20,8 @@ public class TicketType extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_type_id")
     private Long ticketTypeId;
-
+    @Column(name = "description")
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
