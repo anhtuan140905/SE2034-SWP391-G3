@@ -17,8 +17,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Venue> findByDateNotIn(LocalDate dates) {
-        List<Venue> venues = createEventRepository.findByDateNotIn(dates);
+        List<Venue> venues = createEventRepository.findByDateNot(dates);
         return venues;
+
     }
 
 
