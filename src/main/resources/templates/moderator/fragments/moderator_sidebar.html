@@ -2,7 +2,7 @@
    Path: src/main/resources/templates/moderator/fragments/moderator_sidebar.html
 -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <body>
 
 <aside th:fragment="sidebar" class="mod-sidebar">
@@ -48,7 +48,7 @@
 
     <!-- Logout -->
     <div class="sidebar-footer">
-        <a th:href="@{/logout}" class="logout-btn">
+        <a th:href="@{/auth/logout}" class="logout-btn">
             <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
             <span class="nav-label">Logout</span>
         </a>
