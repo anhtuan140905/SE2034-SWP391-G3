@@ -1,0 +1,269 @@
+/* ============================================================
+   moderator_profile.css  —  Moderator Profile page
+   Path: src/main/resources/static/moderator/css/moderator_profile.css
+   ============================================================ */
+
+/* ---------- Page Heading ---------- */
+.mp-heading {
+    margin-bottom: 28px;
+}
+.page-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+.page-subtitle {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* ---------- 2-col Body ---------- */
+.mp-body {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ══════════════════════════════════
+   LEFT: Identity Card
+══════════════════════════════════ */
+.mp-id-card {
+    background: #fff;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Purple accent bar on top */
+.mp-card-accent {
+    height: 5px;
+    background: linear-gradient(90deg, var(--brand-purple) 0%, var(--brand-purple-mid) 60%, var(--brand-pink) 100%);
+}
+
+.mp-card-inner {
+    padding: 32px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Avatar */
+.mp-avatar-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+}
+.mp-avatar {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--brand-purple-light);
+    background: var(--brand-purple-light);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(123, 47, 190, 0.20);
+}
+.mp-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.mp-avatar-fallback {
+    font-size: 42px;
+    color: var(--brand-purple);
+}
+
+/* Verified badge */
+.mp-verified-badge {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 26px; height: 26px;
+    background: #1A9C5B;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 11px;
+    box-shadow: 0 2px 6px rgba(26, 156, 91, 0.35);
+}
+
+/* Name + ID */
+.mp-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+.mp-mod-id {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-purple);
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+}
+
+/* Meta rows */
+.mp-meta-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1.5px solid var(--border-color);
+    padding-top: 20px;
+}
+.mp-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    gap: 12px;
+}
+.mp-meta-row:last-child { border-bottom: none; }
+
+.mp-meta-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    flex-shrink: 0;
+}
+.mp-meta-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: right;
+}
+.mp-mono {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* Clearance badge */
+.mp-clearance-badge {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #1A9C5B;
+    background: #E3FBF0;
+    border: 1.5px solid #5CE8A8;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════
+   RIGHT: Dossier Panel
+══════════════════════════════════ */
+.mp-dossier {
+    background: #fff;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Dossier header */
+.mp-dossier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.mp-dossier-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+.mp-dossier-title i {
+    color: var(--brand-purple);
+    font-size: 18px;
+}
+
+/* Edit button */
+.btn-edit-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    background: var(--brand-purple-light);
+    border: 1.5px solid var(--brand-purple-mid);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-purple);
+    text-decoration: none;
+    transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.btn-edit-profile:hover {
+    background: var(--brand-purple);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(123, 47, 190, 0.25);
+    transform: translateY(-1px);
+}
+.btn-edit-profile i { font-size: 12px; }
+
+/* Dossier grid: 2 columns */
+.mp-dossier-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 40px;
+}
+
+.mp-dossier-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mp-dossier-label {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--brand-purple);
+    text-transform: uppercase;
+}
+
+.mp-dossier-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* ID key special style */
+.mp-id-key {
+    font-family: 'Courier New', monospace;
+    color: var(--brand-purple);
+    letter-spacing: 1px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+    .mp-body { grid-template-columns: 1fr; }
+    .mp-dossier-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+    .mp-dossier-grid { grid-template-columns: 1fr; gap: 20px; }
+    .page-title { font-size: 20px; }
+    .mp-dossier { padding: 20px 16px; }
+    .mp-card-inner { padding: 24px 16px 20px; }
+}
