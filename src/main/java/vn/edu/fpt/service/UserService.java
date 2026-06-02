@@ -2,6 +2,7 @@ package vn.edu.fpt.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
@@ -21,5 +22,5 @@ public interface UserService {
     public User handleCreateOrganizer(RegisterOrgDTO dto);
     public Optional<User> findByEmailWithRoles(String username);
     public User getUserById(Long id);
-    public User handleUpdateUser(UpdateAttendeeProfileDTO dto);
+    public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result);
 }

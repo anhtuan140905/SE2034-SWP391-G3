@@ -49,8 +49,7 @@
 
                     <div class="avatar-preview-container">
                         <div class="avatar-preview-wrapper" id="avatarPreviewContainer">
-                            <img th:src="${user != null ? user.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}"
-                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                            <img th:src="${userUpdateDTO.avatar != null ? userUpdateDTO.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}"
                                  alt="Profile Avatar"
                                  class="avatar-preview-image"
                                  id="avatarPreviewImage">
@@ -63,9 +62,9 @@
                         <input type="file" id="avatarFileInput" name="avatarFile" form="profileForm" accept="image/*" class="d-none">
                     </div>
 
-                    <h3 class="text-white font-heading font-extrabold h4 mb-1 username-text" th:text="${user != null ? user.fullName : 'Alex Rivera'}">Alex Rivera</h3>
+                    <h3 class="text-white font-heading font-extrabold h4 mb-1 username-text" th:text="${userUpdateDTO != null ? userUpdateDTO.lastName : 'Alex Rivera'}"></h3>
                     <p class="text-secondary-light font-mono text-xs d-flex align-items-center justify-content-center gap-1 mb-4" style="letter-spacing: 0.05em;">
-                        <span class="opacity-70">@</span><span th:text="${user != null ? user.username : 'alex_rivera'}">alex_rivera</span>
+                        <span class="opacity-70">@</span><span th:text="${userUpdateDTO != null ? userUpdateDTO.email : 'alex_rivera'}"></span>
                     </p>
 
                     <div class="bg-black/20 rounded-4 p-3 border border-white/5 my-4 text-start font-sans">
@@ -102,7 +101,7 @@
         <div class="col-lg-8 col-md-7">
             <div class="glass-profile-card h-100 anim-fade-in-up" style="animation-delay: 0.15s;">
                 <span class="section-label mb-2">My account management</span>
-                <h2 class="profile-heading mb-4">Cập nhật Hồ sơ cá nhân</h2>
+                <h2 class="profile-heading mb-4">Update profile</h2>
 
                 <form id="profileForm"
                       th:action="@{/attendee/update/profile}"
@@ -193,7 +192,11 @@
                         <div class="col-md-6">
                             <div class="profile-input-group">
                                 <label for="u_ward" class="profile-input-label">Ward</label>
-                                <select id="u_ward" class="profile-input-control" th:field="*{ward}" onchange="handleSelect(this,'wardField')">
+                                <select id="u_ward"
+                                        class="profile-input-control"
+                                        th:field="*{ward}"
+                                        th:data-selected-ward="*{ward}"
+                                        onchange="handleSelect(this,'wardField')">
                                     <option value=""></option>
                                 </select>
                                 <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
