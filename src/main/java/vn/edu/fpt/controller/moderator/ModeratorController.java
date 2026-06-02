@@ -52,7 +52,7 @@ public class ModeratorController {
             }
         }
 
-        // 2. Cấu hình phân trang: 10 bản ghi trên mỗi trang (Có thể đổi thành số khác bạn muốn)
+        // 2. Cấu hình phân trang: 10 bản ghi trên mỗi trang
         Pageable pageable = PageRequest.of(page, 10);
 
         // 3. Gọi xuống tầng Repository đã gộp code ở bước trước để lấy dữ liệu phân trang
