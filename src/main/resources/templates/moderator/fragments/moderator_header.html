@@ -17,7 +17,10 @@
 
         <!-- Greeting -->
         <span class="header-greeting">
-            HELLO, <strong th:text="${#authentication != null ? #authentication.name : 'ALICE'}">ALICE</strong>
+            HELLO,
+            <strong th:if="${#authentication != null}"
+                    th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">ALICE
+            </strong>
         </span>
 
     </div>
