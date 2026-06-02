@@ -1,10 +1,30 @@
+<!--
+   Path: src/main/resources/templates/moderator/fragments/moderator_header.html
+-->
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <body>
+
+<header th:fragment="header" class="mod-header">
+
+    <!-- Page title breadcrumb -->
+    <div class="header-breadcrumb">
+        <span th:text="${pageTitle != null ? pageTitle : 'EVENTHUB CONTROL CENTER'}">MODERATOR CONTROL CENTER</span>
+    </div>
+
+    <!-- Right side actions -->
+    <div class="header-actions">
+
+        <!-- Greeting -->
+        <span class="header-greeting">
+            HELLO,
+            <strong th:if="${#authentication != null}"
+                    th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">ALICE
+            </strong>
+        </span>
+    </div>
+
+</header>
 
 </body>
 </html>

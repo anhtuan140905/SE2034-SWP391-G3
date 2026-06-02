@@ -1,537 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#dashboard-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moderator Dashboard</title>
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #02010d;
-            color: #ffffff;
-        }
-
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, #04162d 0%, #021427 100%);
-            border-right: 1px solid rgba(255,255,255,0.06);
-            padding-top: 25px;
-        }
-
-        .logo {
-            padding: 0 24px 30px;
-        }
-
-        .logo h1 {
-            font-size: 34px;
-            font-weight: 700;
-            background: linear-gradient(to right, #ff9cf7, #b084ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo span {
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: #d0d0d0;
-        }
-
-        .menu {
-            margin-top: 15px;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 18px 24px;
-            color: #c8c8d0;
-            text-decoration: none;
-            transition: 0.3s;
-            border-left: 3px solid transparent;
-        }
-
-        .menu-item:hover {
-            background: rgba(255,255,255,0.04);
-            color: #ffffff;
-        }
-
-        .menu-item.active {
-            background: rgba(255,255,255,0.05);
-            border-left: 3px solid #ff8df7;
-            color: #ffb8ff;
-        }
-
-        .menu-item i {
-            width: 20px;
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
-            flex: 1;
-            background: radial-gradient(circle at top, #070b2b 0%, #020014 65%);
-        }
-
-        /* TOPBAR */
-        .topbar {
-            height: 80px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            background: rgba(5, 15, 40, 0.85);
-        }
-
-        .topbar h2 {
-            font-size: 40px;
-            font-weight: 700;
-            color: #dfe6ff;
-        }
-
-        .topbar-right {
-            position: absolute;
-            right: 30px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .notification {
-            font-size: 20px;
-            color: #ffffff;
-            cursor: pointer;
-        }
-
-        .profile {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #ff8df7;
-        }
-
-        .profile img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* CONTENT */
-        .content {
-            padding: 40px;
-        }
-
-        /* CARDS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            margin-bottom: 45px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg,
-            rgba(27, 37, 79, 0.95),
-            rgba(18, 22, 45, 0.95));
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            padding: 25px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(128, 90, 255, 0.15);
-        }
-
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top right,
-            rgba(255, 105, 255, 0.18),
-            transparent 45%);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .card-header span {
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #d7d7e8;
-        }
-
-        .card-header i {
-            color: #d689ff;
-            font-size: 18px;
-        }
-
-        .card-value {
-            font-size: 54px;
-            font-weight: 700;
-            color: #eef3ff;
-        }
-
-        /* ACTIVITY SECTION */
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 22px;
-            font-size: 22px;
-            font-weight: 700;
-            color: #e7ebff;
-        }
-
-        .activity-box {
-            background: rgba(17, 24, 53, 0.9);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .activity-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 28px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-left {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .pink {
-            background: #ff9cf7;
-            box-shadow: 0 0 10px #ff9cf7;
-        }
-
-        .orange {
-            background: #ffb29c;
-            box-shadow: 0 0 10px #ffb29c;
-        }
-
-        .white {
-            background: #ffffff;
-            box-shadow: 0 0 10px #ffffff;
-        }
-
-        .activity-time {
-            font-size: 13px;
-            letter-spacing: 1px;
-            color: #d0d0d0;
-            width: 90px;
-        }
-
-        .activity-text {
-            color: #edf1ff;
-            font-size: 17px;
-        }
-
-        .highlight {
-            color: #ff8df7;
-        }
-
-        .badge {
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            letter-spacing: 1px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.04);
-            color: #dfe6ff;
-        }
-
-        @media(max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media(max-width: 768px) {
-
-            .dashboard-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .topbar h2 {
-                font-size: 28px;
-            }
-
-            .activity-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-        }
-    </style>
+    <title>Dashboard — EventHub Moderator</title>
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/dashboard_moderator.css}"/>
 </head>
 <body>
 
-<div class="dashboard-container">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+<section id="dashboard-content" th:fragment="content">
 
-        <div class="logo">
-            <h1>EventHub</h1>
-            <span>MODERATOR PORTAL</span>
+    <!-- Page Heading -->
+    <div class="page-heading">
+        <h1 class="page-title">COMMAND CENTER DASHBOARD</h1>
+        <p class="page-subtitle">Real-time ecosystem monitoring, system notifications, and queue action protocols.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <p class="stat-label">Total Pending Events</p>
+            <p class="stat-value" th:text="${stats != null ? stats.pendingEvents : 142}">142</p>
         </div>
 
-        <nav class="menu">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-users-between-lines"></i>
+            </div>
+            <p class="stat-label">Verified Live Hosts</p>
+            <p class="stat-value" th:text="${stats != null ? stats.verifiedHosts : 2840}">2840</p>
+        </div>
 
-            <a href="#" class="menu-item active">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <p class="stat-label">Total Approved Live</p>
+            <p class="stat-value" th:text="${stats != null ? stats.approvedLive : 864}">864</p>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <p class="stat-label">Hosts Active Now</p>
+            <p class="stat-value" th:text="${stats != null ? stats.activeNow : 512}">512</p>
+        </div>
+
+    </div>
+
+    <!-- Activity Stream -->
+    <div class="activity-section">
+        <div class="activity-header">
+            <div class="activity-title">
                 <i class="fa-solid fa-table-cells-large"></i>
-                <span>Dashboard</span>
-            </a>
+                <span>RECENT ACTIVITY STREAM</span>
+            </div>
+            <a th:href="@{/moderator/events}" class="view-all-link">View Entire Feed</a>
+        </div>
 
-            <a href="#" class="menu-item">
-                <i class="fa-regular fa-calendar"></i>
-                <span>Event Management</span>
-            </a>
+        <div class="activity-list">
 
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-shield-heart"></i>
-                <span>Organizer Approvals</span>
-            </a>
-
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Venue Management</span>
-            </a>
-
-            <a href="#" class="menu-item">
-                <i class="fa-regular fa-user"></i>
-                <span>My Profile</span>
-            </a>
-
-        </nav>
-
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <h2>Dashboard</h2>
-
-            <div class="topbar-right">
-
-                <i class="fa-regular fa-bell notification"></i>
-
-                <div class="profile">
-                    <img th:src="@{/images/avatar.jpg}"
-                         src="https://i.pravatar.cc/100"
-                         alt="Profile">
+            <!-- Loop through activities if passed from controller -->
+            <div class="activity-item" th:each="activity : ${recentActivities}"
+                 th:if="${recentActivities != null}">
+                <div class="activity-thumb">
+                    <img th:src="${activity.imageUrl}" th:alt="${activity.name}" onerror="this.style.display='none'"/>
                 </div>
-
+                <div class="activity-info">
+                    <p class="activity-name" th:text="${activity.name}">Event Name</p>
+                    <p class="activity-sub" th:text="${activity.subtitle}">Subtitle</p>
+                </div>
+                <div class="activity-meta">
+                    <span class="activity-time" th:text="${activity.timeAgo}">Just now</span>
+                    <span class="activity-badge"
+                          th:classappend="${activity.status == 'APPROVED'} ? 'badge-approved' :
+                                         (${activity.status == 'PENDING'} ? 'badge-pending' : 'badge-rejected')"
+                          th:text="${activity.status}">STATUS</span>
+                </div>
             </div>
 
-        </header>
-
-        <!-- CONTENT -->
-        <section class="content">
-
-            <!-- STATS -->
-            <div class="stats-grid">
-
-                <div class="stat-card">
-                    <div class="card-header">
-                        <span>Total Pending Events</span>
-                        <i class="fa-regular fa-hourglass-half"></i>
-                    </div>
-
-                    <div class="card-value"
-                         th:text="${pendingEvents}">
-                        42
-                    </div>
+            <!-- Static fallback when no data from controller -->
+            <div class="activity-item" th:if="${#lists.isEmpty(recentActivities)}">
+                <div class="activity-thumb static-thumb static-thumb--1"></div>
+                <div class="activity-info">
+                    <p class="activity-name">Neon Nights Rave: Tokyo Edition</p>
+                    <p class="activity-sub">Submitted by CyberPulse Ent.</p>
                 </div>
-
-                <div class="stat-card">
-                    <div class="card-header">
-                        <span>Total Organizers</span>
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-
-                    <div class="card-value"
-                         th:text="${totalOrganizers}">
-                        1,204
-                    </div>
+                <div class="activity-meta">
+                    <span class="activity-time">2 mins ago</span>
+                    <span class="activity-badge badge-pending">PENDING</span>
                 </div>
-
-                <div class="stat-card">
-                    <div class="card-header">
-                        <span>Approved Events</span>
-                        <i class="fa-regular fa-circle-check"></i>
-                    </div>
-
-                    <div class="card-value"
-                         th:text="${approvedEvents}">
-                        8,932
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="card-header">
-                        <span>Active Organizers</span>
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-
-                    <div class="card-value"
-                         th:text="${activeOrganizers}">
-                        945
-                    </div>
-                </div>
-
             </div>
 
-            <!-- ACTIVITIES -->
-            <div class="section-title">
-                <i class="fa-solid fa-square-poll-vertical"></i>
-                <span>Recent System Activities Log</span>
+            <div class="activity-item" th:if="${#lists.isEmpty(recentActivities)}">
+                <div class="activity-thumb static-thumb static-thumb--2"></div>
+                <div class="activity-info">
+                    <p class="activity-name">FutureTech Summit 2024</p>
+                    <p class="activity-sub">Approved by Auto-Moderator</p>
+                </div>
+                <div class="activity-meta">
+                    <span class="activity-time">15 mins ago</span>
+                    <span class="activity-badge badge-approved">APPROVED</span>
+                </div>
             </div>
 
-            <div class="activity-box">
-
-                <div class="activity-item">
-                    <div class="activity-left">
-
-                        <div class="dot pink"></div>
-
-                        <div class="activity-time">
-                            10:42 AM
-                        </div>
-
-                        <div class="activity-text">
-                            Event <span class="highlight">#EVT-9021</span>
-                            approved by SysAdmin
-                        </div>
-
-                    </div>
-
-                    <div class="badge">
-                        Approval
-                    </div>
+            <div class="activity-item" th:if="${recentActivities == null or recentActivities.isEmpty}">
+                <div class="activity-thumb static-thumb static-thumb--3"></div>
+                <div class="activity-info">
+                    <p class="activity-name">Underground Bites Festival</p>
+                    <p class="activity-sub">Flagged for License Verification</p>
                 </div>
-
-                <div class="activity-item">
-                    <div class="activity-left">
-
-                        <div class="dot orange"></div>
-
-                        <div class="activity-time">
-                            10:15 AM
-                        </div>
-
-                        <div class="activity-text">
-                            Organizer
-                            <span class="highlight">@tech_summit</span>
-                            flagged for review
-                        </div>
-
-                    </div>
-
-                    <div class="badge">
-                        Rejected
-                    </div>
+                <div class="activity-meta">
+                    <span class="activity-time">45 mins ago</span>
+                    <span class="activity-badge badge-rejected">REJECTED</span>
                 </div>
-
-                <div class="activity-item">
-                    <div class="activity-left">
-
-                        <div class="dot white"></div>
-
-                        <div class="activity-time">
-                            09:30 AM
-                        </div>
-
-                        <div class="activity-text">
-                            New venue
-                            <span class="highlight">Neon Hub</span>
-                            registration submitted
-                        </div>
-
-                    </div>
-
-                    <div class="badge">
-                        Pending
-                    </div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-left">
-
-                        <div class="dot pink"></div>
-
-                        <div class="activity-time">
-                            08:00 AM
-                        </div>
-
-                        <div class="activity-text">
-                            Daily system backup completed successfully
-                        </div>
-
-                    </div>
-
-                    <div class="badge">
-                        Pending
-                    </div>
-                </div>
-
             </div>
 
-        </section>
+        </div>
+    </div>
 
-    </main>
+</section>
 
-</div>
+<script id="page-script" th:src="@{/moderator/js/dashboard_moderator.js}"></script>
 
 </body>
-</html>
+</html> 
