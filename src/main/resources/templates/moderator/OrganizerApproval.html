@@ -1,10 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#organizer-management-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Organizer Approvals — EventHub Moderator</title>
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/organizer_approval.css}"/>
 </head>
 <body>
+
+<section id="organizer-management-content" th:fragment="content">
+
+    <div class="om-topbar">
+        <div class="om-heading">
+            <h1 class="page-title">LIST OF ORGANIZER</h1>
+            <p class="page-subtitle">It is human-centered, existing to create new value for society.</p>
+        </div>
+        <div class="om-filters">
+            <div class="filter-group">
+                <label class="filter-label">SEARCH ORGANIZER</label>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput"
+                           placeholder="Search Name, Email, ID..."
+                           th:value="${keyword}"
+                           autocomplete="off"/>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">FILTER STATUS</label>
+                <div class="select-wrapper">
+                    <select id="statusSelect" name="status">
+                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">ALL STATUS</option>
+                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">PENDING</option>
+                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">APPROVED</option>
+                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">REJECTED</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="om-table-wrapper">
+        <table class="om-table">
+            <thead>
+            <tr>
+                <th>FULL NAME</th>
+                <th>HOST NAME</th>
+                <th>EMAIL ADDRESS</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${organizers == null or organizers.isEmpty()}">
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <i class="fa-regular fa-folder-open"
+                       style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                    No suitable organizers were found.
+                </td>
+            </tr>
+
+            <tr th:each="org : ${organizers.content}">
+                <td>
+                    <div class="om-user-info">
+                        <div class="om-user-details">
+                            <span class="om-user-name"
+                                  th:text="${org.user.firstName + ' ' + (org.user.middleName != null ? org.user.middleName + ' ' : '') + org.user.lastName}">Tên đầy đủ</span>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <span class="om-company"
+                          th:text="${org.companyName != null and !org.companyName.isEmpty() ? org.companyName : 'Cá nhân'}">Tên công ty</span>
+                </td>
+
+                <td>
+                    <span class="om-user-email" th:text="${org.user.email}">email@domain.com</span>
+                </td>
+
+                <td>
+            <span th:if="${org.status != null}"
+                  class="om-status-badge"
+                  th:classappend="${org.status == 'APPROVED' ? 'approved' : (org.status == 'REJECTED' ? 'rejected' : 'pending')}"
+                  th:text="${org.status}">PENDING
+            </span>
+                    <span th:if="${org.status == null}" class="om-status-badge pending"
+                          style="opacity: 0.5;">UNKNOWN</span>
+                </td>
+
+                <td>
+                    <div class="om-actions">
+                        <a class="btn-view"
+                           th:href="@{/moderator/organizers/review/{id}(id=${org.userId})}">Review</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="om-pagination">
+            <div class="pagination-info">
+                Showing <strong th:text="${organizers != null ? organizers.numberOfElements : 0}">0</strong> to
+                <strong th:text="${organizers != null ? organizers.size : 0}">0</strong> of
+                <strong th:text="${organizers != null ? organizers.totalElements : 0}">0</strong> results
+            </div>
+
+            <div class="pagination-controls">
+
+                <a class="page-btn page-nav"
+                   th:classappend="${organizers == null or organizers.first} ? 'disabled' : ''"
+                   th:href="@{/moderator/organizers(page=${organizers != null and !organizers.first ? organizers.number - 1 : 0}, keyword=${keyword}, status=${statusFilter})}">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+
+                <th:block th:if="${organizers != null and organizers.totalPages > 0}">
+                    <th:block th:if="${organizers.totalPages <= 5}">
+                        <a th:each="i : ${#numbers.sequence(0, organizers.totalPages - 1)}"
+                           class="page-btn"
+                           th:classappend="${i == organizers.number} ? 'active' : ''"
+                           th:text="${i + 1}"
+                           th:href="@{/moderator/organizers(page=${i}, keyword=${keyword}, status=${statusFilter})}">1</a>
+                    </th:block>
+
+                    <th:block th:if="${organizers.totalPages > 5}">
+                        <a class="page-btn" th:classappend="${organizers.number == 0} ? 'active' : ''" th:text="1"
+                           th:href="@{/moderator/organizers(page=0, keyword=${keyword}, status=${statusFilter})}">1</a>
+
+                        <span th:if="${organizers.number > 2}" class="page-btn dots">...</span>
+
+                        <th:block th:with="
+                            start=${organizers.number <= 2 ? 1 : (organizers.number >= organizers.totalPages - 3 ? organizers.totalPages - 4 : organizers.number - 1)},
+                            end=${organizers.number <= 2 ? 3 : (organizers.number >= organizers.totalPages - 3 ? organizers.totalPages - 2 : organizers.number + 1)}">
+
+                            <a th:each="i : ${#numbers.sequence(start, end)}"
+                               class="page-btn"
+                               th:classappend="${i == organizers.number} ? 'active' : ''"
+                               th:text="${i + 1}"
+                               th:href="@{/moderator/organizers(page=${i}, keyword=${keyword}, status=${statusFilter})}"></a>
+                        </th:block>
+
+                        <span th:if="${organizers.number < organizers.totalPages - 3}" class="page-btn dots">...</span>
+
+                        <a class="page-btn"
+                           th:classappend="${organizers.number == organizers.totalPages - 1} ? 'active' : ''"
+                           th:text="${organizers.totalPages}"
+                           th:href="@{/moderator/organizers(page=${organizers.totalPages - 1}, keyword=${keyword}, status=${statusFilter})}"></a>
+                    </th:block>
+                </th:block>
+
+                <th:block th:if="${organizers == null or organizers.totalPages == 0}">
+                    <a class="page-btn active" href="#">1</a>
+                </th:block>
+
+                <a class="page-btn page-nav"
+                   th:classappend="${organizers == null or organizers.last} ? 'disabled' : ''"
+                   th:href="@{/moderator/organizers(page=${organizers != null and !organizers.last ? organizers.number + 1 : 0}, keyword=${keyword}, status=${statusFilter})}">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/organizer_approval.js}"></script>
 
 </body>
 </html>
