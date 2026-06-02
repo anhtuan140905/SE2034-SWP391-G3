@@ -210,6 +210,20 @@
                                 <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="u_dob" class="profile-input-label">Date of Birth</label>
+                                <input type="date"
+                                       id="u_dob"
+                                       class="profile-input-control"
+                                       placeholder=" "
+                                       onchange="this.setAttribute('placeholder',' ')"
+                                       th:field="*{dob}"/>
+                                <span th:if="${#fields.hasErrors('*{dob}')}"
+                                      th:errors="*{dob}">
+                                </span>
+                            </div>
+                        </div>
 
                         <div class="col-md-6">
                             <div class="profile-input-group">

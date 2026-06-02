@@ -16,6 +16,7 @@ import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.CloudinaryService;
+import vn.edu.fpt.service.impl.CustomOAuth2User;
 import vn.edu.fpt.service.impl.CustomUserDetails;
 
 
@@ -45,9 +46,14 @@ public class HomepageController {
 
     @GetMapping("/profile")
     public String getProfile(Model model,
-                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User user = this.userService.findByUsername(userDetails.getUsername());
-
+                             @AuthenticationPrincipal CustomUserDetails userDetails,
+                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
+        User user = new User();
+        if(userDetails != null) {
+            user = this.userService.findByUsername(userDetails.getUsername());
+        } else {
+            user = this.userService.findByUsername(oAuth2Users.getName());
+        }
         UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -57,6 +63,7 @@ public class HomepageController {
         dto.setPhone(user.getPhone());
         dto.setEmail(user.getEmail());
         dto.setAvatar(user.getAvatar());
+        dto.setDob(user.getDob());
         if(user.getAddress() != null){
             dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
             dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
