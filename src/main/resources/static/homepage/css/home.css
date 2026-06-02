@@ -145,12 +145,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---------------- HEADER FRAGMENT STYLES ---------------- */
 .navbar-custom {
-    background-color: #e3cfff;
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid var(--glass-border);
     position: sticky;
-    color: black !important;
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
@@ -234,6 +233,11 @@ h1, h2, h3, h4, h5, h6 {
     text-shadow: 0 0 8px rgba(255, 42, 122, 0.2);
 }
 
+.btn-outline-light {
+    background: var(--text-secondary);
+    color: #fff;
+}
+
 /* Glass Search Bar in Navbar */
 .navbar-search .input-group {
     background: rgba(45, 27, 78, 0.04);
@@ -268,6 +272,8 @@ h1, h2, h3, h4, h5, h6 {
 .nav-search-input::placeholder {
     color: var(--text-muted);
 }
+
+
 
 /* User Profile Dropdown Header */
 .profile-trigger {
@@ -355,6 +361,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .collapse-btn:focus {
     box-shadow: 0 0 10px var(--color-pink);
+}
+
+.navbar-nav li a {
+    color: black
 }
 
 
@@ -965,9 +975,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+
 /* ---------------- FOOTER STYLES ---------------- */
 footer {
-    background-color: #e3cfff; /* Chuyển từ đen đặc sang nền trắng hồng đồng bộ với header */
+    background-color: #070112;
     padding: 6rem 0 3rem 0;
     border-top: 1px solid var(--glass-border);
     position: relative;
@@ -1026,9 +1037,10 @@ footer {
 }
 
 .footer-tagline {
+    color: var(--text-secondary);
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--text-secondary);
+    color: ;
 }
 
 .social-circle {
@@ -1063,7 +1075,7 @@ footer {
     margin-bottom: 1.5rem;
     position: relative;
     padding-bottom: 0.5rem;
-    color: var(--text-primary);
+    color: #fff;
 }
 
 .footer-title::after {
@@ -1082,7 +1094,7 @@ footer {
 }
 
 .footer-links-list a {
-    color: var(--text-secondary);
+   color: #fff;
     text-decoration: none;
     font-size: 0.9rem;
     transition: all 0.2s ease;
@@ -1092,7 +1104,7 @@ footer {
 }
 
 .footer-links-list a:hover {
-    color: var(--color-pink);
+    color: #fff;
     transform: translateX(3px);
 }
 
@@ -1111,6 +1123,7 @@ footer {
 .newsletter-form:focus-within {
     border-color: var(--color-pink);
     box-shadow: 0 0 12px rgba(255, 42, 122, 0.15);
+        background: rgba(255, 255, 255, 0.06);
 }
 
 .newsletter-input-group {
@@ -1118,6 +1131,7 @@ footer {
     align-items: center;
     width: 100%;
 }
+
 
 .newsletter-input {
     background: transparent !important;
@@ -1142,16 +1156,16 @@ footer {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 10px rgba(255, 42, 122, 0.2);
+    box-shadow: 0 4px 10px rgba(255, 42, 122, 0.3);
 }
 
 .btn-newsletter-submit:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 42, 122, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 42, 122, 0.5);
 }
 
 .footer-divider {
-    border-color: rgba(45, 27, 78, 0.06);
+    border-color: rgba(255, 255, 255, 0.06);
     margin: 4rem 0 2rem 0;
 }
 
@@ -1167,7 +1181,7 @@ footer {
 }
 
 .footer-legal-links a:hover {
-    color: var(--color-pink);
+    color: #fff;
 }
 
 .pulse {

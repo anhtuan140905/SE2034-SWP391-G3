@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
         if(user == null){
             return;
         }
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+        if (dto.getPassword() != null && !dto.getPassword().isBlank() && dto.getConfirmPassword() != null && !dto.getConfirmPassword().isBlank()) {
             if (!dto.getPassword().equals(dto.getConfirmPassword())) {
                 result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
             }
