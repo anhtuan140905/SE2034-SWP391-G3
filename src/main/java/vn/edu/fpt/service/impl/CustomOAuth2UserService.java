@@ -12,12 +12,12 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.repository.UserRepository;
 import vn.edu.fpt.service.RoleService;
-import vn.edu.fpt.service.UserService;
+
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
+
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
