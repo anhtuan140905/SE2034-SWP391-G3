@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -319,9 +319,10 @@
 
 
         .email i {
-            color: #ff2a85 ;
+            color: #ff2a85;
             font-size: 16px;
         }
+
         .status {
             padding: 6px 14px;
             border-radius: 20px;
@@ -367,6 +368,7 @@
             background: rgba(255, 27, 141, 0.3);
             color: #ff1b8d;
         }
+
         .user {
             display: flex;
             align-items: center;
@@ -380,6 +382,7 @@
             object-fit: cover;
             flex-shrink: 0;
         }
+
         /* ================= RESPONSIVE ================= */
 
         @media (max-width: 900px) {
@@ -415,10 +418,9 @@
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Manage Venues</a>
+        <a href="#" class="active"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
         <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
     </div>
@@ -461,10 +463,7 @@
                 <h1>Manage Users</h1>
                 <p>View and manage all platform users</p>
             </div>
-            <button class="add-btn">
-                <i class="fa-solid fa-plus"></i>
-                Add Venue
-            </button>
+
         </div>
 
         <!-- CARD -->
@@ -474,7 +473,18 @@
                 <h2>All Users</h2>
                 <div class="search-inline">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search venues..."/>
+                    <form id="searchForm"
+                          th:action="@{/admin/listuser}"
+                          method="get">
+
+                        <input type="text"
+                               class="search-box-top"
+                               placeholder="Search users..."
+                               id="searchInput"
+                               name="keyword"
+                               th:value="${keyword}"
+                        >
+                    </form>
                 </div>
             </div>
 
@@ -486,149 +496,62 @@
                     <th>User</th>
                     <th>Email</th>
                     <th>Role</th>
-                    <th>Status</th>
                     <th>Joined Date</th>
+                    <th>Status</th>
                     <th style="text-align:right;">Actions</th>
                 </tr>
                 </thead>
 
                 <tbody>
 
-                <tr>
+                <tr th:each="user : ${users}">
                     <td>
                         <div class="user">
-                            <img src="https://i.pravatar.cc/150?img=1" alt="John Smith">
-                            <strong>John Smith</strong>
+                            <img th:if="${user.avatar != null and !user.avatar.isEmpty()}"
+                                 th:src="${user.avatar}"
+                                 th:alt="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}">
+                        </div>
 
+                        <div>
+                            <strong th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></strong>
                         </div>
                     </td>
 
                     <td>
                         <div class="email">
                             <i class="fa-solid fa-envelope"></i>
-                            johnsmith@gmail.com
-                    </div>
-                        </td>
+                            <span th:text="${user.email}"></span>
+                        </div>
+                    </td>
 
                     <td>
-                        <span class="role">Admin</span>
+                     <span th:each="role, stat : ${user.roles}">
+                        <span th:text="${role.roleName}"></span>
+                        <span th:if="${!stat.last}">, </span>
+                     </span>
+                    </td>
+
+                    <td>
+                        <span th:text="${user.createdAt}"></span>
                     </td>
 
                     <td>
                         <span class="status active">Active</span>
                     </td>
 
-                    <td>2026-01-15</td>
 
                     <td>
                         <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                            <a th:href="@{/admin/viewdetailuser(id=${user.id})}">
+                                <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
+                            </a>
+                            <a th:href="@{/admin/edituser}">
+                                <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                            </a>
                         </div>
                     </td>
                 </tr>
 
-                <tr>
-                    <td>
-                        <div class="user">
-                            <img src="https://i.pravatar.cc/150?img=2" alt="Emma Watson">
-
-                            <strong>Emma Watson</strong>
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="email">
-                            <i class="fa-solid fa-envelope"></i>
-                            emma@gmail.com
-                        </div>
-                    </td>
-
-                    <td>
-                        <span class="role">Organizer</span>
-                    </td>
-
-                    <td>
-                        <span class="status active">Active</span>
-                    </td>
-
-                    <td>2026-02-10</td>
-
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <div class="user">
-                            <img src="https://i.pravatar.cc/150?img=3" alt="Michael Lee">
-                            <strong>Michael Lee</strong>
-
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="email">
-                            <i class="fa-solid fa-envelope"></i>
-                            michael@gmail.com
-                        </div>
-                        </td>
-
-                    <td>
-                        <span class="role">Customer</span>
-                    </td>
-
-                    <td>
-                        <span class="status inactive">Inactive</span>
-                    </td>
-
-                    <td>2026-03-05</td>
-
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <div class="user">
-                            <img src="https://i.pravatar.cc/150?img=4" alt="Sophia Brown">
-                            <strong>Sophia Brown</strong>
-
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="email">
-                            <i class="fa-solid fa-envelope"></i>
-                            sophia@gmail.com
-                        </div>
-                        </td>
-
-                    <td>
-                        <span class="role">Organizer</span>
-                    </td>
-
-                    <td>
-                        <span class="status active">Active</span>
-                    </td>
-
-                    <td>2026-04-20</td>
-
-                    <td>
-                        <div class="actions">
-                            <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
-                            <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </td>
-                </tr>
 
                 </tbody>
 
@@ -638,6 +561,20 @@
 
     </div>
 </div>
+<script>
+    const searchInput = document.getElementById("searchInput");
 
+    searchInput.addEventListener("input", function () {
+
+        const keyword = this.value;
+
+        history.replaceState(
+            null,
+            "",
+            "/admin/listuser?keyword=" + encodeURIComponent(keyword)
+        );
+
+    });
+</script>
 </body>
 </html>

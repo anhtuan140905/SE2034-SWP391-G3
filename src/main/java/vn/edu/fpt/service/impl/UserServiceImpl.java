@@ -19,6 +19,7 @@ import vn.edu.fpt.repository.UserRepository;
 import vn.edu.fpt.service.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -161,5 +162,18 @@ public class UserServiceImpl implements UserService {
             user.setAvatar(dto.getAvatar());
         }
         this.userRepository.save(user);
+    }
+    public List<User> getAllUser() {
+
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venue not found: " + id));
+    }
+
+    public List<User> searchUser(String keyword){
+        return userRepository.findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(keyword,keyword,keyword);
     }
 }
