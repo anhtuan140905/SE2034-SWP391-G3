@@ -141,8 +141,7 @@
                             <input type="checkbox" name="remember-me"/>
                             Remember me
                         </label>
-                        <button type="button" class="text-btn" id="forgotBtn">Forgot password?</button>
-                    </div>
+                        <button type="button" class="text-btn" id="forgotBtn" th:onclick="|location.href='@{/auth/forgot-password}'|">Forgot password</button>                    </div>
                 </form>
 
                 <p class="reg-link">New to EventHub? <a th:href = "@{/auth/register}">Create an account</a></p>

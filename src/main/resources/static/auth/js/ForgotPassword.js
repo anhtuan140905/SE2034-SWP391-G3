@@ -47,20 +47,40 @@
 
     /* ── STEP 1: SEND OTP ── */
     function sendOtp() {
-      var email = document.getElementById('emailInput').value.trim();
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('emailField').classList.add('field-error');
-        return;
-      }
-      document.getElementById('emailDisplay').textContent = email;
-      goToStep(2);
-      initOtpInputs();
-      startTimer(60);
-      setTimeout(function(){ document.getElementById('otp0').focus(); }, 100);
-    }
+        var email = document.getElementById('emailInput').value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById('emailField').classList.add('field-error');
+            return;
+        }
 
-    function clearEmailError() {
-      document.getElementById('emailField').classList.remove('field-error');
+        var btn = document.querySelector('#panelEmail .btn-primary');
+        btn.disabled = true;
+        btn.textContent = 'Đang gửi...';
+
+        fetch('/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'email=' + encodeURIComponent(email)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.status === 'ok') {
+                document.getElementById('emailDisplay').textContent = email;
+                goToStep(2);
+                initOtpInputs();
+                startTimer(60);
+                setTimeout(function(){ document.getElementById('otp0').focus(); }, 100);
+            } else {
+                document.getElementById('emailField').classList.add('field-error');
+            }
+        })
+        .catch(function() {
+            alert('Gửi email thất bại, vui lòng thử lại.');
+        })
+        .finally(function() {
+            btn.disabled = false;
+            btn.textContent = 'Gửi mã OTP';
+        });
     }
 
     /* ── STEP 2: OTP ── */
@@ -105,28 +125,51 @@
       document.querySelectorAll('.otp-input').forEach(function(i){ i.classList.remove('error'); });
     }
 
-    function verifyOtp() {
-      var otp = getOtpValue();
-      if (otp.length < 6) {
-        document.getElementById('otpError').textContent = 'Vui lòng nhập đủ 6 chữ số';
-        document.querySelectorAll('.otp-input').forEach(function(i){ if (!i.value) i.classList.add('error'); });
-        return;
-      }
-      // Demo: any 6-digit OTP passes (except "000000")
-      if (otp === '000000') {
-        document.getElementById('otpError').textContent = 'Mã OTP không đúng. Vui lòng thử lại.';
-        document.querySelectorAll('.otp-input').forEach(function(i){ i.classList.add('error'); });
-        setTimeout(function(){
-          document.querySelectorAll('.otp-input').forEach(function(i){ i.classList.remove('error'); i.value = ''; i.classList.remove('filled'); });
-          document.getElementById('otp0').focus();
-          clearOtpError();
-        }, 1200);
-        return;
-      }
-      clearInterval(timerInterval);
-      goToStep(3);
-      setTimeout(function(){ document.getElementById('newPwInput').focus(); }, 100);
-    }
+   function verifyOtp() {
+       var otp = getOtpValue();
+       if (otp.length < 6) {
+           document.getElementById('otpError').textContent = 'Vui lòng nhập đủ 6 chữ số';
+           document.querySelectorAll('.otp-input').forEach(function(i){
+               if (!i.value) i.classList.add('error');
+           });
+           return;
+       }
+
+       var btn = document.querySelector('#panelOtp .btn-primary');
+       btn.disabled = true;
+       btn.textContent = 'Đang xác nhận...';
+
+       fetch('/auth/verify-otp', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+           body: 'otp=' + encodeURIComponent(otp)
+       })
+       .then(function(res) { return res.json(); })
+       .then(function(data) {
+           if (data.status === 'ok') {
+               clearInterval(timerInterval);
+               goToStep(3);
+               setTimeout(function(){ document.getElementById('newPwInput').focus(); }, 100);
+           } else {
+               document.getElementById('otpError').textContent = data.message || 'Mã OTP không đúng.';
+               document.querySelectorAll('.otp-input').forEach(function(i){ i.classList.add('error'); });
+               setTimeout(function(){
+                   document.querySelectorAll('.otp-input').forEach(function(i){
+                       i.classList.remove('error'); i.value = ''; i.classList.remove('filled');
+                   });
+                   document.getElementById('otp0').focus();
+                   clearOtpError();
+               }, 1200);
+           }
+       })
+       .catch(function() {
+           document.getElementById('otpError').textContent = 'Lỗi kết nối, vui lòng thử lại.';
+       })
+       .finally(function() {
+           btn.disabled = false;
+           btn.textContent = 'Xác nhận mã OTP';
+       });
+   }
 
     /* ── OTP TIMER ── */
     function startTimer(seconds) {
@@ -195,22 +238,45 @@
     }
 
     function resetPassword() {
-      var pw = document.getElementById('newPwInput').value;
-      var confirm = document.getElementById('confirmPwInput').value;
+        var pw = document.getElementById('newPwInput').value;
+        var confirm = document.getElementById('confirmPwInput').value;
 
-      if (!pw || calcStrength(pw) < 2) {
-        document.getElementById('newPwInput').focus();
-        return;
-      }
-      if (pw !== confirm) {
-        document.getElementById('confirmPwField').classList.add('field-error');
-        document.getElementById('confirmPwInput').focus();
-        return;
-      }
+        if (!pw || calcStrength(pw) < 2) {
+            document.getElementById('newPwInput').focus();
+            return;
+        }
+        if (pw !== confirm) {
+            document.getElementById('confirmPwField').classList.add('field-error');
+            document.getElementById('confirmPwInput').focus();
+            return;
+        }
 
-      // Success
-      updateLeftSteps(4); // all done
-      showPanel('panelSuccess');
+        var btn = document.querySelector('#panelNewPw .btn-primary');
+        btn.disabled = true;
+        btn.textContent = 'Đang xử lý...';
+
+        fetch('/auth/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'newPassword=' + encodeURIComponent(pw)
+                + '&confirmPassword=' + encodeURIComponent(confirm)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.status === 'ok') {
+                updateLeftSteps(4);
+                showPanel('panelSuccess');
+            } else {
+                alert(data.message || 'Đặt lại mật khẩu thất bại.');
+                btn.disabled = false;
+                btn.textContent = 'Đặt lại mật khẩu';
+            }
+        })
+        .catch(function() {
+            alert('Lỗi kết nối, vui lòng thử lại.');
+            btn.disabled = false;
+            btn.textContent = 'Đặt lại mật khẩu';
+        });
     }
 
     /* ── EYE TOGGLE ── */
