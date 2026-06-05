@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import vn.edu.fpt.service.UserService;
+import vn.edu.fpt.service.impl.CustomOAuth2UserService;
 import vn.edu.fpt.service.impl.CustomUserDetailsService;
 
 import java.util.List;
@@ -21,9 +22,13 @@ public class SecurityConfiguration {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoderConfig passwordEncoderConfig;
-    public SecurityConfiguration(CustomUserDetailsService customUserDetailsService, PasswordEncoderConfig passwordEncoderConfig) {
+    private final CustomOAuth2UserService customOAuth2UserService;
+    public SecurityConfiguration(CustomUserDetailsService customUserDetailsService,
+                                 PasswordEncoderConfig passwordEncoderConfig,
+                                 CustomOAuth2UserService customOAuth2UserService) {
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoderConfig = passwordEncoderConfig;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
 
     @Bean
@@ -89,6 +94,14 @@ public class SecurityConfiguration {
                         .successHandler(customSuccessHandler())
                         .failureUrl("/auth/login?error=true")
                         .permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                .loginPage("/auth/login")
+                .userInfoEndpoint(u -> u
+                        .userService(customOAuth2UserService)
+                )
+                .successHandler(customSuccessHandler())
+                .failureUrl("/auth/login?error=oauth2")
                 )
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
                 .logout(logout -> logout

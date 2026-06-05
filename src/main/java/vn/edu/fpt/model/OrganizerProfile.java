@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.edu.fpt.model.constant.OrganizerStatus;
 
 @Entity
 @Table(name = "organizer_profiles")
@@ -39,7 +38,6 @@ public class OrganizerProfile {
     @Column(name = "bank_account")
     private String bankAccount;
 
-    //@Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private String status;
 }

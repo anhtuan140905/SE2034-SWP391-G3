@@ -27,9 +27,9 @@ public class User extends BaseAuditEntity{
     @Column(name = "email", nullable = false, unique = true)
     @Email
     private String email;
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = true)
     private String passwordHash;
-    @Column(name = "phone", length = 20)
+    @Column(name = "phone", length = 10)
     private String phone;
     @Column(name = "gender", length = 10)
     private String gender;

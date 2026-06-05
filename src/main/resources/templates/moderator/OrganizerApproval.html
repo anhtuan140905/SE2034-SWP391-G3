@@ -16,9 +16,8 @@
 
     <div class="om-topbar">
         <div class="om-heading">
-            <h1 class="page-title">LIVE HOST DIRECTORY</h1>
-            <p class="page-subtitle">Manage promoter background check dossiers, Enterprise credentials, and individual
-                streamer licenses.</p>
+            <h1 class="page-title">LIST OF ORGANIZER</h1>
+            <p class="page-subtitle">Putting people at the center, existing to create new value for society.</p>
         </div>
         <div class="om-filters">
             <div class="filter-group">
@@ -26,7 +25,7 @@
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="searchInput"
-                           placeholder="Search Host, Email, ID..."
+                           placeholder="Search Name, Email, ID..."
                            th:value="${keyword}"
                            autocomplete="off"/>
                 </div>
@@ -89,7 +88,7 @@
                 <td>
             <span th:if="${org.status != null}"
                   class="om-status-badge"
-                  th:classappend="${org.status == 'APPROVED' ? 'approved' : (org.status == 'REJECTED' ? 'rejected' : 'pending')}"
+                  th:classappend="${org.status == 'APPROVED' ? 'badge-approved' : (org.status == 'REJECTED' ? 'badge-rejected' : 'badge-pending')}"
                   th:text="${org.status}">PENDING
             </span>
                     <span th:if="${org.status == null}" class="om-status-badge pending"
@@ -99,7 +98,7 @@
                 <td>
                     <div class="om-actions">
                         <a class="btn-review"
-                           th:href="@{/moderator/organizers/review/{id}(id=${org.userId})}">Review</a>
+                           th:href="@{/moderator/organizer/{id}(id=${org.userId})}">Review</a>
                     </div>
                 </td>
             </tr>

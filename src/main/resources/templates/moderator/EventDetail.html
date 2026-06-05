@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#event-detail-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
+<head>
+    <title>Event Detail — EventHub Moderator</title>
+    <!--/*@thymesVar id="event" type="com.example.dto.EventDetailDTO"*/-->
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/event_detail.css}"/>
+</head>
+<body>
+
+<section id="event-detail-content" th:fragment="content">
+
+    <!-- ── Header: Back + Title + Status badge ── -->
+    <div class="ed-header">
+        <div class="ed-header-left">
+            <a th:href="@{/moderator/events}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>BACK TO LIST</span>
+            </a>
+            <div class="ed-title-block">
+                <p class="ed-label">EVENT REVIEW PANEL</p>
+                <h1 class="ed-title" th:text="${event != null ? event.title : 'Neon Night Music Festival'}">
+                    Neon Night Music Festival
+                </h1>
+            </div>
+        </div>
+        <span class="ed-status-badge"
+              th:classappend="${event != null and event.status == 'APPROVED'} ? 'status-approved' :
+                             (${event != null and event.status == 'REJECTED'} ? 'status-rejected' : 'status-pending')">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span th:text="${event != null ? event.status + ' APPROVAL' : 'PENDING APPROVAL'}">PENDING APPROVAL</span>
+        </span>
+    </div>
+
+    <!-- ── Main 2-col layout ── -->
+    <div class="ed-body">
+
+        <!-- LEFT: Main Content -->
+        <div class="ed-main">
+
+            <!-- Card 1: Cover image -->
+            <div class="ed-card ed-cover-card">
+                <div class="ed-cover">
+                    <img th:if="${event != null and event.coverImageUrl != null}"
+                         th:src="${event.coverImageUrl}"
+                         th:alt="${event.title}"
+                         class="ed-cover-img"/>
+                    <div th:if="${event == null or event.coverImageUrl == null}"
+                         class="ed-cover-placeholder"></div>
+                    <div class="ed-cover-overlays">
+                        <span class="tag-category"
+                              th:text="${event != null ? event.category : 'Live Music'}">Live Music</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Overview + Date row -->
+            <div class="ed-card ed-content-card">
+                <!-- Event Overview -->
+                <div class="ed-section">
+                    <h2 class="ed-section-title">EVENT OVERVIEW</h2>
+                    <div class="ed-overview-text">
+                        <th:block th:if="${event != null}">
+                            <p th:text="${event.description}">Description here.</p>
+                        </th:block>
+                        <th:block th:if="${event == null}">
+                            <p>Nothing for showing</p>
+                        </th:block>
+                    </div>
+                </div>
+
+                <!-- Date / Time / Duration row -->
+                <div class="ed-date-row">
+                    <div class="ed-date-item">
+                        <span class="ed-date-label">CIRCUIT PROPOSED DATE</span>
+                        <span class="ed-date-value"
+                              th:text="${event != null ? #temporals.format(event.startTime, 'MMM dd, yyyy') : 'Oct 24, 2026'}">
+                            Oct 24, 2026
+                        </span>
+                    </div>
+                    <div class="ed-date-item">
+                        <span class="ed-date-label">DOORS STANDARD OPEN</span>
+                        <span class="ed-date-value"
+                              th:text="${event != null ? #temporals.format(event.startTime, 'HH:mm') + ' PM' : '19:00 PM'}">
+                            19:00 PM
+                        </span>
+                    </div>
+                    <div class="ed-date-item">
+                        <span class="ed-date-label">NOCTURNAL DURATION</span>
+                        <span class="ed-date-value"
+                              th:text="${event != null ? event.duration : '8 Hours'}">
+                            8 Hours
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end card 2 -->
+        </div>
+        <!-- end ed-main -->
+        <!-- RIGHT: Sidebar -->
+        <aside class="ed-sidebar">
+            <!-- Venue & Location -->
+            <div class="ed-info-card">
+                <div class="ed-info-card-title">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>VENUE &amp; LOCATION</span>
+                </div>
+                <p class="ed-venue-name"
+                   th:text="${event != null ? event.venueName : 'Cyber Docklands'}">Cyber Docklands</p>
+                <p class="ed-venue-address"
+                   th:text="${event != null ? event.venueAddress : '404 Neon Blvd, District 9, Metropolis'}">
+                    404 Neon Blvd, District 9, Metropolis
+                </p>
+                <div class="ed-capacity-row">
+                    <span class="ed-capacity-label">SAFE CAPACITY</span>
+                    <span class="ed-capacity-value"
+                          th:text="${event != null ? #numbers.formatInteger(event.capacity, 0, 'COMMA') + ' Persons' : '5,000 Persons'}">
+                        5,000 Persons
+                    </span>
+                </div>
+            </div>
+
+            <!-- Total Tickets -->
+            <div class="ed-info-card ed-ticket-card">
+                <div class="ed-info-card-title">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>TOTAL TICKETS</span>
+                </div>
+                <p class="ed-ticket-count"
+                   th:text="${event != null ? #numbers.formatInteger(event.totalTickets, 0, 'COMMA') + ' Persons' : '5,000 Persons'}">
+                    5,000 Persons
+                </p>
+                <p class="ed-ticket-sub">TOTAL AVAILABLE CAPACITY</p>
+                <div class="ed-divider"></div>
+                <p class="ed-organized-label">ORGANIZED BY</p>
+                <p class="ed-organized-name"
+                   th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company</p>
+            </div>
+
+            <!-- Organizer -->
+            <div class="ed-info-card">
+                <div class="ed-info-card-title">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>ORGANIZER</span>
+                </div>
+                <div class="ed-organizer-row">
+                    <div class="ed-organizer-avatar">
+                        <img th:if="${event != null and event.organizerAvatarUrl != null}"
+                             th:src="${event.organizerAvatarUrl}"
+                             th:alt="${event.organizerName}"/>
+                        <span th:if="${event == null or event.organizerAvatarUrl == null}"
+                              class="ed-avatar-fallback">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                    </div>
+                    <div class="ed-organizer-info">
+                        <p class="ed-organizer-name"
+                           th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company</p>
+                    </div>
+                    <a th:href="@{/moderator/information/{id}(id=${event?.organizerId ?: 0}, fromEvent=${event?.id ?: 0})}"
+                       class="ed-organizer-arrow">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+
+        </aside>
+    </div>
+    <!-- end ed-body -->
+
+    <!-- ── Reject Box: full width, below 2 cols ── -->
+    <div class="ed-reject-box" th:if="${event == null or event.status != 'REJECTED'}">
+        <div class="ed-reject-label">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>REASON FOR REJECT (REQUIRED FOR REJECTION)</span>
+        </div>
+        <textarea id="rejectReason"
+                  class="ed-reject-textarea"
+                  placeholder="Please specify why this event is being rejected..."
+                  th:text="${event != null ? event.rejectReason : ''}"></textarea>
+    </div>
+
+    <div class="ed-action-footer">
+        <div class="ed-current-status">
+            <span class="ed-status-label">EVENT STATUS:</span>
+            <span class="event-badge"
+                  th:classappend="${event != null and event.status == 'APPROVED' ? 'badge-approved' :
+                                  (event != null and event.status == 'REJECTED' ? 'badge-rejected' : 'badge-pending')}"
+                  th:text="${event != null ? event.status : 'PENDING'}">PENDING</span>
+        </div>
+        <div class="ed-action-btns">
+            <button class="btn-reject"
+                    th:if="${event == null or event.status != 'REJECTED'}"
+                    th:onclick="|rejectEvent(${event?.id ?: 0})|">
+                REJECT EVENT
+            </button>
+
+            <button class="btn-approve"
+                    th:if="${event == null or event.status != 'APPROVED'}"
+                    th:onclick="|approveEvent(${event?.id ?: 0})|">
+                APPROVE EVENT
+            </button>
+        </div>
+    </div>
+
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/event_detail.js}"></script>
+
+</body>
+</html>

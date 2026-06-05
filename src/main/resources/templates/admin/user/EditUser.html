@@ -397,16 +397,15 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text">Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
+        <a th:href="@{/admin/listvenue}" ><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
+        <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
@@ -429,8 +428,7 @@
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên </div>
                 </div>
             </div>
         </div>
@@ -441,116 +439,111 @@
 
         <!-- PAGE HEADER -->
         <div class="page-header">
-            <button class="back-btn" aria-label="Back">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
+            <a th:href="@{/admin/listuser}">
+                <button class="back-btn" aria-label="Back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
             <div>
-                <h1>Edit User Status</h1>
-                <p>Manage user account status</p>
+                <h1>Chỉnh Sửa Trạng Thái Người Dùng </h1>
+                <p>Quản Lý Trạng Thái Tài Khoản Người Dùng </p>
             </div>
         </div>
-    <!-- Card -->
+        <!-- Card -->
 
-    <div class="card">
+        <div class="card">
 
-        <h2>User Information</h2>
+            <h2>User Information</h2>
 
-        <!-- Avatar -->
+            <!-- Avatar -->
 
-        <div class="avatar-upload">
+            <div class="avatar-upload">
 
-            <img src="https://i.pravatar.cc/300?img=12" alt="User Avatar">
+                <img src="https://i.pravatar.cc/300?img=12" alt="User Avatar">
 
-            <br>
+                <br>
 
-            <label class="upload-btn">
-                <i class="fa-solid fa-upload"></i>
-                Change Avatar
-                <input type="file">
-            </label>
+                <label class="upload-btn">
+                    <i class="fa-solid fa-upload"></i>
+                    Change Avatar
+                    <input type="file">
+                </label>
+
+            </div>
+
+            <!-- Form -->
+
+            <form>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Họ Và Tên</label>
+                        <input type="text" value="Emma Watson">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Địa Chỉ Email</label>
+                        <input type="email" value="emma@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Số Điện Thoại</label>
+                        <input type="text" value="+1 234 567 890">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phân Quyền Người Dùng</label>
+
+                        <select>
+                            <option>Quản Trị Viên</option>
+                            <option selected>Nhà Tổ Chức </option>
+                            <option> Người Dùng </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Trạng Thái Hoạt Động</label>
+
+                        <select>
+                            <option selected>Đang Hoạt Động </option>
+                            <option>Ngừng Hoạt Động </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ngày Sinh</label>
+                        <input type="date" value="1998-06-12">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Địa Chỉ</label>
+                        <input type="text" value="New York, USA">
+                    </div>
+
+
+                </div>
+
+                <!-- Buttons -->
+
+                <div class="actions">
+
+                    <button type="submit" class="save-btn">
+
+                        Save Changes
+                    </button>
+
+                    <button type="button" class="cancel-btn" onclick="history.back()">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
-
-        <!-- Form -->
-
-        <form>
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" value="Emma Watson">
-                </div>
-
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" value="emma@gmail.com">
-                </div>
-
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" value="+1 234 567 890">
-                </div>
-
-                <div class="form-group">
-                    <label>User Role</label>
-
-                    <select>
-                        <option>Admin</option>
-                        <option selected>Organizer</option>
-                        <option>Customer</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Status</label>
-
-                    <select>
-                        <option selected>Active</option>
-                        <option>Inactive</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Date of Birth</label>
-                    <input type="date" value="1998-06-12">
-                </div>
-
-                <div class="form-group full">
-                    <label>Address</label>
-                    <input type="text" value="New York, USA">
-                </div>
-
-                <div class="form-group full">
-                    <label>Bio</label>
-
-                    <textarea>
-Professional event organizer with 5+ years of experience managing concerts, conferences, and large public events.
-            </textarea>
-                </div>
-
-            </div>
-
-            <!-- Buttons -->
-
-            <div class="actions">
-
-                <button type="submit" class="save-btn">
-
-                    Save Changes
-                </button>
-
-                <button type="button" class="cancel-btn" onclick="history.back()">
-                    Cancel
-                </button>
-
-            </div>
-
-        </form>
 
     </div>
-
-</div>
 
 </body>
 </html>

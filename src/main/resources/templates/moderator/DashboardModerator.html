@@ -24,108 +24,108 @@
     <div class="stats-grid">
 
         <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-regular fa-calendar-check"></i>
-            </div>
-            <p class="stat-label">Total Pending Events</p>
+            <p class="stat-label">Sự kiện chờ duyệt</p>
             <p class="stat-value" th:text="${stats != null ? stats.pendingEvents : 142}">142</p>
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-solid fa-users-between-lines"></i>
-            </div>
-            <p class="stat-label">Verified Live Hosts</p>
+            <p class="stat-label">Sự kiện đang hoạt động</p>
             <p class="stat-value" th:text="${stats != null ? stats.verifiedHosts : 2840}">2840</p>
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-regular fa-calendar-check"></i>
-            </div>
-            <p class="stat-label">Total Approved Live</p>
+            <p class="stat-label">Duyệt trong ngày</p>
             <p class="stat-value" th:text="${stats != null ? stats.approvedLive : 864}">864</p>
         </div>
 
         <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fa-solid fa-bolt"></i>
-            </div>
-            <p class="stat-label">Hosts Active Now</p>
+            <p class="stat-label">Sự kiện bị từ chối</p>
             <p class="stat-value" th:text="${stats != null ? stats.activeNow : 512}">512</p>
         </div>
-
     </div>
 
     <!-- Activity Stream -->
-    <div class="activity-section">
-        <div class="activity-header">
-            <div class="activity-title">
-                <i class="fa-solid fa-table-cells-large"></i>
-                <span>RECENT ACTIVITY STREAM</span>
+    <div class="dashboard-panels">
+
+        <div class="panel-section">
+            <div class="panel-header">
+                <span class="panel-title">SỰ KIỆN CHỜ DUYỆT MỚI NHẤT</span>
+                <a th:href="@{/moderator/events?status='PENDING'}" class="view-all-link">Xem tất cả</a>
             </div>
-            <a th:href="@{/moderator/events}" class="view-all-link">View Entire Feed</a>
+
+            <table class="minimal-table">
+                <thead>
+                <tr>
+                    <th style="width: 75%;">Tên sự kiện</th>
+                    <th style="width: 25%; text-align: right;">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event : ${pendingEvents}" th:if="${pendingEvents != null and !pendingEvents.isEmpty()}">
+                    <td th:text="${event.title}">Tên sự kiện chờ duyệt</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/moderator/event/detail/{id}(id=${event.id})}" class="link-action">REVIEW</a>
+                    </td>
+                </tr>
+
+                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
+                    <td>Neon Nights Rave: Tokyo Edition</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
+                </tr>
+                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
+                    <td>FutureTech Summit 2026</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
+                </tr>
+                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
+                    <td>Underground Bites Festival</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="activity-list">
-
-            <!-- Loop through activities if passed from controller -->
-            <div class="activity-item" th:each="activity : ${recentActivities}"
-                 th:if="${recentActivities != null}">
-                <div class="activity-thumb">
-                    <img th:src="${activity.imageUrl}" th:alt="${activity.name}" onerror="this.style.display='none'"/>
-                </div>
-                <div class="activity-info">
-                    <p class="activity-name" th:text="${activity.name}">Event Name</p>
-                    <p class="activity-sub" th:text="${activity.subtitle}">Subtitle</p>
-                </div>
-                <div class="activity-meta">
-                    <span class="activity-time" th:text="${activity.timeAgo}">Just now</span>
-                    <span class="activity-badge"
-                          th:classappend="${activity.status == 'APPROVED'} ? 'badge-approved' :
-                                         (${activity.status == 'PENDING'} ? 'badge-pending' : 'badge-rejected')"
-                          th:text="${activity.status}">STATUS</span>
-                </div>
+        <div class="panel-section">
+            <div class="panel-header">
+                <span class="panel-title">SỰ KIỆN DIỄN RA HÔM NAY</span>
+                <a th:href="@{/moderator/events?status='APPROVED'}" class="view-all-link">Xem tất cả</a>
             </div>
 
-            <!-- Static fallback when no data from controller -->
-            <div class="activity-item" th:if="${#lists.isEmpty(recentActivities)}">
-                <div class="activity-thumb static-thumb static-thumb--1"></div>
-                <div class="activity-info">
-                    <p class="activity-name">Neon Nights Rave: Tokyo Edition</p>
-                    <p class="activity-sub">Submitted by CyberPulse Ent.</p>
-                </div>
-                <div class="activity-meta">
-                    <span class="activity-time">2 mins ago</span>
-                    <span class="activity-badge badge-pending">PENDING</span>
-                </div>
-            </div>
+            <table class="minimal-table">
+                <thead>
+                <tr>
+                    <th style="width: 50%;">Tên sự kiện</th>
+                    <th style="width: 25%;">Giờ bắt đầu</th>
+                    <th style="width: 25%; text-align: right;">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="upEvent : ${todayEvents}" th:if="${todayEvents != null and !todayEvents.isEmpty()}">
+                    <td th:text="${upEvent.title}">Tên sự kiện trong ngày</td>
+                    <td th:text="${#temporals.format(upEvent.startTime, 'HH:mm') + ' PM'}">19:00 PM</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/moderator/event/detail/{id}(id=${upEvent.id})}" class="link-action">DETAIL</a>
+                    </td>
+                </tr>
 
-            <div class="activity-item" th:if="${#lists.isEmpty(recentActivities)}">
-                <div class="activity-thumb static-thumb static-thumb--2"></div>
-                <div class="activity-info">
-                    <p class="activity-name">FutureTech Summit 2024</p>
-                    <p class="activity-sub">Approved by Auto-Moderator</p>
-                </div>
-                <div class="activity-meta">
-                    <span class="activity-time">15 mins ago</span>
-                    <span class="activity-badge badge-approved">APPROVED</span>
-                </div>
-            </div>
-
-            <div class="activity-item" th:if="${recentActivities == null or recentActivities.isEmpty}">
-                <div class="activity-thumb static-thumb static-thumb--3"></div>
-                <div class="activity-info">
-                    <p class="activity-name">Underground Bites Festival</p>
-                    <p class="activity-sub">Flagged for License Verification</p>
-                </div>
-                <div class="activity-meta">
-                    <span class="activity-time">45 mins ago</span>
-                    <span class="activity-badge badge-rejected">REJECTED</span>
-                </div>
-            </div>
-
+                <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
+                    <td>Vietnam Esports Championship</td>
+                    <td>14:00 PM</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
+                </tr>
+                <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
+                    <td>Rap Viet All-Star Concert</td>
+                    <td>19:30 PM</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
+                </tr>
+                <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
+                    <td>International Art Expo</td>
+                    <td>09:00 AM</td>
+                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
+
     </div>
 
 </section>

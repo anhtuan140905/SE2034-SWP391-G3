@@ -12,6 +12,7 @@ import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,4 +24,8 @@ public interface UserService {
     public Optional<User> findByEmailWithRoles(String username);
     public User getUserById(Long id);
     public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result);
+    public List<User> getAllUser();
+    public User findById(Long id);
+    public List<User> searchUser(String keyword);
+
 }
