@@ -20,15 +20,15 @@
         body {
             display: flex;
             min-height: 100vh;
-            background: #090014;
-            color: white;
+            background: #fff0f5;
+            color: #1e0e34;
         }
 
         /* ================= SIDEBAR ================= */
 
         .sidebar {
             width: 260px;
-            background: #140021;
+            background: #ffffff;
             border-right: 1px solid rgba(236, 72, 153, 0.3);
             padding: 20px;
             position: fixed;
@@ -53,8 +53,9 @@
 
         .portal-text {
             font-size: 13px;
-            color: #9ca3af;
+            color: #84759b;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .menu a {
@@ -62,11 +63,12 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #d1d5db;
+            color: #4b3d60;
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 10px;
             transition: 0.3s;
+            font-weight: bold;
         }
 
         .menu a:hover,
@@ -91,7 +93,7 @@
             position: sticky;
             top: 0;
             z-index: 90;
-            background: #0d001a;
+            background: #ffffff;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             padding: 12px 25px;
             display: flex;
@@ -102,18 +104,18 @@
         .topbar .search-box-top {
             flex: 1;
             max-width: 500px;
-            background: #140021;
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 10px;
             padding: 10px 15px;
-            color: white;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
             font-family: 'Be Vietnam Pro', sans-serif;
         }
 
         .topbar .search-box-top::placeholder {
-            color: #9ca3af;
+            color: #84759b;
         }
 
         .topbar-right {
@@ -127,7 +129,7 @@
             position: relative;
             background: none;
             border: none;
-            color: #d1d5db;
+            color: #ff1b8d;
             font-size: 20px;
             cursor: pointer;
         }
@@ -140,7 +142,7 @@
             height: 9px;
             background: #ff1b8d;
             border-radius: 50%;
-            border: 2px solid #0d001a;
+            border: 2px solid #ffffff;
         }
 
         .profile {
@@ -221,7 +223,7 @@
         /* ================= CARD ================= */
 
         .card {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 20px;
             padding: 25px;
@@ -249,8 +251,8 @@
             padding: 10px 15px 10px 38px;
             border-radius: 10px;
             border: 1px solid rgba(236, 72, 153, 0.3);
-            background: #090014;
-            color: white;
+            background: #fff0f5;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
             font-family: 'Be Vietnam Pro', sans-serif;
@@ -288,6 +290,11 @@
             color: #9ca3af;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             font-size: 14px;
+            font-weight: 700;
+        }
+        th {
+            font-weight: 700 !important;
+            color: #4b3d60 !important;
         }
 
         td {
@@ -319,11 +326,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #d1d5db;
+            color: #4b3d60;
         }
 
         .event-count {
-            color: #c084fc;
+            color: #4b3d60;
             font-weight: bold;
         }
 
@@ -350,6 +357,13 @@
             justify-content: flex-end;
             gap: 10px;
         }
+        .actions a,
+        .page-header a {
+            text-decoration: none;
+            border: none;
+            outline: none;
+            display: inline-flex;
+        }
 
         .action-btn {
             width: 36px;
@@ -357,7 +371,7 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            color: #d1d5db;
+            color: #4b3d60;
             background: rgba(255, 255, 255, 0.06);
             font-size: 14px;
             transition: 0.2s;
@@ -404,15 +418,15 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text">Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
-        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a th:href="@{/admin/listuser}"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển</a>
+        <a href="#" class="active"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
+        <a th:href="@{/admin/listuser}"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
@@ -435,8 +449,7 @@
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên</div>
                 </div>
             </div>
 
@@ -450,13 +463,13 @@
         <!-- PAGE HEADER -->
         <div class="page-header">
             <div>
-                <h1>Manage Venues</h1>
-                <p>View and manage all event venues</p>
+                <h1>Quản Lý Địa Điểm </h1>
+                <p>Hiển thị và quản lý tất cả địa điểm tổ chức sự kiện</p>
             </div>
             <a th:href="@{/admin/addvenue}">
                 <button class="add-btn">
                     <i class="fa-solid fa-plus"></i>
-                    Add Venue
+                    Thêm Địa Điểm
                 </button>
             </a>
         </div>
@@ -465,7 +478,7 @@
         <div class="card">
 
             <div class="card-header">
-                <h2>All Venues</h2>
+                <h2>Danh Sách Địa Điểm </h2>
                 <div class="search-inline">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <form id="searchForm"
@@ -474,7 +487,7 @@
 
                         <input type="text"
                                class="search-box-top"
-                               placeholder="Search venues..."
+                               placeholder="Tìm kiếm địa điểm..."
                                id="searchInput"
                                name="keyword"
                                th:value="${keyword}"
@@ -486,12 +499,12 @@
             <table>
                 <thead>
                 <tr>
-                    <th>Venue</th>
-                    <th>Location</th>
-                    <th>Capacity</th>
-                    <th>Events</th>
-                    <th>Status</th>
-                    <th style="text-align:right;">Actions</th>
+                    <th>Tên Địa Điểm</th>
+                    <th>Địa Chỉ</th>
+                    <th>Sức Chứa Tối Đa</th>
+                    <th>Tổng Sự Kiện</th>
+                    <th>Trạng Thái</th>
+                    <th style="text-align:right;">Thao Tác</th>
                 </tr>
                 </thead>
 
@@ -502,7 +515,7 @@
                     th:if="${venues == null or #lists.isEmpty(venues)}">
                     <td colspan="6">
                         <i class="fa-solid fa-building"></i>
-                        No venues found. Click "Add Venue" to create one.
+                        Không Có Dữ liệu Về Địa Điểm Tổ Chức Sự Kiện. Vui Lòng Chọn "Thêm Địa Điểm" Để Tạo Mới.
                     </td>
                 </tr>
 
@@ -549,12 +562,12 @@
 
                     <!-- Số event đã tổ chức -->
                     <td class="event-count"
-                        th:text="${venue.events != null ? #lists.size(venue.events) + ' Events' : '0 Events'}">
-                        0 Events
+                        th:text="${venue.events != null ? #lists.size(venue.events)  : '0'}">
+                        0
                     </td>
 
                     <!-- Status -->
-                    <td><span class="status active">Active</span></td>
+                    <td><span class="status active">Đang Hoạt Động</span></td>
 
                     <!-- Actions -->
                     <td>

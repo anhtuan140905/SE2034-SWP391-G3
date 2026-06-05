@@ -402,15 +402,15 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text">Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
-        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển</a>
+        <a href="#" class="active"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm</a>
+        <a th:href="@{/admin/listuser}"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
@@ -422,7 +422,7 @@
     <div class="topbar">
         <div class="search-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
+            <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức, người dùng..."/>
         </div>
 
         <div class="topbar-right">
@@ -433,8 +433,8 @@
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên</div>
+
                 </div>
             </div>
         </div>
@@ -451,22 +451,22 @@
                 </button>
             </a>
             <div>
-                <h1>Add New Venue</h1>
-                <p>Create a new venue for hosting events</p>
+                <h1>Thêm Địa Điểm Mới </h1>
+                <p>Thêm địa điểm tổ chức sự kiện mới</p>
             </div>
         </div>
 
         <!-- FORM -->
         <div class="form-container">
 
-            <h2 class="form-title">Venue Information</h2>
+            <h2 class="form-title">Thông Tin Địa Điểm</h2>
 
             <form method="post" enctype="multipart/form-data" th:action="@{/admin/addvenue}"
                   th:object="${CreateVenueDTO}">
 
                 <!-- Upload -->
                 <div class="form-group">
-                    <label>Venue Image:</label>
+                    <label>Ảnh Địa Điểm:</label>
 
                     <input type="file"
                            id="venueFile"
@@ -476,28 +476,28 @@
 
                     <div class="upload-box" onclick="document.getElementById('venueFile').click()">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p id="fileName">Click to upload or drag and drop</p>
-                        <span>PNG, JPG up to 10MB</span>
+                        <p id="fileName">Nhấn để chọn ảnh</p>
+                        <span>PNG, JPG </span>
                     </div>
                 </div>
 
                 <!-- Venue Name -->
                 <div class="form-group">
-                    <label>Venue Name:</label>
+                    <label>Tên Địa Điểm:</label>
                     <input type="text"
                            class="form-control"
-                           placeholder="Enter venue name"
+                           placeholder="Nhập tên địa điểm"
                            th:field="*{venueName}"/>
                 </div>
 
                 <!-- City -->
                 <div class="form-group">
-                    <label>City:</label>
+                    <label>Tỉnh/ Thành Phố:</label>
                     <select id="citySelect"
                             class="form-control"
                             th:field="*{city}">
 
-                        <option value="">-- Select City --</option>
+                        <option value="">-- Chọn Tỉnh/ Thành Phố --</option>
 
                         <option th:each="city : ${cities}"
                                 th:value="${city.id}"
@@ -509,32 +509,32 @@
 
                 <!-- Ward — load động bằng JS -->
                 <div class="form-group">
-                    <label>Ward:</label>
+                    <label>Xã/ Phường:</label>
                     <select id="wardSelect"
                             class="form-control"
                             th:field="*{ward}">
-                        <option value="">-- Select ward --</option>
+                        <option value="">-- Chọn Xã/ Phường --</option>
                     </select>
                     <!-- Spinner hiển thị khi đang load -->
                     <div class="ward-loading" id="wardLoading">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách ward...
+                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách xã/ phường...
                     </div>
                 </div>
 
                 <!-- Street Address -->
                 <div class="form-group">
-                    <label>Street Address:</label>
+                    <label>Địa chỉ chi tiết:</label>
                     <input type="text"
                            class="form-control"
-                           placeholder="Specific address"
+                           placeholder="Nhập tên đường,..."
                            th:field="*{streetAddress}"/>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
-                    <label>Description:</label>
+                    <label>Mô Tả:</label>
                     <textarea class="form-control"
-                              placeholder="Describe the venue, amenities, and features..."
+                              placeholder="Nhập mô tả về địa điểm, các tiện ích và đặc điểm nổi bật..."
                               th:field="*{description}"></textarea>
                 </div>
 
@@ -563,7 +563,7 @@
 
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                                 <span class="zone-title"
-                                      style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
+                                      style="font-weight:bold; color:#ff1b8d; font-size:14px;">Khu Vực 1</span>
                                 <button type="button" onclick="removeZone(this)"
                                         style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px;">
                                     <i class="fa-solid fa-xmark"></i>
@@ -575,7 +575,7 @@
                                     <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Tên
                                         Zone</label>
                                     <input type="text" class="form-control zone-name"
-                                           placeholder="VD: VIP, Standard..."
+                                           placeholder="VD: Khu VIP, Khu Tiêu chuẩn (Standard)..."
                                            name="PLACEHOLDER_NAME"/>
                                 </div>
                                 <div>
@@ -605,10 +605,10 @@
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-save">
-                        Save Venue
+                        Lưu Địa Điểm
                     </button>
                     <button type="button" class="btn btn-cancel" onclick="history.back()">
-                        Cancel
+                        Hủy
                     </button>
                 </div>
 
