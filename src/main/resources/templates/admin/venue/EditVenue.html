@@ -18,14 +18,14 @@
         body{
             display:flex;
             min-height:100vh;
-            background:#090014;
-            color:white;
+            background:#fff0f5;
+            color:#1e0e34;
         }
 
         /* ================= SIDEBAR ================= */
         .sidebar{
             width:260px;
-            background:#140021;
+            background:#ffffff;
             border-right:1px solid rgba(236,72,153,0.3);
             padding:20px;
             position:fixed;
@@ -48,8 +48,9 @@
 
         .portal-text{
             font-size:13px;
-            color:#9ca3af;
+            color:#84759b;
             letter-spacing:1px;
+            font-weight: bold;
         }
 
         .menu a{
@@ -57,11 +58,12 @@
             align-items:center;
             gap:12px;
             text-decoration:none;
-            color:#d1d5db;
+            color:#4b3d60;
             padding:14px 16px;
             border-radius:12px;
             margin-bottom:10px;
             transition:0.3s;
+            font-weight: bold;
         }
 
         .menu a:hover,
@@ -84,7 +86,7 @@
             position:sticky;
             top:0;
             z-index:90;
-            background:#0d001a;
+            background:#ffffff;
             border-bottom:1px solid rgba(236,72,153,0.2);
             padding:12px 25px;
             display:flex;
@@ -109,16 +111,16 @@
 
         .search-box-top{
             width:100%;
-            background:#140021;
+            background:#fff0f5;
             border:1px solid rgba(236,72,153,0.25);
             border-radius:10px;
             padding:10px 15px 10px 40px;
-            color:white;
+            color:#1e0e34;
             outline:none;
             font-size:14px;
         }
 
-        .search-box-top::placeholder{ color:#9ca3af; }
+        .search-box-top::placeholder{ color:#84759b; }
 
         .topbar-right{
             margin-left:auto;
@@ -131,7 +133,7 @@
             position:relative;
             background:none;
             border:none;
-            color:#d1d5db;
+            color:#cb0c6b;
             font-size:20px;
             cursor:pointer;
         }
@@ -144,7 +146,7 @@
             height:9px;
             background:#ff1b8d;
             border-radius:50%;
-            border:2px solid #0d001a;
+            border:2px solid #ffffff;
         }
 
         .profile{
@@ -163,7 +165,7 @@
         }
 
         .profile-info{ line-height:1.3; }
-        .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
+        .profile-info .name{ font-size:14px; font-weight:bold; color:#1e0e34; }
         .profile-info .role{ font-size:12px; color:#9ca3af; }
 
         /* ================= MAIN ================= */
@@ -176,14 +178,21 @@
             gap:14px;
             margin-bottom:25px;
         }
+        .page-header a {
+            text-decoration: none;
+            outline: none;
+            border: none;
+            display: inline-flex;
+            font-weight: bold;
+        }
 
         .back-btn{
             width:36px;
             height:36px;
             border-radius:10px;
-            background:rgba(255,255,255,0.06);
-            border:1px solid rgba(236,72,153,0.25);
-            color:#d1d5db;
+            background: #df7cad;
+            border:1px solid rgb(140 70 104);
+            color: #cb0c6b;
             display:flex;
             align-items:center;
             justify-content:center;
@@ -203,7 +212,7 @@
 
         /* ================= FORM CARD ================= */
         .form-container{
-            background:#140021;
+            background:#ffffff;
             border:1px solid rgba(236,72,153,0.25);
             border-radius:20px;
             padding:30px;
@@ -215,7 +224,7 @@
             font-size:18px;
             font-weight:bold;
             margin-bottom:25px;
-            color:#e5e7eb;
+            color:#1e0e34;
         }
 
         .form-group{
@@ -227,16 +236,16 @@
             margin-bottom:10px;
             font-weight:bold;
             font-size:14px;
-            color:#e5e7eb;
+            color:#1e0e34;
         }
 
         .form-control{
             width:100%;
             padding:14px 16px;
-            background:#090014;
+            background:#fff0f5;
             border:1px solid rgba(236,72,153,0.3);
             border-radius:12px;
-            color:white;
+            color:#1e0e34;
             outline:none;
             font-size:14px;
             transition:0.3s;
@@ -247,7 +256,7 @@
             box-shadow:0 0 10px rgba(255,27,141,0.15);
         }
 
-        .form-control::placeholder{ color:#6b7280; }
+        .form-control::placeholder{ color:#84759b; }
 
         textarea.form-control{
             resize:none;
@@ -290,6 +299,14 @@
             color:#d1d5db;
             font-size:14px;
         }
+        a {
+            text-align: left;
+            padding: 14px;
+            color: #9ca3af;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+            font-size: 14px;
+            font-weight: 700;
+        }
 
         /* ================= BUTTONS ================= */
         .button-group{
@@ -324,14 +341,45 @@
         .btn-cancel{
             background:transparent;
             border:1px solid rgba(236,72,153,0.35);
-            color:#d1d5db;
+            color:#4b3d60;
         }
 
         .btn-cancel:hover{
             background:rgba(236,72,153,0.08);
-            color:white;
+            color:#1e0e34;
+        }
+        .upload-box{
+            position:relative;
+            overflow:hidden;
+            height:250px;
+            cursor:pointer;
         }
 
+        .upload-box img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            margin:0;
+        }
+
+        .upload-overlay{
+            position:absolute;
+            inset:0;
+
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+
+            background:rgba(0,0,0,.5);
+
+            opacity:0;
+            transition:.3s;
+        }
+
+        .upload-box:hover .upload-overlay{
+            opacity:1;
+        }
         /* ================= RESPONSIVE ================= */
         @media(max-width:900px){
             .sidebar{ width:220px; }
@@ -352,16 +400,15 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text" >Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
-        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
+        <a href="#" class="active"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
+        <a th:href="@{/admin/listuser}" ><i class="fa-solid fa-users"></i> Quản Lý Người Dùng</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt</a>
     </div>
 
 </div>
@@ -373,7 +420,7 @@
     <div class="topbar">
         <div class="search-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
+            <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức, người dùng..."/>
         </div>
 
         <div class="topbar-right">
@@ -384,8 +431,7 @@
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên</div>
                 </div>
             </div>
         </div>
@@ -402,62 +448,183 @@
                 </button>
             </a>
             <div>
-                <h1>Edit Venue</h1>
-                <p>Update venue information</p>
+                <h1>Chỉnh Sửa Địa Điểm</h1>
+                <p>Cập nhật thông tin địa điểm</p>
             </div>
         </div>
 
         <!-- FORM -->
         <div class="form-container">
 
-            <h2 class="form-title">Venue Information</h2>
+            <h2 class="form-title">Thông Tin Địa Điểm</h2>
 
-            <form>
+            <form method="post" enctype="multipart/form-data" th:action="@{/admin/edit}"
+                  th:object="${CreateVenueDTO}">
 
                 <!-- Upload -->
                 <div class="form-group">
-                    <label>Venue Image</label>
-                    <div class="upload-box">
-                        <img
-                                src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1200"
-                                alt="Venue Image"
-                        />
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p>Click to change image</p>
+                    <label>Ảnh Địa Điểm:</label>
+
+                    <div class="upload-box"
+                         onclick="document.getElementById('venueFile').click()">
+
+                        <img th:if="${venues.imageUrl != null and !venues.imageUrl.isEmpty()}"
+                             th:src="${venues.imageUrl}"
+                             th:alt="${venues.venueName}" />
+
+                        <div class="upload-overlay">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p>Nhấn để chọn ảnh</p>
+                            <span>PNG, JPG </span>
+                        </div>
+
+                        <input type="file"
+                               id="venueFile"
+                               name="imageFile"
+                               hidden>
                     </div>
                 </div>
 
                 <!-- Venue Name -->
                 <div class="form-group">
-                    <label>Venue Name</label>
-                    <input type="text" class="form-control" value="Central Park Arena"/>
+                    <label>Tên Địa Điểm</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Nhập tên địa điểm"
+                           th:value="${venues.venueName}"
+                    />
+
                 </div>
 
-                <!-- Location -->
+                <!-- City -->
                 <div class="form-group">
-                    <label>Location</label>
-                    <input type="text" class="form-control" value="New York, NY"/>
+                    <label>Tỉnh/ Thành Phố:</label>
+                    <select id="citySelect"
+                            class="form-control"
+                    >
+
+                        <option value="">-- Chọn Tỉnh/ Thành Phô --</option>
+
+                        <option th:each="city : ${cities}"
+                                th:value="${city.id}"
+                                th:text="${city.name}"
+                                th:selected="${venues.address.ward.city != null and city.id == venues.address.ward.city.id}"
+                        >
+                        </option>
+
+                    </select>
                 </div>
 
-                <!-- Capacity -->
+                <!-- Ward — load động bằng JS -->
                 <div class="form-group">
-                    <label>Capacity</label>
-                    <input type="number" class="form-control" value="5000"/>
+                    <label>Xã/ Phường:</label>
+                    <select id="wardSelect"
+                            class="form-control"
+                    >
+                        <option th:value="${venues.address.ward.id}"
+                                th:text="${venues.address.ward.name}">
+
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Street Address -->
+                <div class="form-group">
+                    <label>Địa Chỉ Chi Tiết:</label>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Nhập tên đường,..."
+                           th:value="${venues.address.specificAddress}"/>
+
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
-                    <label>Description</label>
-                    <textarea class="form-control">A premier outdoor venue in the heart of Central Park, perfect for large-scale events and concerts.</textarea>
+                    <label>Mô Tả:</label>
+                    <textarea  class="form-control"
+                               placeholder="Nhập mô tả về địa điểm, các tiện ích và đặc điểm nổi bật..."
+                               th:text="${venues.description}"></textarea>
                 </div>
 
+
+
+
+                <!-- ================= ZONES ================= -->
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                        <label style="margin-bottom:0">Khu vực (Zone)</label>
+                        <button type="button" class="btn btn-cancel"
+                                onclick="addZone()"
+                                style="padding:8px 16px; font-size:13px;">
+                            <i class="fa-solid fa-plus"></i> Thêm Zone
+                        </button>
+                    </div>
+
+                    <!-- Container chứa các zone -->
+                    <div id="zone-container"></div>
+
+                    <!-- Template zone ẩn — không submit vì disabled -->
+                    <div th:each="zone, stat : ${zones}"
+                         id="zone-template" style="display:none">
+                        <div class="zone-item" style="
+                            background:#fff0f5;
+                            border:1px solid rgba(236,72,153,0.3);
+                            border-radius:14px;
+                            padding:20px;
+                            margin-bottom:14px;">
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                                <span class="zone-title"
+                                      style="font-weight:bold; color:#ff1b8d; font-size:14px;">Zone 1</span>
+                                <button type="button" onclick="removeZone(this)"
+                                        style="background:none; border:none; color:#9ca3af; cursor:pointer; font-size:18px;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+                                <div>
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Tên
+                                        Zone</label>
+                                    <input type="text" class="form-control zone-name"
+                                           placeholder="VD: Khu VIP, Khu Tiêu chuẩn (Standard)..."
+                                           name="PLACEHOLDER_NAME"/>
+                                </div>
+                                <div>
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Số
+                                        hàng</label>
+                                    <input type="number" class="form-control zone-rows"
+                                           placeholder="VD: 8" min="1"
+                                           name="PLACEHOLDER_ROWS"
+
+
+                                           th:name="'zones['+${stat.index}+'].zoneName'"
+                                           th:value="${zone.zoneName}"
+                                    />
+                                </div>
+                                <div>
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Ghế
+                                        / hàng</label>
+                                    <input type="number" class="form-control zone-seats"
+                                           placeholder="VD: 10" min="1"
+                                           name="PLACEHOLDER_SEATS"/>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:12px; font-size:13px; color:#9ca3af;">
+                                Tổng ghế: <span class="total-seats"
+                                                style="color:#ff1b8d; font-weight:bold;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Buttons -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-update">
-                        Update Venue
+                        Cập Nhật Địa Điểm
                     </button>
                     <button type="button" class="btn btn-cancel" onclick="history.back()">
-                        Cancel
+                        Hủy
                     </button>
                 </div>
 
@@ -468,6 +635,125 @@
     </div><!-- /main -->
 
 </div><!-- /wrapper -->
+<script>
+    // ============================================================
+    // ZONE MANAGEMENT
+    // ============================================================
+    let zoneCount = 0;
 
+    function addZone() {
+        const template = document.getElementById('zone-template').firstElementChild;
+        const clone = template.cloneNode(true);
+
+        clone.querySelector('.zone-name').name = `zones[${zoneCount}].zoneName`;
+        clone.querySelector('.zone-rows').name = `zones[${zoneCount}].rows`;
+        clone.querySelector('.zone-seats').name = `zones[${zoneCount}].seatsPerRow`;
+        clone.querySelector('.zone-title').textContent = `Zone ${zoneCount + 1}`;
+
+        clone.querySelector('.zone-rows').addEventListener('input', () => updateTotal(clone));
+        clone.querySelector('.zone-seats').addEventListener('input', () => updateTotal(clone));
+
+        document.getElementById('zone-container').appendChild(clone);
+        zoneCount++;
+    }
+
+    function removeZone(btn) {
+        btn.closest('.zone-item').remove();
+        reindex();
+    }
+
+    function reindex() {
+        const items = document.querySelectorAll('#zone-container .zone-item');
+        zoneCount = items.length;
+        items.forEach((item, i) => {
+            item.querySelector('.zone-name').name = `zones[${i}].zoneName`;
+            item.querySelector('.zone-rows').name = `zones[${i}].rows`;
+            item.querySelector('.zone-seats').name = `zones[${i}].seatsPerRow`;
+            item.querySelector('.zone-title').textContent = `Zone ${i + 1}`;
+        });
+    }
+
+    function updateTotal(zoneItem) {
+        const rows = parseInt(zoneItem.querySelector('.zone-rows').value) || 0;
+        const seats = parseInt(zoneItem.querySelector('.zone-seats').value) || 0;
+        zoneItem.querySelector('.total-seats').textContent = rows * seats;
+    }
+
+    // Thêm zone đầu tiên mặc định khi load trang
+    addZone();
+
+
+    // ============================================================
+    // LOAD WARD THEO CITY — gọi GET /admin/wards/{cityId}
+    // ============================================================
+    const citySelect = document.getElementById('citySelect');
+    const wardSelect = document.getElementById('wardSelect');
+    const wardLoading = document.getElementById('wardLoading');
+
+    citySelect.addEventListener('change', function () {
+        const cityId = this.value;
+
+        // Reset ward select về trạng thái ban đầu
+        wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+
+        // Nếu chưa chọn city thì dừng
+        if (!cityId) return;
+
+        // Hiện spinner loading
+        wardLoading.style.display = 'block';
+        wardSelect.disabled = true;
+
+        fetch(`/admin/wards/${cityId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể tải danh sách ward. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(wards => {
+                // Render từng ward vào select
+                wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.id;      // Long ID → submit lên server
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                console.error('Lỗi load ward:', err);
+                wardSelect.innerHTML =
+                    '<option value="">-- Lỗi tải ward, thử lại --</option>';
+            })
+            .finally(() => {
+                // Ẩn spinner, mở lại select dù thành công hay lỗi
+                wardLoading.style.display = 'none';
+                wardSelect.disabled = false;
+            });
+    });
+
+    function loadWards(cityId) {
+
+        fetch(`/api/wards?cityId=${cityId}`)
+            .then(response => response.json())
+            .then(data => {
+
+                const wardSelect =
+                    document.getElementById("wardSelect");
+
+                wardSelect.innerHTML =
+                    '<option value="">-- Select Ward --</option>';
+
+                data.forEach(ward => {
+
+                    wardSelect.innerHTML += `
+                    <option value="${ward.id}">
+                        ${ward.name}
+                    </option>
+                `;
+                });
+            });
+    }
+
+</script>
 </body>
 </html>

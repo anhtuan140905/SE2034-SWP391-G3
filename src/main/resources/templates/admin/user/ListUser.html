@@ -418,11 +418,11 @@
     </div>
 
     <div class="menu">
-        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#" class="active"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển</a>
+        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm</a>
+        <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng</a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
@@ -433,7 +433,7 @@
     <!-- TOPBAR -->
     <div class="topbar">
 
-        <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
+        <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức sự kiện, người dùng..."/>
 
         <div class="topbar-right">
 
@@ -445,8 +445,7 @@
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên </div>
                 </div>
             </div>
 
@@ -460,8 +459,8 @@
         <!-- PAGE HEADER -->
         <div class="page-header">
             <div>
-                <h1>Manage Users</h1>
-                <p>View and manage all platform users</p>
+                <h1>Quản Lý Người Dùng </h1>
+                <p>Hiển thị và quản lý tất cả người dùng trên nền tảng</p>
             </div>
 
         </div>
@@ -470,7 +469,7 @@
         <div class="card">
 
             <div class="card-header">
-                <h2>All Users</h2>
+                <h2>Danh Sách Người Dùng</h2>
                 <div class="search-inline">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <form id="searchForm"
@@ -479,7 +478,7 @@
 
                         <input type="text"
                                class="search-box-top"
-                               placeholder="Search users..."
+                               placeholder="Tìm kiếm người dùng..."
                                id="searchInput"
                                name="keyword"
                                th:value="${keyword}"
@@ -493,12 +492,12 @@
 
                 <thead>
                 <tr>
-                    <th>User</th>
+                    <th>Họ Tên</th>
                     <th>Email</th>
-                    <th>Role</th>
-                    <th>Joined Date</th>
-                    <th>Status</th>
-                    <th style="text-align:right;">Actions</th>
+                    <th>Vai Trò</th>
+                    <th>Ngày Đăng Kí</th>
+                    <th>Trạng Thái</th>
+                    <th style="text-align:right;">Thao Tác</th>
                 </tr>
                 </thead>
 
@@ -536,7 +535,7 @@
                     </td>
 
                     <td>
-                        <span class="status active">Active</span>
+                        <span class="status active">Đang Hoạt Động</span>
                     </td>
 
 

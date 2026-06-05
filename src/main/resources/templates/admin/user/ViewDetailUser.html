@@ -1,969 +1,456 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>View User</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        body{
-            display:flex;
-            min-height:100vh;
-            background:#090014;
-            color:white;
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #090014;
+            color: white;
         }
 
         /* ================= SIDEBAR ================= */
-        .sidebar{
-            width:260px;
-            background:#140021;
-            border-right:1px solid rgba(236,72,153,0.3);
-            padding:20px;
-            position:fixed;
-            top:0;
-            left:0;
-            height:100vh;
-            z-index:100;
+        .sidebar {
+            width: 260px;
+            background: #140021;
+            border-right: 1px solid rgba(236, 72, 153, 0.3);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
         }
 
-        .logo-section{ margin-bottom:40px; }
-
-        .logo{
-            font-size:28px;
-            font-weight:bold;
-            margin-bottom:5px;
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
+        .logo-section {
+            margin-bottom: 40px;
         }
 
-        .portal-text{
-            font-size:13px;
-            color:#9ca3af;
-            letter-spacing:1px;
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .menu a{
-            display:flex;
-            align-items:center;
-            gap:12px;
-            text-decoration:none;
-            color:#d1d5db;
-            padding:14px 16px;
-            border-radius:12px;
-            margin-bottom:10px;
-            transition:0.3s;
+        .portal-text {
+            font-size: 13px;
+            color: #9ca3af;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #d1d5db;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
         }
 
         .menu a:hover,
-        .menu a.active{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            color:white;
+        .menu a.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
         }
 
         /* ================= WRAPPER ================= */
-        .wrapper{
-            margin-left:260px;
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            min-height:100vh;
+        .wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* ================= TOPBAR ================= */
-        .topbar{
-            position:sticky;
-            top:0;
-            z-index:90;
-            background:#0d001a;
-            border-bottom:1px solid rgba(236,72,153,0.2);
-            padding:12px 25px;
-            display:flex;
-            align-items:center;
-            gap:16px;
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            background: #0d001a;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.2);
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .topbar .search-box-top{
-            flex:1;
-            max-width:500px;
-            background:#140021;
-            border:1px solid rgba(236,72,153,0.25);
-            border-radius:10px;
-            padding:10px 15px 10px 40px;
-            color:white;<!DOCTYPE html>
-        <html lang="en">
-        <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>View User</title>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-        <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
+        .topbar .search-box-top {
+            flex: 1;
+            max-width: 500px;
+            background: #140021;
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 10px;
+            padding: 10px 15px 10px 40px;
+            color: white;
+            outline: none;
+            font-size: 14px;
         }
 
-            body{
-                display:flex;
-                min-height:100vh;
-                background:#090014;
-                color:white;
-            }
-
-            /* ================= SIDEBAR ================= */
-            .sidebar{
-                width:260px;
-                background:#140021;
-                border-right:1px solid rgba(236,72,153,0.3);
-                padding:20px;
-                position:fixed;
-                top:0;
-                left:0;
-                height:100vh;
-                z-index:100;
-            }
-
-            .logo-section{ margin-bottom:40px; }
-
-            .logo{
-                font-size:28px;
-                font-weight:bold;
-                margin-bottom:5px;
-                background:linear-gradient(to right,#ff1b8d,#ec4899);
-                -webkit-background-clip:text;
-                -webkit-text-fill-color:transparent;
-            }
-
-            .portal-text{
-                font-size:13px;
-                color:#9ca3af;
-                letter-spacing:1px;
-            }
-
-            .menu a{
-                display:flex;
-                align-items:center;
-                gap:12px;
-                text-decoration:none;
-                color:#d1d5db;
-                padding:14px 16px;
-                border-radius:12px;
-                margin-bottom:10px;
-                transition:0.3s;
-            }
-
-            .menu a:hover,
-            .menu a.active{
-                background:linear-gradient(to right,#ff1b8d,#ec4899);
-                color:white;
-            }
-
-            /* ================= WRAPPER ================= */
-            .wrapper{
-                margin-left:260px;
-                flex:1;
-                display:flex;
-                flex-direction:column;
-                min-height:100vh;
-            }
-
-            /* ================= TOPBAR ================= */
-            .topbar{
-                position:sticky;
-                top:0;
-                z-index:90;
-                background:#0d001a;
-                border-bottom:1px solid rgba(236,72,153,0.2);
-                padding:12px 25px;
-                display:flex;
-                align-items:center;
-                gap:16px;
-            }
-
-            .topbar .search-box-top{
-                flex:1;
-                max-width:500px;
-                background:#140021;
-                border:1px solid rgba(236,72,153,0.25);
-                border-radius:10px;
-                padding:10px 15px 10px 40px;
-                color:white;
-                outline:none;
-                font-size:14px;
-            }
-
-            .topbar .search-box-top::placeholder{ color:#9ca3af; }
-
-            .search-wrap{
-                position:relative;
-                flex:1;
-                max-width:500px;
-            }
-
-            .search-wrap i{
-                position:absolute;
-                left:14px;
-                top:50%;
-                transform:translateY(-50%);
-                color:#9ca3af;
-                font-size:14px;
-            }
-
-            .topbar-right{
-                margin-left:auto;
-                display:flex;
-                align-items:center;
-                gap:18px;
-            }
-
-            .notif-btn{
-                position:relative;
-                background:none;
-                border:none;
-                color:#d1d5db;
-                font-size:20px;
-                cursor:pointer;
-            }
-
-            .notif-btn .dot{
-                position:absolute;
-                top:0;
-                right:0;
-                width:9px;
-                height:9px;
-                background:#ff1b8d;
-                border-radius:50%;
-                border:2px solid #0d001a;
-            }
-
-            .profile{
-                display:flex;
-                align-items:center;
-                gap:10px;
-                cursor:pointer;
-            }
-
-            .profile img{
-                width:42px;
-                height:42px;
-                border-radius:50%;
-                border:2px solid #ff1b8d;
-                object-fit:cover;
-            }
-
-            .profile-info{ line-height:1.3; }
-            .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
-            .profile-info .role{ font-size:12px; color:#9ca3af; }
-
-            /* ================= MAIN ================= */
-            .main{ flex:1; padding:25px; }
-
-            /* ================= PAGE HEADER ================= */
-            .page-header{
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:25px;
-            }
-
-            .page-header-left{
-                display:flex;
-                align-items:center;
-                gap:14px;
-            }
-
-            .back-btn{
-                width:36px;
-                height:36px;
-                border-radius:10px;
-                background:rgba(255,255,255,0.06);
-                border:1px solid rgba(236,72,153,0.25);
-                color:#d1d5db;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                cursor:pointer;
-                font-size:15px;
-                transition:0.2s;
-            }
-
-            .back-btn:hover{
-                background:rgba(255,27,141,0.15);
-                color:#ff1b8d;
-            }
-
-            .page-header h1{ font-size:26px; font-weight:bold; }
-            .page-header p{ color:#9ca3af; margin-top:5px; font-size:14px; }
-
-            .edit-btn{
-                background:linear-gradient(to right,#ff1b8d,#ec4899);
-                border:none;
-                padding:12px 20px;
-                border-radius:10px;
-                color:white;
-                font-size:14px;
-                font-weight:bold;
-                cursor:pointer;
-                transition:0.3s;
-                white-space:nowrap;
-                display:flex;
-                align-items:center;
-                gap:8px;
-            }
-
-            .edit-btn:hover{
-                transform:translateY(-2px);
-                box-shadow:0 8px 20px rgba(236,72,153,0.3);
-            }
-
-            /* ================= PROFILE CARD ================= */
-            .profile-card{
-                background:rgba(20,0,33,0.6);
-                border:1px solid rgba(236,72,153,0.3);
-                border-radius:24px;
-                overflow:hidden;
-                margin-bottom:25px;
-            }
-
-            .banner{
-                height:220px;
-                background:url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200') center/cover;
-                position:relative;
-            }
-
-            .overlay{
-                position:absolute;
-                inset:0;
-                background:linear-gradient(to top,#090014,#09001460);
-            }
-
-            .profile-content{
-                position:relative;
-                margin-top:-70px;
-                padding:0 35px 35px;
-            }
-
-            .profile-top{
-                display:flex;
-                align-items:flex-end;
-                justify-content:space-between;
-                flex-wrap:wrap;
-                gap:20px;
-            }
-
-            .user-info{
-                display:flex;
-                align-items:flex-end;
-                gap:20px;
-            }
-
-            .user-info img{
-                width:140px;
-                height:140px;
-                border-radius:50%;
-                object-fit:cover;
-                border:5px solid #090014;
-            }
-
-            .user-details h2{
-                font-size:34px;
-                margin-bottom:8px;
-            }
-
-            .user-details p{
-                color:#cbd5e1;
-                margin-bottom:6px;
-                font-size:14px;
-            }
-
-            .badge{
-                display:inline-block;
-                padding:8px 18px;
-                border-radius:30px;
-                font-size:14px;
-                font-weight:bold;
-            }
-
-            .badge.active{
-                background:rgba(34,197,94,0.2);
-                color:#22c55e;
-            }
-
-            /* ================= INFO GRID ================= */
-            .info-grid{
-                display:grid;
-                grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-                gap:25px;
-                margin-top:35px;
-            }
-
-            .info-box{
-                background:rgba(255,255,255,0.04);
-                border:1px solid rgba(236,72,153,0.15);
-                border-radius:18px;
-                padding:22px;
-            }
-
-            .info-box h3{
-                margin-bottom:18px;
-                font-size:18px;
-                color:#ff1b8d;
-            }
-
-            .info-item{
-                margin-bottom:18px;
-            }
-
-            .info-item:last-child{
-                margin-bottom:0;
-            }
-
-            .info-item span{
-                display:block;
-                color:#9ca3af;
-                margin-bottom:6px;
-                font-size:13px;
-            }
-
-            .info-item p{
-                font-size:15px;
-            }
-
-            /* ================= ACTIVITY ================= */
-            .activity-card{
-                background:rgba(20,0,33,0.6);
-                border:1px solid rgba(236,72,153,0.3);
-                border-radius:24px;
-                padding:30px;
-            }
-
-            .activity-card h2{
-                margin-bottom:25px;
-                font-size:18px;
-            }
-
-            .activity{
-                display:flex;
-                align-items:flex-start;
-                gap:18px;
-                padding:18px 0;
-                border-bottom:1px solid rgba(236,72,153,0.1);
-            }
-
-            .activity:last-child{
-                border-bottom:none;
-            }
-
-            .activity-icon{
-                width:50px;
-                height:50px;
-                border-radius:14px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                background:rgba(236,72,153,0.15);
-                color:#ff1b8d;
-                font-size:18px;
-                flex-shrink:0;
-            }
-
-            .activity-content h4{
-                margin-bottom:6px;
-                font-size:15px;
-            }
-
-            .activity-content p{
-                color:#9ca3af;
-                font-size:13px;
-            }
-
-            /* ================= RESPONSIVE ================= */
-            @media(max-width:1100px){
-                .info-grid{ grid-template-columns:1fr 1fr; }
-            }
-
-            @media(max-width:900px){
-                .sidebar{ width:220px; }
-                .wrapper{ margin-left:220px; }
-            }
-
-            @media(max-width:600px){
-                .sidebar{ display:none; }
-                .wrapper{ margin-left:0; }
-            }
-    </style>
-</head>
-
-<body>
-
-<!-- ================= SIDEBAR ================= -->
-<div class="sidebar">
-
-    <div class="logo-section">
-        <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
-    </div>
-
-    <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#" class="active"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
-    </div>
-
-</div>
-
-<!-- ================= WRAPPER ================= -->
-<div class="wrapper">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-        <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
-        </div>
-
-        <div class="topbar-right">
-            <button class="notif-btn" aria-label="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span class="dot"></span>
-            </button>
-            <div class="profile">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
-                <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN -->
-    <div class="main">
-
-        <!-- PAGE HEADER -->
-        <div class="page-header">
-            <div class="page-header-left">
-                <button class="back-btn" aria-label="Back">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <div>
-                    <h1>User Details</h1>
-                    <p>Complete information and activity history</p>
-                </div>
-            </div>
-            <button class="edit-btn">
-                <i class="fa-solid fa-pen"></i> Edit User
-            </button>
-        </div>
-
-        <!-- PROFILE CARD -->
-        <div class="profile-card">
-
-            <div class="banner">
-                <div class="overlay"></div>
-            </div>
-
-            <div class="profile-content">
-
-                <div class="profile-top">
-                    <div class="user-info">
-                        <img src="https://i.pravatar.cc/300?img=12" alt="User"/>
-                        <div class="user-details">
-                            <h2>Emma Watson</h2>
-                            <p><i class="fa-solid fa-envelope"></i> emma@gmail.com</p>
-                            <p><i class="fa-solid fa-phone"></i> +1 234 567 890</p>
-                            <p><i class="fa-solid fa-location-dot"></i> New York, USA</p>
-                        </div>
-                    </div>
-                    <span class="badge active">Active</span>
-                </div>
-
-                <!-- INFO GRID -->
-                <div class="info-grid">
-
-                    <div class="info-box">
-                        <h3>Account Information</h3>
-                        <div class="info-item"><span>User ID</span><p>US002</p></div>
-                        <div class="info-item"><span>Role</span><p>Organizer</p></div>
-                        <div class="info-item"><span>Joined Date</span><p>2026-02-10</p></div>
-                        <div class="info-item"><span>Last Login</span><p>2026-05-25 08:30 AM</p></div>
-                    </div>
-
-                    <div class="info-box">
-                        <h3>Personal Information</h3>
-                        <div class="info-item"><span>Full Name</span><p>Emma Watson</p></div>
-                        <div class="info-item"><span>Date of Birth</span><p>12 June 1998</p></div>
-                        <div class="info-item"><span>Gender</span><p>Female</p></div>
-                        <div class="info-item"><span>Nationality</span><p>American</p></div>
-                    </div>
-
-                    <div class="info-box">
-                        <h3>Biography</h3>
-                        <div class="info-item">
-                            <p>Professional event organizer with more than 5 years of experience managing concerts,
-                                conferences, exhibitions, and entertainment events for large audiences.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ACTIVITY -->
-        <div class="activity-card">
-            <h2>Recent Activity</h2>
-
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                <div class="activity-content">
-                    <h4>Created New Event</h4>
-                    <p>Summer Music Festival 2026 • 2 hours ago</p>
-                </div>
-            </div>
-
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-ticket"></i></div>
-                <div class="activity-content">
-                    <h4>Updated Ticket Pricing</h4>
-                    <p>Food &amp; Wine Fair • Yesterday</p>
-                </div>
-            </div>
-
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-user-check"></i></div>
-                <div class="activity-content">
-                    <h4>Logged Into System</h4>
-                    <p>Successfully signed in from Chrome Browser • Today</p>
-                </div>
-            </div>
-
-        </div>
-
-    </div><!-- /main -->
-
-</div><!-- /wrapper -->
-
-</body>
-</html>
-            outline:none;
-            font-size:14px;
+        .topbar .search-box-top::placeholder {
+            color: #9ca3af;
         }
 
-        .topbar .search-box-top::placeholder{ color:#9ca3af; }
-
-        .search-wrap{
-            position:relative;
-            flex:1;
-            max-width:500px;
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 500px;
         }
 
-        .search-wrap i{
-            position:absolute;
-            left:14px;
-            top:50%;
-            transform:translateY(-50%);
-            color:#9ca3af;
-            font-size:14px;
+        .search-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
         }
 
-        .topbar-right{
-            margin-left:auto;
-            display:flex;
-            align-items:center;
-            gap:18px;
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
 
-        .notif-btn{
-            position:relative;
-            background:none;
-            border:none;
-            color:#d1d5db;
-            font-size:20px;
-            cursor:pointer;
+        .notif-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #d1d5db;
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        .notif-btn .dot{
-            position:absolute;
-            top:0;
-            right:0;
-            width:9px;
-            height:9px;
-            background:#ff1b8d;
-            border-radius:50%;
-            border:2px solid #0d001a;
+        .notif-btn .dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 9px;
+            height: 9px;
+            background: #ff1b8d;
+            border-radius: 50%;
+            border: 2px solid #0d001a;
         }
 
-        .profile{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            cursor:pointer;
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
         }
 
-        .profile img{
-            width:42px;
-            height:42px;
-            border-radius:50%;
-            border:2px solid #ff1b8d;
-            object-fit:cover;
+        .profile img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff1b8d;
+            object-fit: cover;
         }
 
-        .profile-info{ line-height:1.3; }
-        .profile-info .name{ font-size:14px; font-weight:bold; color:white; }
-        .profile-info .role{ font-size:12px; color:#9ca3af; }
+        .profile-info {
+            line-height: 1.3;
+        }
+
+        .profile-info .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .profile-info .role {
+            font-size: 12px;
+            color: #9ca3af;
+        }
 
         /* ================= MAIN ================= */
-        .main{ flex:1; padding:25px; }
+        .main {
+            flex: 1;
+            padding: 25px;
+        }
 
         /* ================= PAGE HEADER ================= */
-        .page-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:25px;
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        .page-header-left{
-            display:flex;
-            align-items:center;
-            gap:14px;
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .back-btn{
-            width:36px;
-            height:36px;
-            border-radius:10px;
-            background:rgba(255,255,255,0.06);
-            border:1px solid rgba(236,72,153,0.25);
-            color:#d1d5db;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            font-size:15px;
-            transition:0.2s;
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
         }
 
-        .back-btn:hover{
-            background:rgba(255,27,141,0.15);
-            color:#ff1b8d;
+        .back-btn:hover {
+            background: rgba(255, 27, 141, 0.15);
+            color: #ff1b8d;
         }
 
-        .page-header h1{ font-size:26px; font-weight:bold; }
-        .page-header p{ color:#9ca3af; margin-top:5px; font-size:14px; }
-
-        .edit-btn{
-            background:linear-gradient(to right,#ff1b8d,#ec4899);
-            border:none;
-            padding:12px 20px;
-            border-radius:10px;
-            color:white;
-            font-size:14px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
-            white-space:nowrap;
-            display:flex;
-            align-items:center;
-            gap:8px;
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: bold;
         }
 
-        .edit-btn:hover{
-            transform:translateY(-2px);
-            box-shadow:0 8px 20px rgba(236,72,153,0.3);
+        .page-header p {
+            color: #9ca3af;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .edit-btn {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
         }
 
         /* ================= PROFILE CARD ================= */
-        .profile-card{
-            background:rgba(20,0,33,0.6);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:24px;
-            overflow:hidden;
-            margin-bottom:25px;
+        .profile-card {
+            background: rgba(20, 0, 33, 0.6);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 25px;
         }
 
-        .banner{
-            height:220px;
-            background:url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200') center/cover;
-            position:relative;
+        .banner {
+            height: 220px;
+            background: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200') center/cover;
+            position: relative;
         }
 
-        .overlay{
-            position:absolute;
-            inset:0;
-            background:linear-gradient(to top,#090014,#09001460);
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, #090014, #09001460);
         }
 
-        .profile-content{
-            position:relative;
-            margin-top:-70px;
-            padding:0 35px 35px;
+        .profile-content {
+            position: relative;
+            margin-top: -70px;
+            padding: 0 35px 35px;
         }
 
-        .profile-top{
-            display:flex;
-            align-items:flex-end;
-            justify-content:space-between;
-            flex-wrap:wrap;
-            gap:20px;
+        .profile-top {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .user-info{
-            display:flex;
-            align-items:flex-end;
-            gap:20px;
+        .user-info {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
         }
 
-        .user-info img{
-            width:140px;
-            height:140px;
-            border-radius:50%;
-            object-fit:cover;
-            border:5px solid #090014;
+        .user-info img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #090014;
         }
 
-        .user-details h2{
-            font-size:34px;
-            margin-bottom:8px;
+        .user-details h2 {
+            font-size: 34px;
+            margin-bottom: 8px;
         }
 
-        .user-details p{
-            color:#cbd5e1;
-            margin-bottom:6px;
-            font-size:14px;
+        .user-details p {
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
-        .badge{
-            display:inline-block;
-            padding:8px 18px;
-            border-radius:30px;
-            font-size:14px;
-            font-weight:bold;
+        .badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
         }
 
-        .badge.active{
-            background:rgba(34,197,94,0.2);
-            color:#22c55e;
+        .badge.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
         }
 
         /* ================= INFO GRID ================= */
-        .info-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-            gap:25px;
-            margin-top:35px;
+        .info-grid {
+            display: grid;
+            grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 35px;
         }
 
-        .info-box{
-            background:rgba(255,255,255,0.04);
-            border:1px solid rgba(236,72,153,0.15);
-            border-radius:18px;
-            padding:22px;
+        .info-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(236, 72, 153, 0.15);
+            border-radius: 18px;
+            padding: 22px;
         }
 
-        .info-box h3{
-            margin-bottom:18px;
-            font-size:18px;
-            color:#ff1b8d;
+        .info-box h3 {
+            margin-bottom: 18px;
+            font-size: 18px;
+            color: #ff1b8d;
         }
 
-        .info-item{
-            margin-bottom:18px;
+        .info-item {
+            margin-bottom: 18px;
         }
 
-        .info-item:last-child{
-            margin-bottom:0;
+        .info-item:last-child {
+            margin-bottom: 0;
         }
 
-        .info-item span{
-            display:block;
-            color:#9ca3af;
-            margin-bottom:6px;
-            font-size:13px;
+        .info-item span {
+            display: block;
+            color: #9ca3af;
+            margin-bottom: 6px;
+            font-size: 13px;
         }
 
-        .info-item p{
-            font-size:15px;
+        .info-item p {
+            font-size: 15px;
         }
 
         /* ================= ACTIVITY ================= */
-        .activity-card{
-            background:rgba(20,0,33,0.6);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:24px;
-            padding:30px;
+        .activity-card {
+            background: rgba(20, 0, 33, 0.6);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 24px;
+            padding: 30px;
         }
 
-        .activity-card h2{
-            margin-bottom:25px;
-            font-size:18px;
+        .activity-card h2 {
+            margin-bottom: 25px;
+            font-size: 18px;
         }
 
-        .activity{
-            display:flex;
-            align-items:flex-start;
-            gap:18px;
-            padding:18px 0;
-            border-bottom:1px solid rgba(236,72,153,0.1);
+        .activity {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(236, 72, 153, 0.1);
         }
 
-        .activity:last-child{
-            border-bottom:none;
+        .activity:last-child {
+            border-bottom: none;
         }
 
-        .activity-icon{
-            width:50px;
-            height:50px;
-            border-radius:14px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            background:rgba(236,72,153,0.15);
-            color:#ff1b8d;
-            font-size:18px;
-            flex-shrink:0;
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(236, 72, 153, 0.15);
+            color: #ff1b8d;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .activity-content h4{
-            margin-bottom:6px;
-            font-size:15px;
+        .activity-content h4 {
+            margin-bottom: 6px;
+            font-size: 15px;
         }
 
-        .activity-content p{
-            color:#9ca3af;
-            font-size:13px;
+        .activity-content p {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        .email {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
         }
 
+
+        .email i {
+            color: #ff2a85 ;
+            font-size: 16px;
+        }
         /* ================= RESPONSIVE ================= */
-        @media(max-width:1100px){
-            .info-grid{ grid-template-columns:1fr 1fr; }
+        @media (max-width: 1100px) {
+            .info-grid {
+                grid-template-columns:1fr 1fr;
+            }
         }
 
-        @media(max-width:900px){
-            .sidebar{ width:220px; }
-            .wrapper{ margin-left:220px; }
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .wrapper {
+                margin-left: 220px;
+            }
         }
 
-        @media(max-width:600px){
-            .sidebar{ display:none; }
-            .wrapper{ margin-left:0; }
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+
+            .wrapper {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -975,16 +462,15 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text"> Kênh Quản Trị </div>
     </div>
 
     <div class="menu">
-        <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-        <a href="#"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#" class="active"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+        <a th:href="@{/admin/dashboard}" ><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
+        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
+        <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
+        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
@@ -994,24 +480,25 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-box-top" placeholder="Search events, venues, users..."/>
-        </div>
+
+        <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức sự kiện, người dùng..."/>
 
         <div class="topbar-right">
+
             <button class="notif-btn" aria-label="Notifications">
                 <i class="fa-solid fa-bell"></i>
                 <span class="dot"></span>
             </button>
+
             <div class="profile">
                 <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
                 <div class="profile-info">
-                    <div class="name">Admin User</div>
-                    <div class="role">Super Admin</div>
+                    <div class="name">Quản Trị Viên </div>
                 </div>
             </div>
+
         </div>
+
     </div>
 
     <!-- MAIN -->
@@ -1020,17 +507,21 @@
         <!-- PAGE HEADER -->
         <div class="page-header">
             <div class="page-header-left">
-                <button class="back-btn" aria-label="Back">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
+                <a th:href="@{/admin/listuser}">
+                    <button class="back-btn" aria-label="Back">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </a>
                 <div>
-                    <h1>User Details</h1>
-                    <p>Complete information and activity history</p>
+                    <h1>Thông Tin Người Dùng</h1>
+                    <p>Thông tin chi tiết và lịch sử hoạt động</p>
                 </div>
             </div>
-            <button class="edit-btn">
-                <i class="fa-solid fa-pen"></i> Edit User
-            </button>
+            <a th:href="@{/admin/edituser}">
+                <button class="edit-btn">
+                    <i class="fa-solid fa-pen"></i> Cập nhật người dùng
+                </button>
+            </a>
         </div>
 
         <!-- PROFILE CARD -->
@@ -1044,82 +535,102 @@
 
                 <div class="profile-top">
                     <div class="user-info">
-                        <img src="https://i.pravatar.cc/300?img=12" alt="User"/>
+                        <img th:if="${users.avatar != null and !users.avatar.isEmpty()}"
+                             th:src="${users.avatar}" alt="User"/>
                         <div class="user-details">
-                            <h2>Emma Watson</h2>
-                            <p><i class="fa-solid fa-envelope"></i> emma@gmail.com</p>
-                            <p><i class="fa-solid fa-phone"></i> +1 234 567 890</p>
-                            <p><i class="fa-solid fa-location-dot"></i> New York, USA</p>
+                            <h2 th:text="${users.lastName + ' ' + users.middleName + ' ' + users.firstName}"></h2>
+                            <p class="email"><i class="fa-solid fa-envelope"></i>
+                                <span th:text="${users.email}"></span>
+                            </p>
+                            <p><i class="fa-solid fa-phone"></i>
+                                <span th:text="${users.phone}"></span>
+                            </p>
+                            <p><i class="fa-solid fa-location-dot"></i>
+                                <span th:if="${users.address != null}"
+                                      th:text="${users.address.ward.name + ', ' + users.address.ward.city.name}">
+                                    N/A
+                                </span>
+                            </p>
                         </div>
                     </div>
-                    <span class="badge active">Active</span>
+                    <span class="badge active">Đang Hoạt Động</span>
                 </div>
 
                 <!-- INFO GRID -->
                 <div class="info-grid">
 
                     <div class="info-box">
-                        <h3>Account Information</h3>
-                        <div class="info-item"><span>User ID</span><p>US002</p></div>
-                        <div class="info-item"><span>Role</span><p>Organizer</p></div>
-                        <div class="info-item"><span>Joined Date</span><p>2026-02-10</p></div>
-                        <div class="info-item"><span>Last Login</span><p>2026-05-25 08:30 AM</p></div>
-                    </div>
-
-                    <div class="info-box">
-                        <h3>Personal Information</h3>
-                        <div class="info-item"><span>Full Name</span><p>Emma Watson</p></div>
-                        <div class="info-item"><span>Date of Birth</span><p>12 June 1998</p></div>
-                        <div class="info-item"><span>Gender</span><p>Female</p></div>
-                        <div class="info-item"><span>Nationality</span><p>American</p></div>
-                    </div>
-
-                    <div class="info-box">
-                        <h3>Biography</h3>
-                        <div class="info-item">
-                            <p>Professional event organizer with more than 5 years of experience managing concerts,
-                                conferences, exhibitions, and entertainment events for large audiences.</p>
+                        <h3>Thông Tin Tài Khoản </h3>
+                        <div class="info-item"><span>Mã Tài Khoản </span>
+                            <p th:text="${users.id}"></p>
                         </div>
+                        <div class="info-item"><span>Vai Trò</span>
+                            <p >
+                                <strong th:each="role, stat : ${users.roles}">
+                                    <span style="color:white;" th:text="${role.roleName}"></span>
+                                    <span style="color:white;" th:if="${!stat.last}">, </span>
+
+                                </strong>
+                            </p>
+                        </div>
+                        <div class="info-item"><span>Ngày Đăng Kí</span>
+                            <p th:text="${users.createdAt}"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="info-box">
+                        <h3>Thông Tin Cá Nhân</h3>
+                        <div class="info-item"><span>Họ Tên</span>
+                            <p th:text="${users.lastName + ' ' + users.middleName + ' ' + users.firstName}"></p>
+                        </div>
+                        <div class="info-item"><span>Ngày Sinh</span>
+                            <p th:text="${users.dob}"></p>
+                        </div>
+                        <div class="info-item"><span>Giới Tính</span>
+                            <p th:text="${users.gender}"></p>
+                        </div>
+
+
+
                     </div>
 
                 </div>
-
             </div>
-        </div>
 
-        <!-- ACTIVITY -->
-        <div class="activity-card">
-            <h2>Recent Activity</h2>
+            <!-- ACTIVITY -->
+            <div class="activity-card">
+                <h2>Hoạt Động Gần Đây</h2>
 
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                <div class="activity-content">
-                    <h4>Created New Event</h4>
-                    <p>Summer Music Festival 2026 • 2 hours ago</p>
+                <div class="activity">
+                    <div class="activity-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="activity-content">
+                        <h4>Created New Event</h4>
+                        <p>Summer Music Festival 2026 • 2 hours ago</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-ticket"></i></div>
-                <div class="activity-content">
-                    <h4>Updated Ticket Pricing</h4>
-                    <p>Food &amp; Wine Fair • Yesterday</p>
+                <div class="activity">
+                    <div class="activity-icon"><i class="fa-solid fa-ticket"></i></div>
+                    <div class="activity-content">
+                        <h4>Updated Ticket Pricing</h4>
+                        <p>Food &amp; Wine Fair • Yesterday</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="activity">
-                <div class="activity-icon"><i class="fa-solid fa-user-check"></i></div>
-                <div class="activity-content">
-                    <h4>Logged Into System</h4>
-                    <p>Successfully signed in from Chrome Browser • Today</p>
+                <div class="activity">
+                    <div class="activity-icon"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="activity-content">
+                        <h4>Logged Into System</h4>
+                        <p>Successfully signed in from Chrome Browser • Today</p>
+                    </div>
                 </div>
+
             </div>
 
-        </div>
+        </div><!-- /main -->
 
-    </div><!-- /main -->
-
-</div><!-- /wrapper -->
+    </div><!-- /wrapper -->
 
 </body>
 </html>
