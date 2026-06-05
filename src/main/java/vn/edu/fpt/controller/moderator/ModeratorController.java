@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.model.OrganizerProfile;
@@ -20,12 +21,6 @@ public class ModeratorController {
     @GetMapping("/dashboard")
     public String moderator(Model model) {
         return "moderator/DashboardModerator";
-    }
-
-
-    @GetMapping("/events")
-    public String eventManagement() {
-        return "moderator/EventManagement";
     }
 
     @GetMapping("/profile")
@@ -43,7 +38,6 @@ public class ModeratorController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model) {
 
-        // 1. Chuyển đổi trạng thái từ chuỗi String (URL) sang Enum OrganizerStatus an toàn
         OrganizerStatus organizerStatus = null;
         if (status != null && !status.trim().isEmpty()) {
             try {
@@ -53,16 +47,13 @@ public class ModeratorController {
             }
         }
 
-        // 2. Cấu hình phân trang: 10 bản ghi trên mỗi trang (Có thể đổi thành số khác bạn muốn)
         Pageable pageable = PageRequest.of(page, 10);
 
-        // 3. Gọi xuống tầng Repository đã gộp code ở bước trước để lấy dữ liệu phân trang
         Page<OrganizerProfile> organizers = organizerProfileRepository.searchAndFilterOrganizers(keyword, status, pageable);
 
-        // 4. Đẩy chính xác các biến khớp 1:1 với Thymeleaf trong HTML của bạn
         model.addAttribute("organizers", organizers);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("statusFilter", status); // Phải đặt đúng tên "statusFilter" để khớp với HTML
+        model.addAttribute("statusFilter", status);
 
         return "moderator/OrganizerApproval";
 
