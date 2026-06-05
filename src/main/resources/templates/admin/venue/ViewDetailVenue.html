@@ -472,130 +472,130 @@
         <!-- BANNER -->
 
         <div class="banner">
-<div>
-            <img th:if="${venues.imageUrl != null and !venues.imageUrl.isEmpty()}"
-                 th:src="${venues.imageUrl}"
-                 th:alt="${venues.venueName}"
-                 class="venue-thumb"/>
-            <div th:unless="${venues.imageUrl != null and !venues.imageUrl.isEmpty()}"
-                 class="venue-thumb-placeholder">
-                <i class="fa-solid fa-building"></i>
-            </div>
-            <div class="banner-content">
-                <div class="venue-name">
-                    <strong th:text="${venues.venueName}"></strong>
+            <div>
+                <img th:if="${venues.imageUrl != null and !venues.imageUrl.isEmpty()}"
+                     th:src="${venues.imageUrl}"
+                     th:alt="${venues.venueName}"
+                     class="venue-thumb"/>
+                <div th:unless="${venues.imageUrl != null and !venues.imageUrl.isEmpty()}"
+                     class="venue-thumb-placeholder">
+                    <i class="fa-solid fa-building"></i>
                 </div>
-                <div class="venue-meta">
-                    <div>
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span th:if="${venues.address != null}"
-                              th:text="${venues.address.specificAddress}">
+                <div class="banner-content">
+                    <div class="venue-name">
+                        <strong th:text="${venues.venueName}"></strong>
+                    </div>
+                    <div class="venue-meta">
+                        <div>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span th:if="${venues.address != null}"
+                                  th:text="${venues.address.specificAddress}">
                                     N/A
                                 </span>
-                        <span th:unless="${venues.address != null}">N/A</span>
+                            <span th:unless="${venues.address != null}">N/A</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-users"></i>
+                            <span th:text="${#numbers.formatInteger(venues.capacity, 1, 'COMMA')}">0</span>
+                        </div>
                     </div>
-                    <div>
-                        <i class="fa-solid fa-users"></i>
-                        <span th:text="${#numbers.formatInteger(venues.capacity, 1, 'COMMA')}">0</span>
-                    </div>
+                    <div class="status-badge">Active</div>
                 </div>
-                <div class="status-badge">Active</div>
             </div>
-        </div>
 
-        <!-- STATS -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-calendar"></i></div>
-                <div class="stat-title">Total Events</div>
-                <div class="stat-value">
+            <!-- STATS -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-calendar"></i></div>
+                    <div class="stat-title">Total Events</div>
+                    <div class="stat-value">
                     <span th:text="${venues.events != null ? #lists.size(venues.events)  : '0'}">
                     0 </span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-title">Total Attendees</div>
+                    <div class="stat-value">94.2K</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="stat-title">Revenue Generated</div>
+                    <div class="stat-value">$1.2M</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+                    <div class="stat-title">Avg. Occupancy</div>
+                    <div class="stat-value">87%</div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-                <div class="stat-title">Total Attendees</div>
-                <div class="stat-value">94.2K</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="stat-title">Revenue Generated</div>
-                <div class="stat-value">$1.2M</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
-                <div class="stat-title">Avg. Occupancy</div>
-                <div class="stat-value">87%</div>
-            </div>
-        </div>
 
-        <!-- CONTENT GRID -->
-        <div class="content-grid">
+            <!-- CONTENT GRID -->
+            <div class="content-grid">
 
-            <!-- About -->
-            <div class="card">
-                <h2>About Venue</h2>
-                <p th:text="${venues.description}"></p>
+                <!-- About -->
+                <div class="card">
+                    <h2>About Venue</h2>
+                    <p th:text="${venues.description}"></p>
+
+                </div>
+
+                <!-- Chart -->
+                <div class="card">
+                    <h2>Monthly Performance</h2>
+                    <img
+                            src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue',data:[45,52,68,71,55]}]}}"
+                            alt="Monthly Performance Chart"
+                            style="width:100%; border-radius:15px;"
+                    />
+                </div>
 
             </div>
 
-            <!-- Chart -->
-            <div class="card">
-                <h2>Monthly Performance</h2>
-                <img
-                        src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{label:'Revenue',data:[45,52,68,71,55]}]}}"
-                        alt="Monthly Performance Chart"
-                        style="width:100%; border-radius:15px;"
-                />
+            <!-- EVENT HISTORY -->
+            <div class="table-card">
+                <h2>Event History</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Attendees</th>
+                        <th>Revenue</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Summer Music Festival</td>
+                        <td>2026-06-15</td>
+                        <td>4,800</td>
+                        <td class="revenue">$48,000</td>
+                    </tr>
+                    <tr>
+                        <td>Food &amp; Wine Fair</td>
+                        <td>2026-05-22</td>
+                        <td>3,200</td>
+                        <td class="revenue">$32,000</td>
+                    </tr>
+                    <tr>
+                        <td>Tech Summit 2026</td>
+                        <td>2026-04-10</td>
+                        <td>4,500</td>
+                        <td class="revenue">$67,500</td>
+                    </tr>
+                    <tr>
+                        <td>Spring Concert Series</td>
+                        <td>2026-03-15</td>
+                        <td>4,200</td>
+                        <td class="revenue">$42,000</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
-        </div>
+        </div><!-- /main -->
 
-        <!-- EVENT HISTORY -->
-        <div class="table-card">
-            <h2>Event History</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Event Name</th>
-                    <th>Date</th>
-                    <th>Attendees</th>
-                    <th>Revenue</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Summer Music Festival</td>
-                    <td>2026-06-15</td>
-                    <td>4,800</td>
-                    <td class="revenue">$48,000</td>
-                </tr>
-                <tr>
-                    <td>Food &amp; Wine Fair</td>
-                    <td>2026-05-22</td>
-                    <td>3,200</td>
-                    <td class="revenue">$32,000</td>
-                </tr>
-                <tr>
-                    <td>Tech Summit 2026</td>
-                    <td>2026-04-10</td>
-                    <td>4,500</td>
-                    <td class="revenue">$67,500</td>
-                </tr>
-                <tr>
-                    <td>Spring Concert Series</td>
-                    <td>2026-03-15</td>
-                    <td>4,200</td>
-                    <td class="revenue">$42,000</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div><!-- /main -->
-
-</div><!-- /wrapper -->
+    </div><!-- /wrapper -->
 </div>
 </body>
 </html>

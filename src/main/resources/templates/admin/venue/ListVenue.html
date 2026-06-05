@@ -410,8 +410,7 @@
     <div class="menu">
         <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
         <a href="#" class="active"><i class="fa-solid fa-building"></i> Manage Venues</a>
-        <a href="#"><i class="fa-solid fa-users"></i> Manage Users</a>
-        <a href="#"><i class="fa-solid fa-tags"></i> Event Categories</a>
+        <a th:href="@{/admin/listuser}"><i class="fa-solid fa-users"></i> Manage Users</a>
         <a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a>
         <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
     </div>
@@ -507,10 +506,10 @@
                     </td>
                 </tr>
 
-                <!-- Data từ DB -->
+
                 <tr th:each="venue : ${venues}">
 
-                    <!-- Venue name + ảnh -->
+
                     <td>
                         <div class="venue-info">
                             <img th:if="${venue.imageUrl != null and !venue.imageUrl.isEmpty()}"
@@ -521,7 +520,7 @@
                                  class="venue-thumb-placeholder">
                                 <i class="fa-solid fa-building"></i>
                             </div>
-                            <strong th:text="${venue.venueName}">Venue Name</strong>
+                            <strong th:text="${venue.venueName}"></strong>
                         </div>
                     </td>
 
@@ -530,7 +529,7 @@
                         <div class="location">
                             <i class="fa-solid fa-location-dot"></i>
                             <div th:if="${venue.address != null}"
-                                 th:text="${venue.address.specificAddress}">
+                                 th:text="${venue.address.ward.name + ', ' + venue.address.ward.city.name}">
                             </div>
                             <span th:unless="${venue.address != null}">N/A</span>
                         </div>
