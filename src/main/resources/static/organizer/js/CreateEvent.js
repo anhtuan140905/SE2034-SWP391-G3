@@ -1,410 +1,174 @@
-/**
- * Create Event Wizard — wizard.js
- * Vanilla JS logic converted from React/TypeScript
- */
+"use strict";
 
-// ════════════════════════════════════════════
-//  DATA: Predefined Locations
-// ════════════════════════════════════════════
-const PREDEFINED_LOCATIONS = [
-    {
-        id: "secc",
-        placeName: "Saigon Exhibition and Convention Center (SECC) - Hall A",
-        street: "799 Nguyen Van Linh",
-        district: "District 7",
-        province: "Ho Chi Minh City",
-        zones: [
-            "Standee Area A (VIP)",
-            "Standee Area B",
-            "Standard Standee Area",
-            "Gold Zone Pit",
-        ],
-    },
-    {
-        id: "phutho",
-        placeName: "Phu Tho Indoor Stadium",
-        street: "1 Lu Gia",
-        district: "District 11",
-        province: "Ho Chi Minh City",
-        zones: [
-            "VIP Floor Seats",
-            "Stand A (Ground floor)",
-            "Stand B (1st Floor)",
-            "Stand C (2nd Floor)",
-        ],
-    },
-    {
-        id: "hoabinh",
-        placeName: "Hoa Binh Theatre",
-        street: "240 3 Thang 2 Street",
-        district: "District 10",
-        province: "Ho Chi Minh City",
-        zones: [
-            "VIP Seats 1st Floor",
-            "Standard Seats 1st Floor",
-            "Auditorium Level 2 - Front",
-            "Auditorium Level 2 - Back",
-        ],
-    },
-    {
-        id: "national-convention",
-        placeName: "National Convention Center (NCC)",
-        street: "Gate 1, Thang Long Boulevard",
-        district: "Nam Tu Liem District",
-        province: "Hanoi",
-        zones: [
-            "VIP Stage Front",
-            "Stand 1st Floor Center",
-            "Stand 2nd Floor",
-            "Left/Right Wings",
-        ],
-    },
-    {
-        id: "hanoi-opera",
-        placeName: "Hanoi Opera House",
-        street: "1 Trang Tien",
-        district: "Hoan Kiem District",
-        province: "Hanoi",
-        zones: [
-            "VIP Center Seats",
-            "Mezzanine Royal Box",
-            "Wing Premium Seats",
-            "Level 3 General Admission",
-        ],
-    },
-    {
-        id: "mydinh",
-        placeName: "My Dinh National Stadium",
-        street: "Le Duc Tho Street",
-        district: "Nam Tu Liem District",
-        province: "Hanoi",
-        zones: [
-            "VIP Stand A - Center",
-            "A-Standard Seats",
-            "Stand B - Standee",
-            "Stand C/D",
-        ],
-    },
-    {
-        id: "tienson",
-        placeName: "Tien Son Sports Complex",
-        street: "Phan Dang Luu",
-        district: "District of Hai Chau",
-        province: "Da Nang",
-        zones: ["VIP Field Area", "1st Floor Stands", "2nd Floor Stands"],
-    },
-];
-
-// ════════════════════════════════════════════
-//  DATA: Thematic Presets
-// ════════════════════════════════════════════
-const THEMATIC_PRESETS = [
-    {
-        name: "Cosmic Rave Space Festival 2026",
-        category: "Entertainment",
-        placeName: "Saigon Exhibition and Convention Center (SECC) - Hall A",
-        street: "799 Nguyen Van Linh",
-        district: "District 7",
-        province: "Ho Chi Minh City",
-        bannerHorizontal:
-            "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1600&auto=format&fit=crop",
-        organizerName: "Minh Event Corporation",
-        organizerPhone: "0901 000 999",
-        description: `Event Description:\nA premium signature EDM & light-mapping concert with immersive surround systems, mesmerizing holographic visual lasers, and rich base drops.\n\nEvent Details:\n- Main Stage: Live continuous DJ lineup, non-stop laser sequences, and stage pyrotechnics.\n- Guest Artists: Global top-10 electronic music co-headliners and premium ambient visualists.\n- Special Experiences: Sensory light domes, glowing cocktail stations, and custom photo booths.\n\nTerms and Conditions:\n- Aged 18+ valid government photo ID card required at entry gates.\n- Strictly prohibited outside foods, liquids, and flammable equipment.`,
-        additionalImages: [
-            "https://images.unsplash.com/photo-1506157786151-b8491531f063?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&auto=format&fit=crop",
-        ],
-        showtimes: [
-            {
-                id: "slot-default",
-                date: "2026-06-25",
-                startTime: "19:00",
-                endTime: "22:30",
-                ticketTiers: [
-                    {
-                        id: "tkt-default-std",
-                        name: "Standard Ticket",
-                        price: 350000,
-                        isFree: false,
-                        totalQuantity: 1000,
-                        description: "General admission wristband, standard standing area.",
-                        zone: "Standard Standee Area",
-                    },
-                    {
-                        id: "tkt-default-vip",
-                        name: "VIP Super Fan Pass",
-                        price: 1200000,
-                        isFree: false,
-                        totalQuantity: 150,
-                        description:
-                            "Special side-stage access, dedicated fast-track entrance, and custom light-stick merchandise package.",
-                        zone: "Standee Area A (VIP)",
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        name: "Vietnam Horizon AI Technology Summit",
-        category: "Technology",
-        placeName: "National Convention Center (NCC)",
-        street: "Gate 1, Thang Long Boulevard",
-        district: "Nam Tu Liem District",
-        province: "Hanoi",
-        bannerHorizontal:
-            "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&auto=format&fit=crop",
-        organizerName: "TechVibe Alliance LTD",
-        organizerPhone: "0912 111 222",
-        description: `Event Description:\nDelve into the future of Artificial Intelligence, Large Language Models, and deep robotic system integrations driving Southeast Asia's tech growth.\n\nEvent Details:\n- Panel Conversations: Engaging live dialogues with world-tier computer vision and NLP researchers.\n- Demo Exhibition Hall: Interact directly with prototype humanoid hardware and innovative SaaS suites.\n\nTerms and Conditions:\n- Registration is required prior to entrance.\n- Smart casual dress code.`,
-        additionalImages: [
-            "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&auto=format&fit=crop",
-        ],
-        showtimes: [
-            {
-                id: "slot-tech",
-                date: "2026-07-15",
-                startTime: "08:30",
-                endTime: "17:30",
-                ticketTiers: [
-                    {
-                        id: "tkt-tech-std",
-                        name: "General Access Pass",
-                        price: 150000,
-                        isFree: false,
-                        totalQuantity: 800,
-                        description:
-                            "Access to main panel stages and the general exhibit booths.",
-                        zone: "Stand 1st Floor Center",
-                    },
-                    {
-                        id: "tkt-tech-vip",
-                        name: "VIP Executive Pass",
-                        price: 850000,
-                        isFree: false,
-                        totalQuantity: 100,
-                        description:
-                            "Includes front-row seating, catered buffet lunch, and access to private networking lounge.",
-                        zone: "VIP Stage Front",
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        name: "Chroma Light Art Exposition",
-        category: "Art",
-        placeName: "Hanoi Opera House",
-        street: "1 Trang Tien",
-        district: "Hoan Kiem District",
-        province: "Hanoi",
-        bannerHorizontal:
-            "https://images.unsplash.com/photo-1531058020387-3be344559be6?w=1600&auto=format&fit=crop",
-        organizerName: "Saison d'Art",
-        organizerPhone: "0933 876 543",
-        description: `Event Description:\nAn ambient gallery showcasing progressive fusion art that merges physical canvas brushstrokes with real-time reactive projection mapping.\n\nEvent Details:\n- Artists Talks: Exclusive evening discussions detailing modern digital crafting workflows.\n- Interactive Projection Wall: Create continuous geometric watercolor shapes using bodily gestures.\n\nTerms and Conditions:\n- Flash photography is strictly forbidden near physical oil paintings.\n- Children under 12 must be accompanied by an adult.`,
-        additionalImages: [
-            "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1501183007986-d0d080b147f9?w=800&auto=format&fit=crop",
-        ],
-        showtimes: [
-            {
-                id: "slot-art",
-                date: "2026-08-05",
-                startTime: "10:00",
-                endTime: "21:00",
-                ticketTiers: [
-                    {
-                        id: "tkt-art-std",
-                        name: "Standard Gallery Admission",
-                        price: 90000,
-                        isFree: false,
-                        totalQuantity: 300,
-                        description:
-                            "Access to the interactive exhibits for 1 entire custom timespan.",
-                        zone: "Level 3 General Admission",
-                    },
-                    {
-                        id: "tkt-art-prem",
-                        name: "Premium Collector Ticket",
-                        price: 250000,
-                        isFree: false,
-                        totalQuantity: 50,
-                        description:
-                            "Guided curator tour and souvenir premium artwork catalogue collection.",
-                        zone: "VIP Center Seats",
-                    },
-                ],
-            },
-        ],
-    },
-];
-
-// ════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════
+// ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
-    eventName: "",
-    category: "Entertainment",
-    description: "",
-    bannerHorizontal: "",
+    bannerUrl: "",
     additionalImages: [],
-    organizerName: "",
-    organizerPhone: "",
-    organizerLogo: "",
-    placeName: "",
-    province: "",
-    district: "",
-    street: "",
-    eventDate: "",
-    showtimes: [],
-    selectedShowtimeId: null,
+    galleryFiles: [],
+    tiers: [],
 };
 
-// ════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════
+let tierIdCounter = 1;
+function newTierId() {
+    return "tier-" + Date.now() + "-" + tierIdCounter++;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-    initDefaultDate();
-    renderPresets();
-    renderVenueOptions();
+    setDefaultDate();
+
+    // ✅ Gắn event listener SAU KHI DOM sẵn sàng — tránh lỗi null
+    const dateInput   = document.getElementById("inp-date");
+    const venueSelect = document.getElementById("venueSelect");
+
+    // BƯỚC 1: Chọn ngày → load venue trống
+    dateInput.addEventListener("change", function () {
+        const date = this.value;
+
+        // Reset venue + tier khi đổi ngày
+        venueSelect.innerHTML = '<option value="">-- Please select verified venue --</option>';
+        state.tiers = [];
+        renderTiers();
+        document.getElementById("venueDetail").classList.add("d-none");
+        document.getElementById("venueEmpty").classList.remove("d-none");
+
+        if (!date) return;
+
+        fetch(`/organizer/api/venue?date=${date}`)
+            .then(r => r.json())
+            .then(venues => {
+                venues.forEach(v => {
+                    const opt = document.createElement("option");
+                    opt.value       = v.venueID;
+                    opt.textContent = v.venueName;
+                    venueSelect.appendChild(opt);
+                });
+            })
+            .catch(err => console.error("Error loading venues:", err));
+    });
+
+    // BƯỚC 2: Chọn venue → load địa chỉ
+    // ✅ Chỉ 1 listener duy nhất — trước đó có 2 listener gây conflict
+    venueSelect.addEventListener("change", function () {
+        const venueId = this.value;
+
+        // Reset tier khi đổi venue
+        state.tiers = [];
+        renderTiers();
+
+        const venueDetail = document.getElementById("venueDetail");
+        const venueEmpty  = document.getElementById("venueEmpty");
+
+        if (!venueId) {
+            venueDetail.classList.add("d-none");
+            venueEmpty.classList.remove("d-none");
+            return;
+        }
+
+        fetch(`/organizer/api/address?venueid=${venueId}`)
+            .then(r => r.json())
+            .then(venue => {
+                venueDetail.classList.remove("d-none");
+                venueEmpty.classList.add("d-none");
+                venueDetail.innerHTML = `
+                    <div class="venue-verified-badge">
+                        <span class="material-symbols-outlined">verified</span>
+                        VERIFIED REVENUE-SHARING VENUE ACTIVE
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-6">
+                            <span class="venue-detail-label">Venue Name</span>
+                            <strong class="venue-detail-value d-block">
+                                ${escHtml(venue.venueName || '')}
+                            </strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="venue-detail-label">Address Line</span>
+                            <span class="venue-detail-value d-block">
+                                ${escHtml(venue.address?.specificAddress || 'N/A')}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <span class="venue-detail-label">District Area</span>
+                            <span class="venue-detail-value d-block">
+                                ${escHtml(venue.address?.ward?.name || 'N/A')}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <span class="venue-detail-label">Province / City</span>
+                            <span class="venue-detail-value d-block">
+                                ${escHtml(venue.address?.ward?.city?.name || 'N/A')}
+                            </span>
+                        </div>
+                    </div>`;
+            })
+            .catch(err => console.error("Error loading venue address:", err));
+    });
 });
 
-function initDefaultDate() {
+// ─── DATE ─────────────────────────────────────────────────────────────────────
+function setDefaultDate() {
     const d = new Date();
     d.setDate(d.getDate() + 15);
-    const dateStr = d.toISOString().split("T")[0];
-    state.eventDate = dateStr;
-    document.getElementById("eventDate").value = dateStr;
-
-    const slot = createShowtimeSlot(dateStr, "19:00", "22:30", []);
-    state.showtimes = [slot];
-    state.selectedShowtimeId = slot.id;
-    renderShowtimes();
+    const iso = d.toISOString().split("T")[0];
+    const dateEl = document.getElementById("inp-date");
+    if (dateEl) dateEl.value = iso;
 }
 
-// ════════════════════════════════════════════
-//  PRESETS
-// ════════════════════════════════════════════
-function renderPresets() {
-    const grid = document.getElementById("presetGrid");
-    grid.innerHTML = THEMATIC_PRESETS.map(
-        (p, i) => `
-    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-      <div class="preset-card" onclick="applyPreset(${i})">
-        <img src="${p.bannerHorizontal}" alt="${p.name}" />
-        <div class="preset-card-body">
-          <div class="preset-card-name" title="${p.name}">${p.name}</div>
-          <div class="preset-card-cat">${p.category}</div>
-        </div>
-      </div>
-    </div>
-  `,
-    ).join("");
+function handleDateChange(val) {
+    document.getElementById("showtimeDateBadge").textContent = val || "Not set yet";
 }
 
-function applyPreset(idx) {
-    const p = THEMATIC_PRESETS[idx];
-
-    // Fill form fields
-    setValue("eventName", p.name);
-    document.getElementById("nameLen").textContent = p.name.length;
-    setValue("eventCategory", p.category);
-    setValue("eventDescription", p.description);
-    setValue("organizerName", p.organizerName);
-    setValue("organizerPhone", p.organizerPhone || "");
-
-    // Banner
-    state.bannerHorizontal = p.bannerHorizontal;
-    setValue("bannerUrlInput", p.bannerHorizontal);
-    updateCoverPreview(p.bannerHorizontal);
-
-    // Gallery
-    state.additionalImages = [...(p.additionalImages || [])];
-    renderGallery();
-
-    // Venue
-    const loc = PREDEFINED_LOCATIONS.find((l) => l.placeName === p.placeName);
-    if (loc) {
-        state.placeName = loc.placeName;
-        state.street = loc.street;
-        state.district = loc.district;
-        state.province = loc.province;
-        document.getElementById("venueSelect").value = loc.id;
-        showVenueDetails(loc);
-    }
-
-    // Date & showtimes
-    if (p.showtimes && p.showtimes.length > 0) {
-        const src = p.showtimes[0];
-        state.eventDate = src.date;
-        document.getElementById("eventDate").value = src.date;
-
-        const cloned = {
-            id: `slot-${Date.now()}`,
-            date: src.date,
-            startTime: src.startTime,
-            endTime: src.endTime,
-            ticketTiers: src.ticketTiers.map((t) => ({
-                ...t,
-                id: `tkt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-            })),
-        };
-        state.showtimes = [cloned];
-        state.selectedShowtimeId = cloned.id;
-        renderShowtimes();
-    }
-
-    dismissAlert();
-}
-
-// ════════════════════════════════════════════
-//  COVER IMAGE
-// ════════════════════════════════════════════
-function handleCoverFile(e) {
+// ─── BANNER ───────────────────────────────────────────────────────────────────
+function handleBannerFile(e) {
     const file = e.target.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    state.bannerHorizontal = url;
-    document.getElementById("bannerUrlInput").value = "";
-    updateCoverPreview(url);
+    setBanner(url);
+    document.getElementById("bannerUrl").value = url;
+    state.bannerUrl = url;
 }
 
-function syncBannerUrl(url) {
-    state.bannerHorizontal = url;
-    updateCoverPreview(url);
+function syncBannerFromUrl(url) {
+    state.bannerUrl = url;
+    setBanner(url);
 }
 
-function updateCoverPreview(url) {
-    const preview = document.getElementById("coverPreview");
-    const placeholder = document.getElementById("coverPlaceholder");
+function setBanner(url) {
+    state.bannerUrl = url;
+    const preview     = document.getElementById("bannerPreview");
+    const placeholder = document.getElementById("bannerPlaceholder");
+    const overlay     = document.getElementById("bannerHoverOverlay");
     if (url) {
         preview.src = url;
-        preview.style.display = "block";
-        placeholder.style.display = "none";
+        preview.classList.remove("d-none");
+        overlay.classList.remove("d-none");
+        placeholder.classList.add("d-none");
     } else {
-        preview.style.display = "none";
-        placeholder.style.display = "";
+        clearBanner();
     }
 }
 
-// ════════════════════════════════════════════
-//  GALLERY
-// ════════════════════════════════════════════
+function clearBanner() {
+    document.getElementById("bannerPreview").classList.add("d-none");
+    document.getElementById("bannerHoverOverlay").classList.add("d-none");
+    document.getElementById("bannerPlaceholder").classList.remove("d-none");
+    state.bannerUrl = "";
+}
+
+// ─── GALLERY ──────────────────────────────────────────────────────────────────
 function handleGalleryFiles(e) {
-    const files = e.target.files;
-    if (!files) return;
-    for (const file of files) {
+    const files = Array.from(e.target.files || []);
+    files.forEach(file => {
+        state.galleryFiles.push(file);
         state.additionalImages.push(URL.createObjectURL(file));
-    }
+    });
     renderGallery();
 }
 
 function addGalleryUrl() {
     const input = document.getElementById("galleryUrlInput");
-    const url = input.value.trim();
+    const url   = input.value.trim();
     if (!url) return;
     state.additionalImages.push(url);
     input.value = "";
@@ -413,508 +177,356 @@ function addGalleryUrl() {
 
 function removeGalleryImage(idx) {
     state.additionalImages.splice(idx, 1);
+    state.galleryFiles.splice(idx, 1);
     renderGallery();
 }
 
 function renderGallery() {
-    const grid = document.getElementById("galleryGrid");
+    const grid  = document.getElementById("galleryGrid");
     const count = document.getElementById("galleryCount");
-    count.textContent = state.additionalImages.length;
+    count.textContent = state.additionalImages.length + " ADDED";
 
     if (state.additionalImages.length === 0) {
-        grid.style.display = "none";
+        grid.classList.add("d-none");
         grid.innerHTML = "";
         return;
     }
 
-    grid.style.display = "grid";
-    grid.innerHTML = state.additionalImages
-        .map(
-            (img, i) => `
-    <div class="gallery-item">
-      <img src="${img}" alt="Gallery ${i}" />
-      <button class="gallery-item-del" onclick="removeGalleryImage(${i})" title="Delete">&times;</button>
-    </div>
-  `,
-        )
-        .join("");
+    grid.classList.remove("d-none");
+    grid.innerHTML = state.additionalImages.map((url, i) => `
+        <div class="gallery-item">
+            <img src="${escHtml(url)}" alt="Gallery ${i + 1}" loading="lazy"/>
+            <button class="gallery-item-del" type="button"
+                    onclick="removeGalleryImage(${i})" title="Remove">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+    `).join("");
 }
 
-// ════════════════════════════════════════════
-//  ORGANIZER LOGO
-// ════════════════════════════════════════════
+// ─── LOGO ─────────────────────────────────────────────────────────────────────
 function handleLogoFile(e) {
     const file = e.target.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    state.organizerLogo = url;
     document.getElementById("logoPreview").src = url;
-    document.getElementById("logoPreview").style.display = "block";
-    document.getElementById("logoPlaceholder").style.display = "none";
+    document.getElementById("logoPreview").classList.remove("d-none");
+    document.getElementById("logoPlaceholder").classList.add("d-none");
 }
 
-// ════════════════════════════════════════════
-//  VENUE
-// ════════════════════════════════════════════
-function renderVenueOptions() {
-    const sel = document.getElementById("venueSelect");
-    PREDEFINED_LOCATIONS.forEach((loc) => {
-        const opt = document.createElement("option");
-        opt.value = loc.id;
-        opt.textContent = `${loc.placeName} (${loc.province})`;
-        sel.appendChild(opt);
+// ─── TICKET TIERS ─────────────────────────────────────────────────────────────
+
+// BƯỚC 3: Thêm tier → fetch zones của venue đang chọn
+async function addTicketTier() {
+    const venueId = document.getElementById("venueSelect").value;
+    if (!venueId) {
+        alert("Please select a venue first.");
+        return;
+    }
+
+    let zones = [];
+    try {
+        const response = await fetch(`/organizer/api/venueid?id=${venueId}`);
+        zones = await response.json();
+    } catch (e) {
+        console.error("Error loading zones:", e);
+    }
+
+    state.tiers.push({
+        id:          newTierId(),
+        name:        "",
+        price:       0,
+        isFree:      false,
+        qty:         0,
+        desc:        "",
+        zoneId:      "",      // ✅ lưu ID số — gửi lên server
+        zone:        "",      // lưu zoneName — chỉ để hiển thị
+        maxCapacity: 0,       // ✅ lưu capacity — để validate qty
+        zones:       zones    // danh sách zones để render <option>
     });
+
+    renderTiers();
 }
 
-function handleVenueChange(id) {
-    const loc = PREDEFINED_LOCATIONS.find((l) => l.id === id);
-    if (loc) {
-        state.placeName = loc.placeName;
-        state.street = loc.street;
-        state.district = loc.district;
-        state.province = loc.province;
-        showVenueDetails(loc);
+function deleteTier(id) {
+    state.tiers = state.tiers.filter(t => t.id !== id);
+    renderTiers();
+}
+
+function updateTierField(id, field, value) {
+    const tier = state.tiers.find(t => t.id === id);
+    if (!tier) return;
+
+    if (field === "isFree" && value === true) {
+        tier.price = 0;
+    }
+
+    tier[field] = value;
+
+    // Chỉ re-render khi toggle isFree — tránh re-render mỗi keystroke
+    if (field === "isFree") {
+        renderTiers();
+    }
+}
+
+// ✅ Hàm xử lý khi chọn zone — lưu zoneId + maxCapacity vào state
+function handleZoneSelectChange(tierId, selectEl) {
+    const tier = state.tiers.find(t => t.id === tierId);
+    if (!tier) return;
+
+    const chosen = selectEl.options[selectEl.selectedIndex];
+
+    tier.zoneId      = selectEl.value;                          // ID số → gửi server
+    tier.zone        = chosen.dataset.name || "";               // tên → hiển thị
+    tier.maxCapacity = parseInt(chosen.dataset.max || "0");     // capacity → validate
+    tier.qty         = 0;                                       // reset qty khi đổi zone
+
+    renderTiers();
+}
+
+// ✅ Validate qty — dùng lỗi inline thay vì alert
+function validateTicketQty(id, qty) {
+    const tier  = state.tiers.find(t => t.id === id);
+    if (!tier) return;
+
+    const max   = tier.maxCapacity || 0;
+    const errEl = document.getElementById(`qtyerr-${id}`);
+
+    if (max > 0 && qty > max) {
+        tier.qty = max;
+
+        // Sửa thẳng value input — không re-render cả list
+        const inputEl = document.querySelector(`#card-${id} input[name*=".stock"]`);
+        if (inputEl) inputEl.value = max;
+
+        if (errEl) {
+            errEl.textContent   = `Zone này chỉ có ${max} ghế.`;
+            errEl.style.display = "";
+        }
     } else {
-        state.placeName = state.street = state.district = state.province = "";
-        document.getElementById("venueDetails").style.display = "none";
-        document.getElementById("venueEmpty").style.display = "";
+        tier.qty = qty;
+        if (errEl) errEl.style.display = "none";
     }
 }
 
-function showVenueDetails(loc) {
-    document.getElementById("vd-name").textContent = loc.placeName;
-    document.getElementById("vd-street").textContent = loc.street;
-    document.getElementById("vd-district").textContent = loc.district;
-    document.getElementById("vd-province").textContent = loc.province;
-    document.getElementById("venueDetails").style.display = "";
-    document.getElementById("venueEmpty").style.display = "none";
-}
+// ✅ renderTiers — đã sửa toàn bộ 4 lỗi
+function renderTiers() {
+    const container  = document.getElementById("ticketTiersContainer");
+    const emptyState = document.getElementById("ticketTiersEmpty");
 
-// ════════════════════════════════════════════
-//  DATE
-// ════════════════════════════════════════════
-function handleDateChange(dateStr) {
-    if (!dateStr) return;
-    state.eventDate = dateStr;
-    // Sync all showtimes dates
-    state.showtimes = state.showtimes.map((s) => ({ ...s, date: dateStr }));
-    renderShowtimes();
-}
-
-// ════════════════════════════════════════════
-//  SHOWTIMES
-// ════════════════════════════════════════════
-function createShowtimeSlot(date, startTime, endTime, ticketTiers) {
-    return {
-        id: `slot-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        date,
-        startTime,
-        endTime,
-        ticketTiers: ticketTiers || [],
-    };
-}
-
-function addNewShowtime() {
-    const date = state.eventDate || "";
-    const slot = createShowtimeSlot(date, "19:00", "22:00", [
-        {
-            id: `tkt-${Date.now()}`,
-            name: "General Admission",
-            price: 150000,
-            isFree: false,
-            totalQuantity: 100,
-            description: "Basic entry ticket",
-            zone: "",
-        },
-    ]);
-    state.showtimes.push(slot);
-    state.selectedShowtimeId = slot.id;
-    renderShowtimes();
-}
-
-function deleteShowtime(slotId) {
-    if (state.showtimes.length === 1) {
-        alert("Event must retain at least one configured showtime.");
-        return;
-    }
-    state.showtimes = state.showtimes.filter((s) => s.id !== slotId);
-    if (state.selectedShowtimeId === slotId) {
-        state.selectedShowtimeId = state.showtimes[0]?.id || null;
-    }
-    renderShowtimes();
-}
-
-function selectShowtime(slotId) {
-    state.selectedShowtimeId = slotId;
-    renderShowtimes();
-}
-
-function updateShowtimeField(slotId, field, value) {
-    state.showtimes = state.showtimes.map((s) =>
-        s.id === slotId ? { ...s, [field]: value } : s,
-    );
-}
-
-function renderShowtimes() {
-    const tabsEl = document.getElementById("showtimeTabs");
-    const panelEl = document.getElementById("showtimePanel");
-    const emptyEl = document.getElementById("showtimeEmpty");
-
-    if (state.showtimes.length === 0) {
-        tabsEl.innerHTML = "";
-        panelEl.innerHTML = "";
-        emptyEl.style.display = "";
+    if (state.tiers.length === 0) {
+        emptyState.style.display = "";
+        container.innerHTML = "";
         return;
     }
 
-    emptyEl.style.display = "none";
+    emptyState.style.display = "none";
 
-    // Tabs
-    tabsEl.innerHTML = state.showtimes
-        .map(
-            (slot, idx) => `
-    <button type="button"
-      class="showtime-tab ${slot.id === state.selectedShowtimeId ? "active" : ""}"
-      onclick="selectShowtime('${slot.id}')">
-      <span class="material-symbols-outlined" style="font-size:13px">schedule</span>
-      Show #${idx + 1}: ${slot.date} ${slot.startTime ? `(${slot.startTime})` : ""}
-    </button>
-  `,
-        )
-        .join("");
+    container.innerHTML = state.tiers.map((t, idx) => `
 
-    // Active panel
-    const active = state.showtimes.find((s) => s.id === state.selectedShowtimeId);
-    if (!active) {
-        panelEl.innerHTML = "";
-        return;
-    }
+        <div class="ticket-tier-card fade-in" id="card-${t.id}">
 
-    const sIdx = state.showtimes.indexOf(active);
-
-    const ticketsHtml =
-        active.ticketTiers.length === 0
-            ? `<div class="empty-state">No ticket tiers configured. Add a category above!</div>`
-            : `<div class="ticket-grid">
-        ${active.ticketTiers
-                .map(
-                    (t) => `
-          <div class="ticket-card">
-            <button class="ticket-card-del" onclick="deleteTicket('${active.id}','${t.id}')" title="Delete">&times;</button>
-            <div>
-              <div class="d-flex flex-wrap gap-1">
-                ${t.isFree ? `<span class="ticket-badge-free">FREE</span>` : ""}
-                ${t.zone ? `<span class="ticket-badge-zone">${escHtml(t.zone)}</span>` : ""}
-              </div>
-              <div class="ticket-name">${escHtml(t.name)}</div>
-              <div class="ticket-desc">${escHtml(t.description || "")}</div>
+            <div class="ticket-tier-header">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="tier-num-badge">${idx + 1}</span>
+                    <span class="tier-config-label">Ticket Tier Configuration</span>
+                </div>
+                <button type="button" class="btn-delete-tier"
+                        onclick="deleteTier('${t.id}')">
+                    <span class="material-symbols-outlined">delete</span>
+                    Remove Tier
+                </button>
             </div>
-            <div class="ticket-footer">
-              <div>
-                <span class="ticket-price-label">Price</span>
-                <span class="ticket-price-value">${t.isFree ? "Free" : t.price.toLocaleString("vi-VN") + " ₫"}</span>
-              </div>
-              <div class="text-end">
-                <span class="ticket-qty-label">Inventory</span>
-                <span class="ticket-qty-value">${t.totalQuantity} items</span>
-              </div>
+
+            <div class="row g-3 mb-3">
+
+                <!-- Tên loại vé -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="tier-field-label">
+                        Category Name <span style="color:#ef4444;">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        class="tier-input"
+                        placeholder="e.g. Standard Pass, VIP Area"
+                        name="ticketTypes[${idx}].typeName"
+                        value="${escHtml(t.name || '')}"
+                        oninput="updateTierField('${t.id}', 'name', this.value)" />
+                </div>
+
+                <!-- Zone select -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="tier-field-label">Zone / Seat Location</label>
+                    <select
+                        class="tier-input"
+                        name="ticketTypes[${idx}].zoneName"
+                        onchange="handleZoneSelectChange('${t.id}', this)">
+
+                        <option value="">-- Select Zone --</option>
+
+                        ${(t.zones || []).map(zone => `
+                            <option
+                                value="${zone.zoneId}"
+                                data-name="${(zone.zoneName)}"
+                                data-max="${zone.rows * zone.seatsPerRow}"
+                               ${String(t.zoneId) === String(zone.zoneId) ? "selected" : ""}>
+                                ${(zone.zoneName)}
+                                (max ${zone.rows * zone.seatsPerRow})
+                            </option>
+                        `).join("")}
+
+                    </select>
+                </div>
+
+                <!-- Giá -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="tier-field-label mb-0">Price (₫)</label>
+                        <button type="button"
+                                class="btn-free-toggle ${t.isFree ? 'is-free' : 'is-paid'}"
+                                onclick="updateTierField('${t.id}', 'isFree', ${!t.isFree})">
+                            ${t.isFree ? "FREE" : "PAID"}
+                        </button>
+                    </div>
+                    <div class="price-input-wrap">
+                        <input
+                            type="number"
+                            class="tier-input tier-input-mono ${t.isFree ? 'tier-input-free' : ''}"
+                            name="ticketTypes[${idx}].price"
+                            placeholder="e.g. 250000"
+                            ${t.isFree ? "disabled" : ""}
+                            value="${t.isFree ? 0 : (t.price || 0)}"
+                            min="0"
+                            oninput="updateTierField('${t.id}', 'price',
+                                     Math.max(0, Number(this.value) || 0))" />
+                        ${!t.isFree ? '<span class="price-suffix">₫</span>' : ""}
+                    </div>
+                    <!-- ✅ Hidden input — Spring đọc được isFree = false -->
+                    <input type="hidden"
+                           name="ticketTypes[${idx}].isFree"
+                           value="${t.isFree}" />
+                </div>
+
+                <!-- Số lượng -->
+                <div class="col-12 col-sm-6 col-md-3">
+                    <label class="tier-field-label">
+                        Quantity
+                        <span class="text-muted fw-normal" style="font-size:11px;">
+                            ${t.maxCapacity ? `(tối đa ${t.maxCapacity})` : ""}
+                        </span>
+                    </label>
+                    <input
+                        type="number"
+                        class="tier-input tier-input-mono"
+                        name="ticketTypes[${idx}].stock"
+                        placeholder="e.g. 200"
+                        min="1"
+                        ${t.maxCapacity ? `max="${t.maxCapacity}"` : ""}
+                        value="${t.qty || ''}"
+                        oninput="validateTicketQty('${t.id}',
+                                 Math.max(0, parseInt(this.value) || 0))" />
+                    <div id="qtyerr-${t.id}"
+                         style="color:#ef4444; font-size:12px; margin-top:4px; display:none;">
+                    </div>
+                </div>
+
             </div>
-          </div>
-        `,
-                )
-                .join("")}
-      </div>`;
 
-    // Date options for the slot selector
-    const dateOptions = state.eventDate
-        ? `<option value="${state.eventDate}">${state.eventDate}</option>`
-        : '<option value="">-- Choose Date --</option>';
+            <!-- Description -->
+            <div class="border-top pt-3">
+                <label class="tier-field-label">
+                    Benefits, Perks &amp; Tier Description
+                </label>
+                <textarea
+                    class="tier-input"
+                    name="ticketTypes[${idx}].description"
+                    placeholder="e.g. Welcome drink, Front row seats..."
+                    oninput="updateTierField('${t.id}', 'desc', this.value)"
+                >${escHtml(t.desc || "")}</textarea>
+            </div>
 
-    panelEl.innerHTML = `
-    <div class="showtime-panel animate-fade-in">
-      <div class="showtime-panel-badge">Editing Show #${sIdx + 1}</div>
-
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 pt-2">
-        <span class="mono-tag">Configure Schedule Hours</span>
-        <button type="button" class="btn-outline-danger btn-sm"
-          onclick="deleteShowtime('${active.id}')">
-          <span class="material-symbols-outlined" style="font-size:13px">delete</span>
-          Remove Slot
-        </button>
-      </div>
-
-      <div class="row g-3 mb-4 pb-3" style="border-bottom:1px solid rgba(0,0,0,.05)">
-        <div class="col-sm-4">
-          <div class="mono-tag mb-1">ASSIGNED DATE</div>
-          <select class="wiz-select" onchange="updateShowtimeField('${active.id}','date',this.value);renderShowtimes()">
-            ${dateOptions}
-          </select>
         </div>
-        <div class="col-sm-4">
-          <div class="mono-tag mb-1">GATE OPENING HOUR</div>
-          <input type="text" class="wiz-input" value="${active.startTime}"
-            placeholder="e.g. 19:00"
-            onchange="updateShowtimeField('${active.id}','startTime',this.value);renderShowtimes()" />
-        </div>
-        <div class="col-sm-4">
-          <div class="mono-tag mb-1">EXPECTED ENDING HOUR</div>
-          <input type="text" class="wiz-input" value="${active.endTime}"
-            placeholder="e.g. 22:30"
-            onchange="updateShowtimeField('${active.id}','endTime',this.value);renderShowtimes()" />
-        </div>
-      </div>
 
-      <div class="d-flex align-items-center justify-content-between mb-3">
-        <span class="mono-tag">Ticket Pricing &amp; Categories</span>
-        <button type="button" class="btn-purple btn-sm" onclick="openTicketModal()">
-          Create Ticket Tier +
-        </button>
-      </div>
-
-      ${ticketsHtml}
-    </div>
-  `;
+    `).join("");
 }
 
-// ════════════════════════════════════════════
-//  TICKET MODAL
-// ════════════════════════════════════════════
-function openTicketModal() {
-    // Reset fields
-    setValue("tkt-name", "");
-    setValue("tkt-price", "");
-    setValue("tkt-qty", "");
-    setValue("tkt-desc", "");
-    document.getElementById("tkt-free").checked = false;
-    document.getElementById("tkt-price").disabled = false;
+// ─── SUBMIT ───────────────────────────────────────────────────────────────────
+function handleSubmit(isDraft) {
+    const eventName = getVal("eventName").trim();
+    const venueId   = getVal("venueSelect").trim();
 
-    // Populate zone options
-    const sel = document.getElementById("tkt-zone");
-    sel.innerHTML = "";
-    const loc = PREDEFINED_LOCATIONS.find((l) => l.placeName === state.placeName);
-    const zones = loc
-        ? loc.zones
-        : ["VIP Zone", "Standard Zone", "General Admission"];
-    zones.forEach((z) => {
-        const opt = document.createElement("option");
-        opt.value = z;
-        opt.textContent = z;
-        sel.appendChild(opt);
-    });
-
-    document.getElementById("ticketModal").style.display = "flex";
-}
-
-function closeTicketModal() {
-    document.getElementById("ticketModal").style.display = "none";
-}
-
-function confirmAddTicket() {
-    const name = document.getElementById("tkt-name").value.trim();
-    if (!name) {
-        alert("Please specify a ticket category name!");
-        return;
-    }
-    if (!state.selectedShowtimeId) {
-        showAlert("Please select or create a Showtime Slot first!");
-        return;
-    }
-
-    const isFree = document.getElementById("tkt-free").checked;
-    const price = isFree
-        ? 0
-        : Number(document.getElementById("tkt-price").value) || 0;
-    const qty = Number(document.getElementById("tkt-qty").value) || 100;
-    const desc =
-        document.getElementById("tkt-desc").value.trim() ||
-        "No description provided.";
-    const zone = document.getElementById("tkt-zone").value;
-
-    const tier = {
-        id: `tkt-${Date.now()}`,
-        name,
-        price,
-        isFree,
-        totalQuantity: qty,
-        description: desc,
-        zone,
-    };
-
-    state.showtimes = state.showtimes.map((slot) => {
-        if (slot.id === state.selectedShowtimeId) {
-            return { ...slot, ticketTiers: [...slot.ticketTiers, tier] };
-        }
-        return slot;
-    });
-
-    closeTicketModal();
-    renderShowtimes();
-}
-
-function deleteTicket(showtimeId, ticketId) {
-    state.showtimes = state.showtimes.map((slot) => {
-        if (slot.id === showtimeId) {
-            return {
-                ...slot,
-                ticketTiers: slot.ticketTiers.filter((t) => t.id !== ticketId),
-            };
-        }
-        return slot;
-    });
-    renderShowtimes();
-}
-
-// ════════════════════════════════════════════
-//  VALIDATION & SUBMIT
-// ════════════════════════════════════════════
-function handleSubmit(isDraft = false) {
-    const eventName = document.getElementById("eventName").value.trim();
     if (!eventName) {
-        showAlert("Please specify an Event Name before publishing!");
-        scrollToSection("section-event-info");
+        showError("Please specify an Event Name before publishing!");
+        document.getElementById("section-event-info")
+            .scrollIntoView({ behavior: "smooth" });
+        return;
+    }
+    if (!venueId) {
+        showError("Please select a verified hosting venue!");
+        document.getElementById("section-date-venue")
+            .scrollIntoView({ behavior: "smooth" });
+        return;
+    }
+    if (state.tiers.length === 0) {
+        showError("Please configure at least one Ticket Tier!");
+        document.getElementById("section-showtimes")
+            .scrollIntoView({ behavior: "smooth" });
         return;
     }
 
-    if (!state.placeName) {
-        showAlert(
-            "Please select a verified hosting venue in the Date & Venue section!",
-        );
-        scrollToSection("section-date-venue");
-        return;
+    // Validate từng tier trước khi submit
+    for (let i = 0; i < state.tiers.length; i++) {
+        const t = state.tiers[i];
+        if (!t.zoneId) {
+            showError(`Loại vé #${i + 1}: chưa chọn Zone.`);
+            return;
+        }
+        if (!t.qty || t.qty < 1) {
+            showError(`Loại vé #${i + 1}: số lượng phải ít nhất là 1.`);
+            return;
+        }
     }
 
-    if (state.showtimes.length === 0) {
-        showAlert("Please configure at least one active Showtime Slot!");
-        scrollToSection("section-showtimes");
-        return;
-    }
+    // ✅ Đẩy file gallery vào input file trước khi submit form
+    const dataTransfer = new DataTransfer();
+    state.galleryFiles.forEach(file => dataTransfer.items.add(file));
+    const galleryInput = document.getElementById("galleryFileInput");
+    if (galleryInput) galleryInput.files = dataTransfer.files;
 
-    // Compute totals
-    let totalCapacity = 0;
-    let expectedRevenue = 0;
-    state.showtimes.forEach((slot) => {
-        slot.ticketTiers.forEach((t) => {
-            totalCapacity += t.totalQuantity;
-            expectedRevenue += t.price * t.totalQuantity;
-        });
-    });
-    if (totalCapacity === 0) totalCapacity = 1000;
-
-    const firstSlot = state.showtimes[0];
-    const displayDate = firstSlot ? firstSlot.date : "2026-06-15";
-    const displayTimeline = firstSlot
-        ? `${firstSlot.date} • ${firstSlot.startTime || "19:00"} - ${firstSlot.endTime || "22:30"}`
-        : "2026-06-15 • 19:00 - 22:30";
-
-    const result = {
-        name: eventName,
-        category: document.getElementById("eventCategory").value,
-        status: isDraft ? "Draft" : "On Sale",
-        date: displayDate,
-        timeLine: displayTimeline,
-        location: `${state.placeName}, ${state.street || ""}, ${state.district || ""}, ${state.province || ""}`,
-        capacity: totalCapacity,
-        totalTickets: totalCapacity,
-        description:
-            document.getElementById("eventDescription").value ||
-            "No detailed description provided by the host.",
-        expectedRevenue:
-            expectedRevenue > 0
-                ? `${(expectedRevenue / 1000000).toFixed(2)}M VND`
-                : "0.00 VND",
-        organizerName:
-            document.getElementById("organizerName").value || "Independent Promoter",
-        organizerPhone:
-            document.getElementById("organizerPhone").value || "1900 6408",
-        bannerImage:
-            state.bannerHorizontal ||
-            "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&auto=format&fit=crop",
-        additionalImages: state.additionalImages,
-        showtimes: state.showtimes,
-    };
-
-    console.log("[Create Event] Saved result:", result);
-
-    alert(
-        `✅ Event "${result.name}" ${isDraft ? "saved as Draft" : "published successfully"}!\n\nCapacity: ${totalCapacity.toLocaleString()} tickets\nRevenue: ${result.expectedRevenue}\nStatus: ${result.status}`,
-    );
+    // Submit form thật (Thymeleaf + Spring MVC)
+    document.getElementById("eventForm").submit();
 }
 
-// ════════════════════════════════════════════
-//  CLEAR ALL
-// ════════════════════════════════════════════
-function handleClearAll() {
-    if (!confirm("Restore all form fields back to defaults?")) return;
-
-    setValue("eventName", "");
-    setValue("eventCategory", "Entertainment");
-    setValue("eventDescription", "");
-    setValue("bannerUrlInput", "");
-    setValue("organizerName", "");
-    setValue("organizerPhone", "");
-    setValue("organizerWebsite", "");
-    setValue("venueSelect", "");
-    document.getElementById("nameLen").textContent = "0";
-
-    state.bannerHorizontal = "";
-    state.additionalImages = [];
-    state.placeName = state.street = state.district = state.province = "";
-    state.organizerLogo = "";
-
-    updateCoverPreview("");
-    renderGallery();
-    document.getElementById("venueDetails").style.display = "none";
-    document.getElementById("venueEmpty").style.display = "";
-    document.getElementById("logoPreview").style.display = "none";
-    document.getElementById("logoPlaceholder").style.display = "";
-
-    initDefaultDate();
-    dismissAlert();
+// ─── ERROR HELPERS ────────────────────────────────────────────────────────────
+function showError(msg) {
+    const el = document.getElementById("validationError");
+    document.getElementById("validationErrorMsg").textContent = msg;
+    el.classList.remove("d-none");
+    el.classList.add("d-flex");
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-// ════════════════════════════════════════════
-//  CLOSE (back to parent app)
-// ════════════════════════════════════════════
-function handleClose() {
-    if (confirm("Discard changes and exit?")) {
-        // In standalone mode: go back / close tab
-        if (window.history.length > 1) window.history.back();
-        else window.close();
-    }
+function dismissError() {
+    const el = document.getElementById("validationError");
+    el.classList.add("d-none");
+    el.classList.remove("d-flex");
 }
 
-// ════════════════════════════════════════════
-//  ALERT HELPERS
-// ════════════════════════════════════════════
-function showAlert(msg) {
-    document.getElementById("validationMsg").textContent = msg;
-    document.getElementById("validationAlert").style.display = "flex";
-    document
-        .getElementById("wizardBody")
-        .scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function dismissAlert() {
-    document.getElementById("validationAlert").style.display = "none";
-}
-
-// ════════════════════════════════════════════
-//  UTILITY HELPERS
-// ════════════════════════════════════════════
-function setValue(id, value) {
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function getVal(id) {
     const el = document.getElementById(id);
-    if (el) el.value = value;
+    return el ? el.value : "";
 }
 
-function scrollToSection(id) {
+function setValue(id, val) {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) el.value = val;
 }
 
 function escHtml(str) {
     return String(str)
         .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
         .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+        .replace(/>/g, "&gt;");
 }

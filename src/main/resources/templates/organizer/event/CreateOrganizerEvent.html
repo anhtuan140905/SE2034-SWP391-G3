@@ -1,478 +1,411 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Event Portal</title>
 
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
-    />
-    <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-    <link rel="stylesheet" th:href="@{/organizer/css/CreateEvant.css}" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/organizer/css/CreateEvent.css}" />
 </head>
 <body>
-<div class="wizard-page" id="wizardPage">
-    <header class="wizard-header">
-        <div class="wizard-header-brand">
-            <div class="wizard-header-icon">
-                <span class="material-symbols-outlined" style="font-size: 18px">add_circle</span>
+
+<!-- AMBIENT DECORATIONS -->
+<div class="ambient-blob ambient-blob-1"></div>
+<div class="ambient-blob ambient-blob-2"></div>
+
+<!-- MAIN WRAPPER -->
+<div class="page-wrapper d-flex flex-column">
+
+    <!-- ===== HEADER BAR ===== -->
+    <header class="page-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+            <div class="header-icon">
+                <span class="material-symbols-outlined">add_circle</span>
             </div>
             <div>
-                <div class="wizard-header-title">Create Event Portal</div>
-                <div class="wizard-header-sub">
-                    SINGLE-PAGE INTERACTIVE EVENT DESIGNER
-                </div>
+                <h1 class="header-title mb-0">Create Event Portal</h1>
+                <p class="header-subtitle mb-0">SINGLE-PAGE INTERACTIVE EVENT DESIGNER</p>
             </div>
         </div>
-
-        <div class="wizard-header-actions">
-            <button class="btn-outline-purple" onclick="handleSubmit(true)">
-                <span class="material-symbols-outlined" style="font-size: 15px">save</span>
-                Save Draft
-            </button>
-            <button class="btn-outline-danger" onclick="handleClearAll()">
-                <span class="material-symbols-outlined" style="font-size: 15px">delete_sweep</span>
-                Xóa sạch
-            </button>
-            <button class="btn-purple" onclick="handleSubmit(false)">
-                <span class="material-symbols-outlined" style="font-size: 15px">celebration</span>
-                Publish Event
-            </button>
-            <div style="width: 1px;height: 24px;background: rgba(0, 0, 0, 0.1);margin: 0 2px;"></div>
-            <button class="btn-ghost" onclick="handleClose()">
-                <span class="material-symbols-outlined" style="font-size: 14px">close</span>
-                Cancel
-            </button>
-        </div>
+        <button type="button" class="btn btn-cancel" th:onclick="|window.location.href='@{/organizer/dashboard}'|">
+            <span class="material-symbols-outlined">close</span>
+            Cancel
+        </button>
     </header>
 
-    <div class="wizard-body" id="wizardBody">
-        <div id="validationAlert" class="wizard-alert" style="display: none">
-          <span
-                  class="material-symbols-outlined"
-                  style="font-size: 16px; flex-shrink: 0"
-          >error</span
-          >
-            <span id="validationMsg"></span>
-            <button class="wizard-alert-dismiss" onclick="dismissAlert()">
-                Dismiss
-            </button>
-        </div>
+    <!-- ===== SCROLLABLE FORM AREA ===== -->
+    <div class="form-scroll-area flex-grow-1">
+        <div class="form-container">
 
-        <div id="section-event-info" class="mb-5">
-            <div class="section-header">
-                <div class="section-badge">1</div>
-                <div>
-                    <h3 class="section-title">Event Information</h3>
-                    <p class="section-sub">
-                        Describe what your landmark gathering is about and upload
-                        promotional media
-                    </p>
-                </div>
+            <!-- Validation Error Banner -->
+            <div id="validationError" class="alert alert-danger d-none align-items-center gap-3 mb-4 fade-in" role="alert">
+                <span class="material-symbols-outlined flex-shrink-0">error</span>
+                <span id="validationErrorMsg"></span>
+                <button type="button" class="btn-dismiss ms-auto" onclick="dismissError()">Dismiss</button>
             </div>
 
-            <div class="wizard-card">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="field-label">
-                        <span class="material-symbols-outlined" style="font-size: 16px; color: var(--purple)">image</span>
-                        Event Cover Image
-                        <span class="required">*</span>
-                    </div>
-                    <span class="field-hint">16:9 RATIO RECOMMENDED</span>
-                </div>
+            <!-- ===== FORM CARD ===== -->
+            <form id="eventForm" novalidate th:action="@{/organizer/create/event}" method="post" enctype="multipart/form-data" th:object="${event}">
+                <div class="form-card">
 
-                <div class="upload-zone" id="coverUploadZone" onclick="document.getElementById('coverFileInput').click()">
-                    <input type="file" id="coverFileInput" accept="image/*" style="display: none" onchange="handleCoverFile(event)"/>
-                    <div class="upload-zone-placeholder" id="coverPlaceholder"><div class="upload-zone-icon">
-                        <span class="material-symbols-outlined" style="font-size: 20px">landscape</span>
-                    </div>
-                        <div>
-                            <div class="upload-zone-label">Add dynamic cover banner</div>
-                            <div class="upload-zone-hint">
-                                (Ratio 16:9 — e.g. 1280×720 px)
+                    <!-- ========================================
+                         SECTION 1: EVENT INFORMATION
+                    ======================================== -->
+                    <section id="section-event-info" class="form-section">
+                        <div class="section-header">
+                            <span class="section-num">1</span>
+                            <div>
+                                <h3 class="section-title">Event Information</h3>
+                                <p class="section-subtitle">Describe what your landmark gathering is about and upload promotional media</p>
                             </div>
                         </div>
-                    </div>
-                    <img id="coverPreview" class="upload-zone-preview" src="" alt="Cover" style="display: none"/>
-                    <div class="upload-zone-overlay">
-                        <span class="material-symbols-outlined" style="font-size: 22px">cloud_upload</span>
-                        <span style="font-size: 12px; font-weight: 700">Change cover image</span>
-                    </div>
-                </div>
+                        <!-- Cover Image -->
+                        <div class="field-card mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="field-label mb-0">
+                                    <span class="material-symbols-outlined text-purple">image</span>
+                                    Event Cover Image <span class="text-required">*</span>
+                                </label>
+                                <span class="mono-tag">16:9 RATIO RECOMMENDED</span>
+                            </div>
 
-                <div class="mt-3">
-                    <div class="mono-tag mb-1">OR DIRECTLY PASTE BANNER WEB URL</div>
-                    <input type="text" id="bannerUrlInput" class="wiz-input" placeholder="https://images.unsplash.com/photo-..." oninput="syncBannerUrl(this.value)"/>
-                </div>
-            </div>
+                            <div class="upload-zone" id="bannerUploadZone" onclick="document.getElementById('bannerFileInput').click()">
+                                <input type="file" id="bannerFileInput" accept="image/*" class="d-none"   th:field="*{thumbnailFile}" onchange="handleBannerFile(event)" />
+                                <div id="bannerPlaceholder" class="upload-placeholder">
+                                    <div class="upload-icon-wrap mx-auto">
+                                        <span class="material-symbols-outlined">landscape</span>
+                                    </div>
+                                    <p class="fw-bold mb-1" style="font-size:11.5px;">Add dynamic cover banner</p>
+                                    <span class="upload-hint">(Ratio 16:9 – e.g., 1280×720 pixels)</span>
+                                </div>
+                                <img id="bannerPreview" src="" alt="Banner Preview" class="banner-preview d-none" />
+                                <div id="bannerHoverOverlay" class="upload-hover-overlay d-none">
+                                    <span class="material-symbols-outlined">cloud_upload</span>
+                                    <span>Change cover image</span>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="wizard-card">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="field-label">
-                        <span class="material-symbols-outlined" style="font-size: 16px; color: var(--purple)">filter</span>
-                        Detailed Event Gallery
-                    </div>
-                    <span class="field-hint"><span id="galleryCount">0</span> ADDED</span>
-                </div>
-                <p style="font-size: 11px; color: var(--muted)">
-                    Supplementary imagery for checkout descriptions (artist profiles,
-                    layout diagrams, legal guidelines).
-                </p>
+                        <!-- Photo Gallery -->
+                        <div class="field-card mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="field-label mb-0">
+                                    <span class="material-symbols-outlined text-purple">filter</span>
+                                    Detailed Event Gallery
+                                </label>
+                                <span class="mono-tag" id="galleryCount">0 ADDED</span>
+                            </div>
+                            <p class="field-hint mb-3">Provide supplementary imagery to display inside checkout descriptions (artist profiles, layout diagrams, maps).</p>
 
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <button type="button" class="btn-outline-purple w-100 justify-content-center py-3"
-                                onclick="document.getElementById('galleryFileInput').click()">
-                            <span class="material-symbols-outlined" style="font-size: 16px">collections</span>
-                            Browse Files
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-md-12">
+                                    <button type="button" class="btn btn-upload-browse w-100"
+                                            onclick="document.getElementById('galleryFileInput').click()">
+                                        <span class="material-symbols-outlined">collections</span>
+                                        Browse Files
+                                    </button>
+                                    <input th:field="*{imageFiles}" type="file" id="galleryFileInput" name="imageFiles" accept="image/*" multiple class="d-none"
+                                           onchange="handleGalleryFiles(event)" />
+                                </div>
+                            </div>
+
+                            <div id="galleryGrid" class="gallery-grid mt-4 d-none">
+
+                            </div>
+                        </div>
+
+                        <!-- Name, Category, Description -->
+                        <div class="field-card">
+                            <!-- Event Name -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label for="eventName" class="field-label mb-0">
+                                        Event Name <span class="text-required">*</span>
+                                    </label>
+                                    <span class="mono-tag" id="nameCounter">0 / 120</span>
+                                </div>
+                                <input type="text" id="eventName" name="eventName" class="form-control field-input field-input-lg"
+                                       maxlength="120"      th:field="*{title}"
+                                       placeholder="Enter an exciting name for your event..."
+                                       oninput="document.getElementById('nameCounter').textContent = this.value.length + ' / 120'" />
+                            </div>
+
+                            <!-- Category -->
+                            <div class="mb-4">
+                                <label for="category" class="field-label">
+                                    Event Category <span class="text-required">*</span>
+                                </label>
+                                <select id="category" name="category" th:field="*{categoryId}" class="form-select field-input">
+                                    <option value="">
+                                        -- Select Category --
+                                    </option>
+                                    <option   th:each="category : ${eventCategoryList}"
+                                              th:value="${category.categoryId}"
+                                              th:text="${category.categoryName}">
+
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <label for="description" class="field-label">
+                                    Full Description / Event Details <span class="text-required">*</span>
+                                </label>
+                                <textarea  th:field="*{description}" id="description" name="description" class="form-control field-input" rows="8"
+                                          placeholder="Enter details including continuous schedule, featured star guests, entry criteria, prohibited attire and refund options..."></textarea>
+                            </div>
+                        </div>
+                    </section><!-- /section-1 -->
+
+
+                    <!-- ========================================
+                         SECTION 2: ORGANIZER
+                    ======================================== -->
+                    <section id="section-organizer" class="form-section">
+                        <div class="section-header">
+                            <span class="section-num">2</span>
+                            <div>
+                                <h3 class="section-title">Organizer Details</h3>
+                                <p class="section-subtitle">Public contact information shown on the event listing page</p>
+                            </div>
+                        </div>
+                        <input type="hidden" th:field="*{organizerDtoID}">
+                        <div class="field-card"  th:object="${organizerdto}">
+                            <div class="row g-4">
+                                <!-- Organizer Logo -->
+                                <div class="col-12 col-md-3 d-flex flex-column align-items-center gap-2">
+                                    <div class="organizer-logo-wrap" id="logoWrap" onclick="document.getElementById('logoFileInput').click()">
+                                        <img id="logoPreview" src="" alt="" class="d-none w-100 h-100 object-fit-cover rounded-circle" />
+                                        <div id="logoPlaceholder" class="d-flex flex-column align-items-center justify-content-center h-100">
+                                            <span class="material-symbols-outlined text-purple" style="font-size:28px;">person</span>
+                                        </div>
+                                    </div>
+                                    <img type="file" id="logoFileInput"  th:src="${organizerdto.avatar}" class="d-none" onchange="handleLogoFile(event)" />
+                                    <span class="mono-tag text-center" style="font-size:9px;">ORGANIZER LOGO</span>
+                                </div>
+
+                                <div class="col-12 col-md-9">
+                                    <div class="mb-3">
+                                        <label for="organizerName" class="field-label">Organizer / Company Email</label>
+                                        <input type="text" id="organizerName" name="organizerName" readonly th:value="${organizerdto.email}" class="form-control field-input"
+                                               placeholder="e.g. Minh Event Corporation" />
+                                    </div>
+                                    <div>
+                                        <label for="organizerPhone" class="field-label">Contact Phone Number</label>
+                                        <input type="text" id="organizerPhone" name="organizerPhone" readonly class="form-control field-input"
+                                               th:value="${organizerdto.phone}" placeholder="e.g. 0901 234 567" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section><!-- /section-2 -->
+
+
+                    <!-- ========================================
+                         SECTION 3: DATE & VENUE
+                    ======================================== -->
+                    <section id="section-date-venue" class="form-section">
+                        <div class="section-header">
+                            <span class="section-num">3</span>
+                            <div>
+                                <h3 class="section-title">Date &amp; Venue</h3>
+                                <p class="section-subtitle">Specify dates the event runs and select an officially verified hosting venue</p>
+                            </div>
+                        </div>
+
+                        <!-- Date Picker -->
+                        <div class="field-card mb-4">
+                            <label class="field-label">
+                                <span class="material-symbols-outlined text-purple">calendar_today</span>
+                                Event Date <span class="text-required">*</span>
+                            </label>
+                            <p class="field-hint">Modifying this date will instantly align your showtime schedule below.</p>
+                            <div style="max-width:280px;" class="mt-2">
+                                <input type="date"name="eventDate" id="inp-date"    th:field="*{eventDate}" class="form-control field-input"
+                                       onchange="handleDateChange(this.value)" />
+                            </div>
+                        </div>
+
+                        <!-- Venue Select -->
+                        <div class="field-card">
+                            <label class="field-label">
+                                <span class="material-symbols-outlined text-purple">location_on</span>
+                                Official Hosting Venue <span class="text-required">*</span>
+                            </label>
+                            <p class="field-hint">Ticket bookings require a verified offline venue in our system database.</p>
+
+                            <select id="venueSelect" name="venueId" class="form-select field-input mt-3"   th:field="*{venueId}" onchange="handleVenueChange(this.value)">
+                                <option value="">-- Please select verified venue --</option>
+                            </select>
+
+                            <!-- Venue Detail Card -->
+                            <div id="venueDetail" class="venue-detail-card d-none mt-3">
+
+                            </div>
+
+                            <div id="venueEmpty" class="venue-empty-card mt-3">
+                                No venue selected. High-quality ticket layouts will use default mapping configurations.
+                            </div>
+                        </div>
+                    </section><!-- /section-3 -->
+
+
+                    <!-- ========================================
+                         SECTION 4: SHOWTIMES & TICKETS
+                    ======================================== -->
+                    <section id="section-showtimes" class="form-section">
+                        <div class="section-header">
+                            <span class="section-num">4</span>
+                            <div>
+                                <h3 class="section-title">Showtime &amp; Ticket Tiers</h3>
+                                <p class="section-subtitle">Configure hour ranges and register ticket tiers (Standard, VIP, free entry, etc.)</p>
+                            </div>
+                        </div>
+
+                        <div class="field-card">
+                            <!-- Date sync badge -->
+                            <div class="date-sync-badge mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="material-symbols-outlined" style="color:#7c3aed;font-size:16px;">calendar_today</span>
+                                    <span>Event Date:</span>
+                                    <strong id="showtimeDateBadge" class="date-badge-value">Not set yet</strong>
+                                </div>
+                                <span class="date-sync-hint">Automatically synced from Section 3 above</span>
+                            </div>
+
+                            <!-- Start / End Time -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-12 col-sm-6">
+                                    <label for="startTime" class="field-label">
+                                        <span class="material-symbols-outlined text-purple" style="font-size:16px;">login</span>
+                                        Gate Opening Hour <span class="text-required">*</span>
+                                    </label>
+                                    <input type="time"  th:field="*{startTime}" id="startTime" name="startTime" class="form-control field-input"
+                                           placeholder="e.g. 19:00" value="19:00" />
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <label for="endTime" class="field-label">
+                                        <span class="material-symbols-outlined text-purple" style="font-size:16px;">logout</span>
+                                        Expected Ending Hour <span class="text-required">*</span>
+                                    </label>
+                                    <input  th:field="*{endTime}" type="time" id="endTime" name="endTime" class="form-control field-input"
+                                           placeholder="e.g. 22:30" value="22:30" />
+                                </div>
+                            </div>
+
+                            <!-- Ticket Tiers -->
+                            <div class="border-top pt-4">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                                    <div>
+                                        <h4 class="ticket-section-title">
+                                            <span class="material-symbols-outlined text-purple" style="font-size:16px;">confirmation_number</span>
+                                            Registered Ticket Tiers
+                                        </h4>
+                                        <p class="field-hint mb-0">Configure Standard, VIP, or free-entry ticket passes.</p>
+                                    </div>
+                                    <button type="button" id="createTicketTier" class="btn btn-purple-solid" onclick="addTicketTier()">
+                                        <span class="material-symbols-outlined" style="font-size:15px;">add</span>
+                                        Create Ticket Tier
+                                    </button>
+                                </div>
+
+                                <div id="ticketTiersEmpty" class="ticket-empty-state">
+                                    <div id="ticket-tier-template" style="display:none">
+
+                                        <div class="ticket-tier-card fade-in">
+
+                                            <div class="ticket-tier-header">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="tier-num-badge"></span>
+                                                    <span class="tier-config-label">
+                    Ticket Tier Configuration
+                </span>
+                                                </div>
+                                                <button
+                                                        type="button"
+                                                        class="btn-delete-tier"
+                                                        onclick="deleteTier(this)">
+                <span class="material-symbols-outlined">delete</span>
+                                                    Remove Tier
+                                                </button>
+                                            </div>
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-12 col-sm-6 col-md-3">
+                                                    <label class="tier-field-label">
+                                                        Category Name
+                                                    </label>
+                                                    <input
+                                                            type="text"
+                                                            class="tier-name tier-input">
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-md-3">
+                                                    <label class="tier-field-label">
+                                                        Zone
+                                                    </label>
+                                                    <select
+                                                            class="tier-zone tier-input">
+                                                        <option value="">
+                                                            -- Select Zone --
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-md-3">
+                                                    <label class="tier-field-label">
+                                                        Price
+                                                    </label>
+                                                    <input type="number" class="tier-price tier-input">
+                                                </div>
+                                                <div class="col-12 col-sm-6 col-md-3">
+                                                    <label class="tier-field-label">
+                                                        Quantity
+                                                    </label>
+                                                    <input type="number" class="tier-qty tier-input">
+                                                </div>
+                                            </div>
+                                            <textarea class="tier-desc tier-input"></textarea>
+                                        </div>
+                                    </div>
+                                    No ticket tiers configured. Click "Create Ticket Tier" to setup pricing!
+                                </div>
+                                <div id="ticketTiersContainer"></div>
+
+                                <!-- Zones datalist -->
+                                <datalist id="zonesSuggestions"></datalist>
+                            </div>
+                        </div>
+                    </section><!-- /section-4 -->
+
+
+                    <!-- ===== ACTION BUTTONS ===== -->
+                    <div class="form-actions border-top pt-4 mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-end gap-3">
+                        <button type="button" class="btn btn-save w-100 w-sm-auto" onclick="handleSubmit(true)">
+                            <span class="material-symbols-outlined">save</span>
+                            Save as Draft
                         </button>
-                        <input type="file" id="galleryFileInput"
-                               accept="image/*" multiple
-                               style="display: none" onchange="handleGalleryFiles(event)"/>
+                        <button type="submit" class="btn btn-publish w-100 w-sm-auto" onclick="handleSubmit(false)">
+                            <span class="material-symbols-outlined">celebration</span>
+                            Publish Event
+                        </button>
                     </div>
-                    <div class="col-md-8">
-                        <div class="mono-tag mb-1">OR PASTE EXTERNAL IMAGE URL</div>
-                        <div class="d-flex gap-2">
-                            <input type="text" id="galleryUrlInput"
-                                   class="wiz-input" placeholder="https://images.unsplash.com/photo-..."/>
-                            <button type="button"
-                                    class="btn-purple btn-sm flex-shrink-0" onclick="addGalleryUrl()">
-                                Add URL
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
-                <div id="galleryGrid" class="gallery-grid" style="display: none"></div>
-            </div>
+                </div><!-- /form-card -->
+            </form>
 
-            <div class="wizard-card">
-                <div class="mb-4">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <label class="field-label"
-                        >Event Name <span class="required">*</span></label
-                        >
-                        <span class="char-count"
-                        ><span id="nameLen">0</span> / 120</span
-                        >
-                    </div>
-                    <input
-                            type="text"
-                            id="eventName"
-                            class="wiz-input"
-                            maxlength="120"
-                            placeholder="Enter an exciting name for your event..."
-                            oninput="
-                  document.getElementById('nameLen').textContent =
-                    this.value.length
-                "
-                    />
-                </div>
+        </div><!-- /form-container -->
+    </div><!-- /form-scroll-area -->
+</div><!-- /page-wrapper -->
 
-                <div class="mb-4">
-                    <label class="field-label"
-                    >Event Category <span class="required">*</span></label
-                    >
-                    <select id="eventCategory" class="wiz-select">
-                        <option value="Entertainment">
-                            Entertainment (Music, Stand-up, Rave)
-                        </option>
-                        <option value="Technology">
-                            Technology (Tech Conferences, LLMs)
-                        </option>
-                        <option value="Art">
-                            Art Exhibits (Physical &amp; Digital projection)
-                        </option>
-                        <option value="Workshop">
-                            Workshop (Courses, Seminars, Training)
-                        </option>
-                        <option value="Sports">Sports &amp; Recreation Events</option>
-                        <option value="Charity">
-                            Charity &amp; Community Fundraisers
-                        </option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="field-label"
-                    >Full Description / Event Details
-                        <span class="required">*</span></label
-                    >
-                    <textarea
-                            id="eventDescription"
-                            class="wiz-textarea"
-                            rows="8"
-                            placeholder="Enter details including schedule, featured guests, entry criteria, prohibited attire, refund options..."
-                    ></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div id="section-date-venue" class="mb-5">
-            <div class="section-header">
-                <div class="section-badge">2</div>
-                <div>
-                    <h3 class="section-title">Date &amp; Venue</h3>
-                    <p class="section-sub">
-                        Specify dates and select an officially verified hosting venue
-                    </p>
-                </div>
-            </div>
-
-            <div class="wizard-card">
-                <div class="field-label mb-1">
-              <span
-                      class="material-symbols-outlined"
-                      style="font-size: 16px; color: var(--purple)">calendar_today</span>
-                    Event Date <span class="required">*</span>
-                </div>
-                <p
-                        style="font-size: 11px; color: var(--muted); margin-bottom: 14px"
-                >
-                    Modifying this date will instantly align your showtime schedule
-                    below.
-                </p>
-                <div style="max-width: 280px">
-                    <div class="mono-tag mb-1">PICK DATE</div>
-                    <input
-                            type="date"
-                            id="eventDate"
-                            class="wiz-input"
-                            onchange="handleDateChange(this.value)"
-                    />
-                </div>
-            </div>
-
-            <div class="wizard-card">
-                <div class="field-label mb-1">
-              <span
-                      class="material-symbols-outlined"
-                      style="font-size: 16px; color: var(--purple)"
-              >location_on</span
-              >
-                    Official Hosting Venue <span class="required">*</span>
-                </div>
-                <p
-                        style="font-size: 11px; color: var(--muted); margin-bottom: 14px"
-                >
-                    Ticket bookings require a verified offline venue in our system
-                    database.
-                </p>
-
-                <select
-                        id="venueSelect"
-                        class="wiz-select mb-3"
-                        onchange="handleVenueChange(this.value)"
-                >
-                    <option value="">-- Please select verified venue --</option>
-                </select>
-
-                <div
-                        id="venueDetails"
-                        style="display: none"
-                        class="venue-verified animate-fade-in"
-                >
-                    <div class="venue-verified-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px"
-                >verified</span
-                >
-                        VERIFIED REVENUE-SHARING VENUE ACTIVE
-                    </div>
-                    <div class="venue-detail-grid">
-                        <div>
-                            <span class="venue-detail-label">Venue Name</span>
-                            <span class="venue-detail-value" id="vd-name"></span>
-                        </div>
-                        <div>
-                            <span class="venue-detail-label">Address Line</span>
-                            <span
-                                    class="venue-detail-value"
-                                    id="vd-street"
-                                    style="font-weight: 500; font-size: 12px"
-                            ></span>
-                        </div>
-                        <div>
-                            <span class="venue-detail-label">District Area</span>
-                            <span
-                                    class="venue-detail-value"
-                                    id="vd-district"
-                                    style="font-weight: 500; font-size: 12px"
-                            ></span>
-                        </div>
-                        <div>
-                            <span class="venue-detail-label">Province / City</span>
-                            <span
-                                    class="venue-detail-value"
-                                    id="vd-province"
-                                    style="font-weight: 500; font-size: 12px"
-                            ></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="venueEmpty" class="empty-state">
-                    No venue selected. Ticket layouts will use default mapping
-                    configurations.
-                </div>
-            </div>
-        </div>
-
-        <div id="section-showtimes" class="mb-5">
-            <div class="section-header">
-                <div class="section-badge">3</div>
-                <div>
-                    <h3 class="section-title">Showtimes &amp; Tickets</h3>
-                    <p class="section-sub">
-                        Configure hour ranges and ticket tiers for each show day
-                    </p>
-                </div>
-            </div>
-
-            <div class="wizard-card">
-                <div
-                        class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4 pb-3"
-                        style="border-bottom: 1px solid rgba(0, 0, 0, 0.04)"
-                >
-                    <div>
-                        <h4
-                                style="
-                    font-size: 12px;
-                    font-weight: 900;
-                    text-transform: uppercase;
-                    letter-spacing: 0.04em;
-                    color: #1e293b;
-                    margin: 0;
-                  "
-                        >
-                            Configure Showtime Schedules
-                        </h4>
-                        <p
-                                style="font-size: 10px; color: var(--muted); margin: 2px 0 0"
-                        >
-                            Toggle between tabs to declare ticket capacities for each date
-                            block.
-                        </p>
-                    </div>
-                    <button
-                            type="button"
-                            class="btn-outline-purple btn-sm"
-                            onclick="addNewShowtime()"
-                    >
-                        Create Showtime Slot
-                        <span class="material-symbols-outlined" style="font-size: 14px"
-                        >more_time</span
-                        >
-                    </button>
-                </div>
-
-                <div id="showtimeTabs" class="showtime-tabs"></div>
-
-                <div id="showtimePanel"></div>
-
-                <div id="showtimeEmpty" class="empty-state" style="display: none">
-                    No active showtimes configured. Add a date block or click "Create
-                    Showtime Slot" above.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal-backdrop" id="ticketModal" style="display: none">
-    <div class="modal-box">
-        <div class="modal-title">
-          <span
-                  class="material-symbols-outlined"
-                  style="font-size: 18px; color: var(--purple)"
-          >confirmation_number</span
-          >
-            Register New Ticket Tier
-        </div>
-
-        <div class="mb-3">
-            <label class="field-label">Ticket Tier Name</label>
-            <input
-                    type="text"
-                    id="tkt-name"
-                    class="wiz-input"
-                    placeholder="e.g. VIP Ultra Fan Pass"
-            />
-        </div>
-
-        <div class="mb-3">
-            <label class="field-label">Zone Allocation</label>
-            <select id="tkt-zone" class="wiz-select"></select>
-        </div>
-
-        <div class="row g-3 mb-3">
-            <div class="col-6">
-                <label class="field-label">Ticket Price (₫)</label>
-                <input
-                        type="number"
-                        id="tkt-price"
-                        class="wiz-input"
-                        placeholder="e.g. 450000"
-                />
-                <div class="d-flex align-items-center gap-2 mt-2">
-                    <input
-                            type="checkbox"
-                            id="tkt-free"
-                            class="form-check-input"
-                            style="cursor: pointer"
-                            onchange="
-                  document.getElementById('tkt-price').disabled = this.checked
-                "
-                    />
-                    <label
-                            for="tkt-free"
-                            style="
-                  font-size: 10px;
-                  color: var(--purple);
-                  font-weight: 800;
-                  cursor: pointer;
-                "
-                    >Free Admission Ticket</label
-                    >
-                </div>
-            </div>
-            <div class="col-6">
-                <label class="field-label">Release Quantity</label>
-                <input
-                        type="number"
-                        id="tkt-qty"
-                        class="wiz-input"
-                        placeholder="e.g. 150"
-                />
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <label class="field-label">Tier Benefits &amp; Description</label>
-            <textarea
-                    id="tkt-desc"
-                    class="wiz-textarea"
-                    rows="2"
-                    placeholder="Ticket includes special gift set, complimentary drinks, priority lane..."
-            ></textarea>
-        </div>
-
-        <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn-ghost" onclick="closeTicketModal()">
-                Cancel
-            </button>
-            <button type="button" class="btn-purple" onclick="confirmAddTicket()">
-                Confirm Tier
-            </button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
 <script th:src="@{/organizer/js/CreateEvent.js}"></script>
 </body>
 </html>
-
