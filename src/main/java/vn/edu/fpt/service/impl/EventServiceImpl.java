@@ -1,11 +1,17 @@
 package vn.edu.fpt.service.impl;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.model.Event;
+import vn.edu.fpt.model.Venue;
+import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.repository.EventSummaryProjection;
+import vn.edu.fpt.repository.FeaturedEventDTO;
+
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.*;
-import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.repository.*;
@@ -16,14 +22,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
+    private final EventRepository eventRepository;
     private EventCategoryRepository eventCategoryRepository;
     private VenueRepository venueRepository;
     private VenueZoneRepository venueZoneRepository;
-    private EventRepository eventRepository;
     private UserRepository userRepository;
     private CloudinaryService cloudinaryService;
 
@@ -139,6 +147,23 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public long countHostedEvents() {
+        return this.eventRepository.countHostedEvents(List.of(EventStatus.APPROVED, EventStatus.ENDED));
+    }
+
+    @Override
+    public List<EventSummaryDto> findTopFeaturedEvents() {
+        List<EventSummaryProjection> projections =  this.eventRepository.findTopFeaturedEvents();
+
+        return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public FeaturedEventDTO findFeaturedEvent() {
+        return this.eventRepository.findFeaturedEvent();
+    }
+
+    @Override
     public EventDetailModeratorDTO getEventDetailById(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -182,13 +207,11 @@ public class EventServiceImpl implements EventService {
             eventDetailModeratorDTO.setOrganizerName(fullName);
             eventDetailModeratorDTO.setOrganizerAvatarUrl(event.getOrganizer().getAvatar());
         }
-
         //truong gia dinh (se dung khi database update them cot)
         eventDetailModeratorDTO.setRejectReason("");
 
         return eventDetailModeratorDTO;
     }
+
+
 }
-
-
-

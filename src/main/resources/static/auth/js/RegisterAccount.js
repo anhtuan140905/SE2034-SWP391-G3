@@ -80,7 +80,7 @@ var currentRole = 'user';
     /* ── OTP INPUTS ── */
     var otpInputs = document.querySelectorAll('.otp-input');
     otpInputs.forEach(function(inp, i) {
-      inp.addEventListener('input', function() {
+    inp.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g,'');
         if (this.value && i < 5) otpInputs[i+1].focus();
         this.classList.toggle('filled', !!this.value);
@@ -205,4 +205,3 @@ window.onload = function () {
             });
 
     });
-

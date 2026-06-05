@@ -6,6 +6,9 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -23,12 +26,24 @@ public class SecurityConfiguration {
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoderConfig passwordEncoderConfig;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final ClientRegistrationRepository clientRegistrationRepository;
     public SecurityConfiguration(CustomUserDetailsService customUserDetailsService,
                                  PasswordEncoderConfig passwordEncoderConfig,
-                                 CustomOAuth2UserService customOAuth2UserService) {
+                                 CustomOAuth2UserService customOAuth2UserService,
+                                 ClientRegistrationRepository clientRegistrationRepository) {
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoderConfig = passwordEncoderConfig;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.clientRegistrationRepository = clientRegistrationRepository;
+    }
+
+    @Bean
+    public OAuth2AuthorizationRequestResolver oAuth2RequestResolver() {
+        var resolver = new DefaultOAuth2AuthorizationRequestResolver(
+                clientRegistrationRepository, "/oauth2/authorization");
+        resolver.setAuthorizationRequestCustomizer(c ->
+                c.additionalParameters(p -> p.put("prompt", "select_account")));
+        return resolver;
     }
 
     @Bean
@@ -71,7 +86,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/auth/**", "/css/**",
-                                "/js/**", "/homepage/**"
+                                "/js/**", "/homepage/**",
+                                "/auth/css/**", "/auth/js/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")
@@ -96,7 +112,8 @@ public class SecurityConfiguration {
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                .loginPage("/auth/login")
+                .loginPage("/auth/login").authorizationEndpoint(a -> a
+                                        .authorizationRequestResolver(oAuth2RequestResolver()))
                 .userInfoEndpoint(u -> u
                         .userService(customOAuth2UserService)
                 )

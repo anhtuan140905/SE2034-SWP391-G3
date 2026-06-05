@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,7 +31,7 @@ public class Venue extends BaseAuditEntity {
     @Column(name = "capacity", nullable = false)
     private Integer capacity; // Tính động = SUM(rows × seats_per_row) của tất cả Zone
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @Column(name = "imageUrl")

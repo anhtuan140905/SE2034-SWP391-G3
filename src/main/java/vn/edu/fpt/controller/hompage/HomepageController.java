@@ -1,6 +1,7 @@
 package vn.edu.fpt.controller.hompage;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,28 +14,48 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
+import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.service.CityService;
+import vn.edu.fpt.service.EventService;
+import vn.edu.fpt.service.TicketService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.CloudinaryService;
 import vn.edu.fpt.service.impl.CustomOAuth2User;
 import vn.edu.fpt.service.impl.CustomUserDetails;
+import vn.edu.fpt.service.impl.EventCategoryServiceImpl;
+
+import java.util.List;
 
 
 @Controller
+@AllArgsConstructor
 public class HomepageController {
     private final UserService userService;
     private final CityService cityService;
     private final CloudinaryService cloudinaryService;
-
-    public HomepageController(UserService userService, CityService cityService,  CloudinaryService cloudinaryService) {
-        this.userService = userService;
-        this.cityService = cityService;
-        this.cloudinaryService = cloudinaryService;
-    }
+    private final EventService eventService;
+    private final TicketService ticketService;
+    private final EventCategoryServiceImpl eventCategoryService;
 
     @GetMapping("/")
     public String homepage(
             Model model){
+        long hostedEvents = this.eventService.countHostedEvents();
+        model.addAttribute("hostedEvents", hostedEvents);
+        long issuedTickets = this.ticketService.issuedTickets();
+        model.addAttribute("issuedTickets", issuedTickets);
+        long eventCategories = this.eventCategoryService.countEventCategories();
+        model.addAttribute("eventCategories", eventCategories);
+        long activatedOrganizer = this.userService.getActivatedOrganizers().size();
+        model.addAttribute("activatedOrganizers", activatedOrganizer);
+        List<EventSummaryDto> featuredEvents = this.eventService.findTopFeaturedEvents();
+        model.addAttribute("featuredEvents", featuredEvents);
+        List<FeaturedOrganizerDto> featuredOrganizers = this.userService.getFeaturedOrganizers();
+        model.addAttribute("featuredOrganizers", featuredOrganizers);
+        FeaturedEventDTO featuredEvent = this.eventService.findFeaturedEvent();
+        model.addAttribute("featuredEvent", featuredEvent);
         return "homepage/Home";
     }
 
@@ -103,7 +124,6 @@ public class HomepageController {
             return "homepage/UpdateProfileUser";
         }
         return "redirect:/profile";
-
     }
 
 
