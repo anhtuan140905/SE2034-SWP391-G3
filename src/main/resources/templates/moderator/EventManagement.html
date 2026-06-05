@@ -16,8 +16,9 @@
 
     <div class="em-topbar">
         <div class="em-heading">
-            <h1 class="page-title">EVENT MODERATION FEED</h1>
-            <p class="page-subtitle">Review and certify incoming event applications submitted for the central midnight grid.</p>
+            <h1 class="page-title">EVENT LIST</h1>
+            <p class="page-subtitle">Review and certify incoming event applications submitted for the central midnight
+                grid.</p>
         </div>
         <div class="em-filters">
             <div class="filter-group">
@@ -25,8 +26,8 @@
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="searchInput"
-                           aria-label="Search Event, Host, Venue"
-                           placeholder="Search Event, Host, Venue."
+                           aria-label="Search Event, Host"
+                           placeholder="Search Event, Host."
                            th:value="${keyword}"
                            autocomplete="off"/>
                 </div>
@@ -35,14 +36,31 @@
                 <label class="filter-label" for="statusSelect">STATUS FILTER</label>
                 <div class="select-wrapper">
                     <select id="statusSelect">
-                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">All Statuses</option>
-                        <option value="PENDING"  th:selected="${statusFilter == 'PENDING'}">Pending</option>
+                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">All Statuses
+                        </option>
+                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">Pending</option>
                         <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">Approved</option>
                         <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">Rejected</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-arrow"></i>
                 </div>
             </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="statusSelect">Category Filter</label>
+                <div class="select-wrapper">
+                    <select name="categoryId" class="form-select">
+                        <option value="">All Categories</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.categoryId}"
+                                th:text="${cat.categoryName}"
+                                th:selected="${cat.categoryId == categoryId}">
+                        </option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -99,42 +117,47 @@
             </thead>
             <tbody>
 
-            <th:block th:if="${#lists.isEmpty(recentActivities)}">
+            <th:block th:if="${events != null and events.totalElements > 0}">
                 <tr th:each="event : ${events}">
                     <td>
-                        <span class="event-id" th:text="${'#EV-' + event.id}">#EV-0000</span>
+                        <span class="event-id"
+                              th:text="${event?.eventId != null ?  event.eventId : '#EV-0000'}">#EV-0000</span>
                     </td>
                     <td>
-                        <span class="event-title" th:text="${event.title}">Event Title</span>
+                        <span class="event-title" th:text="${event?.title ?: 'Chưa cập nhật tên'}">Event Title</span>
                     </td>
                     <td>
-                        <span class="event-organizer" th:text="${event.organizerName}">Organizer</span>
+                        <span class="event-organizer"
+                              th:text="${event?.organizer != null ? (event.organizer.firstName + ' ' + event.organizer.lastName) : 'Unknown Host'}">Organizer</span>
                     </td>
                     <td>
-                        <span class="event-date" th:text="${#temporals.format(event.startTime, 'MMM dd, yyyy')}">Jan 01, 2026</span>
-                        <span class="event-time" th:text="${#temporals.format(event.startTime, 'HH:mm') + ' PM'}">00:00 PM</span>
+                        <span class="event-date"
+                              th:text="${event?.startTime != null ? #temporals.format(event.startTime, 'dd/MM/yyyy') : ''}">Jan 01, 2026</span>
+                        <span class="event-time"
+                              th:text="${event?.startTime != null ? #temporals.format(event.startTime, 'HH:mm') : ''}">00:00</span>
                     </td>
                     <td>
                         <span class="event-badge"
-                              th:classappend="${event.status == 'APPROVED' ? 'badge-approved' : (event.status == 'PENDING' ? 'badge-pending' : 'badge-rejected')}"
-                              th:text="${event.status}">STATUS</span>
+                              th:classappend="${event?.status?.name() == 'APPROVED' ? 'badge-approved' : (event?.status?.name() == 'PENDING' ? 'badge-pending' : 'badge-rejected')}"
+                              th:text="${event?.status ?: 'PENDING'}">STATUS</span>
                     </td>
                     <td>
-                        <a th:href="@{/moderator/events/{id}(id=${event.eventId})}" class="btn-view">
+                        <a th:href="@{/moderator/event/detail/{id}(id=${event?.eventId ?: 0})}" class="btn-view">
                             View Details
                         </a>
                     </td>
                 </tr>
             </th:block>
 
-            <th:block th:if="${#lists.isEmpty(recentActivities)}">
+            <th:block th:if="${events == null or events.totalElements == 0}">
                 <tr>
                     <td colspan="6" class="em-empty-container">
                         <div class="em-empty-icon">
                             <i class="fa-regular fa-folder-open"></i>
                         </div>
                         <h3 class="em-empty-title">No events found</h3>
-                        <p class="em-empty-text">We couldn't find any events matching your search or filter criteria.</p>
+                        <p class="em-empty-text">We couldn't find any events matching your search or filter
+                            criteria.</p>
                     </td>
                 </tr>
             </th:block>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#organizer-detail-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
+<head>
+    <title>Organizer Detail — EventHub Moderator</title>
+    <!--/*@thymesVar id="organizer" type="com.example.dto.OrganizerDetailDTO"*/-->
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/organizer_detail.css}"/>
+</head>
+<body>
+
+<section id="organizer-detail-content" th:fragment="content">
+
+    <!-- Back + Page Title -->
+    <div class="od-header">
+        <a th:href="${backEventId != null} ? @{/moderator/event/detail/{id}(id=${backEventId})} : @{/moderator/events}"
+           class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>QUAY LẠI SỰ KIỆN</span>
+        </a>
+        <h1 class="od-page-title">ORGANIZER INFORMATION</h1>
+    </div>
+
+    <!-- Top 2 cards row -->
+    <div class="od-cards-row">
+
+        <!-- ── LEFT: Personal Info (Users Table) ── -->
+        <div class="od-card">
+            <div class="od-card-title">
+                <i class="fa-solid fa-database"></i>
+                <span>PERSONAL INFORMATION</span>
+            </div>
+
+            <!-- Avatar + Name/Email/Company -->
+            <div class="od-personal-top">
+                <div class="od-avatar-wrapper">
+                    <div class="od-avatar">
+                        <img th:if="${organizer != null and organizer.avatarUrl != null}"
+                             th:src="${organizer.avatarUrl}"
+                             th:alt="${organizer.fullName}"/>
+                        <span th:if="${organizer == null or organizer.avatarUrl == null}"
+                              class="od-avatar-fallback">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="od-personal-info">
+                    <div class="od-info-item">
+                        <span class="od-info-label">FULL NAME</span>
+                        <div class="od-info-value-row">
+                            <span class="od-info-value"
+                                  th:text="${organizer != null ? organizer.fullName : 'Helena Carter'}">Helena Carter</span>
+                        </div>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-info-label">CONTACT EMAIL</span>
+                        <div class="od-info-value-row">
+                            <span class="od-info-value od-mono"
+                                  th:text="${organizer != null ? organizer.email : 'admin@hyperion.com'}">admin@hyperion.com</span>
+                        </div>
+                    </div>
+                    <div class="od-info-item">
+                        <span class="od-info-label">COMPANY NAME</span>
+                        <div class="od-info-value-row">
+                            <span class="od-info-value"
+                                  th:text="${organizer != null ? organizer.companyName : 'Hyperion Agency Inc.'}">Hyperion Agency Inc.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address row -->
+            <div class="od-address-row">
+                <div class="od-address-item">
+                    <span class="od-info-label">HOME ADDRESS</span>
+                    <div class="od-info-value-row">
+                        <span class="od-info-value"
+                              th:text="${organizer != null ? organizer.homeAddress : '55 Pham Nhat '}">55 Hyperion Heights</span>
+                    </div>
+                </div>
+                <div class="od-address-item">
+                    <span class="od-info-label">WARD</span>
+                    <div class="od-info-value-row">
+                        <span class="od-info-value"
+                              th:text="${organizer != null ? organizer.ward : 'Ben Thanh'}">Ben Thanh Ward</span>
+                    </div>
+                </div>
+                <div class="od-address-item">
+                    <span class="od-info-label">CITY</span>
+                    <div class="od-info-value-row">
+                        <span class="od-info-value"
+                              th:text="${organizer != null ? organizer.city : 'Ho Chi Minh City'}">Ho Chi Minh City</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: Promoter Details (Organizers Table) ── -->
+        <div class="od-card">
+            <div class="od-card-title">
+                <i class="fa-solid fa-store"></i>
+                <span>PROMOTER DETAILS</span>
+            </div>
+
+            <div class="od-promoter-grid">
+
+                <div class="od-promoter-item">
+                    <span class="od-info-label">TAX NUMBER</span>
+                    <div class="od-info-value-row">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span class="od-info-value od-mono"
+                              th:text="${organizer != null ? organizer.taxId : 'TAX-US-9930219'}">TAX-US-9930219</span>
+                    </div>
+                </div>
+
+                <div class="od-promoter-item">
+                    <span class="od-info-label">JOINED DATE</span>
+                    <div class="od-info-value-row">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span class="od-info-value"
+                              th:text="${organizer != null ? #temporals.format(organizer.joinedDate, 'MMM dd, yyyy') : 'May 24, 2026'}">May 24, 2026</span>
+                    </div>
+                </div>
+
+                <div class="od-promoter-item">
+                    <span class="od-info-label">NUMBER OF EVENTS ORGANIZED</span>
+                    <div class="od-info-value-row">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span class="od-info-value od-stat-value"
+                              th:text="${organizer != null ? organizer.totalEventsOrganized : 0}">0</span>
+                    </div>
+                </div>
+
+                <div class="od-promoter-item">
+                    <span class="od-info-label">NUMBER OF REJECTED EVENTS</span>
+                    <div class="od-info-value-row">
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                        <span class="od-info-value od-stat-value od-stat-rejected"
+                              th:text="${organizer != null ? organizer.totalRejectedEvents : 0}">0</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/organizer_detail.js}"></script>
+
+</body>
+</html>

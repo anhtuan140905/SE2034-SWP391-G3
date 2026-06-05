@@ -17,7 +17,7 @@
     <div class="om-topbar">
         <div class="om-heading">
             <h1 class="page-title">LIST OF ORGANIZER</h1>
-            <p class="page-subtitle"></p>
+            <p class="page-subtitle">Putting people at the center, existing to create new value for society.</p>
         </div>
         <div class="om-filters">
             <div class="filter-group">
@@ -88,7 +88,7 @@
                 <td>
             <span th:if="${org.status != null}"
                   class="om-status-badge"
-                  th:classappend="${org.status == 'APPROVED' ? 'approved' : (org.status == 'REJECTED' ? 'rejected' : 'pending')}"
+                  th:classappend="${org.status == 'APPROVED' ? 'badge-approved' : (org.status == 'REJECTED' ? 'badge-rejected' : 'badge-pending')}"
                   th:text="${org.status}">PENDING
             </span>
                     <span th:if="${org.status == null}" class="om-status-badge pending"
@@ -97,8 +97,8 @@
 
                 <td>
                     <div class="om-actions">
-                        <a class="btn-view"
-                           th:href="@{/moderator/organizers/review/{id}(id=${org.userId})}">Review</a>
+                        <a class="btn-review"
+                           th:href="@{/moderator/organizer/{id}(id=${org.userId})}">Review</a>
                     </div>
                 </td>
             </tr>

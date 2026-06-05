@@ -9,7 +9,6 @@
 
     <!-- Brand -->
     <div class="sidebar-brand">
-        <span class="brand-icon"><i class="fa-solid fa-bolt"></i></span>
         <div class="brand-text">
             <span class="brand-name">EVENTHUB</span>
             <span class="brand-role">MODERATOR PORTAL</span>
@@ -28,15 +27,15 @@
             <li th:classappend="${activePage == 'event-management'} ? 'active' : ''">
                 <a th:href="@{/moderator/events}">
                     <span class="nav-icon"><i class="fa-regular fa-calendar-days"></i></span>
-                    <span class="nav-label">Event Management</span>
+                    <span class="nav-label">Pending Event</span>
                 </a>
             </li>
-            <li th:classappend="${activePage == 'organizer-approvals'} ? 'active' : ''">
-                <a th:href="@{/moderator/organizers}">
-                    <span class="nav-icon"><i class="fa-solid fa-shield-halved"></i></span>
-                    <span class="nav-label">Organizer Approvals</span>
-                </a>
-            </li>
+<!--            <li th:classappend="${activePage == 'organizer-approvals'} ? 'active' : ''">-->
+<!--                <a th:href="@{/moderator/organizers}">-->
+<!--                    <span class="nav-icon"><i class="fa-solid fa-shield-halved"></i></span>-->
+<!--                    <span class="nav-label">Organizer Approvals</span>-->
+<!--                </a>-->
+<!--            </li>-->
             <li th:classappend="${activePage == 'profile'} ? 'active' : ''">
                 <a th:href="@{/moderator/profile}">
                     <span class="nav-icon"><i class="fa-regular fa-user"></i></span>
