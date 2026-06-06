@@ -9,6 +9,7 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
+import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
 
@@ -27,5 +28,6 @@ public interface UserService {
     public List<User> getAllUser();
     public User findById(Long id);
     public List<User> searchUser(String keyword);
-
+    public List<User> getActivatedOrganizers();
+    public List<FeaturedOrganizerDto> getFeaturedOrganizers();
 }

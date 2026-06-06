@@ -10,12 +10,16 @@ import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.VenueDto;
 import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.repository.FeaturedEventDTO;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
+    long countHostedEvents();
+    List<EventSummaryDto> findTopFeaturedEvents();
+    FeaturedEventDTO findFeaturedEvent();
     List<VenueDto> findByDateNot(LocalDate dates);
     List<EventCategory> getListEventCategory();
     List<VenueZoneOrganizerDTO> getVenueZoneByVenueId(Long id);

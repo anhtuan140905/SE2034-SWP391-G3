@@ -1,6 +1,8 @@
 package vn.edu.fpt.service.impl;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +16,7 @@ import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
+import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
 import vn.edu.fpt.service.*;
@@ -176,4 +179,17 @@ public class UserServiceImpl implements UserService {
     public List<User> searchUser(String keyword){
         return userRepository.findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(keyword,keyword,keyword);
     }
+
+    @Override
+    public List<User> getActivatedOrganizers() {
+        return this.userRepository.findActiveOrganizers("ACTIVE");
+    }
+
+    @Override
+    public List<FeaturedOrganizerDto> getFeaturedOrganizers() {
+        List<FeaturedOrganizerDto> top3 = this.userRepository.getTopFeaturedOrganizer((Pageable) PageRequest.of(0, 3));
+        return top3;
+    }
+
+
 }
