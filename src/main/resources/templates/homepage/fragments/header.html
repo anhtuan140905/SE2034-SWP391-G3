@@ -55,7 +55,8 @@
                 <div sec:authorize="isAuthenticated()" class="nav-item dropdown ms-lg-2 profile-dropdown">
                     <a class="nav-link dropdown-toggle profile-trigger d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar-wrap">
-                            <img src="https://ui-avatars.com/api/?name=User&background=random" alt="" class="user-avatar">
+                            <img th:with="avatar=${#authentication != null ? #authentication.principal.user.avatar : null}"
+                                 th:src="${avatar != null ? avatar : 'https://ui-avatars.com/api/?name=User&amp;background=random'}" alt="" class="user-avatar">
                             <span class="status-indicator online"></span>
                         </div>
                         <span class="d-none d-md-inline ms-2 username-text" sec:authentication="name">Username</span>

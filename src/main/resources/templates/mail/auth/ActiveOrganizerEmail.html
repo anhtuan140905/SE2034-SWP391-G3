@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kích hoạt tài khoản Organizer - EventHub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #08090d;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .email-wrapper {
+            background-color: #08090d;
+            padding: 40px 16px;
+            min-height: 100vh;
+        }
+
+        .email-container {
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        /* ── Header / Brand ── */
+        .brand-header {
+            text-align: center;
+            padding-bottom: 32px;
+        }
+
+        .brand-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-pink   { background: #ff3cac; }
+        .dot-violet { background: #7928ca; }
+        .dot-orange { background: #ff6b2b; }
+
+        .brand-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .brand-name span {
+            background: linear-gradient(90deg, #ff3cac, #7928ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── Main Card ── */
+        .main-card {
+            background: linear-gradient(135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Glow top accent */
+        .card-glow-top {
+            height: 3px;
+            background: linear-gradient(90deg, #ff3cac, #7928ca, #ff6b2b);
+        }
+
+        /* Hero section */
+        .card-hero {
+            background: linear-gradient(135deg,
+                rgba(121,40,202,0.15) 0%,
+                rgba(255,60,172,0.08) 50%,
+                rgba(255,107,43,0.05) 100%);
+            padding: 48px 40px 36px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative circle background */
+        .hero-circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(121,40,202,0.12) 0%, transparent 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .hero-icon-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(121,40,202,0.3), rgba(255,60,172,0.2));
+            border: 1px solid rgba(255,255,255,0.12);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-icon {
+            font-size: 32px;
+        }
+
+        .hero-label {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ff3cac;
+            background: rgba(255,60,172,0.1);
+            border: 1px solid rgba(255,60,172,0.2);
+            border-radius: 100px;
+            padding: 4px 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.3;
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title span {
+            background: linear-gradient(90deg, #ff3cac, #7928ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── Body Content ── */
+        .card-body {
+            padding: 36px 40px;
+        }
+
+        .greeting {
+            font-size: 15px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.72);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .greeting strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Info block */
+        .info-block {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .info-row:first-child {
+            padding-top: 0;
+        }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(121,40,202,0.15);
+            border: 1px solid rgba(121,40,202,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* CTA Button */
+        .cta-wrap {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #7928ca, #ff3cac);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 100px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            box-shadow: 0 8px 32px rgba(121,40,202,0.35), 0 2px 8px rgba(255,60,172,0.2);
+        }
+
+        /* Fallback link */
+        .fallback-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 28px;
+        }
+
+        .fallback-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .fallback-link {
+            font-size: 12px;
+            color: #7928ca;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Expire notice */
+        .expire-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255,107,43,0.06);
+            border: 1px solid rgba(255,107,43,0.15);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 28px;
+        }
+
+        .expire-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .expire-text {
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.58);
+            line-height: 1.7;
+        }
+
+        .expire-text strong {
+            color: #ff6b2b;
+            font-weight: 600;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            margin: 28px 0;
+        }
+
+        .help-text {
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .help-text a {
+            color: #ff3cac;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* ── Footer ── */
+        .email-footer {
+            text-align: center;
+            padding: 28px 0 8px;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.22);
+            line-height: 1.9;
+        }
+
+        .footer-text a {
+            color: rgba(255,255,255,0.38);
+            text-decoration: none;
+        }
+
+        .footer-dots {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .footer-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-container">
+
+        <!-- Brand Header -->
+        <div class="brand-header">
+            <div class="brand-logo">
+                <div class="brand-dots">
+                    <div class="dot dot-pink"></div>
+                    <div class="dot dot-violet"></div>
+                    <div class="dot dot-orange"></div>
+                </div>
+                <span class="brand-name">Event<span>Hub</span></span>
+            </div>
+        </div>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <div class="card-glow-top"></div>
+
+            <!-- Hero -->
+            <div class="card-hero">
+                <div class="hero-circle"></div>
+                <div class="hero-icon-wrap">
+                    <span class="hero-icon">🎉</span>
+                </div>
+                <div class="hero-label">Organizer Account</div>
+                <h1 class="hero-title">Xác nhận <span>email</span> của bạn</h1>
+            </div>
+
+            <!-- Body -->
+            <div class="card-body">
+
+                <p class="greeting">
+                    Xin chào, <strong th:text="${organizerName}">.</strong>!<br><br>
+                    Cảm ơn bạn đã đăng ký tài khoản <strong>Organizer</strong> trên EventHub.
+                    Vui lòng xác nhận địa chỉ email để kích hoạt tài khoản và bắt đầu tạo sự kiện của bạn.
+                </p>
+
+                <!-- Info Block -->
+                <div class="info-block">
+                    <div class="info-row">
+                        <div class="info-icon">🏢</div>
+                        <div>
+                            <div class="info-label">Tên công ty</div>
+                            <div class="info-value" th:text="${companyName}">EventHub Corp</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-icon">📧</div>
+                        <div>
+                            <div class="info-label">Email đăng ký</div>
+                            <div class="info-value" th:text="${username}">.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="cta-wrap">
+                    <a th:href="${activationLink}" href="#" class="cta-btn">
+                        Kích hoạt tài khoản
+                    </a>
+                </div>
+
+                <!-- Fallback link -->
+                <div class="fallback-box">
+                    <div class="fallback-label">Hoặc copy link bên dưới vào trình duyệt</div>
+                    <span class="fallback-link" th:text="${activationLink}">
+                        https://eventhub.vn/verify?token=abc123xyz
+                    </span>
+                </div>
+
+                <!-- Expire notice -->
+                <div class="expire-notice">
+                    <span class="expire-icon">⏰</span>
+                    <p class="expire-text">
+                        Link xác nhận sẽ <strong>hết hạn sau 24 giờ</strong>.
+                        Nếu bạn không đăng ký tài khoản này, vui lòng bỏ qua email này.
+                    </p>
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="help-text">
+                    Cần hỗ trợ? Liên hệ chúng tôi tại
+                    <a href="mailto:support@eventhub.vn">support@eventhub.vn</a>
+                </p>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="email-footer">
+            <div class="footer-dots">
+                <div class="footer-dot" style="background:#ff3cac;"></div>
+                <div class="footer-dot" style="background:#7928ca;"></div>
+                <div class="footer-dot" style="background:#ff6b2b;"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

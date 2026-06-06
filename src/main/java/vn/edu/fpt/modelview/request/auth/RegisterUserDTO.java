@@ -2,6 +2,7 @@ package vn.edu.fpt.modelview.request.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,8 +26,10 @@ public class RegisterUserDTO {
     @NotBlank(message = "Email không được để trống!")
     @Email(message = "Email không hợp lệ")
     private String username;
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     @NotBlank(message = "Vui lòng nhập mật khẩu")
     private String password;
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     @NotBlank(message = "Confirm password không được để trống!")
     private String confirmPassword;
     @NotBlank(message = "Vui lòng chọn gender")

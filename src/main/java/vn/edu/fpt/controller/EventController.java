@@ -10,17 +10,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.User;
-import vn.edu.fpt.model.Venue;
-import vn.edu.fpt.model.VenueZone;
-import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.service.UserService;
-import vn.edu.fpt.service.impl.CustomUserDetails;
+import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 @Controller
 //@RestController
