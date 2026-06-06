@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
@@ -13,9 +12,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import vn.edu.fpt.service.UserService;
-import vn.edu.fpt.service.impl.CustomOAuth2UserService;
-import vn.edu.fpt.service.impl.CustomUserDetailsService;
+import vn.edu.fpt.service.impl.security.CustomAuthenticationFailureHandler;
+import vn.edu.fpt.service.impl.security.CustomDaoAuthenticationProvider;
+import vn.edu.fpt.service.impl.security.CustomOAuth2UserService;
+import vn.edu.fpt.service.impl.security.CustomUserDetailsService;
 
 import java.util.List;
 
@@ -27,14 +27,17 @@ public class SecurityConfiguration {
     private final PasswordEncoderConfig passwordEncoderConfig;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     public SecurityConfiguration(CustomUserDetailsService customUserDetailsService,
                                  PasswordEncoderConfig passwordEncoderConfig,
                                  CustomOAuth2UserService customOAuth2UserService,
-                                 ClientRegistrationRepository clientRegistrationRepository) {
+                                 ClientRegistrationRepository clientRegistrationRepository,
+                                 CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
         this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoderConfig = passwordEncoderConfig;
         this.customOAuth2UserService = customOAuth2UserService;
         this.clientRegistrationRepository = clientRegistrationRepository;
+        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
     }
 
     @Bean
@@ -48,9 +51,11 @@ public class SecurityConfiguration {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        CustomDaoAuthenticationProvider authenticationProvider = new CustomDaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(this.passwordEncoderConfig.passwordEncoder());
         authenticationProvider.setUserDetailsService(customUserDetailsService);
+        authenticationProvider.setPreAuthenticationChecks(u -> {}); // nhận user nhưng bỏ qua
+                                                            // Thằng này nó nhận vafo 1 thằng UserDetailsChecker mà là interface có đúng 1 hàm duy nhất nên viết lambda đc
         return authenticationProvider;
     }
     @Bean
@@ -65,7 +70,6 @@ public class SecurityConfiguration {
             else if (roles.contains("ROLE_MODERATOR")) redirect = "/moderator/dashboard";
             else if (roles.contains("ROLE_FINANCE"))   redirect = "/finance/dashboard";
             else if (roles.contains("ROLE_ORGANIZER")) redirect = "/organizer/dashboard";
-            else if (roles.contains("ROLE_STAFF"))     redirect = "/staff/dashboard";
             else                                        redirect = "/";
             response.sendRedirect(request.getContextPath() + redirect);
         };
@@ -108,7 +112,7 @@ public class SecurityConfiguration {
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
                         .successHandler(customSuccessHandler())
-                        .failureUrl("/auth/login?error=true")
+                        .failureHandler(customAuthenticationFailureHandler)
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

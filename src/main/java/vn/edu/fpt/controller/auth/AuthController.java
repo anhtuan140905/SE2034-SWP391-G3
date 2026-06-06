@@ -8,17 +8,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.common.error.CheckDuplicateException;
+import vn.edu.fpt.model.User;
+import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.Ward;
+import vn.edu.fpt.model.constant.TokenType;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.UserService;
+import vn.edu.fpt.service.VerifyTokenService;
 import vn.edu.fpt.service.WardService;
-import vn.edu.fpt.service.impl.resetPassword.PasswordResetService;
+import vn.edu.fpt.service.impl.security.PasswordResetService;
+import vn.edu.fpt.service.impl.security.RegistrationService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,22 +32,54 @@ public class AuthController {
     private final WardService wardService;
     private final CityService cityService;
     private final PasswordResetService passwordResetService;
+    private final VerifyTokenService  verifyTokenService;
+    private final RegistrationService registrationService;
 
     public AuthController(UserService userService,
                           WardService wardService,
                           CityService cityService,
-                          PasswordResetService passwordResetService) {
+                          PasswordResetService passwordResetService,
+                          VerifyTokenService verifyTokenService,
+                          RegistrationService registrationService) {
         this.userService = userService;
         this.wardService = wardService;
         this.cityService = cityService;
         this.passwordResetService = passwordResetService;
+        this.verifyTokenService = verifyTokenService;
+        this.registrationService = registrationService;
     }
     @GetMapping("/login")
     public String getLoginPage(
-            @RequestParam(value = "error", required = false) String error, Model model
+            @RequestParam(name = "error", required = false) String error,
+            @RequestParam(name = "success", required = false) String success,
+            Model model
     ) {
+
         if(error != null) {
-            model.addAttribute("loginError", "Tài khoản hoặc mật khẩu không đúng");
+            String msg;
+            switch (error) {
+                case "not_activated": {
+                    msg="Tài khoản chưa được active. Vui lòng check gmail!";
+                    break;
+                }
+                case "locked": {
+                    msg="Tài khoản của bạn đã bị khóa";
+                    break;
+                }
+                case "bad_credentials": {
+                    msg ="Tài khoản hoặc mật khẩu sai!";
+                    break;
+                }
+                case "fail_active": {
+                    msg = "Link kích hoạt không hợp lệ hoặc đã hết hạn!";
+                    break;
+                }
+                default: msg = "Đăng nhập thất bại! Vui lòng thử lại!";
+            }
+            model.addAttribute("error", msg);
+        }
+        if(success != null) {
+            model.addAttribute("success", "Kích hoạt tài khoản thành công!");
         }
 
         return "auth/Login";
@@ -86,9 +121,8 @@ public class AuthController {
             return "auth/RegisterAccount";
         }
         try {
-            this.userService.handleCreateOrganizer(dto);
-
-        } catch (CheckDuplicateException e) {
+            this.registrationService.registerOrganizer(dto);
+        } catch (CheckDuplicateException | MessagingException e) {
             model.addAttribute("errorMsg", e.getMessage());
             model.addAttribute("cities", this.cityService.getCityList());
             model.addAttribute("registerOrgDTO", dto);
@@ -97,6 +131,17 @@ public class AuthController {
             return "auth/RegisterAccount";
         }
         return "auth/Login";
+    }
+
+
+    @GetMapping("/activate")
+    public String activeOrganizer(
+            @RequestParam String token,
+            @RequestParam String email) {
+        if (this.verifyTokenService.checkActiveAccount(token, email)) {
+            return "redirect:/auth/login?success=activate_success";
+        }
+        return "redirect:/auth/login?error=fail_active";
     }
 
     @ResponseBody
@@ -118,7 +163,7 @@ public class AuthController {
             @RequestParam String email,
             HttpSession session) {
         try {
-            passwordResetService.sendOtp(email, session);
+            passwordResetService.sendOtp(email);
             // Luôn trả success (không lộ email có tồn tại không)
             return ResponseEntity.ok(Map.of("status", "ok"));
         } catch (MessagingException e) {
@@ -131,12 +176,15 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<Map<String, String>> verifyOtp(
             @RequestParam String otp,
+            @RequestParam String email,
             HttpSession session) {
-        if (!passwordResetService.verifyOtp(otp, session)) {
+        VerificationToken verificationToken = this.verifyTokenService.findByEmailAndTypeAndUsedFalse(email, TokenType.FORGOT_PASSWORD_OTP);
+        if (verificationToken == null || !passwordResetService.verifyOtp(otp, verificationToken)) {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Mã OTP không đúng hoặc đã hết hạn."));
         }
         session.setAttribute("otp_verified", true);
+        session.setAttribute("reset_email", email);
         return ResponseEntity.ok(Map.of("status", "ok"));
     }
 
@@ -158,7 +206,7 @@ public class AuthController {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Phiên làm việc hết hạn, vui lòng thử lại."));
         }
-        boolean success = passwordResetService.resetPassword(newPassword, session);
+        boolean success = passwordResetService.resetPassword(newPassword, (String) session.getAttribute("reset_email"));
         if (!success) {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Phiên làm việc hết hạn, vui lòng thử lại."));

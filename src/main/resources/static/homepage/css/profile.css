@@ -24,6 +24,7 @@
     --glass-shadow: 0 8px 32px 0 rgba(7, 1, 22, 0.5);
     --text-primary: #fcfbfe;
     --text-secondary: #c9bfdc;
+    --text-third: #1e0e34;
     --text-muted: #7d7295;
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body: 'Outfit', sans-serif;
@@ -401,7 +402,7 @@ select.profile-input-control option {
 .brand-dots .dot.orange { background-color: var(--color-orange); box-shadow: 0 0 10px rgba(241, 115, 41, 0.4); }
 
 .navbar-brand .brand-text {
-    color: var(--text-primary);
+    color: var(--text-third);
 }
 
 .navbar-brand .highlight {
@@ -531,7 +532,7 @@ select.profile-input-control option {
 .brand-dots .dot.orange { background-color: var(--color-orange); box-shadow: 0 0 10px rgba(241, 115, 41, 0.4); }
 
 .navbar-brand .brand-text {
-    color: var(--text-primary);
+    color: var(--text-third);
 }
 
 .navbar-brand .highlight {

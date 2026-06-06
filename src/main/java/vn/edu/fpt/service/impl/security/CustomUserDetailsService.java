@@ -1,7 +1,5 @@
-package vn.edu.fpt.service.impl;
+package vn.edu.fpt.service.impl.security;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        vn.edu.fpt.model.User user = this.userService.findByEmailWithRoles(username).get();
+        vn.edu.fpt.model.User user = this.userService.findByEmailWithRoles(username).orElse(null);
         if(user == null){
             throw new UsernameNotFoundException("Không tìm thấy USER");
         }
