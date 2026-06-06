@@ -24,7 +24,7 @@ public class OrganizerProfile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "company_name")
+    @Column(name = "company_name", columnDefinition = "NVARCHAR(500)")
     private String companyName;
 
     @Column(name = "tax_code", length = 20, unique = true)

@@ -6,6 +6,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
+import vn.edu.fpt.common.SecurityUtil;
 
 import java.time.Instant;
 
@@ -28,11 +29,13 @@ public abstract class BaseAuditEntity {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUsername();
+        this.createdAt = Instant.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUsername();
+        this.updatedAt = Instant.now();
     }
 }

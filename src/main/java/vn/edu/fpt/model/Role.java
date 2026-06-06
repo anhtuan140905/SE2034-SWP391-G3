@@ -22,6 +22,6 @@ public class Role {
     @Column(name = "role_name", nullable = false, length = 50)
     private RoleName roleName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(500)")
     private String description;
 }
