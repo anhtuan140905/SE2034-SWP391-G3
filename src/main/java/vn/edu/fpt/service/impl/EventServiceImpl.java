@@ -1,35 +1,166 @@
 package vn.edu.fpt.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
-import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
-import vn.edu.fpt.repository.CreateEventRepository;
+import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.repository.EventSummaryProjection;
+import vn.edu.fpt.repository.FeaturedEventDTO;
+
+import org.springframework.web.multipart.MultipartFile;
+import vn.edu.fpt.model.*;
+import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
+import vn.edu.fpt.modelview.request.organizer.*;
+import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service("EventService")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class EventServiceImpl implements EventService {
-
-    private CreateEventRepository createEventRepository;
-
     private final EventRepository eventRepository;
+    private EventCategoryRepository eventCategoryRepository;
+    private VenueRepository venueRepository;
+    private VenueZoneRepository venueZoneRepository;
+    private UserRepository userRepository;
+    private CloudinaryService cloudinaryService;
 
     @Override
-    public Event createEvent(Event event) {
-        return null;
+    public List<EventCategory> getListEventCategory() {
+        List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
+        return listAllEventCategory;
+    }
+    @Override
+    public List<VenueZoneOrganizerDTO> getVenueZoneByVenueId(Long id) {
+        List<VenueZone> venueZones = venueZoneRepository.findByVenueVenueId(id);
+        List<VenueZoneOrganizerDTO> VenueZoneOrganizerDTOS = new ArrayList<>();
+        for (VenueZone venueZone : venueZones) {
+            VenueZoneOrganizerDTO dto = new VenueZoneOrganizerDTO();
+            dto.setZoneID(venueZone.getZoneId());
+            dto.setZoneName(venueZone.getZoneName());
+            dto.setRows(venueZone.getRows());
+            dto.setSeatsPerRow(venueZone.getSeatsPerRow());
+            VenueZoneOrganizerDTOS.add(dto);
+        }
+        return VenueZoneOrganizerDTOS;
     }
 
     @Override
-    public List<Venue> findByDateNot(LocalDate dates) {
-        List<Venue> venues = createEventRepository.findByDateNot(dates);
-        return venues;
+    public List<VenueDto> findByDateNot(LocalDate dates) {
+        List<Venue> venues = venueRepository.findAvailableVenuesByDate(dates);
+        List<VenueDto> venueDtos = new ArrayList<>();
+        for (Venue venue : venues) {
+            VenueDto dto = new VenueDto();
+            dto.setVenueID(venue.getVenueId());
+            dto.setVenueName(venue.getVenueName());
+            dto.setCapacity(venue.getCapacity());
+            dto.setDescription(venue.getDescription());
+            dto.setImageUrl(venue.getImageUrl());
+            venueDtos.add(dto);
+        }
+        return venueDtos;
+    }
+    @Override
+    public VenueDto getVenuebyId(Long venueID) {
+        Venue venue = venueRepository.findById(venueID)
+                                    .orElseThrow(()->new RuntimeException("Venue Not Found with: "+venueID));
+        VenueDto venueDto = new VenueDto();
+        venueDto.setVenueID(venue.getVenueId());
+        venueDto.setVenueName(venue.getVenueName());
+        AddressDto addressDto = new AddressDto();
+        addressDto.setSpecificAddress(venue.getAddress().getSpecificAddress());
+        wardDTO wardDTO = new wardDTO();
+        wardDTO.setName(venue.getAddress().getWard().getName());
+        cityDto cityDto = new cityDto();
+        cityDto.setId(venue.getAddress().getWard().getCity().getId());
+        cityDto.setName(venue.getAddress().getWard().getCity().getName());
+        wardDTO.setCity(cityDto);
+        addressDto.setWard(wardDTO);
+        venueDto.setAddress(addressDto);
+        return venueDto;
+    }
+
+    @Override
+    public void saveEvent(EventDTO eventDTO) {
+        EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
+                                        .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
+        User organizer =  userRepository.findById(eventDTO.getOrganizerDtoID())
+                                    .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
+        Venue venue = venueRepository.findById(eventDTO.getVenueId())
+                                    .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
+        Event event = new Event();
+        event.setOrganizer(organizer);
+        event.setCategory(eventCategory);
+        event.setVenue(venue);
+        event.setTitle(eventDTO.getTitle());
+        event.setDescription(eventDTO.getDescription());
+        event.setDate(eventDTO.getEventDate());
+        event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getStartTime()));
+        event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getEndTime()));
+        event.setCreatedBy(organizer.getLastName()+organizer.getMiddleName()+organizer.getFirstName());
+        event.setStatus(EventStatus.PENDING);
+
+        if (eventDTO.getThumbnailFile() != null
+                && !eventDTO.getThumbnailFile().isEmpty()) {
+            String thumbnailUrl = cloudinaryService.uploadFile(eventDTO.getThumbnailFile(),"EventBanner");
+            event.setThumbnailUrl(thumbnailUrl);
+        }
+        List<EventImage> eventImages = new ArrayList<>();
+        if(eventDTO.getImageFiles()!=null){
+            for (MultipartFile file : eventDTO.getImageFiles()){
+                if (file.isEmpty()) {
+                    continue;
+                }
+                String imageurl = cloudinaryService.uploadFile(file,"EventImg");
+                EventImage image = new EventImage();
+                image.setEvent(event);
+                image.setCreatedBy(organizer.getLastName()+organizer.getMiddleName()+organizer.getFirstName());
+                image.setImageUrl(imageurl);
+                eventImages.add(image);
+            }
+            event.setImages(eventImages);
+
+        }
+//        List<TicketType> ticketTypes = new ArrayList<>();
+//        if(eventDTO.getTicketTypes()!=null){
+//            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
+//                TicketType type = new TicketType();
+//                type.setEvent(event);
+//                type.setTypeName(ticketTypeDto.getTypeName());
+//                type.setPrice(ticketTypeDto.getPrice());
+//                type.setDescription(ticketTypeDto.getDescription());
+//                ticketTypes.add(type);
+//            }
+//        }
+//        event.setTicketTypes(ticketTypes);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public long countHostedEvents() {
+        return this.eventRepository.countHostedEvents(List.of(EventStatus.APPROVED, EventStatus.ENDED));
+    }
+
+    @Override
+    public List<EventSummaryDto> findTopFeaturedEvents() {
+        List<EventSummaryProjection> projections =  this.eventRepository.findTopFeaturedEvents();
+
+        return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public FeaturedEventDTO findFeaturedEvent() {
+        return this.eventRepository.findFeaturedEvent();
     }
 
     @Override
@@ -76,13 +207,11 @@ public class EventServiceImpl implements EventService {
             eventDetailModeratorDTO.setOrganizerName(fullName);
             eventDetailModeratorDTO.setOrganizerAvatarUrl(event.getOrganizer().getAvatar());
         }
-
         //truong gia dinh (se dung khi database update them cot)
         eventDetailModeratorDTO.setRejectReason("");
 
         return eventDetailModeratorDTO;
     }
+
+
 }
-
-
-

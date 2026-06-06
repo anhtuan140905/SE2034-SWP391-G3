@@ -8,9 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -18,25 +21,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventDTO {
-    @NotBlank(message = "Tên sự kiện không được để trống")
-    private  String eventName;
-    @NotEmpty(message = "Sự kiên phải có Ảnh Banner")
-    private String bannerImg;
-    private List<MultipartFile> imgs;
-    @NotNull(message = "Loại sự kiện không được để trống")
-    private String eventCatagory;
-    private String eventDescription;
-    @NotNull(message = "Thời gian bắt đầu không được để trống")
-    @Future(message = "Thời gian bắt đầu phải là một ngày trong tương lai")
-    private LocalDateTime date;
-    @NotBlank(message = "Địa điểm diễn ra không được để trống")
-    private String venue;
-    @NotNull(message = "Thời gian bắt đầu không được để trống")
-    @Future(message = "Thời gian bắt đầu phải là một ngày trong tương lai")
-    private LocalDateTime startTime;
-    @NotNull(message = "Thời gian kết thúc không được để trống")
-    private LocalDateTime endTime;
-    @NotEmpty(message = "Sự kiện phải có ít nhất một loại vé")
-    @NotNull(message = "Danh sách loại vé không được để trống")
+    private Long categoryId;
+    private Long venueId;
+    private Long organizerDtoID;
+    private String title;
+    private String description;
+    private LocalDate eventDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private List<TicketTypeRequestDTO> ticketTypes;
+    private MultipartFile thumbnailFile;
+    private List<MultipartFile> imageFiles;
 }

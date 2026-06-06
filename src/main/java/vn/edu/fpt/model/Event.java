@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.edu.fpt.model.constant.EventStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,7 +39,7 @@ public class Event extends BaseAuditEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @Column(name = "thumbnail_url")
@@ -48,7 +49,7 @@ public class Event extends BaseAuditEntity {
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
     @Column(name = "date",nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
@@ -59,9 +60,6 @@ public class Event extends BaseAuditEntity {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("isPrimary DESC") // ảnh primary lên trước
     private List<EventImage> images; // List vì có thứ tự, ảnh primary trước
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<EventStaff> staffs; // Set vì junction table, composite PK, không cần thứ tự
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketType> ticketTypes; // List vì hiển thị theo thứ tự zone
