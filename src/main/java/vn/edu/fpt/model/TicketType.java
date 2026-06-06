@@ -20,7 +20,7 @@ public class TicketType extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_type_id")
     private Long ticketTypeId;
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "NVARCHAR(255)")
     private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
@@ -30,7 +30,7 @@ public class TicketType extends BaseAuditEntity {
     @JoinColumn(name = "zone_id", nullable = false)
     private VenueZone zone; // Bridge để query giá khi User chọn ghế theo zone
 
-    @Column(name = "type_name", nullable = false)
+    @Column(name = "type_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String typeName; // Auto-fill từ zone_name khi Organizer setup pricing
 
     @Column(name = "price", nullable = false, precision = 15, scale = 2)

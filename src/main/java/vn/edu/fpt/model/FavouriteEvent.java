@@ -30,6 +30,6 @@ public class FavouriteEvent {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = Instant.now();
+        this.createdAt = Instant.now();
     }
 }

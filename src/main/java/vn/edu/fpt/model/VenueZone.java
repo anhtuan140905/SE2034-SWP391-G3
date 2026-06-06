@@ -23,7 +23,7 @@ public class VenueZone extends BaseAuditEntity {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
-    @Column(name = "zone_name", nullable = false)
+    @Column(name = "zone_name", nullable = false, columnDefinition = "NVARCHAR(255)")
     private String zoneName;
 
     @Column(name = "rows", nullable = false)

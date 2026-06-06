@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.edu.fpt.model.constant.EventStatus;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class Event extends BaseAuditEntity {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, columnDefinition = "NVARCHAR(500)")
     private String title;
 
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
