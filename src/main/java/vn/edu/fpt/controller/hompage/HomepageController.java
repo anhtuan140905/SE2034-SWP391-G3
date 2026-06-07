@@ -59,12 +59,6 @@ public class HomepageController {
         return "homepage/Home";
     }
 
-    @GetMapping("/events")
-    public String getEvents(){
-        return "homepage/ListPublicEvents";
-    }
-
-
     @GetMapping("/profile")
     public String getProfile(Model model,
                              @AuthenticationPrincipal CustomUserDetails userDetails,

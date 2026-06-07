@@ -1,10 +1,16 @@
 package vn.edu.fpt.service.impl;
 
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.EventSummaryProjection;
@@ -211,6 +217,84 @@ public class EventServiceImpl implements EventService {
         eventDetailModeratorDTO.setRejectReason("");
 
         return eventDetailModeratorDTO;
+    }
+
+    @Override
+    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
+        Specification<Event> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
+                predicates.add( cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
+            }
+
+            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
+                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
+                predicates.add( cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
+            }
+
+            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
+
+                Join<Event, Venue> venueJoin = root.join("venue", JoinType.INNER);
+
+                Join<Venue, Address> addressJoin = venueJoin.join("address", JoinType.INNER);
+
+                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
+
+                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
+
+                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
+            }
+
+            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
+                try {
+                    String[] parts = criteria.getMonth().split("-");
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]);
+
+                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
+                            .withHour(23).withMinute(59).withSecond(59);
+
+                    predicates.add( cb.between(root.get("startTime"), startOfMonth, endOfMonth));
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
+                }
+            }
+
+
+            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
+
+                Subquery<Double> subquery = query.subquery(Double.class);
+
+                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
+
+                subquery.select(cb.min(ticketRoot.get("price")));
+
+                subquery.where(cb.equal(ticketRoot.get("event"), root));
+
+                Expression<Double> minPriceExpr = subquery;
+
+                switch (criteria.getPrice()) {
+                    case "free":
+                        predicates.add( cb.equal(minPriceExpr, 0D));
+                        break;
+                    case "under200":
+                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
+                        break;
+                    case "200to1000":
+                        predicates.add( cb.between(minPriceExpr, 200000D, 1000000D));
+                        break;
+                    case "over1000":
+                        predicates.add( cb.greaterThan(minPriceExpr, 1000000D));
+                        break;
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return eventRepository.findAll(spec, pageable);
     }
 
 

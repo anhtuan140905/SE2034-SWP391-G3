@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
         op.setBankAccount(dto.getBankAccount());
         op.setCompanyName(dto.getCompanyName());
         op.setTaxCode(dto.getTaxCode());
+
         this.organizerProfileRepository.save(op);
         return u;
     }

@@ -807,9 +807,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Rounded Cards Booking CTA Button */
 .btn-book-now {
-    background: var(--bg-dark-primary);
+    background: var(--text-secondary);
     border: 1px solid var(--glass-border);
-    color: var(--text-primary);
+    color: #fff;
     border-radius: 30px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -1248,3 +1248,334 @@ footer {
     }
 }
 
+/* ================================================================
+   FILTER BAR — thêm vào cuối home.css
+   ================================================================ */
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #ffffff;
+    border: 1.5px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 0 0.5rem 0 0;
+    height: 56px;
+    box-shadow: 0 4px 24px rgba(255, 42, 122, 0.06);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    overflow: hidden;
+}
+
+.filter-bar:focus-within {
+    border-color: rgba(255, 42, 122, 0.35);
+    box-shadow: 0 6px 30px rgba(255, 42, 122, 0.1);
+}
+
+/* ── Search area ── */
+.filter-bar__search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 240px;
+    min-width: 0;
+    height: 100%;
+}
+
+.filter-bar__search-icon {
+    position: absolute;
+    left: 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.filter-bar__search:focus-within .filter-bar__search-icon {
+    color: var(--color-pink);
+}
+
+.filter-bar__search-input {
+    width: 100%;
+    height: 100%;
+    padding: 0 2.2rem 0 2.7rem;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    font-family: var(--font-body);
+    font-weight: 400;
+}
+
+.filter-bar__search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.filter-bar__search-clear {
+    position: absolute;
+    right: 0.6rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(45, 27, 78, 0.08);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.filter-bar__search-clear:hover {
+    background: rgba(255, 42, 122, 0.12);
+    color: var(--color-pink);
+}
+
+/* ── Divider ── */
+.filter-bar__divider {
+    width: 1px;
+    height: 28px;
+    background: var(--glass-border);
+    flex-shrink: 0;
+    margin: 0 0.25rem;
+}
+
+/* ── Select wrapper ── */
+.filter-bar__select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.filter-bar__select-icon {
+    position: absolute;
+    left: 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 1;
+    transition: color 0.2s ease;
+}
+
+.filter-bar__select-wrap:focus-within .filter-bar__select-icon,
+.filter-bar__select-wrap:has(.is-active) .filter-bar__select-icon {
+    color: var(--color-pink);
+}
+
+.filter-bar__select {
+    height: 100%;
+    padding: 0 1.8rem 0 2.2rem;
+    background: transparent
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2384759b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e")
+        no-repeat right 0.55rem center / 9px 9px;
+    border: none;
+    outline: none;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 120px;
+    transition: color 0.2s ease;
+    border-left: 1px solid var(--glass-border);
+}
+
+.filter-bar__select:hover {
+    color: var(--text-primary);
+}
+
+.filter-bar__select:focus {
+    color: var(--text-primary);
+}
+
+/* Active state khi có giá trị khác default */
+.filter-bar__select.is-active {
+    color: var(--color-pink);
+    font-weight: 600;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ff2a7a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* ── Clear button ── */
+.filter-bar__clear-btn {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 42, 122, 0.25);
+    background: transparent;
+    color: var(--color-pink);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-left: 0.35rem;
+}
+
+.filter-bar__clear-btn:hover {
+    background: rgba(255, 42, 122, 0.08);
+    border-color: var(--color-pink);
+    transform: rotate(-30deg);
+}
+
+/* Result count badge */
+.result-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.3rem 0.9rem;
+    background: rgba(255, 42, 122, 0.05);
+    border: 1px solid rgba(255, 42, 122, 0.12);
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 991.98px) {
+    .filter-bar {
+        flex-wrap: wrap;
+        border-radius: 20px;
+        height: auto;
+        padding: 0.6rem;
+        gap: 6px;
+    }
+
+    .filter-bar__search {
+        flex: 1 1 100%;
+        height: 44px;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 0.4rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .filter-bar__divider { display: none; }
+
+    .filter-bar__select-wrap {
+        flex: 1 1 calc(50% - 6px);
+        height: 40px;
+    }
+
+    .filter-bar__select {
+        width: 100%;
+        border-left: none;
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        background-color: var(--bg-dark-primary);
+        padding-left: 2.1rem;
+    }
+
+    .filter-bar__clear-btn {
+        flex: 1 1 100%;
+        width: 100%;
+        border-radius: 10px;
+        height: 40px;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .filter-bar__select-wrap {
+        flex: 1 1 100%;
+    }
+}
+
+/* --- CSS CĂN CHỈNH BỘ ĐÔI NÚT LỌC --- */
+
+/* Khối bao bọc 2 nút: Đảm bảo luôn nằm ngang và căn giữa theo chiều dọc */
+.filter-bar__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* Đẩy cụm nút về sát rìa phải nếu cần */
+    padding-left: 10px;
+}
+
+/* Nút Lọc (Gradient màu hồng tím) */
+.btn-filter-submit {
+    background: linear-gradient(135deg, var(--color-pink, #ff758c), #8a2be2);
+    color: #ffffff !important;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 42px; /* Chiều cao bằng với các ô select/input trong filter-bar */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
+}
+
+.btn-filter-submit:hover {
+    transform: translateY(-1px);
+    box-sizing: border-box;
+    opacity: 0.9;
+    box-shadow: 0 6px 16px rgba(138, 43, 226, 0.35);
+}
+
+.btn-filter-submit:active {
+    transform: translateY(1px);
+}
+
+/* Nút Thùng rác (Xóa bộ lọc) */
+.btn-filter-clear {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-pink, #ff758c);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    width: 42px;  /* Tạo thành nút vuông */
+    height: 42px; /* Chiều cao bằng nút Lọc */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-filter-clear:hover {
+    background: rgba(255, 117, 140, 0.1); /* Đổi nền hồng nhẹ khi hover */
+    border-color: rgba(255, 117, 140, 0.3);
+    color: #ff4757;
+    transform: translateY(-1px);
+}
+
+.btn-filter-clear:active {
+    transform: translateY(1px);
+}
+
+/* CSS bổ sung để nút phân trang đồng bộ giao diện Glassmorphism */
+        .pagination-container .btn-page {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px border rgba(255, 255, 255, 0.1);
+            color: var(--text-primary, #fff);
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .pagination-container .btn-page:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ff007f;
+        }
+        .pagination-container .btn-page.active {
+            background: linear-gradient(135deg, #ff007f, #7f00ff);
+            border: none;
+            color: #fff;
+        }
+        .pagination-container .btn-page:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }

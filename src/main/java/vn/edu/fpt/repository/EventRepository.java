@@ -3,6 +3,7 @@ package vn.edu.fpt.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import vn.edu.fpt.model.constant.EventStatus;
 import java.util.List;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event>{
 
     @Query("SELECT COUNT(e) FROM Event e WHERE e.status IN :statuses")
     long countHostedEvents(@Param("statuses") List<EventStatus> statuses);
@@ -34,7 +35,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "            LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
             "            WHERE e.status = 'APPROVED' AND e.start_time > GETDATE()\n" +
             "            GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name\n" +
-            "            ORDER BY sold_count DESC", // XÓA BỎ HOÀN TOÀN CHỮ LIMIT 6 Ở ĐÂY
+            "            ORDER BY sold_count DESC",
             nativeQuery = true)
     List<EventSummaryProjection> findTopFeaturedEvents();
 
