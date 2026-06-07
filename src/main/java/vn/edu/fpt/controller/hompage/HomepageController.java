@@ -22,8 +22,8 @@ import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.service.TicketService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.CloudinaryService;
-import vn.edu.fpt.service.impl.CustomOAuth2User;
-import vn.edu.fpt.service.impl.CustomUserDetails;
+import vn.edu.fpt.service.impl.security.CustomOAuth2User;
+import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventCategoryServiceImpl;
 
 import java.util.List;
@@ -95,6 +95,7 @@ public class HomepageController {
         model.addAttribute("userUpdateDTO", dto);
         return "homepage/UpdateProfileUser";
     }
+
 
     @PostMapping("/attendee/update/profile")
     public String updateProfile(

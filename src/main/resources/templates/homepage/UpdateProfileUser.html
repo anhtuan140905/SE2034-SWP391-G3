@@ -19,7 +19,7 @@
     <div class="glow-blob glow-blob-3"></div>
 </div>
 
-<div th:replace="~{homepage/fragments/header :: header}">
+<div th:replace="~{homepage/fragments/header :: header('')}">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
@@ -179,7 +179,7 @@
                             <div class="profile-input-group">
                                 <label for="u_city" class="profile-input-label">City</label>
                                 <select id="u_city" class="profile-input-control" th:field="*{city}" onchange="handleSelect(this,'cityField')">
-                                    <option value=""></option>
+                                    <option value="">Chọn Tỉnh/Thành Phố</option>
                                     <option th:each="city : ${cities}"
                                             th:value="${city.id}"
                                             th:text="${city.name}">
@@ -197,7 +197,7 @@
                                         th:field="*{ward}"
                                         th:data-selected-ward="*{ward}"
                                         onchange="handleSelect(this,'wardField')">
-                                    <option value=""></option>
+                                    <option value="">Chọn Phường/Xã</option>
                                 </select>
                                 <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
                             </div>
