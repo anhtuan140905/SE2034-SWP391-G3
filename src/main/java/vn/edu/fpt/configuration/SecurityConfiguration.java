@@ -89,7 +89,7 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/auth/**", "/css/**",
+                                "/", "/events", "/auth/**", "/css/**",
                                 "/js/**", "/homepage/**",
                                 "/auth/css/**", "/auth/js/**"
                         ).permitAll()

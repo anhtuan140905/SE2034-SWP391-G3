@@ -49,106 +49,198 @@
         <span class="badge-gradient-sub mb-3">
                 <i class="fa-solid fa-sparkles text-pink-glow"></i> Live Events Discovery
             </span>
-        <h2 class="display-5 font-heading font-extrabold text-white mt-1">Khám phá vạn Sự kiện HOT</h2>
+        <h2 class="display-5 font-heading font-extrabold text-white mt-1" style="color: purple !important;">Khám phá vạn Sự kiện HOT</h2>
         <p class="text-secondary-light leading-relaxed max-w-2xl">
             Hàng ngàn lễ hội âm nhạc đỉnh cao, workshop sáng tạo nghệ thuật, sự kiện sức khỏe hội tụ tại EventHub. Trải nghiệm không gian sân khấu bùng nổ và các hoạt động cộng đồng cực chất ngay gần bạn.
         </p>
     </div>
 
     <!-- Filter Toolbar (Active Category Parameter handling) -->
-    <div class="row align-items-center mb-5 gy-4">
-        <div class="col-lg-4 text-center text-lg-start">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6 text-center text-md-start">
             <span class="section-label">LIVE DATABOUND COLLECTION</span>
-            <h3 class="h2 highlight font-heading font-extrabold mb-0">Sự kiện đang diễn ra</h3>
+            <h3 class="h2 font-heading font-extrabold mb-0" style="color: var(--text-primary);">
+                Sự kiện đang diễn ra
+            </h3>
         </div>
-        <div class="col-lg-8">
-            <div class="category-filter-container justify-content-lg-end">
-                <a class="btn btn-cat-filter" th:classappend="${activeCategory == 'all' || activeCategory == null ? 'active' : ''}" th:href="@{/events(category='all')}" href="?category=all" data-category="all">
-                    <i class="fa-solid fa-globe cat-icon"></i> All Categories
-                </a>
-                <a class="btn btn-cat-filter" th:classappend="${activeCategory == 'music' ? 'active' : ''}" th:href="@{/events(category='music')}" href="?category=music" data-category="music">
-                    <i class="fa-solid fa-music cat-icon"></i> Music
-                </a>
-                <a class="btn btn-cat-filter" th:classappend="${activeCategory == 'tech' ? 'active' : ''}" th:href="@{/events(category='tech')}" href="?category=tech" data-category="tech">
-                    <i class="fa-solid fa-laptop-code cat-icon"></i> Tech
-                </a>
-                <a class="btn btn-cat-filter" th:classappend="${activeCategory == 'art' ? 'active' : ''}" th:href="@{/events(category='art')}" href="?category=art" data-category="art">
-                    <i class="fa-solid fa-palette cat-icon"></i> Arts
-                </a>
-                <a class="btn btn-cat-filter" th:classappend="${activeCategory == 'wellness' ? 'active' : ''}" th:href="@{/events(category='wellness')}" href="?category=wellness" data-category="wellness">
-                    <i class="fa-solid fa-spa cat-icon"></i> Wellness
-                </a>
-            </div>
+        <div class="col-md-6 text-center text-md-end">
+                <span id="filterResultCount" class="result-count-badge">
+                    <i class="fa-solid fa-circle-dot" style="font-size: 0.6rem; color: var(--color-pink);"></i>
+                    <span id="resultCountText">Tất cả sự kiện</span>
+                </span>
         </div>
     </div>
 
-    <!-- Dynamic Events Grid -->
+    <form id="searchForm" th:action="@{/events}" method="get" class="filter-bar mb-5" >
+
+        <input type="hidden" id="pageInput" name="page" th:value="${eventPage.number}">
+        <input type="hidden" id="sizeInput" name="size" th:value="${eventPage.size}">
+
+        <div class="filter-bar__search">
+            <i class="fa-solid fa-magnifying-glass filter-bar__search-icon"></i>
+            <input
+                    type="text"
+                    id="searchInput"
+                    name="keyword"
+                    th:value="${criteria.keyword}"
+                    class="filter-bar__search-input"
+                    placeholder="Tìm kiếm theo tên sự kiện hoặc host..."
+                    autocomplete="off"
+            >
+        </div>
+
+        <div class="filter-bar__divider"></div>
+
+        <div class="filter-bar__select-wrap">
+            <i class="fa-solid fa-layer-group filter-bar__select-icon"></i>
+            <select id="categorySelect" name="category" class="filter-bar__select">
+                <option value="">Danh mục</option>
+                <option th:each="c : ${categories}"
+                        th:value="${c.categoryName}"
+                        th:text="${c.categoryName}"
+                        th:selected="${c.categoryName == criteria.category}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-bar__select-wrap">
+            <i class="fa-solid fa-location-dot filter-bar__select-icon"></i>
+            <select id="citySelect" name="city" class="filter-bar__select">
+                <option value="">Thành phố</option>
+                <option th:each="city : ${cities}"
+                        th:value="${city.name}"
+                        th:text="${city.name}"
+                        th:selected="${city.name == criteria.city}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-bar__select-wrap">
+            <i class="fa-solid fa-calendar-day filter-bar__select-icon"></i>
+            <select id="timeSelect" name="month" class="filter-bar__select">
+                <option value="">Thời gian</option>
+                <option th:each="m : ${dynamicMonths}"
+                        th:value="${m}"
+                        th:text="${'Tháng ' + #strings.substring(m, 5, 7)}"
+                        th:selected="${m == criteria.month}">
+                </option>
+            </select>
+        </div>
+
+        <div class="filter-bar__select-wrap">
+            <i class="fa-solid fa-tags filter-bar__select-icon"></i>
+            <select id="priceSelect" name="price" class="filter-bar__select">
+                <option value="">Giá vé</option>
+                <option value="free" th:selected="${criteria.price == 'free'}">Miễn phí</option>
+                <option value="under200" th:selected="${criteria.price == 'under200'}">Dưới 200K</option>
+                <option value="200to1000" th:selected="${criteria.price == '200to1000'}">200K – 1 triệu</option>
+                <option value="over1000" th:selected="${criteria.price == 'over1000'}">Trên 1 triệu</option>
+            </select>
+        </div>
+
+        <div class="filter-bar__actions">
+            <button type="submit" id="btnApplyFilters" class="btn-filter-submit" onclick="document.getElementById('pageInput').value = 0;">
+                <i class="fa-solid fa-filter"></i> Lọc
+            </button>
+
+            <a th:href="@{/events}" id="btnClearFilters" class="btn-filter-clear text-decoration-none d-inline-flex align-items-center justify-content-center" title="Xóa tất cả bộ lọc">
+                <i class="fa-solid fa-trash-can"></i>
+            </a>
+        </div>
+
+    </form>
+
     <div class="row g-4" id="eventsGrid">
 
-        <!-- Loop through events via Thymeleaf -->
-        <div class="col-lg-4 col-md-6 event-list-item" th:each="event : ${events}" th:data-category="${event.category}">
+        <div class="col-lg-4 col-md-6 event-list-item" th:each="event : ${eventPage.content}">
             <div class="card-event">
                 <div class="event-img-wrap">
-                        <span class="event-badge-category">
-                            <i class="fa-solid" th:classappend="${
-                                event.category == 'music' ? 'fa-music' :
-                                event.category == 'tech' ? 'fa-laptop-code' :
-                                event.category == 'art' ? 'fa-palette' : 'fa-spa'}"></i>
-                            <span th:text="${event.category.toUpperCase()}">Music</span>
-                        </span>
-                    <span class="event-badge-price" th:text="${event.price}">From $75</span>
+                    <span class="event-badge-category">
+                        <i class="fa-solid" th:classappend="${
+                            #strings.toLowerCase(event.category.categoryName) == 'music' ? 'fa-music' :
+                            #strings.toLowerCase(event.category.categoryName) == 'tech' ? 'fa-laptop-code' :
+                            #strings.toLowerCase(event.category.categoryName) == 'art' ? 'fa-palette' : 'fa-spa'}"></i>
+                        <span th:text="${event.category.categoryName.toUpperCase()}">MUSIC</span>
+                    </span>
+
+                    <span class="event-badge-price"
+                          th:text="${!#lists.isEmpty(event.ticketTypes) ? 'Từ ' + #numbers.formatInteger(event.ticketTypes[0].price, 3, 'POINT') + ' đ' : 'Free'}">
+    Từ 2.000.000 VNĐ
+</span>
+
                     <div class="event-date-badge">
-                        <span class="month" th:text="${event.month}">JUN</span>
-                        <span class="day" th:text="${event.day}">12</span>
+                        <span class="month" th:text="${#temporals.format(event.date, 'MMM').toUpperCase()}">JUN</span>
+                        <span class="day" th:text="${#temporals.format(event.date, 'dd')}">12</span>
                     </div>
-                    <img th:src="${event.image}" class="event-img" alt="Event cover image">
+
+                    <img th:src="${event.thumbnailUrl != null ? event.thumbnailUrl : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=600'}" class="event-img" alt="Event cover image">
                 </div>
 
                 <div class="event-card-body">
                     <div class="event-hosts">
-                        <img th:src="${event.avatar != null ? event.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}" class="host-mini-avatar" alt="Host avatar">
-                        <span class="host-name" th:text="${event.host}">BY ORGANIZER</span>
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200" class="host-mini-avatar" alt="Host avatar">
+                        <span class="host-name" th:text="${event.organizer.organizerProfile.companyName != null ? event.organizer.organizerProfile.companyName : 'ORGANIZER'}">BY ORGANIZER</span>
                     </div>
 
                     <h5 class="event-card-title">
-                        <a href="#" th:href="@{/events/detail/{id}(id=${event.id})}" th:text="${event.title}">Neon Sunset Beats & DJ Festival</a>
+                        <a th:href="@{/events/detail/{id}(id=${event.eventId})}" th:text="${event.title}">Title</a>
                     </h5>
 
-                    <p class="text-secondary-light small pb-2" th:text="${event.desc}">Experience heavy synthesized basslines, dynamic live fireworks, and glowing neon body arts under full moonlight.</p>
+                    <p class="text-secondary-light small pb-2" th:text="${event.description}">Description</p>
 
                     <div class="event-details-meta">
                         <div class="meta-element">
                             <i class="fa-solid fa-location-dot text-pink"></i>
-                            <span th:text="${event.location}">Skye Open Air Plaza, CA</span>
+                            <span th:text="${event.venue.venueName + ', ' + event.venue.address.ward.city.name}">Venue</span>
                         </div>
                         <div class="meta-element">
                             <i class="fa-regular fa-clock text-pink"></i>
-                            <span th:text="${event.time}">06:00 PM - 02:00 AM</span>
+                            <span th:text="${#temporals.format(event.startTime, 'HH:mm') + ' - ' + #temporals.format(event.endTime, 'HH:mm')}">06:00 PM - 02:00 AM</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="event-card-footer">
                     <div class="attendee-preview">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" class="att-avatar" alt="Attendee">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" class="att-avatar" alt="Attendee">
-                        <span class="att-more" th:text="|+${event.attendees} going|">+140 going</span>
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" class="att-avatar" alt="Attendee">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100" class="att-avatar" alt="Attendee">
+                        <span class="att-more">+140 going</span>
                     </div>
-                    <a th:href="@{/events/book/{id}(id=${event.id})}" class="btn btn-book-now text-decoration-none text-white">
+                    <a th:href="@{/events/book/{id}(id=${event.eventId})}" class="btn btn-book-now text-decoration-none text-white">
                         Get Pass <i class="fa-solid fa-chevron-right"></i>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Empty State if list is empty -->
-        <div class="col-12 text-center py-5 border border-white/5 rounded-4 p-5 glass-panel" th:if="${#lists.isEmpty(events)}">
+        <div class="col-12 text-center py-5 border border-white/5 rounded-4 p-5 glass-panel" th:if="${eventPage.isEmpty()}">
             <i class="fa-solid fa-calendar-xmark text-pink display-4 mb-3"></i>
             <h5 class="text-white font-extrabold">Không tìm thấy sự kiện nào</h5>
-            <p class="text-secondary-light text-sm max-w-md mx-auto">Chúng tôi hiện chưa tìm thấy hoạt động nào thuộc danh mục này. Hãy quay lại sau hoặc chuyển đổi bộ lọc tìm kiếm nhé!</p>
-            <a th:href="@{/events}" class="btn btn-grad-cta text-xs px-4 rounded-pill text-white font-bold mt-3">Tất cả sự kiện</a>
+            <p class="text-secondary-light text-sm max-w-md mx-auto">Chúng tôi hiện chưa tìm thấy hoạt động nào phù hợp với bộ lọc bạn yêu cầu. Hãy thử đổi tiêu chí tìm kiếm nhé!</p>
+            <a th:href="@{/events}" class="btn btn-grad-cta text-xs px-4 rounded-pill text-white font-bold mt-3">Xem tất cả sự kiện</a>
         </div>
 
+    </div>
+
+    <div class="pagination-container d-flex justify-content-center align-items-center mt-5" th:if="${eventPage.totalPages > 1}">
+
+        <button type="button" class="btn-page" th:disabled="${!eventPage.hasPrevious()}"
+                th:onclick="'changePage(' + ${eventPage.number - 1} + ')'">
+            <i class="fa-solid fa-chevron-left"></i> Trước
+        </button>
+
+        <span th:each="i : ${#numbers.sequence(0, eventPage.totalPages - 1)}">
+            <button type="button" class="btn-page"
+                    th:classappend="${eventPage.number == i} ? 'active' : ''"
+                    th:text="${i + 1}"
+                    th:onclick="'changePage(' + ${i} + ')'">
+            </button>
+        </span>
+
+        <button type="button" class="btn-page" th:disabled="${!eventPage.hasNext()}"
+                th:onclick="'changePage(' + ${eventPage.number + 1} + ')'">
+            Sau <i class="fa-solid fa-chevron-right"></i>
+        </button>
     </div>
 </main>
 
