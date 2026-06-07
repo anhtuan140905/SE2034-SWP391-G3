@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.edu.fpt.model.constant.VenueStatus;
 
 import java.util.List;
 
@@ -36,6 +37,10 @@ public class Venue extends BaseAuditEntity {
 
     @Column(name = "imageUrl")
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private VenueStatus status;
 
     @OneToMany(mappedBy = "venue", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("zoneName ASC")

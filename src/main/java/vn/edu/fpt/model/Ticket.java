@@ -23,29 +23,15 @@ public class Ticket {
     private Long ticketId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_detail_id", nullable = false, unique = true)
-    private OrderDetail orderDetail; // FK Ticket → OrderDetail (không phải ngược lại)
+    @JoinColumn(name = "order_detail_id", unique = true)
+    private OrderDetail orderDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Người sở hữu vé
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "qr_code", nullable = false, unique = true)
-    private String qrCode; // QR code độc lập mỗi vé
-
-    @Column(name = "is_checked_in", nullable = false)
-    private Boolean isCheckedIn;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "checked_in_by")
-    private User checkedInBy; // Staff thực hiện check-in — nullable trước khi check-in
-
-    @Column(name = "checked_in_at")
-    private Instant checkedInAt;
-
-    @Version
-    @Column(name = "version", nullable = false)
-    private Integer version; // OptimisticLock — xử lý 2 Staff scan QR cùng lúc
+    private String qrCode;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -54,7 +40,11 @@ public class Ticket {
     private Instant createdAt;
 
     @Column(name = "updated_at")
-    private Instant updatedAt; // Hữu ích để biết thời điểm check-in, không có updated_by
+    private Instant updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id")
+    private TicketType ticketType;
 
     @PrePersist
     protected void onCreate() {
