@@ -258,3 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentYearEl.textContent = new Date().getFullYear();
     }
 });
+function changePage(pageNumber) {
+        // Gán số trang mới vào input ẩn bên trong Form bộ lọc
+        document.getElementById('pageInput').value = pageNumber;
+        // Thực hiện Submit form để gửi kèm tất cả bộ lọc hiện tại lên Backend
+        document.getElementById('searchForm').submit();
+    }

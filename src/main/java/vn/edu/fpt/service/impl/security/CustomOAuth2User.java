@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl;
+package vn.edu.fpt.service.impl.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

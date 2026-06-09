@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl;
+package vn.edu.fpt.service.impl.security;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

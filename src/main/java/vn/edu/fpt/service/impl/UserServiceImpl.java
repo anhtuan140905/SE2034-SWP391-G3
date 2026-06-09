@@ -1,10 +1,9 @@
 package vn.edu.fpt.service.impl;
 
+import jakarta.mail.MessagingException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -13,6 +12,7 @@ import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrganizerStatus;
 import vn.edu.fpt.model.constant.RoleName;
+import vn.edu.fpt.model.constant.TokenType;
 import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
@@ -21,10 +21,8 @@ import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
 import vn.edu.fpt.service.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service("UserService")
 public class UserServiceImpl implements UserService {
@@ -34,32 +32,33 @@ public class UserServiceImpl implements UserService {
     private final OrganizerProfileRepository organizerProfileRepository;
     private final OrganizerProfileService organizerProfileService;
     private final WardService wardService;
-    private final CityService cityService;
-    private final CloudinaryService cloudinaryService;
-    private final UserDetailsService userDetailsService;
+    private final VerifyTokenService  verifyTokenService;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
                            PasswordEncoderConfig passwordEncoderConfig,
                            OrganizerProfileRepository organizerProfileRepository,
                            OrganizerProfileService organizerProfileService,
-                           WardService wardService,
-                           CityService cityService,
+                            WardService wardService,
                            CloudinaryService cloudinaryService,
-                           @Lazy UserDetailsService userDetailsService) {
+                           @Lazy UserDetailsService userDetailsService,
+                           EmailService emailService,
+                           VerifyTokenService verifyTokenService) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoderConfig = passwordEncoderConfig;
         this.organizerProfileRepository = organizerProfileRepository;
         this.organizerProfileService = organizerProfileService;
         this.wardService = wardService;
-        this.cityService = cityService;
-        this.cloudinaryService = cloudinaryService;
-        this.userDetailsService = userDetailsService;
+        this.verifyTokenService = verifyTokenService;
     }
 
     public User findByUsername(String username) {
         return userRepository.findByEmail(username);
+    }
+    @Override
+    public User handleSaveUser(User user) {
+        return this.userRepository.save(user);
     }
 
 
@@ -84,13 +83,13 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(hashedPassword);
         return this.userRepository.save(user);
     }
-    public User handleCreateOrganizer(RegisterOrgDTO dto) throws CheckDuplicateException {
+    public User handleCreateOrganizer(RegisterOrgDTO dto) throws CheckDuplicateException{
         if(findByUsername(dto.getUsername()) != null){
-            throw new CheckDuplicateException("Email address has already been registered");
+            throw new CheckDuplicateException("Email đã tồn tại!");
         }
 
         if(this.organizerProfileService.existsByTaxCode(dto.getTaxCode())){
-            throw new CheckDuplicateException("Tax code has already been registered");
+            throw new CheckDuplicateException("Tax code đã được đăng kí");
         }
         User user = new User();
         user.setFirstName(dto.getFirstName());
@@ -98,7 +97,7 @@ public class UserServiceImpl implements UserService {
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getUsername());
         user.setDob(dto.getDob());
-        user.setIsActive(true);
+        user.setIsActive(false);
         user.setPhone(dto.getPhone());
         Role role = this.roleService.getRoleByName(RoleName.ROLE_ORGANIZER);
         Set<Role> roles = new HashSet<>();
@@ -106,6 +105,10 @@ public class UserServiceImpl implements UserService {
         user.setRoles(roles);
         String hashedPassword = this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
+        Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
+        Address address = new Address();
+        address.setWard(ward);
+        address.setSpecificAddress(dto.getSpecificAddress());
         User u =  this.userRepository.save(user);
         OrganizerProfile op = new OrganizerProfile();
         op.setUser(u);
@@ -113,6 +116,7 @@ public class UserServiceImpl implements UserService {
         op.setBankAccount(dto.getBankAccount());
         op.setCompanyName(dto.getCompanyName());
         op.setTaxCode(dto.getTaxCode());
+
         this.organizerProfileRepository.save(op);
         return u;
     }

@@ -2,6 +2,8 @@ package vn.edu.fpt.modelview.request.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +28,10 @@ public class RegisterOrgDTO {
     @NotBlank(message = "Email không được để trống!")
     @Email(message = "Email không hợp lệ")
     private String username;
-    @NotBlank(message = "Vui lòng nhập mật khẩu")
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
+    @NotBlank(message = "Mật khẩu không được để trống")
     private String password;
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     @NotBlank(message = "Confirm password không được để trống!")
     private String confirmPassword;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -39,9 +43,9 @@ public class RegisterOrgDTO {
     @NotBlank(message = "Bank account không được để trống")
     private String bankAccount;
     @NotBlank(message = "Thành phố không được để trống")
-    public String city;
+    private String city;
     @NotBlank(message = "Phường/Xã không được để trống")
-    public String ward;
+    private String ward;
     @NotBlank(message = "Địa chỉ cụ thể không được để trống")
-    public String specificAddress;
+    private String specificAddress;
 }

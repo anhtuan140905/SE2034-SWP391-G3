@@ -1,6 +1,11 @@
 package vn.edu.fpt.service.impl;
 
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;

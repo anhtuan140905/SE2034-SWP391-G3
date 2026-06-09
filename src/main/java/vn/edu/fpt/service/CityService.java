@@ -9,5 +9,5 @@ public interface CityService {
     public City getCityByName(String name);
     public List<City> getCityList();
     public City getCityById(Long id);
-
+    public List<City> getListCityHaveApprovedEvents();
 }
