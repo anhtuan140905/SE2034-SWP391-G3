@@ -41,14 +41,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-
-    private EventRepository eventRepository;
     private EventCategoryRepository eventCategoryRepository;
     private VenueRepository venueRepository;
     private VenueZoneRepository venueZoneRepository;
     private UserRepository userRepository;
     private CloudinaryService cloudinaryService;
     private TickRepository tickRepository;
+
     @Override
     public List<EventCategory> getListEventCategory() {
         List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
@@ -114,11 +113,6 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
         Venue venue = venueRepository.findById(eventDTO.getVenueId())
                 .orElseThrow(() -> new RuntimeException("Venue Not Found with: " + eventDTO.getVenueId()));
-                .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
-        User organizer =  userRepository.findById(eventDTO.getOrganizerDtoID())
-                .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
-        Venue venue = venueRepository.findById(eventDTO.getVenueId())
-                .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
         Event event = new Event();
         event.setOrganizer(organizer);
         event.setCategory(eventCategory);
@@ -173,6 +167,7 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
         CreateTicket(ticketTypes,organizer.getEmail());
     }
+
     public void CreateTicket(List<TicketType> ticketTypeList,String emailUser ){
         for (TicketType type : ticketTypeList){
             for (int i = 0; i< type.getStock();i++){
@@ -340,10 +335,11 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAll(spec, pageable);
     }
 
-
+    @Override
     public List<Event> findEventbyVenueID(Long id) {
         return eventRepository.findByVenue_VenueId(id);
     }
+
     @Override
     public DashboardStatsDTO getDashboardStats() {
 
@@ -376,6 +372,7 @@ public class EventServiceImpl implements EventService {
                 endOfDay
         );
     }
+
     @Override
     public Page<EventCardDTO> getEventCards(Long organizerId,String[] statuses, String keyword, int page) {
         // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
@@ -395,6 +392,7 @@ public class EventServiceImpl implements EventService {
                 .findByMultiStatusAndKeyword(organizerId,statusList, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
+
     private EventCardDTO toDTO(Event event) {
         EventCardDTO dto = new EventCardDTO();
         dto.setId(event.getEventId());
@@ -411,7 +409,7 @@ public class EventServiceImpl implements EventService {
         int stock = 0;
         int numSelled = 0;
         for (TicketType tt : ticketTypes) {
-            stock     += tt.getStock();
+            stock += tt.getStock();
             numSelled += tickRepository.getNumTicketSelled(tt.getTicketTypeId());
         }
 
@@ -419,94 +417,18 @@ public class EventServiceImpl implements EventService {
         dto.setTicketSelled(numSelled);
         dto.setPercent(stock == 0 ? 0 : numSelled * 100 / stock);
 
+        return dto;
+    }
     public List<EventSummaryProjection> getEventStatisticsByVenue(Long id){
         return eventRepository.getEventStatisticsByVenue(id);
     }
+
     public VenueSummaryProjection getVenueStatisticSummary( Long id){
         return  eventRepository.getVenueStatisticSummary(id);
     }
 
-    @Override
-    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
-        Specification<Event> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
-            }
-
-            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
-                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
-                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
-            }
-
-            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
-
-                Join<Event, Venue> venueJoin = root.join("venue", JoinType.INNER);
-
-                Join<Venue, Address> addressJoin = venueJoin.join("address", JoinType.INNER);
-
-                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
-
-                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
-
-                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
-            }
-
-            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
-                try {
-                    String[] parts = criteria.getMonth().split("-");
-                    int year = Integer.parseInt(parts[0]);
-                    int month = Integer.parseInt(parts[1]);
-
-                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
-                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
-                            .withHour(23).withMinute(59).withSecond(59);
-
-                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
-                } catch (Exception e) {
-                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
-                }
-            }
-
-
-            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
-
-                Subquery<Double> subquery = query.subquery(Double.class);
-
-                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
-
-                subquery.select(cb.min(ticketRoot.get("price")));
-
-                subquery.where(cb.equal(ticketRoot.get("event"), root));
-
-                Expression<Double> minPriceExpr = subquery;
-
-                switch (criteria.getPrice()) {
-                    case "free":
-                        predicates.add(cb.equal(minPriceExpr, 0D));
-                        break;
-                    case "under200":
-                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
-                        break;
-                    case "200to1000":
-                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
-                        break;
-                    case "over1000":
-                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
-                        break;
-                }
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return eventRepository.findAll(spec, pageable);
-    }
-
     public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
         return eventRepository.getMonthlyRevenueByVenue(id);
-        return dto;
     }
 }
 
