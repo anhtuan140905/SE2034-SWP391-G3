@@ -4,13 +4,16 @@ import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
+import vn.edu.fpt.model.constant.TicketStatus;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
@@ -20,6 +23,7 @@ import vn.edu.fpt.repository.FeaturedEventDTO;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
+import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
@@ -28,21 +32,23 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
-
     private final EventRepository eventRepository;
+
+    private EventRepository eventRepository;
     private EventCategoryRepository eventCategoryRepository;
     private VenueRepository venueRepository;
     private VenueZoneRepository venueZoneRepository;
     private UserRepository userRepository;
     private CloudinaryService cloudinaryService;
-
+    private TickRepository tickRepository;
     @Override
     public List<EventCategory> getListEventCategory() {
         List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
@@ -108,6 +114,11 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
         Venue venue = venueRepository.findById(eventDTO.getVenueId())
                 .orElseThrow(() -> new RuntimeException("Venue Not Found with: " + eventDTO.getVenueId()));
+                .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
+        User organizer =  userRepository.findById(eventDTO.getOrganizerDtoID())
+                .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
+        Venue venue = venueRepository.findById(eventDTO.getVenueId())
+                .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
         Event event = new Event();
         event.setOrganizer(organizer);
         event.setCategory(eventCategory);
@@ -141,19 +152,46 @@ public class EventServiceImpl implements EventService {
             event.setImages(eventImages);
 
         }
-//        List<TicketType> ticketTypes = new ArrayList<>();
-//        if(eventDTO.getTicketTypes()!=null){
-//            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
-//                TicketType type = new TicketType();
-//                type.setEvent(event);
-//                type.setTypeName(ticketTypeDto.getTypeName());
-//                type.setPrice(ticketTypeDto.getPrice());
-//                type.setDescription(ticketTypeDto.getDescription());
-//                ticketTypes.add(type);
-//            }
-//        }
-//        event.setTicketTypes(ticketTypes);
+        List<TicketType> ticketTypes = new ArrayList<>();
+        if(eventDTO.getTicketTypes()!=null){
+            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
+                TicketType type = new TicketType();
+                VenueZone zone = venueZoneRepository.findById(ticketTypeDto.getZoneID())
+                        .orElseThrow(()->new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
+                type.setZone(zone);
+                type.setEvent(event);
+                type.setTypeName(ticketTypeDto.getTypeName());
+                type.setPrice(ticketTypeDto.getPrice());
+                type.setCreatedBy(organizer.getEmail());
+                type.setStock(Math.toIntExact(ticketTypeDto.getStock()));
+                type.setDescription(ticketTypeDto.getDescription());
+                ticketTypes.add(type);
+
+            }
+        }
+        event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
+        CreateTicket(ticketTypes,organizer.getEmail());
+    }
+    public void CreateTicket(List<TicketType> ticketTypeList,String emailUser ){
+        for (TicketType type : ticketTypeList){
+            for (int i = 0; i< type.getStock();i++){
+                Ticket ticket = new Ticket();
+                ticket.setTicketType(type);
+                ticket.setStatus(TicketStatus.UNSOLD);
+                ticket.setCreatedBy(emailUser);
+                ticket.setIsCheckedIn(false);
+                do{
+                    String code = UUID.randomUUID()
+                            .toString()
+                            .replace("-", "")
+                            .substring(0, 12)
+                            .toUpperCase();
+                    ticket.setQrCode(type.getTypeName()+code);
+                } while(tickRepository.existsByQrCode(ticket.getQrCode()));
+                tickRepository.save(ticket);
+            }
+        }
     }
 
     @Override
@@ -217,43 +255,11 @@ public class EventServiceImpl implements EventService {
             eventDetailModeratorDTO.setOrganizerName(fullName);
             eventDetailModeratorDTO.setOrganizerAvatarUrl(event.getOrganizer().getAvatar());
         }
+
         //truong gia dinh (se dung khi database update them cot)
         eventDetailModeratorDTO.setRejectReason("");
 
         return eventDetailModeratorDTO;
-    }
-
-    @Override
-    public DashboardStatsDTO getDashboardStats() {
-
-        DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.PENDING));
-        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.APPROVED));
-        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.REJECTED));
-
-        return stats;
-    }
-
-    @Override
-    public List<Event> getTopThreePendingEvents() {
-        return eventRepository.findByStatusOrderByCreatedAtDesc(
-                EventStatus.PENDING,
-                org.springframework.data.domain.PageRequest.of(0, 3)
-        );
-    }
-
-    @Override
-    public List<Event> getTodayActiveEvents() {
-
-        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-
-        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-
-        return eventRepository.findByStatusAndStartTimeBetween(
-                EventStatus.APPROVED,
-                startOfDay,
-                endOfDay
-        );
     }
 
     @Override
@@ -334,4 +340,175 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAll(spec, pageable);
     }
 
+
+    public List<Event> findEventbyVenueID(Long id) {
+        return eventRepository.findByVenue_VenueId(id);
+    }
+    @Override
+    public DashboardStatsDTO getDashboardStats() {
+
+        DashboardStatsDTO stats = new DashboardStatsDTO();
+        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.PENDING));
+        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.APPROVED));
+        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.REJECTED));
+
+        return stats;
+    }
+
+    @Override
+    public List<Event> getTopThreePendingEvents() {
+        return eventRepository.findByStatusOrderByCreatedAtDesc(
+                EventStatus.PENDING,
+                org.springframework.data.domain.PageRequest.of(0, 3)
+        );
+    }
+
+    @Override
+    public List<Event> getTodayActiveEvents() {
+
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+
+        return eventRepository.findByStatusAndStartTimeBetween(
+                EventStatus.APPROVED,
+                startOfDay,
+                endOfDay
+        );
+    }
+    @Override
+    public Page<EventCardDTO> getEventCards(Long organizerId,String[] statuses, String keyword, int page) {
+        // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
+        List<String> statusList = statuses == null
+                ? List.of()
+                : Arrays.stream(statuses)
+                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(
+                Math.max(page - 1, 0),
+                9
+        );
+        Page<Event> entityPage = eventRepository
+                .findByMultiStatusAndKeyword(organizerId,statusList, keyword, pageable);
+        return entityPage.map(this::toDTO);
+    }
+    private EventCardDTO toDTO(Event event) {
+        EventCardDTO dto = new EventCardDTO();
+        dto.setId(event.getEventId());
+        dto.setEventName(event.getTitle());
+        dto.setThumnail(event.getThumbnailUrl());
+        dto.setDate(event.getDate());
+        dto.setStartime(event.getStartTime().toLocalTime());
+        dto.setEndtime(event.getEndTime().toLocalTime());
+        dto.setStatusEvent(event.getStatus().name());
+        dto.setEventCatagory(event.getCategory().getCategoryName());
+        dto.setVenueName(event.getVenue().getVenueName());
+
+        List<TicketType> ticketTypes = event.getTicketTypes();
+        int stock = 0;
+        int numSelled = 0;
+        for (TicketType tt : ticketTypes) {
+            stock     += tt.getStock();
+            numSelled += tickRepository.getNumTicketSelled(tt.getTicketTypeId());
+        }
+
+        dto.setStock(stock);
+        dto.setTicketSelled(numSelled);
+        dto.setPercent(stock == 0 ? 0 : numSelled * 100 / stock);
+
+    public List<EventSummaryProjection> getEventStatisticsByVenue(Long id){
+        return eventRepository.getEventStatisticsByVenue(id);
+    }
+    public VenueSummaryProjection getVenueStatisticSummary( Long id){
+        return  eventRepository.getVenueStatisticSummary(id);
+    }
+
+    @Override
+    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
+        Specification<Event> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
+            }
+
+            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
+                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
+                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
+            }
+
+            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
+
+                Join<Event, Venue> venueJoin = root.join("venue", JoinType.INNER);
+
+                Join<Venue, Address> addressJoin = venueJoin.join("address", JoinType.INNER);
+
+                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
+
+                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
+
+                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
+            }
+
+            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
+                try {
+                    String[] parts = criteria.getMonth().split("-");
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]);
+
+                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
+                            .withHour(23).withMinute(59).withSecond(59);
+
+                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
+                }
+            }
+
+
+            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
+
+                Subquery<Double> subquery = query.subquery(Double.class);
+
+                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
+
+                subquery.select(cb.min(ticketRoot.get("price")));
+
+                subquery.where(cb.equal(ticketRoot.get("event"), root));
+
+                Expression<Double> minPriceExpr = subquery;
+
+                switch (criteria.getPrice()) {
+                    case "free":
+                        predicates.add(cb.equal(minPriceExpr, 0D));
+                        break;
+                    case "under200":
+                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
+                        break;
+                    case "200to1000":
+                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
+                        break;
+                    case "over1000":
+                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
+                        break;
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return eventRepository.findAll(spec, pageable);
+    }
+
+    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
+        return eventRepository.getMonthlyRevenueByVenue(id);
+        return dto;
+    }
 }
+
+
+

@@ -7,7 +7,6 @@ import vn.edu.fpt.service.OrganizerProfileService;
 
 @Service("OrganizerProfileService")
 public class OrganizerProfileServiceImpl implements OrganizerProfileService {
-
     private final OrganizerProfileRepository organizerProfileRepository;
 
     public OrganizerProfileServiceImpl(OrganizerProfileRepository organizerProfileRepository) {

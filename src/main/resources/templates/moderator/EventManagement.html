@@ -49,12 +49,12 @@
             <div class="filter-group">
                 <label class="filter-label" for="statusSelect">Category Filter</label>
                 <div class="select-wrapper">
-                    <select id="categorySelect" name="categoryId" class="form-select">
+                    <select name="categoryId" class="form-select">
                         <option value="">All Categories</option>
-                        <option th:each="cate : ${categories}"
-                                th:value="${cate.categoryId}"
-                                th:text="${cate.categoryName}"
-                                th:selected="${cate.categoryId == categoryId}">
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.categoryId}"
+                                th:text="${cat.categoryName}"
+                                th:selected="${cat.categoryId == categoryId}">
                         </option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-arrow"></i>

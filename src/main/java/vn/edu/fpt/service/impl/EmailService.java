@@ -60,7 +60,6 @@ public class EmailService {
         context.setVariable("eventTitle", eventTitle);
         context.setVariable("reviewMessage", reviewMessage != null ? reviewMessage.trim() : "");
 
-        // Render template từ folder templates/mail/event/approvalMail.html
         String htmlContent = templateEngine.process("mail/event/approvalMail", context);
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -78,7 +77,6 @@ public class EmailService {
         context.setVariable("eventTitle", eventTitle);
         context.setVariable("reviewMessage", reviewMessage != null ? reviewMessage.trim() : "");
 
-        // Render template từ folder templates/mail/event/rejectionMail.html
         String htmlContent = templateEngine.process("mail/event/rejectionMail", context);
 
         MimeMessage message = mailSender.createMimeMessage();

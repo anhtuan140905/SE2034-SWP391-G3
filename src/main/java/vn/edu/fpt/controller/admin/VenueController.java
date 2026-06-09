@@ -1,18 +1,19 @@
 package vn.edu.fpt.controller.admin;
 
 import jakarta.validation.Valid;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Venue;
+import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.model.Ward;
 import vn.edu.fpt.modelview.request.admin.CreateVenueDTO;
-import vn.edu.fpt.service.CityService;
-import vn.edu.fpt.service.VenueService;
-import vn.edu.fpt.service.WardService;
-import vn.edu.fpt.service.impl.CloudinaryService;
+import vn.edu.fpt.repository.EventSummaryProjection;
+import vn.edu.fpt.repository.VenueSummaryProjection;
+import vn.edu.fpt.service.impl.*;
 
 import java.util.List;
 
@@ -20,22 +21,25 @@ import java.util.List;
 @RequestMapping("/admin")
 public class VenueController {
 
-    private final VenueService venueService;
-    private final CityService cityService;
-    private final WardService wardService;
+    private final VenueServiceImpl venueServiceImpl;
+    private final CityServiceImpl cityServiceImpl;
+    private final WardServiceImpl wardServiceImpl;
     private final CloudinaryService cloudinaryService;
+    private final EventServiceImpl eventServiceImpl;
 
-    public VenueController(VenueService venueService, CityService cityService, WardService wardService, CloudinaryService cloudinaryService) {
-        this.venueService = venueService;
-        this.cityService = cityService;
-        this.wardService = wardService;
+
+    public VenueController(VenueServiceImpl venueServiceImpl, CityServiceImpl cityServiceImpl, WardServiceImpl wardServiceImpl, CloudinaryService cloudinaryService, EventServiceImpl eventServiceImpl) {
+        this.venueServiceImpl = venueServiceImpl;
+        this.cityServiceImpl = cityServiceImpl;
+        this.wardServiceImpl = wardServiceImpl;
         this.cloudinaryService = cloudinaryService;
+        this.eventServiceImpl = eventServiceImpl;
     }
 
     @GetMapping("/addvenue")
     public String getCreateVenuePage(Model model) {
         model.addAttribute("CreateVenueDTO", new CreateVenueDTO());
-        model.addAttribute("cities", cityService.getCityList());
+        model.addAttribute("cities", cityServiceImpl.getCityList());
         return "admin/venue/AddVenue";
     }
 
@@ -47,7 +51,7 @@ public class VenueController {
             @RequestParam(value = "venueFile", required = false) MultipartFile venueFile) {
 
         if (result.hasErrors()) {
-            model.addAttribute("cities", cityService.getCityList());
+            model.addAttribute("cities", cityServiceImpl.getCityList());
             return "admin/venue/AddVenue";
         }
         try {
@@ -57,10 +61,10 @@ public class VenueController {
             } else {
                 request.setImageUrl(null);
             }
-            venueService.createVenue(request);
+            venueServiceImpl.createVenue(request);
         } catch (Exception e) {
-            model.addAttribute("cities", this.cityService.getCityList());
-            return "admin/AddVenue";
+            model.addAttribute("cities", this.cityServiceImpl.getCityList());
+            return "admin/venue/AddVenue";
         }
 
 
@@ -71,20 +75,19 @@ public class VenueController {
     @ResponseBody
     public List<Ward> getWardsByCity(@PathVariable Long cityId) {
 
-        return wardService.findByCityId(cityId);
+        return wardServiceImpl.findByCityId(cityId);
     }
 
     @GetMapping("/listvenue")
     public String getListVenuePage(Model model,
                                    @RequestParam(required = false) String keyword) {
         List<Venue> venues;
-        if (keyword==null||keyword.trim().isEmpty()) {
-            venues = venueService.getAllVenue();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            venues = venueServiceImpl.getAllVenue();
+        } else {
+            venues = venueServiceImpl.searchVenue(keyword);
         }
-        else {
-             venues = venueService.searchVenue(keyword);
-        }
-model.addAttribute("keyword", keyword);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("venues", venues);
         return "admin/venue/ListVenue";
     }
@@ -92,15 +95,60 @@ model.addAttribute("keyword", keyword);
 
     @GetMapping("/viewdetailvenue")
     public String getViewDetailVenuePage(@RequestParam Long id, Model model) {
-        Venue venues = venueService.findById(id);
+        Venue venues = venueServiceImpl.findById(id);
+        List<EventSummaryProjection> event = eventServiceImpl.getEventStatisticsByVenue(id);
+        VenueSummaryProjection venueEvents = eventServiceImpl.getVenueStatisticSummary(id);
+        List<VenueSummaryProjection> mothEvent = eventServiceImpl.getMonthlyRevenueByVenue(id);
         model.addAttribute("venues", venues);
+        model.addAttribute("event", event);
+        model.addAttribute("venueEvents",venueEvents);
+        model.addAttribute("mothEvent", mothEvent);
         return "admin/venue/ViewDetailVenue";
     }
 
     @GetMapping("/editvenue")
-    public String editVenuePage(Model model) {
-        List<Venue> venues = venueService.getAllVenue();
+    public String editVenuePage(@RequestParam Long id, Model model) {
+        Venue venues = venueServiceImpl.findById(id);
+        List<VenueZone> venueZones = venueServiceImpl.findByVenueVenueId(id);
         model.addAttribute("venues", venues);
+        model.addAttribute("venueZones", venueZones);
+
+        model.addAttribute("cities", cityServiceImpl.getCityList());
+
         return "admin/venue/EditVenue";
     }
+
+    @PostMapping("/editvenue")
+    public String editVenuePage(
+            @Valid @ModelAttribute("CreateVenueDTO") CreateVenueDTO request,
+            BindingResult result,
+            Model model,
+            @RequestParam(value = "venueFile", required = false) MultipartFile venueFile,
+            @RequestParam Long id
+
+    ) {
+
+        Venue venue = venueServiceImpl.findById(id);
+        if (result.hasErrors()) {
+            model.addAttribute("cities", cityServiceImpl.getCityList());
+            model.addAttribute("venues", venue);
+            return "admin/venue/EditVenue";
+        }
+        try {
+            if (venueFile != null && !venueFile.isEmpty()) {
+                String imageUrl = this.cloudinaryService.uploadFile(venueFile, "venueFile");
+                request.setImageUrl(imageUrl);
+            } else {
+                request.setImageUrl(null);
+            }
+            venueServiceImpl.updateVenue(id, request);
+        } catch (Exception e) {
+            model.addAttribute("cities", this.cityServiceImpl.getCityList());
+            model.addAttribute("venues", venue);
+            return "admin/venue/EditVenue";
+        }
+
+        return "redirect:/admin/listvenue";
+    }
+
 }
