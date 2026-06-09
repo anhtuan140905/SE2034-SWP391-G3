@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -34,7 +35,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "            LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
             "            WHERE e.status = 'APPROVED' AND e.start_time > GETDATE()\n" +
             "            GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name\n" +
-            "            ORDER BY sold_count DESC", // XÓA BỎ HOÀN TOÀN CHỮ LIMIT 6 Ở ĐÂY
+            "            ORDER BY sold_count DESC",
             nativeQuery = true)
     List<EventSummaryProjection> findTopFeaturedEvents();
 
@@ -52,6 +53,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "ORDER BY sold_count DESC\n", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 
+
+    //---------------------------------------------------------------------------------------
     @Query("SELECT e FROM Event e WHERE " +
             "(:status IS NULL OR e.status = :status) " +
             "AND " +
@@ -64,6 +67,17 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             @Param("categoryId") Long categoryId,
             Pageable pageable);
 
+    // Đếm số lượng sự kiện theo trạng thái
     long countByStatus(EventStatus status);
+
+    // Lấy 3 sự kiện Pending mới nhất
+    List<Event> findByStatusOrderByCreatedAtDesc(EventStatus status, Pageable pageable);
+
+    // Lấy sự kiện diễn ra trong ngày (status = APPROVED)
+    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
+
+    long countByOrganizerId(Long organizerId);
+
+    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 
 }

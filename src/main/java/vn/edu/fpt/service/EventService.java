@@ -5,6 +5,7 @@ import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
+import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.request.organizer.AddressDto;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.VenueDto;
@@ -26,4 +27,7 @@ public interface EventService {
     void saveEvent(EventDTO eventDTO);
     VenueDto getVenuebyId(Long venueID);
     EventDetailModeratorDTO getEventDetailById(Long id);
+    DashboardStatsDTO getDashboardStats();
+    List<Event> getTopThreePendingEvents();
+    List<Event> getTodayActiveEvents();
 }

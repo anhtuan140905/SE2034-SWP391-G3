@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.EventSummaryProjection;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
+
     private final EventRepository eventRepository;
     private EventCategoryRepository eventCategoryRepository;
     private VenueRepository venueRepository;
@@ -40,6 +42,7 @@ public class EventServiceImpl implements EventService {
         List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
         return listAllEventCategory;
     }
+
     @Override
     public List<VenueZoneOrganizerDTO> getVenueZoneByVenueId(Long id) {
         List<VenueZone> venueZones = venueZoneRepository.findByVenueVenueId(id);
@@ -70,6 +73,7 @@ public class EventServiceImpl implements EventService {
         }
         return venueDtos;
     }
+
     @Override
     public VenueDto getVenuebyId(Long venueID) {
         Venue venue = venueRepository.findById(venueID)
@@ -213,5 +217,37 @@ public class EventServiceImpl implements EventService {
         return eventDetailModeratorDTO;
     }
 
+    @Override
+    public DashboardStatsDTO getDashboardStats() {
+
+        DashboardStatsDTO stats = new DashboardStatsDTO();
+        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.PENDING));
+        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.APPROVED));
+        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.REJECTED));
+
+        return stats;
+    }
+
+    @Override
+    public List<Event> getTopThreePendingEvents() {
+        return eventRepository.findByStatusOrderByCreatedAtDesc(
+                EventStatus.PENDING,
+                org.springframework.data.domain.PageRequest.of(0, 3)
+        );
+    }   
+
+    @Override
+    public List<Event> getTodayActiveEvents() {
+
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+
+        return eventRepository.findByStatusAndStartTimeBetween(
+                    EventStatus.APPROVED,
+                    startOfDay,
+                    endOfDay
+        );
+    }
 
 }
