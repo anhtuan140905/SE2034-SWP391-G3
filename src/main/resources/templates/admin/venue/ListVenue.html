@@ -167,7 +167,7 @@
         .profile-info .name {
             font-size: 14px;
             font-weight: bold;
-            color: white;
+            color: #1e0e34;
         }
 
         .profile-info .role {
@@ -347,9 +347,14 @@
             color: #4ade80;
         }
 
+        .status.inactive {
+            background: rgba(220, 53, 69, 0.15);
+            color: #d11127;
+        }
+
         .status.maintenance {
             background: rgba(234, 179, 8, 0.2);
-            color: #facc15;
+            color: #e8ba05;
         }
 
         .actions {
@@ -567,7 +572,12 @@
                     </td>
 
                     <!-- Status -->
-                    <td><span class="status active">Đang Hoạt Động</span></td>
+                    <td>
+                        <span th:if="${venue.status != null and venue.status.name() == 'ACTIVE'}" class="status active">Đang Hoạt Động</span>
+                        <span th:if="${venue.status != null and venue.status.name() == 'INACTIVE'}" class="status inactive">Ngừng Hoạt Động</span>
+                        <span th:if="${venue.status != null and venue.status.name() == 'MAINTAIN'}" class="status maintenance">Bảo Trì</span>
+                        <span th:if="${venue.status == null}" class="status">Chưa Xác Định</span>
+                    </td>
 
                     <!-- Actions -->
                     <td>
