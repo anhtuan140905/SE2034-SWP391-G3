@@ -1,5 +1,6 @@
 package vn.edu.fpt.service;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Address;
 import vn.edu.fpt.model.City;
@@ -17,111 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class VenueService {
+public interface VenueService {
+    void createVenue(CreateVenueDTO request);
+    void updateVenue(Long id, CreateVenueDTO request);
 
-    private final VenueRepository venueRepository;
-    private final CityRepository cityRepository;
-    private final WardRepository wardRepository;
+    List<Venue> getAllVenue();
 
-    public VenueService(
-            VenueRepository venueRepository,
-            CityRepository cityRepository,
-            WardRepository wardRepository) {
-        this.venueRepository = venueRepository;
-        this.cityRepository  = cityRepository;
-        this.wardRepository  = wardRepository;
-    }
+    Venue findById(Long id);
 
-    public void createVenue(CreateVenueDTO request) {
+    List<Venue> searchVenue(String keyword);
 
-        // =====================
-        // Tìm City theo ID
-        // =====================
-        City city = cityRepository.findById(request.getCity())
-                .orElseThrow(() -> new RuntimeException(
-                        "City not found with id: " + request.getCity()
-                ));
-
-        // =====================
-        // Tìm Ward theo ID
-        // =====================
-        Ward ward = wardRepository.findById(request.getWard())
-                .orElseThrow(() -> new RuntimeException(
-                        "Ward not found with id: " + request.getWard()
-                ));
-
-        // =====================
-        // Address
-        // =====================
-        Address address = new Address();
-
-        address.setWard(ward);
-        address.setSpecificAddress(request.getStreetAddress());
-
-        // =====================
-        // Venue
-        // =====================
-        Venue venue = new Venue();
-        venue.setVenueName(request.getVenueName());
-        venue.setAddress(address);
-        venue.setDescription(request.getDescription());
-        venue.setImageUrl(request.getImageUrl());
-
-        // =====================
-        // Capacity
-        // =====================
-        int totalCapacity = request.getZones()
-                .stream()
-                .mapToInt(z -> z.getRows() * z.getSeatsPerRow())
-                .sum();
-        venue.setCapacity(totalCapacity);
-
-        // =====================
-        // Zones + Seats
-        // =====================
-        List<VenueZone> zoneList = new ArrayList<>();
-
-        for (VenueZoneDTO zoneRequest : request.getZones()) {
-
-            VenueZone zone = new VenueZone();
-            zone.setVenue(venue);
-            zone.setZoneName(zoneRequest.getZoneName());
-            zone.setRows(zoneRequest.getRows());
-            zone.setSeatsPerRow(zoneRequest.getSeatsPerRow());
-
-            List<Seat> seats = new ArrayList<>();
-            for (int r = 0; r < zoneRequest.getRows(); r++) {
-                String rowLabel = String.valueOf((char) ('A' + r));
-                for (int s = 1; s <= zoneRequest.getSeatsPerRow(); s++) {
-                    Seat seat = new Seat();
-                    seat.setZone(zone);
-                    seat.setRowLabel(rowLabel);
-                    seat.setSeatNumber(s);
-                    seats.add(seat);
-                }
-            }
-
-            zone.setSeats(seats);
-            zoneList.add(zone);
-        }
-
-        venue.setZones(zoneList);
+    List<VenueZone> findByVenueVenueId(Long id);
 
 
-        // Save
-
-        venueRepository.save(venue);
-    }
-
-    public List<Venue> getAllVenue() {
-        return venueRepository.findAll();
-    }
-    public Venue findById(Long id) {
-        return venueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Venue not found: " + id));
-    }
-
-    public List<Venue> searchVenue(String keyword) {
-return venueRepository.findByVenueNameContainingIgnoreCase(keyword);
-    }
 }

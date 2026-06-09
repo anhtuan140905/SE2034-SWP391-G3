@@ -1,677 +1,310 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Cổng Tài Chính - Tạo Thanh Toán</title>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Portal – Create Settlement</title>
     <style>
-        /* ═══ SIDEBAR ═══ */
-        .sidebar {
-            width: 270px;
-            min-height: 100vh;
-            background: #ffffff;
-            border-right: 1px solid #E2E8F0;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar-header {
-            padding: 28px 24px 20px;
-            border-bottom: 1px solid #E2E8F0;
-        }
-        .sidebar-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #7C3AED;
-            line-height: 1.15;
-        }
-        .sidebar-subtitle {
-            margin-top: 6px;
-            color: #64748B;
-            font-size: .82rem;
-        }
-        .sidebar-nav {
-            padding: 16px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex: 1;
-        }
-        .nav-section-title {
-            font-size: .68rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #A78BFA;
-            font-weight: 700;
-            margin: 16px 10px 6px;
-        }
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            padding: 12px 14px;
-            border-radius: 14px;
-            text-decoration: none;
-            color: #475569;
-            font-size: .92rem;
-            font-weight: 500;
-            transition: .18s;
-        }
-        .nav-item svg {
-            flex-shrink: 0;
-            opacity: .75;
-        }
-        .nav-item:hover {
-            background: #F5F3FF;
-            color: #7C3AED;
-        }
-        .nav-item:hover svg { opacity: 1; }
-        .nav-item.active {
-            background: #EDE9FE;
-            color: #7C3AED;
-            font-weight: 700;
-        }
-        .nav-item.active svg { opacity: 1; }
-        .sidebar-footer {
-            border-top: 1px solid #E2E8F0;
-            padding: 18px 20px;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #7C3AED;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: .9rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-        .user-name { font-weight: 700; font-size: .92rem; }
-        .user-role { color: #64748B; font-size: .78rem; margin-top: 2px; }
-
-        :root{
-            --bg:#fbf5f7;
-            --card:#FFFFFF;
-            --border:#E2E8F0;
-            --text:#0F172A;
-            --muted:#64748B;
-            --primary:#7C3AED;
-            --primary-light:#F3E8FF;
-            --sidebar:#FFFFFF;
-        }
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
-
-        body{
-            font-family:'Segoe UI',sans-serif;
-            background:var(--bg);
-            color:var(--text);
-            height:100vh;
-            overflow:hidden;
-        }
-
-        .app{
-            display:flex;
-            height:100vh;
-        }
-
-        .main{
-            flex:1;
-            overflow-y:auto;
-            padding:40px;
-        }
-
-        .page-title{
-            font-size:2.5rem;
-            font-weight:800;
-        }
-
-        .page-desc{
-            color:var(--muted);
-            margin-top:10px;
-        }
-
-        .form-grid{
-            display:grid;
-            grid-template-columns:1fr 420px;
-            gap:28px;
-            margin-top:32px;
-        }
-
-        .card,
-        .calc-card{
-            background:white;
-            border:1px solid var(--border);
-            border-radius:24px;
-            padding:28px;
-        }
-
-        .card-title{
-            font-size:1.25rem;
-            font-weight:800;
-            margin-bottom:24px;
-            display:flex;
-            align-items:center;
-            gap:10px;
-        }
-
-        .form-group{
-            margin-bottom:20px;
-        }
-
-        .form-label{
-            display:block;
-            font-size:.9rem;
-            font-weight:700;
-            margin-bottom:8px;
-        }
-
-        .form-control{
-            width:100%;
-            padding:14px 16px;
-            border:1px solid var(--border);
-            border-radius:14px;
-            background:white;
-            color:var(--text);
-            font-size:.95rem;
-            outline:none;
-            transition:.2s;
-        }
-
-        .form-control:focus{
-            border-color:#C4B5FD;
-            box-shadow:0 0 0 4px rgba(124,58,237,.12);
-        }
-
-        .form-control[readonly]{
-            background:#fbf5f7;
-            color:#64748B;
-        }
-
-        .form-control option{
-            background:white;
-            color:#0F172A;
-        }
-
-        textarea.form-control{
-            resize:none;
-        }
-
-        .calc-formula{
-            background:#fbf5f7;
-            border:1px solid var(--border);
-            border-radius:16px;
-            padding:18px;
-            margin-bottom:22px;
-        }
-
-        .calc-formula p:first-child{
-            font-size:.82rem;
-            color:var(--muted);
-            margin-bottom:6px;
-        }
-
-        .calc-formula p:last-child{
-            font-weight:700;
-        }
-
-        .calc-row{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:14px 16px;
-            border-radius:14px;
-            background:#fbf5f7;
-            margin-bottom:12px;
-        }
-
-        .calc-row .label{
-            color:var(--muted);
-            font-size:.9rem;
-        }
-
-        .calc-row .val{
-            font-weight:700;
-        }
-
-        .calc-row .neg{
-            color:#DC2626;
-        }
-
-        .calc-divider{
-            height:1px;
-            background:#E2E8F0;
-            margin:18px 0;
-        }
-
-        .net-payout-box{
-            background:#F5F3FF;
-            border:1px solid #DDD6FE;
-            border-radius:20px;
-            padding:24px;
-        }
-
-        .net-label{
-            color:#6D28D9;
-            font-size:.9rem;
-            font-weight:700;
-            margin-bottom:10px;
-        }
-
-        .net-value{
-            font-size:2.5rem;
-            font-weight:800;
-            color:var(--primary);
-        }
-
-        .btn-generate{
-            width:100%;
-            margin-top:24px;
-            padding:16px;
-            border:none;
-            border-radius:16px;
-            background:var(--primary);
-            color:white;
-            font-size:1rem;
-            font-weight:700;
-            cursor:pointer;
-            transition:.2s;
-        }
-
-        .btn-generate:hover{
-            opacity:.92;
-        }
-
-        .btn-generate:disabled{
-            opacity:.5;
-            cursor:not-allowed;
-        }
-
-        .alert-success{
-            margin-top:24px;
-            background:#DCFCE7;
-            color:#166534;
-            border:1px solid #BBF7D0;
-            padding:14px 18px;
-            border-radius:14px;
-        }
-
-        .alert-error{
-            margin-top:24px;
-            background:#FEE2E2;
-            color:#991B1B;
-            border:1px solid #FECACA;
-            padding:14px 18px;
-            border-radius:14px;
-        }
-
+        :root{--background:#0C061E;--foreground:#ffffff;--card:rgba(30,20,50,0.6);--primary:#E91E63;--secondary:rgba(50,30,80,0.8);--muted-foreground:#A5A5B8;--border:rgba(233,30,99,0.15);--input-bg:rgba(30,20,50,0.5);--sidebar:rgba(20,12,40,0.95);--sidebar-border:rgba(233,30,99,0.2);--sidebar-accent:rgba(233,30,99,0.1);--radius:0.75rem}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{font-size:16px}
+        body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--background);color:var(--foreground);height:100vh;overflow:hidden}
+        .app{display:flex;height:100vh;overflow:hidden}
+        .sidebar{width:256px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column}
+        .sidebar-header{padding:24px;border-bottom:1px solid var(--sidebar-border)}
+        .sidebar-title{font-size:1.5rem;font-weight:700;background:linear-gradient(90deg,var(--primary),#9C27B0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .sidebar-subtitle{font-size:.75rem;color:var(--muted-foreground);margin-top:4px}
+        .sidebar-nav{flex:1;padding:16px;display:flex;flex-direction:column;gap:8px}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius);cursor:pointer;transition:all .2s;color:var(--muted-foreground);text-decoration:none;font-weight:500;font-size:.9rem;border:none;background:none;width:100%;text-align:left}
+        .nav-item:hover{background:var(--sidebar-accent);color:#fff}
+        .nav-item.active{background:var(--sidebar-accent);color:var(--primary);box-shadow:0 4px 20px rgba(233,30,99,.2)}
+        .nav-item svg{width:20px;height:20px;flex-shrink:0}
+        .sidebar-footer{padding:16px;border-top:1px solid var(--sidebar-border)}
+        .user-info{display:flex;align-items:center;gap:12px;padding:12px 16px}
+        .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#9C27B0);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(233,30,99,.3);flex-shrink:0}
+        .avatar svg{width:20px;height:20px}
+        .user-name{font-size:.875rem;font-weight:500}
+        .user-role{font-size:.75rem;color:var(--muted-foreground)}
+        .main{flex:1;overflow-y:auto;padding:32px}
+        .page-title{font-size:1.875rem;font-weight:700}
+        .page-desc{color:var(--muted-foreground);margin-top:4px}
+        .card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);padding:24px;box-shadow:0 4px 30px rgba(233,30,99,.05);transition:box-shadow .2s}
+        .card:hover{box-shadow:0 4px 30px rgba(233,30,99,.1)}
+        .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px}
+        .table-wrapper{overflow-x:auto}
+        table{width:100%;border-collapse:collapse}
+        thead tr{border-bottom:1px solid rgba(233,30,99,.12)}
+        th{padding:16px 24px;text-align:left;font-size:.875rem;font-weight:500;color:var(--muted-foreground)}
+        th.right{text-align:right}
+        th.center{text-align:center}
+        tbody tr{border-bottom:1px solid rgba(233,30,99,.08);transition:background .15s}
+        tbody tr:hover{background:rgba(50,30,80,.2)}
+        tbody tr:nth-child(even){background:rgba(50,30,80,.1)}
+        tbody tr:nth-child(even):hover{background:rgba(50,30,80,.25)}
+        td{padding:16px 24px;font-size:.875rem}
+        td.right{text-align:right}
+        td.center{text-align:center}
+        .mono{font-family:monospace;color:var(--primary);font-size:.875rem}
+        .text-muted{color:var(--muted-foreground)}
+        .badge{display:inline-block;padding:4px 16px;border-radius:9999px;font-size:.75rem;font-weight:600;border:1px solid}
+        .badge.pending{background:rgba(249,115,22,.2);color:#fb923c;border-color:rgba(249,115,22,.4)}
+        .badge.approved{background:rgba(59,130,246,.2);color:#60a5fa;border-color:rgba(59,130,246,.4)}
+        .badge.paid{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.4)}
+        .filter-row{display:flex;gap:16px;margin-top:24px}
+        .search-wrap{flex:1;position:relative}
+        .search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted-foreground)}
+        .search-input,.filter-btn{padding:12px 24px;background:var(--input-bg);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);color:#fff;font-size:.9rem;outline:none;transition:all .2s}
+        .search-input{width:100%;padding-left:48px}
+        .search-input::placeholder{color:var(--muted-foreground)}
+        .search-input:focus{box-shadow:0 0 0 2px rgba(233,30,99,.3);border-color:rgba(233,30,99,.5)}
+        .filter-btn{display:flex;align-items:center;gap:8px;background:var(--secondary);cursor:pointer;white-space:nowrap}
+        .filter-btn:hover{background:rgba(50,30,80,.9)}
+        .filter-btn svg{width:20px;height:20px}
+        .pills{display:flex;gap:16px;margin-top:24px;overflow-x:auto;padding-bottom:8px}
+        .pill{padding:10px 24px;border-radius:calc(var(--radius) + 2px);font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid var(--border);background:var(--secondary);color:var(--muted-foreground);font-size:.9rem}
+        .pill:hover{background:rgba(50,30,80,.9)}
+        .pill.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 20px rgba(233,30,99,.3)}
+        .btn-link{display:flex;align-items:center;gap:4px;color:var(--primary);background:none;border:none;cursor:pointer;font-size:.875rem;font-weight:500;transition:opacity .2s}
+        .btn-link:hover{opacity:.8}
+        .btn-link svg{width:16px;height:16px}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+        .form-group{margin-bottom:16px}
+        .form-label{display:block;font-size:.875rem;font-weight:500;margin-bottom:8px}
+        .form-control{width:100%;padding:12px 16px;background:var(--input-bg);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);color:#fff;font-size:.9rem;outline:none;transition:all .2s}
+        .form-control:focus{box-shadow:0 0 0 2px rgba(233,30,99,.3);border-color:rgba(233,30,99,.5)}
+        .form-control:read-only{background:rgba(50,30,80,.3);color:var(--muted-foreground)}
+        .form-control option{background:#1A0F33}
+        .calc-card{background:linear-gradient(135deg,rgba(233,30,99,.1),rgba(156,39,176,.1));border:1px solid rgba(233,30,99,.3);border-radius:calc(var(--radius) + 2px);padding:24px;box-shadow:0 4px 30px rgba(233,30,99,.2)}
+        .calc-formula{background:rgba(30,20,50,.5);border-radius:var(--radius);border:1px solid rgba(233,30,99,.08);padding:16px;margin-bottom:16px}
+        .calc-formula p:first-child{font-size:.875rem;color:var(--muted-foreground);margin-bottom:4px}
+        .calc-formula p:last-child{font-size:.875rem;font-family:monospace}
+        .calc-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(50,30,80,.2);border-radius:var(--radius);margin-bottom:8px}
+        .calc-row .label{font-size:.875rem;color:var(--muted-foreground)}
+        .calc-row .val{font-weight:600}
+        .calc-row .val.neg{color:#fb923c}
+        .calc-divider{height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);margin:8px 0 16px}
+        .net-payout-box{background:linear-gradient(135deg,rgba(233,30,99,.2),rgba(156,39,176,.2));border:1px solid rgba(233,30,99,.4);border-radius:calc(var(--radius) + 4px);padding:24px}
+        .net-payout-box .net-label{font-size:.875rem;color:var(--muted-foreground);margin-bottom:8px}
+        .net-payout-box .net-value{font-size:2.5rem;font-weight:700}
+        .btn-generate{width:100%;padding:16px;margin-top:24px;background:linear-gradient(135deg,var(--primary),#9C27B0);color:#fff;font-weight:600;font-size:1rem;border:none;cursor:pointer;border-radius:calc(var(--radius) + 2px);box-shadow:0 4px 20px rgba(233,30,99,.3);transition:all .2s}
+        .btn-generate:hover{box-shadow:0 6px 30px rgba(233,30,99,.5);transform:translateY(-1px)}
+        .btn-generate:disabled{opacity:.5;cursor:not-allowed;transform:none}
+        .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:32px}
+        .metric-card{background:var(--card);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);padding:24px;transition:box-shadow .2s}
+        .metric-card:hover{box-shadow:0 4px 30px rgba(233,30,99,.1)}
+        .metric-icon{width:48px;height:48px;border-radius:var(--radius);background:rgba(233,30,99,.1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(233,30,99,.2);margin-bottom:16px}
+        .metric-icon svg{width:24px;height:24px}
+        .metric-label{font-size:.875rem;color:var(--muted-foreground);margin-bottom:8px}
+        .metric-row{display:flex;align-items:flex-end;justify-content:space-between}
+        .metric-value{font-size:1.5rem;font-weight:700}
+        .metric-change{font-size:.75rem;color:var(--primary)}
+        .chart-section{margin-top:32px}
+        .chart-container{width:100%;height:300px;position:relative}
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+        .activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:var(--radius);background:rgba(50,30,80,.3);border:1px solid rgba(233,30,99,.08);margin-bottom:12px}
+        .activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+        .activity-dot.success{background:#22c55e}
+        .activity-dot.info{background:#3b82f6}
+        .activity-dot.pending{background:#f97316}
+        .activity-dot.warning{background:#eab308}
+        .activity-text{font-size:.875rem}
+        .activity-time{font-size:.75rem;color:var(--muted-foreground);margin-top:4px}
+        .task-item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:var(--radius);margin-bottom:12px}
+        .task-item.orange{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3)}
+        .task-item.blue{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3)}
+        .task-item.purple{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3)}
+        .task-count{font-size:1.5rem;font-weight:700}
+        .task-count.orange{color:#fb923c}
+        .task-count.blue{color:#60a5fa}
+        .task-count.purple{color:#c084fc}
+        .profile-header{display:flex;align-items:center;gap:24px;padding:32px;border-bottom:1px solid rgba(233,30,99,.12)}
+        .avatar-large{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#9C27B0);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(233,30,99,.3),0 8px 30px rgba(233,30,99,.2);position:relative}
+        .avatar-large svg{width:48px;height:48px}
+        .online-dot{position:absolute;bottom:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#22c55e;border:3px solid var(--card)}
+        .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:32px}
+        .profile-footer{display:flex;justify-content:flex-end;gap:16px;padding:24px 32px;background:rgba(50,30,80,.2);border-top:1px solid rgba(233,30,99,.1)}
+        .btn-cancel{padding:12px 32px;border:2px solid var(--border);background:none;color:#fff;border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;transition:all .2s}
+        .btn-cancel:hover{background:rgba(50,30,80,.3)}
+        .btn-cancel svg{width:20px;height:20px}
+        .btn-save{padding:12px 32px;background:linear-gradient(135deg,var(--primary),#9C27B0);color:#fff;border:none;border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(233,30,99,.3);transition:all .2s}
+        .btn-save:hover{box-shadow:0 6px 30px rgba(233,30,99,.5)}
+        .btn-save svg{width:20px;height:20px}
+        .account-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        .account-item{background:rgba(50,30,80,.2);border:1px solid rgba(233,30,99,.08);border-radius:var(--radius);padding:16px}
+        .account-item .a-label{font-size:.75rem;color:var(--muted-foreground);margin-bottom:4px}
+        .account-item .a-value{font-size:.875rem;font-weight:600}
+        .account-item .a-value.green{color:#4ade80}
+        .mt-32{margin-top:32px}
+        .section-header{padding:24px;border-bottom:1px solid rgba(233,30,99,.1)}
+        .section-header h2{font-size:1.25rem;font-weight:700}
+        .empty{padding:48px;text-align:center;color:var(--muted-foreground)}
+        ::-webkit-scrollbar{width:6px;height:6px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:rgba(233,30,99,.3);border-radius:3px}
     </style>
 </head>
-
 <body>
-
 <div class="app">
-
-    <!-- SIDEBAR -->
-
     <aside class="sidebar">
-
         <div class="sidebar-header">
-            <div class="sidebar-title">Finance<br>Portal</div>
-            <div class="sidebar-subtitle">Quản Lý Thanh Toán</div>
+            <div class="sidebar-title">Finance Portal</div>
+            <div class="sidebar-subtitle">Settlement Management</div>
         </div>
-
         <nav class="sidebar-nav">
-
-            <div class="nav-section-title">CHÍNH</div>
-            <a class="nav-item" th:href="@{/finance/dashboard}">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
-                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
-                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
-                </svg>
-                Tổng Quan
+            <a class="nav-item" href="DashboardFinance.html">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
             </a>
-
-            <div class="nav-section-title">TÀI CHÍNH</div>
-            <a class="nav-item" th:href="@{/finance/events}">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                    <path d="M8 2v4M16 2v4M3 10h18"/>
-                    <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-linecap="round" stroke-width="2"/>
-                </svg>
-                Sự Kiện Đã Kết Thúc
+            <a class="nav-item" href="ListEndedEvents.html">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Completed Events
             </a>
-            <a class="nav-item active" th:href="@{/finance/settlement/create}">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="9"/>
-                    <path d="M12 8v8M8 12h8" stroke-linecap="round"/>
-                </svg>
-                Tạo Thanh Toán
+            <a class="nav-item active" href="CreateSettlement.html">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Create Settlement
             </a>
-            <a class="nav-item" th:href="@{/finance/settlements}">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <rect x="4" y="3" width="16" height="18" rx="2"/>
-                    <path d="M8 8h8M8 12h8M8 16h5" stroke-linecap="round"/>
-                </svg>
-                Danh Sách Thanh Toán
+            <a class="nav-item" href="ListSettlement.html">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                List Settlement
             </a>
-
+            <a class="nav-item" href="UpdateProfileFinance.html">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+            </a>
         </nav>
-
         <div class="sidebar-footer">
             <div class="user-info">
-                <div class="avatar">F</div>
+                <div class="avatar">
+                    <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
                 <div>
-                    <div class="user-name"
-                         th:text="${activeUser != null ? activeUser.firstName + ' ' + activeUser.lastName : 'Finance Officer'}">
-                        Nhân Viên Tài Chính
-                    </div>
-                    <div class="user-role">Nhân Viên Tài Chính</div>
+                    <div class="user-name">Finance Officer</div>
+                    <div class="user-role">Admin</div>
                 </div>
             </div>
         </div>
-
     </aside>
 
-    <!-- MAIN -->
-
     <main class="main">
-
-        <h1 class="page-title">
-            Tạo thanh toán mới
-        </h1>
-
-        <p class="page-desc">
-            Tạo hồ sơ thanh toán với tính toán tự động.
-        </p>
-
-        <div th:if="${successMessage}"
-             class="alert-success"
-             th:text="${successMessage}">
+        <div>
+            <h1 class="page-title">Generate New Settlement Request</h1>
+            <p class="page-desc">Create settlement records with automated calculations</p>
         </div>
 
-        <div th:if="${errorMessage}"
-             class="alert-error"
-             th:text="${errorMessage}">
-        </div>
-
-        <form th:action="@{/finance/settlement/create}"
-              method="post">
-
-            <div class="form-grid">
-
-                <!-- LEFT -->
-
-                <div class="card">
-
-                    <h2 class="card-title">
-                        Thông tin sự kiện
-                    </h2>
-
+        <div class="form-grid">
+            <div class="card" style="padding:24px">
+                <h2 class="card-title" style="display:flex;align-items:center;gap:8px">
+                    <svg width="24" height="24" fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    Event Selection &amp; Details
+                </h2>
+                <div class="form-group">
+                    <label class="form-label">Select Completed Event</label>
+                    <select class="form-control" id="eventSelect" onchange="updateCalc()">
+                        <option value="">-- Choose an event --</option>
+                        <option value="EVT-8821">EVT-8821 - Tech Summit 2026</option>
+                        <option value="EVT-8812">EVT-8812 - Music Festival Spring</option>
+                        <option value="EVT-8805">EVT-8805 - Business Conference 2026</option>
+                        <option value="EVT-8798">EVT-8798 - Art Exhibition Gala</option>
+                    </select>
+                </div>
+                <div id="eventDetails" style="display:none">
                     <div class="form-group">
-
-                        <label class="form-label">
-                            Chọn sự kiện đã hoàn thành
-                        </label>
-
-                        <select class="form-control"
-                                id="eventSelect"
-                                name="eventId"
-                                onchange="updateCalc()">
-
-                            <option value="">
-                                -- Chọn một sự kiện --
-                            </option>
-
-                            <option th:each="ev : ${unsettledEvents}"
-                                    th:value="${ev.eventId}"
-                                    th:text="${ev.title}"
-                                    th:data-organizer="${ev.organizerName}"
-                                    th:data-revenue="${ev.revenue}">
-                            </option>
-
+                        <label class="form-label">Organizer Name</label>
+                        <input class="form-control" id="organizerField" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Ticket Revenue</label>
+                        <input class="form-control" id="revenueField" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">System Fee Deductions (10%)</label>
+                        <input class="form-control" id="feeField" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Refund Deductions</label>
+                        <input class="form-control" id="refundInput" type="number" value="0" placeholder="Enter refund amount" oninput="updateCalc()" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-control" id="paymentMethod">
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="stripe">Stripe</option>
                         </select>
-
                     </div>
-
-                    <div id="eventDetails">
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Tên người tổ chức
-                            </label>
-
-                            <input class="form-control"
-                                   type="text"
-                                   id="organizerField"
-                                   readonly/>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Tổng Doanh Thu
-                            </label>
-
-                            <input class="form-control"
-                                   type="text"
-                                   id="revenueField"
-                                   readonly/>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Phí hệ thống (10%)
-                            </label>
-
-                            <input class="form-control"
-                                   type="text"
-                                   id="feeField"
-                                   readonly/>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Số tiền hoàn lại
-                            </label>
-
-                            <input class="form-control"
-                                   type="number"
-                                   id="refundInput"
-                                   name="refundDeduction"
-                                   value="0"
-                                   oninput="updateCalc()"/>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Phương thức thanh toán
-                            </label>
-
-                            <select class="form-control"
-                                    name="paymentMethod">
-
-                                <option value="bank_transfer">
-                                    Bank Transfer
-                                </option>
-
-                                <option value="paypal">
-                                    PayPal
-                                </option>
-
-                                <option value="stripe">
-                                    Stripe
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            <label class="form-label">
-                                Ghi Chú
-                            </label>
-
-                            <textarea class="form-control"
-                                      rows="4"
-                                      name="notes"
-                                      placeholder="Additional notes..."></textarea>
-
-                        </div>
-
+                    <div class="form-group">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" id="notesField" rows="3" placeholder="Add any notes for this settlement..."></textarea>
                     </div>
-
                 </div>
-
-                <!-- RIGHT -->
-
-                <div class="calc-card">
-
-                    <h2 class="card-title">
-                        Tính toán thanh toán
-                    </h2>
-
-                    <div class="calc-formula">
-
-                        <p>
-                            Công thức
-                        </p>
-
-                        <p>
-                            Doanh thu - Phí - Hoàn tiền = Số tiền thanh toán ròng
-                        </p>
-
-                    </div>
-
-                    <div class="calc-row">
-                        <span class="label">
-                            Doanh thu
-                        </span>
-
-                        <span class="val"
-                              id="c-revenue">
-                            $0
-                        </span>
-                    </div>
-
-                    <div class="calc-row">
-                        <span class="label">
-                            Phí hệ thống
-                        </span>
-
-                        <span class="val neg"
-                              id="c-fee">
-                            -$0
-                        </span>
-                    </div>
-
-                    <div class="calc-row">
-                        <span class="label">
-                            Đền bù
-                        </span>
-
-                        <span class="val neg"
-                              id="c-refund">
-                            -$0
-                        </span>
-                    </div>
-
-                    <div class="calc-divider"></div>
-
-                    <div class="net-payout-box">
-
-                        <div class="net-label">
-                            Số Tiền Ròng
-                        </div>
-
-                        <div class="net-value"
-                             id="c-net">
-                            $0
-                        </div>
-
-                    </div>
-
-                    <button type="submit"
-                            class="btn-generate"
-                            id="generateBtn">
-
-                        Tạo thanh toán
-
-                    </button>
-
-                </div>
-
             </div>
 
-        </form>
-
+            <div class="calc-card">
+                <h2 class="card-title" style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+                    <svg width="24" height="24" fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Automated Calculation
+                </h2>
+                <div class="calc-formula">
+                    <p>Formula</p>
+                    <p>Revenue - System Fee - Refunds = Net Payout</p>
+                </div>
+                <div class="calc-row"><span class="label">Total Revenue</span><span class="val" id="c-revenue">$0</span></div>
+                <div class="calc-row"><span class="label">- System Fee (10%)</span><span class="val neg" id="c-fee">-$0</span></div>
+                <div class="calc-row"><span class="label">- Refunds</span><span class="val neg" id="c-refund">-$0</span></div>
+                <div class="calc-divider"></div>
+                <div class="net-payout-box">
+                    <div class="net-label">Net Payout Amount</div>
+                    <div class="net-value" id="c-net">$0</div>
+                </div>
+                <button class="btn-generate" id="generateBtn" disabled onclick="generateSettlement()">Generate Settlement Record</button>
+            </div>
+        </div>
     </main>
-
 </div>
 
 <script>
+    const eventDetails = {
+        'EVT-8821':{organizer:'TechCorp Inc.',revenue:125000},
+        'EVT-8812':{organizer:'EventPro Ltd.',revenue:245000},
+        'EVT-8805':{organizer:'BizEvents Co.',revenue:102000},
+        'EVT-8798':{organizer:'Creative Studios',revenue:67500},
+    };
 
     function updateCalc() {
-
-        const sel = document.getElementById("eventSelect");
-        const opt = sel.options[sel.selectedIndex];
-        const btn = document.getElementById("generateBtn");
-
-        if (!sel.value) {
-            document.getElementById("organizerField").value = "";
-            document.getElementById("revenueField").value = "";
-            document.getElementById("feeField").value = "";
-            document.getElementById("c-revenue").textContent = "$0";
-            document.getElementById("c-fee").textContent = "-$0";
-            document.getElementById("c-refund").textContent = "-$0";
-            document.getElementById("c-net").textContent = "$0";
-            btn.disabled = true;
+        const sel = document.getElementById('eventSelect').value;
+        const det = eventDetails[sel];
+        const detDiv = document.getElementById('eventDetails');
+        const genBtn = document.getElementById('generateBtn');
+        if (!det) {
+            detDiv.style.display = 'none'; genBtn.disabled = true;
+            document.getElementById('c-revenue').textContent = '$0';
+            document.getElementById('c-fee').textContent = '-$0';
+            document.getElementById('c-refund').textContent = '-$0';
+            document.getElementById('c-net').textContent = '$0';
             return;
         }
-
-        const revenue = Number(opt.dataset.revenue);
-        const fee = revenue * 0.1;
-        const refund = Number(document.getElementById("refundInput").value) || 0;
-        const net = Math.max(0, revenue - fee - refund);
-
-        document.getElementById("organizerField").value = opt.dataset.organizer;
-        document.getElementById("revenueField").value = revenue.toLocaleString();
-        document.getElementById("feeField").value = fee.toLocaleString();
-
-        document.getElementById("c-revenue").textContent = "$" + revenue.toLocaleString();
-        document.getElementById("c-fee").textContent = "-$" + fee.toLocaleString();
-        document.getElementById("c-refund").textContent = "-$" + refund.toLocaleString();
-        document.getElementById("c-net").textContent = "$" + net.toLocaleString();
-
-        btn.disabled = false;
+        detDiv.style.display = ''; genBtn.disabled = false;
+        document.getElementById('organizerField').value = det.organizer;
+        document.getElementById('revenueField').value = '$' + det.revenue.toLocaleString();
+        const fee = det.revenue * 0.1;
+        const refund = parseFloat(document.getElementById('refundInput').value) || 0;
+        const net = det.revenue - fee - refund;
+        document.getElementById('feeField').value = '$' + fee.toLocaleString();
+        document.getElementById('c-revenue').textContent = '$' + det.revenue.toLocaleString();
+        document.getElementById('c-fee').textContent = '-$' + fee.toLocaleString();
+        document.getElementById('c-refund').textContent = '-$' + refund.toLocaleString();
+        document.getElementById('c-net').textContent = '$' + net.toLocaleString();
     }
 
-    document.getElementById("generateBtn").disabled = true;
-
+    function generateSettlement() {
+        const sel = document.getElementById('eventSelect').value;
+        const det = eventDetails[sel];
+        if (!det) return;
+        const fee = det.revenue * 0.1;
+        const refund = parseFloat(document.getElementById('refundInput').value) || 0;
+        const net = det.revenue - fee - refund;
+        alert('Settlement record generated successfully!\nNet Payout: $' + net.toLocaleString());
+    }
 </script>
-
 </body>
 </html>

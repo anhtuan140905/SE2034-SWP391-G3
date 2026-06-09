@@ -18,14 +18,14 @@
         body {
             display: flex;
             min-height: 100vh;
-            background: #090014;
-            color: white;
+            background: #fff0f5;
+            color: #1e0e34;
         }
 
         /* ================= SIDEBAR ================= */
         .sidebar {
             width: 260px;
-            background: #140021;
+            background: #ffffff;
             border-right: 1px solid rgba(236, 72, 153, 0.3);
             padding: 20px;
             position: fixed;
@@ -50,7 +50,7 @@
 
         .portal-text {
             font-size: 13px;
-            color: #9ca3af;
+            color: #84759b;
             letter-spacing: 1px;
         }
 
@@ -59,7 +59,7 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #d1d5db;
+            color: #4b3d60;
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 10px;
@@ -86,7 +86,7 @@
             position: sticky;
             top: 0;
             z-index: 90;
-            background: #0d001a;
+            background: #ffffff;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             padding: 12px 25px;
             display: flex;
@@ -97,33 +97,19 @@
         .topbar .search-box-top {
             flex: 1;
             max-width: 500px;
-            background: #140021;
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 10px;
             padding: 10px 15px 10px 40px;
-            color: white;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
         }
 
         .topbar .search-box-top::placeholder {
-            color: #9ca3af;
+            color: #84759b;
         }
 
-        .search-wrap {
-            position: relative;
-            flex: 1;
-            max-width: 500px;
-        }
-
-        .search-wrap i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            font-size: 14px;
-        }
 
         .topbar-right {
             margin-left: auto;
@@ -136,7 +122,7 @@
             position: relative;
             background: none;
             border: none;
-            color: #d1d5db;
+            color: #ff1b8d;
             font-size: 20px;
             cursor: pointer;
         }
@@ -149,7 +135,7 @@
             height: 9px;
             background: #ff1b8d;
             border-radius: 50%;
-            border: 2px solid #0d001a;
+            border: 2px solid #ffffff;
         }
 
         .profile {
@@ -174,13 +160,10 @@
         .profile-info .name {
             font-size: 14px;
             font-weight: bold;
-            color: white;
+            color: #1e0e34;
         }
 
-        .profile-info .role {
-            font-size: 12px;
-            color: #9ca3af;
-        }
+
 
         /* ================= MAIN ================= */
         .main {
@@ -203,23 +186,28 @@
         }
 
         .back-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(236, 72, 153, 0.25);
-            color: #d1d5db;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 12px;
+            background: #fff0f5;
+            color: #4b3d60;
             cursor: pointer;
-            font-size: 15px;
-            transition: 0.2s;
+            transition: 0.3s;
+            font-size: 18px;
         }
 
         .back-btn:hover {
             background: rgba(255, 27, 141, 0.15);
             color: #ff1b8d;
+        }
+
+        .page-header-left a,
+        .page-header > a {
+            text-decoration: none;
+            border: none;
+            outline: none;
+            display: inline-flex;
         }
 
         .page-header h1 {
@@ -244,11 +232,7 @@
             cursor: pointer;
             transition: 0.3s;
             white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-
         .edit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
@@ -256,7 +240,7 @@
 
         /* ================= PROFILE CARD ================= */
         .profile-card {
-            background: rgba(20, 0, 33, 0.6);
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.3);
             border-radius: 24px;
             overflow: hidden;
@@ -272,7 +256,7 @@
         .overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, #090014, #09001460);
+            background: linear-gradient(to top, rgba(255,240,245,0.9), rgba(255,240,245,0.3));
         }
 
         .profile-content {
@@ -300,16 +284,16 @@
             height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid #090014;
+            border: 5px solid #ffffff;
         }
 
         .user-details h2 {
-            font-size: 34px;
-            margin-bottom: 8px;
+
+            color: #1e0e34;
         }
 
         .user-details p {
-            color: #cbd5e1;
+            color: #4b3d60;
             margin-bottom: 6px;
             font-size: 14px;
         }
@@ -336,7 +320,7 @@
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.04);
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.15);
             border-radius: 18px;
             padding: 22px;
@@ -365,11 +349,12 @@
 
         .info-item p {
             font-size: 15px;
+            color: #1e0e34;
         }
 
         /* ================= ACTIVITY ================= */
         .activity-card {
-            background: rgba(20, 0, 33, 0.6);
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.3);
             border-radius: 24px;
             padding: 30px;
@@ -406,8 +391,7 @@
         }
 
         .activity-content h4 {
-            margin-bottom: 6px;
-            font-size: 15px;
+            color: #1e0e34;
         }
 
         .activity-content p {
@@ -418,7 +402,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #ffffff;
+            color: #4b3d60;
         }
 
 
@@ -527,7 +511,10 @@
         <!-- PROFILE CARD -->
         <div class="profile-card">
 
-            <div class="banner">
+            <div class="banner"
+                 th:style="${users.avatar != null and !users.avatar.isEmpty()}
+               ? 'background: url(' + ${users.avatar} + ') center/cover'
+               : 'background: url(https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200) center/cover'">
                 <div class="overlay"></div>
             </div>
 
@@ -567,8 +554,8 @@
                         <div class="info-item"><span>Vai Trò</span>
                             <p >
                                 <strong th:each="role, stat : ${users.roles}">
-                                    <span style="color:white;" th:text="${role.roleName}"></span>
-                                    <span style="color:white;" th:if="${!stat.last}">, </span>
+                                    <span style="color:#1e0e34;" th:text="${role.roleName}"></span>
+                                    <span style="color:#1e0e34;" th:if="${!stat.last}">, </span>
 
                                 </strong>
                             </p>

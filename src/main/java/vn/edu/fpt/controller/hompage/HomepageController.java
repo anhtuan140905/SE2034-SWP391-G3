@@ -93,11 +93,11 @@ public class HomepageController {
 
     @PostMapping("/attendee/update/profile")
     public String updateProfile(
-        Model model,
-        @Valid @ModelAttribute UpdateAttendeeProfileDTO dto,
-        BindingResult result,
-        RedirectAttributes redirectAttributes,
-        @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile
+            Model model,
+            @Valid @ModelAttribute UpdateAttendeeProfileDTO dto,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile
     ) {
         if (result.hasErrors()) {
             model.addAttribute("cities", this.cityService.getCityList());

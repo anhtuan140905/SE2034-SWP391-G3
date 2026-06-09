@@ -18,14 +18,14 @@
         body {
             display: flex;
             min-height: 100vh;
-            background: #090014;
-            color: white;
+            background: #fff0f5;
+            color: #1e0e34;
         }
 
         /* ================= SIDEBAR ================= */
         .sidebar {
             width: 260px;
-            background: #140021;
+            background: #ffffff;
             border-right: 1px solid rgba(236, 72, 153, 0.3);
             padding: 20px;
             position: fixed;
@@ -50,7 +50,7 @@
 
         .portal-text {
             font-size: 13px;
-            color: #9ca3af;
+            color: #84759b;
             letter-spacing: 1px;
         }
 
@@ -59,7 +59,7 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #d1d5db;
+            color: #4b3d60;
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 10px;
@@ -86,7 +86,7 @@
             position: sticky;
             top: 0;
             z-index: 90;
-            background: #0d001a;
+            background: #ffffff;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             padding: 12px 25px;
             display: flex;
@@ -111,17 +111,17 @@
 
         .search-box-top {
             width: 100%;
-            background: #140021;
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 10px;
             padding: 10px 15px 10px 40px;
-            color: white;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
         }
 
         .search-box-top::placeholder {
-            color: #9ca3af;
+            color: #84759b;
         }
 
         .topbar-right {
@@ -135,7 +135,7 @@
             position: relative;
             background: none;
             border: none;
-            color: #d1d5db;
+            color: #ff1b8d;
             font-size: 20px;
             cursor: pointer;
         }
@@ -148,7 +148,7 @@
             height: 9px;
             background: #ff1b8d;
             border-radius: 50%;
-            border: 2px solid #0d001a;
+            border: 2px solid #ffffff;
         }
 
         .profile {
@@ -173,12 +173,7 @@
         .profile-info .name {
             font-size: 14px;
             font-weight: bold;
-            color: white;
-        }
-
-        .profile-info .role {
-            font-size: 12px;
-            color: #9ca3af;
+            color: #1e0e34;
         }
 
         /* ================= MAIN ================= */
@@ -196,19 +191,15 @@
         }
 
         .back-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(236, 72, 153, 0.25);
-            color: #d1d5db;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 12px;
+            background: #fff0f5;
+            color: #4b3d60;
             cursor: pointer;
-            font-size: 15px;
-            transition: 0.2s;
-            flex-shrink: 0;
+            transition: 0.3s;
+            font-size: 18px;
         }
 
         .back-btn:hover {
@@ -229,7 +220,7 @@
 
         /* ================= FORM CARD ================= */
         .form-container {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 20px;
             padding: 30px;
@@ -241,7 +232,7 @@
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 25px;
-            color: #e5e7eb;
+            color: #1e0e34;
         }
 
         .form-group {
@@ -253,17 +244,17 @@
             margin-bottom: 10px;
             font-weight: bold;
             font-size: 14px;
-            color: #e5e7eb;
+            color: #1e0e34;
         }
 
         .form-control {
 
             width: 100%;
             padding: 14px 16px;
-            background: #090014;
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.3);
             border-radius: 12px;
-            color: white;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
             transition: 0.3s;
@@ -275,13 +266,13 @@
         }
 
         .form-control::placeholder {
-            color: #6b7280;
+            color: #84759b;
         }
 
         /* Style cho option trong select */
         .form-control option {
-            background: #140021;
-            color: white;
+            background: #eca3c5;
+            color: #0b1229;
         }
 
         textarea.form-control {
@@ -307,7 +298,7 @@
 
         .upload-box i {
             font-size: 52px;
-            color: #9ca3af;
+            color: #eca3c5;
             margin-bottom: 14px;
             display: block;
         }
@@ -321,15 +312,10 @@
         .upload-box span {
             color: #6b7280;
             font-size: 13px;
+            font-weight: lighter;
         }
 
-        /* ================= WARD LOADING ================= */
-        .ward-loading {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-top: 8px;
-            display: none;
-        }
+
 
         /* ================= BUTTONS ================= */
         .button-group {
@@ -351,6 +337,7 @@
             gap: 8px;
         }
 
+
         .btn-save {
             background: linear-gradient(to right, #ff1b8d, #ec4899);
             color: white;
@@ -364,12 +351,12 @@
         .btn-cancel {
             background: transparent;
             border: 1px solid rgba(236, 72, 153, 0.35);
-            color: #d1d5db;
+            color: #4b3d60;
         }
 
         .btn-cancel:hover {
             background: rgba(236, 72, 153, 0.08);
-            color: white;
+            color: #1e0e34;
         }
 
         /* ================= RESPONSIVE ================= */
@@ -515,10 +502,7 @@
                             th:field="*{ward}">
                         <option value="">-- Chọn Xã/ Phường --</option>
                     </select>
-                    <!-- Spinner hiển thị khi đang load -->
-                    <div class="ward-loading" id="wardLoading">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách xã/ phường...
-                    </div>
+
                 </div>
 
                 <!-- Street Address -->
@@ -538,6 +522,15 @@
                               th:field="*{description}"></textarea>
                 </div>
 
+                <!-- Status -->
+                <div class="form-group">
+                    <label>Trạng Thái:</label>
+                    <select class="form-control" th:field="*{status}">
+                        <option value="ACTIVE">Đang Hoạt Động</option>
+                        <option value="INACTIVE">Ngừng Hoạt Động</option>
+                        <option value="MAINTAIN">Bảo Trì</option>
+                    </select>
+                </div>
                 <!-- ================= ZONES ================= -->
                 <div class="form-group">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -555,7 +548,7 @@
                     <!-- Template zone ẩn — không submit vì disabled -->
                     <div id="zone-template" style="display:none">
                         <div class="zone-item" style="
-                            background:#090014;
+                            background:#fff0f5;
                             border:1px solid rgba(236,72,153,0.3);
                             border-radius:14px;
                             padding:20px;
@@ -572,21 +565,21 @@
 
                             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Tên
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Tên
                                         Zone</label>
                                     <input type="text" class="form-control zone-name"
                                            placeholder="VD: Khu VIP, Khu Tiêu chuẩn (Standard)..."
                                            name="PLACEHOLDER_NAME"/>
                                 </div>
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Số
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Số
                                         hàng</label>
                                     <input type="number" class="form-control zone-rows"
                                            placeholder="VD: 8" min="1"
                                            name="PLACEHOLDER_ROWS"/>
                                 </div>
                                 <div>
-                                    <label style="font-size:13px; color:#e5e7eb; display:block; margin-bottom:8px;">Ghế
+                                    <label style="font-size:13px; color:#1e0e34; display:block; margin-bottom:8px;">Ghế
                                         / hàng</label>
                                     <input type="number" class="form-control zone-seats"
                                            placeholder="VD: 10" min="1"
@@ -594,9 +587,9 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top:12px; font-size:13px; color:#9ca3af;">
+                            <div style="margin-top:12px; font-size:13px; color:#1e0e34;">
                                 Tổng ghế: <span class="total-seats"
-                                                style="color:#ff1b8d; font-weight:bold;">0</span>
+                                                style="color:#1e0e34; font-weight:bold;">0</span>
                             </div>
                         </div>
                     </div>
@@ -673,7 +666,6 @@
     // ============================================================
     const citySelect = document.getElementById('citySelect');
     const wardSelect = document.getElementById('wardSelect');
-    const wardLoading = document.getElementById('wardLoading');
 
     citySelect.addEventListener('change', function () {
         const cityId = this.value;
@@ -684,9 +676,6 @@
         // Nếu chưa chọn city thì dừng
         if (!cityId) return;
 
-        // Hiện spinner loading
-        wardLoading.style.display = 'block';
-        wardSelect.disabled = true;
 
         fetch(`/admin/wards/${cityId}`)
             .then(response => {
@@ -709,11 +698,7 @@
                 wardSelect.innerHTML =
                     '<option value="">-- Lỗi tải ward, thử lại --</option>';
             })
-            .finally(() => {
-                // Ẩn spinner, mở lại select dù thành công hay lỗi
-                wardLoading.style.display = 'none';
-                wardSelect.disabled = false;
-            });
+
     });
 </script>
 

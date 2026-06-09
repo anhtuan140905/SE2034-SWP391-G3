@@ -1,5 +1,6 @@
 package vn.edu.fpt.repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public interface EventSummaryProjection {
@@ -7,9 +8,12 @@ public interface EventSummaryProjection {
     String getTitle();
     String getThumbnailUrl();
     LocalDateTime getStartTime();
+    LocalDateTime getEndTime();
     Double getMinPrice();
     String getCategoryName();
     String getVenueName();
     String getCityName();
     Long getSoldCount();
+    Long getParticipantCount();
+    BigDecimal getRevenue();
 }
