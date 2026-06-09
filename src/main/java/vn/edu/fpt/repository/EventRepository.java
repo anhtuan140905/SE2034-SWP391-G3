@@ -146,4 +146,13 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
 
 
+    long countByOrganizerId(Long organizerId);
+
+    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
+    Page<Event> findByMultiStatusAndKeyword(
+            @Param("organizerId") Long organizerId, // Thêm param này
+            @Param("statusList") List<String> statusList,
+            @Param("keyword")      String keyword,
+            Pageable pageable
+    );
 }

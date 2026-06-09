@@ -9,10 +9,7 @@ import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
-import vn.edu.fpt.modelview.request.organizer.AddressDto;
-import vn.edu.fpt.modelview.request.organizer.EventDTO;
-import vn.edu.fpt.modelview.request.organizer.VenueDto;
-import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
+import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventSummaryProjection;
@@ -41,4 +38,6 @@ public interface EventService {
     List<EventSummaryProjection> getEventStatisticsByVenue(Long id);
     VenueSummaryProjection getVenueStatisticSummary(Long id);
     List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id);
+}
+    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
 }
