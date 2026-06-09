@@ -5,21 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import vn.edu.fpt.model.Event;
-import vn.edu.fpt.model.OrganizerProfile;
+import org.springframework.web.bind.annotation.*;
+import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
+import vn.edu.fpt.repository.EventCategoryRepository;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
+import vn.edu.fpt.service.impl.EmailService;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -30,6 +30,8 @@ public class ModeratorEventController {
     private final EventRepository eventRepository;
     private final EventServiceImpl eventService;
     private final OrganizerProfileRepository organizerProfileRepository;
+    private final EventCategoryRepository eventCategoryRepository;
+    private final EmailService emailService;
 
     @GetMapping("/events")
     public String listEvents(
@@ -129,6 +131,62 @@ public class ModeratorEventController {
         }
 
         return "moderator/EventDetail";
+    }
+
+    @PostMapping("/events/{id}/approve")
+    @ResponseBody
+    public ResponseEntity<?> approveEventAPI(
+            @PathVariable("id") Long id,
+            @RequestBody Map<String, String> payload
+    ) {
+        try {
+            Event event = eventRepository.findById(id).orElse(null);
+            if (event != null) {
+                event.setStatus(EventStatus.APPROVED);
+                eventRepository.save(event);
+
+                // Lấy lời nhắn gõ từ ô Textarea
+                String reviewMessage = payload.get("message");
+                String toEmail = event.getOrganizer().getEmail();
+                String organizerName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
+                String eventTitle = event.getTitle();
+
+                emailService.sendEventApprovalEmail(toEmail, organizerName, eventTitle, reviewMessage);
+
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/events/{id}/reject")
+    @ResponseBody
+    public ResponseEntity<?> rejectEventAPI(
+            @PathVariable("id") Long id,
+            @RequestBody Map<String, String> payload
+    ) {
+        try {
+            Event event = eventRepository.findById(id).orElse(null);
+            if (event != null) {
+                event.setStatus(EventStatus.REJECTED);
+                eventRepository.save(event);
+
+                // Lấy lý do từ chối
+                String reviewMessage = payload.get("message");
+                String toEmail = event.getOrganizer().getEmail();
+                String organizerName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
+                String eventTitle = event.getTitle();
+
+                emailService.sendEventRejectionEmail(toEmail, organizerName, eventTitle, reviewMessage);
+
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

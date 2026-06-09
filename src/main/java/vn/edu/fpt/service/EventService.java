@@ -4,11 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
+import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
+import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
+import vn.edu.fpt.modelview.request.organizer.EventDTO;
+import vn.edu.fpt.modelview.request.organizer.VenueDto;
+import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
-import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
-import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
@@ -35,9 +38,9 @@ public interface EventService {
     DashboardStatsDTO getDashboardStats();
     List<Event> getTopThreePendingEvents();
     List<Event> getTodayActiveEvents();
+    Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     List<EventSummaryProjection> getEventStatisticsByVenue(Long id);
     VenueSummaryProjection getVenueStatisticSummary(Long id);
     List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id);
-}
     Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
 }
