@@ -149,6 +149,16 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countByOrganizerId(Long organizerId);
 
     long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
+
+    @Query("""
+        SELECT e FROM Event e
+        WHERE e.organizer.id = :organizerId 
+          AND (:#{#statusList.size()} = 0
+               OR e.status IN :statusList)
+          AND (:keyword IS NULL OR :keyword = ''
+               OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+    """)
+
     Page<Event> findByMultiStatusAndKeyword(
             @Param("organizerId") Long organizerId, // Thêm param này
             @Param("statusList") List<String> statusList,

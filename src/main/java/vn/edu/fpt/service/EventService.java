@@ -38,7 +38,6 @@ public interface EventService {
     DashboardStatsDTO getDashboardStats();
     List<Event> getTopThreePendingEvents();
     List<Event> getTodayActiveEvents();
-    Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     List<EventSummaryProjection> getEventStatisticsByVenue(Long id);
     VenueSummaryProjection getVenueStatisticSummary(Long id);
     List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id);
