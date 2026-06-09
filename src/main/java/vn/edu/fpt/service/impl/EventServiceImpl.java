@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
@@ -82,7 +83,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public VenueDto getVenuebyId(Long venueID) {
         Venue venue = venueRepository.findById(venueID)
-                                    .orElseThrow(()->new RuntimeException("Venue Not Found with: "+venueID));
+                .orElseThrow(() -> new RuntimeException("Venue Not Found with: " + venueID));
         VenueDto venueDto = new VenueDto();
         venueDto.setVenueID(venue.getVenueId());
         venueDto.setVenueName(venue.getVenueName());
@@ -102,11 +103,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public void saveEvent(EventDTO eventDTO) {
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
-                                        .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
-        User organizer =  userRepository.findById(eventDTO.getOrganizerDtoID())
-                                    .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
+                .orElseThrow(() -> new RuntimeException("EventCategory Not Found with: " + eventDTO.getCategoryId()));
+        User organizer = userRepository.findById(eventDTO.getOrganizerDtoID())
+                .orElseThrow(() -> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
         Venue venue = venueRepository.findById(eventDTO.getVenueId())
-                                    .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
+                .orElseThrow(() -> new RuntimeException("Venue Not Found with: " + eventDTO.getVenueId()));
         Event event = new Event();
         event.setOrganizer(organizer);
         event.setCategory(eventCategory);
@@ -114,26 +115,26 @@ public class EventServiceImpl implements EventService {
         event.setTitle(eventDTO.getTitle());
         event.setDescription(eventDTO.getDescription());
         event.setDate(eventDTO.getEventDate());
-        event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getStartTime()));
-        event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getEndTime()));
-        event.setCreatedBy(organizer.getLastName()+organizer.getMiddleName()+organizer.getFirstName());
+        event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(), eventDTO.getStartTime()));
+        event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(), eventDTO.getEndTime()));
+        event.setCreatedBy(organizer.getLastName() + organizer.getMiddleName() + organizer.getFirstName());
         event.setStatus(EventStatus.PENDING);
 
         if (eventDTO.getThumbnailFile() != null
                 && !eventDTO.getThumbnailFile().isEmpty()) {
-            String thumbnailUrl = cloudinaryService.uploadFile(eventDTO.getThumbnailFile(),"EventBanner");
+            String thumbnailUrl = cloudinaryService.uploadFile(eventDTO.getThumbnailFile(), "EventBanner");
             event.setThumbnailUrl(thumbnailUrl);
         }
         List<EventImage> eventImages = new ArrayList<>();
-        if(eventDTO.getImageFiles()!=null){
-            for (MultipartFile file : eventDTO.getImageFiles()){
+        if (eventDTO.getImageFiles() != null) {
+            for (MultipartFile file : eventDTO.getImageFiles()) {
                 if (file.isEmpty()) {
                     continue;
                 }
-                String imageurl = cloudinaryService.uploadFile(file,"EventImg");
+                String imageurl = cloudinaryService.uploadFile(file, "EventImg");
                 EventImage image = new EventImage();
                 image.setEvent(event);
-                image.setCreatedBy(organizer.getLastName()+organizer.getMiddleName()+organizer.getFirstName());
+                image.setCreatedBy(organizer.getLastName() + organizer.getMiddleName() + organizer.getFirstName());
                 image.setImageUrl(imageurl);
                 eventImages.add(image);
             }
@@ -162,7 +163,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventSummaryDto> findTopFeaturedEvents() {
-        List<EventSummaryProjection> projections =  this.eventRepository.findTopFeaturedEvents();
+        List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
 
         return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
     }
@@ -176,7 +177,7 @@ public class EventServiceImpl implements EventService {
     public EventDetailModeratorDTO getEventDetailById(Long eventId) {
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() ->new RuntimeException("Không tìm thấy sự kiện"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện"));
 
         EventDetailModeratorDTO eventDetailModeratorDTO = new EventDetailModeratorDTO();
         eventDetailModeratorDTO.setId(event.getEventId());
@@ -191,7 +192,7 @@ public class EventServiceImpl implements EventService {
         eventDetailModeratorDTO.setStartTime(event.getStartTime());
 
         // Tinh toan thoi luong Duration
-        if(event.getStartTime() != null && event.getEndTime() != null) {
+        if (event.getStartTime() != null && event.getEndTime() != null) {
             long hours = Duration.between(event.getStartTime(), event.getEndTime()).toHours();
             eventDetailModeratorDTO.setDuration(hours + " hours");
         } else {
@@ -239,7 +240,7 @@ public class EventServiceImpl implements EventService {
                 EventStatus.PENDING,
                 org.springframework.data.domain.PageRequest.of(0, 3)
         );
-    }   
+    }
 
     @Override
     public List<Event> getTodayActiveEvents() {
@@ -249,10 +250,88 @@ public class EventServiceImpl implements EventService {
         LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
 
         return eventRepository.findByStatusAndStartTimeBetween(
-                    EventStatus.APPROVED,
-                    startOfDay,
-                    endOfDay
+                EventStatus.APPROVED,
+                startOfDay,
+                endOfDay
         );
+    }
+
+    @Override
+    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
+        Specification<Event> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
+            }
+
+            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
+                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
+                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
+            }
+
+            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
+
+                Join<Event, Venue> venueJoin = root.join("venue", JoinType.INNER);
+
+                Join<Venue, Address> addressJoin = venueJoin.join("address", JoinType.INNER);
+
+                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
+
+                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
+
+                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
+            }
+
+            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
+                try {
+                    String[] parts = criteria.getMonth().split("-");
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]);
+
+                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
+                            .withHour(23).withMinute(59).withSecond(59);
+
+                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
+                }
+            }
+
+
+            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
+
+                Subquery<Double> subquery = query.subquery(Double.class);
+
+                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
+
+                subquery.select(cb.min(ticketRoot.get("price")));
+
+                subquery.where(cb.equal(ticketRoot.get("event"), root));
+
+                Expression<Double> minPriceExpr = subquery;
+
+                switch (criteria.getPrice()) {
+                    case "free":
+                        predicates.add(cb.equal(minPriceExpr, 0D));
+                        break;
+                    case "under200":
+                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
+                        break;
+                    case "200to1000":
+                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
+                        break;
+                    case "over1000":
+                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
+                        break;
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return eventRepository.findAll(spec, pageable);
     }
 
 }
