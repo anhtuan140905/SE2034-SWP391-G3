@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ────────────────────────────────────────── */
     const searchInput  = document.getElementById('searchInput');
     const statusSelect = document.getElementById('statusSelect');
+    const categorySelect = document.getElementById('categorySelect');
 
     /**
      * Build URL with current keyword + status then navigate
@@ -23,14 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyFilters = () => {
         const keyword = searchInput ? searchInput.value.trim() : '';
         const status  = statusSelect ? statusSelect.value : '';
+        const categoryId = categorySelect ? categorySelect.value : '';
+
         const url     = new URL(window.location.href);
 
-        url.searchParams.set('page', '0'); // reset to first page on new filter
+        url.searchParams.set('page', '0');
         if (keyword) url.searchParams.set('keyword', keyword);
         else url.searchParams.delete('keyword');
 
         if (status) url.searchParams.set('status', status);
         else url.searchParams.delete('status');
+
+        if (categoryId) url.searchParams.set('categoryId', categoryId);
+        else url.searchParams.delete('categoryId');
 
         window.location.href = url.toString();
     };
@@ -56,7 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
         statusSelect.addEventListener('change', applyFilters);
     }
 
-
+    if(categorySelect) {
+        categorySelect.addEventListener('change', applyFilters);
+    }
+    
     /* ──────────────────────────────────────────
        2. TABLE ROW STAGGERED ENTRANCE ANIMATION
     ────────────────────────────────────────── */

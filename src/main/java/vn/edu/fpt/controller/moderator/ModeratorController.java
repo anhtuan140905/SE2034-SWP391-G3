@@ -18,11 +18,6 @@ import vn.edu.fpt.repository.OrganizerProfileRepository;
 @RequestMapping("/moderator")
 public class ModeratorController {
 
-    @GetMapping("/dashboard")
-    public String moderator(Model model) {
-        return "moderator/DashboardModerator";
-    }
-
     @GetMapping("/profile")
     public String moderatorProfile() {
         return  "moderator/ModeratorProfile";

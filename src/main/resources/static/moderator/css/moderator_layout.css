@@ -151,6 +151,19 @@ ul { list-style: none; }
     border-top: 1.5px solid var(--border-color);
     margin-top: 8px;
 }
+
+.sidebar-item.active {
+    background: rgba(107, 33, 168, 0.12);
+    color: var(--brand-purple);
+    font-weight: 700;
+    border-right: 4px solid var(--brand-purple);
+}
+
+/* Đổi màu icon khi Active */
+.sidebar-item.active i {
+    color: var(--brand-purple);
+}
+
 .logout-btn {
     display: flex;
     align-items: center;

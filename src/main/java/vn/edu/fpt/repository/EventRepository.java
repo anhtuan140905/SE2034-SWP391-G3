@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -53,6 +54,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             "ORDER BY sold_count DESC\n", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 
+
+    //---------------------------------------------------------------------------------------
     @Query("SELECT e FROM Event e WHERE " +
             "(:status IS NULL OR e.status = :status) " +
             "AND " +
@@ -65,6 +68,17 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("categoryId") Long categoryId,
             Pageable pageable);
 
+    // Đếm số lượng sự kiện theo trạng thái
     long countByStatus(EventStatus status);
+
+    // Lấy 3 sự kiện Pending mới nhất
+    List<Event> findByStatusOrderByCreatedAtDesc(EventStatus status, Pageable pageable);
+
+    // Lấy sự kiện diễn ra trong ngày (status = APPROVED)
+    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
+
+    long countByOrganizerId(Long organizerId);
+
+    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 
 }
