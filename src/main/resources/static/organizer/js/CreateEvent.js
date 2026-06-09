@@ -228,6 +228,7 @@ async function addTicketTier() {
     try {
         const response = await fetch(`/organizer/api/venueid?id=${venueId}`);
         zones = await response.json();
+        console.log(zones)
     } catch (e) {
         console.error("Error loading zones:", e);
     }
@@ -280,8 +281,20 @@ function handleZoneSelectChange(tierId, selectEl) {
     tier.zone        = chosen.dataset.name || "";               // tên → hiển thị
     tier.maxCapacity = parseInt(chosen.dataset.max || "0");     // capacity → validate
     tier.qty         = 0;                                       // reset qty khi đổi zone
+    console.log("zoneId saved:", tier.zoneId, typeof tier.zoneId);
+    // renderTiers();
+    // ❌ Bỏ renderTiers() — không cần re-render, chỉ cần cập nhật label qty
+    const qtyLabel = document.querySelector(`#card-${tierId} .tier-field-label span.text-muted`);
+    if (qtyLabel) {
+        qtyLabel.textContent = tier.maxCapacity ? `(tối đa ${tier.maxCapacity})` : "";
+    }
 
-    renderTiers();
+    // Reset qty input
+    const qtyInput = document.querySelector(`#card-${tierId} input[name*=".stock"]`);
+    if (qtyInput) {
+        qtyInput.value = "";
+        qtyInput.max   = tier.maxCapacity || "";
+    }
 }
 
 // ✅ Validate qty — dùng lỗi inline thay vì alert
@@ -359,21 +372,21 @@ function renderTiers() {
                     <label class="tier-field-label">Zone / Seat Location</label>
                     <select
                         class="tier-input"
-                        name="ticketTypes[${idx}].zoneName"
+                        name="ticketTypes[${idx}].zoneID"
                         onchange="handleZoneSelectChange('${t.id}', this)">
 
                         <option value="">-- Select Zone --</option>
 
-                        ${(t.zones || []).map(zone => `
-                            <option
-                                value="${zone.zoneId}"
-                                data-name="${(zone.zoneName)}"
-                                data-max="${zone.rows * zone.seatsPerRow}"
-                               ${String(t.zoneId) === String(zone.zoneId) ? "selected" : ""}>
-                                ${(zone.zoneName)}
-                                (max ${zone.rows * zone.seatsPerRow})
-                            </option>
-                        `).join("")}
+${(t.zones || []).map(zone => `
+    <option
+        value="${zone.zoneID || ''}"                 
+        data-name="${escHtml(zone.zoneName)}"
+        data-max="${zone.rows * zone.seatsPerRow}"
+        ${String(t.zoneId) === String(zone.zoneID) ? "selected" : ""}>   
+        ${escHtml(zone.zoneName)}
+        (max ${zone.rows * zone.seatsPerRow})
+    </option>
+`).join("")}
 
                     </select>
                 </div>

@@ -17,8 +17,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TicketTypeRequestDTO {
     private String typeName;
-    private String zoneName;
+    private Long zoneID;
     private BigDecimal price;
-    private String description;;
+    private Long Stock;
+    private String description;
 
 }

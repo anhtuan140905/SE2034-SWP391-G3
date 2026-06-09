@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.TicketStatus;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventRepository;
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -35,13 +37,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
 
-    private final EventRepository eventRepository;
+    private EventRepository eventRepository;
     private EventCategoryRepository eventCategoryRepository;
     private VenueRepository venueRepository;
     private VenueZoneRepository venueZoneRepository;
     private UserRepository userRepository;
     private CloudinaryService cloudinaryService;
-
+    private TickRepository tickRepository;
     @Override
     public List<EventCategory> getListEventCategory() {
         List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
@@ -102,11 +104,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public void saveEvent(EventDTO eventDTO) {
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
-                                        .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
+                .orElseThrow(()->new RuntimeException("EventCategory Not Found with: "+eventDTO.getCategoryId()));
         User organizer =  userRepository.findById(eventDTO.getOrganizerDtoID())
-                                    .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
+                .orElseThrow(()-> new RuntimeException("Organizer Not Found with: " + eventDTO.getOrganizerDtoID()));
         Venue venue = venueRepository.findById(eventDTO.getVenueId())
-                                    .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
+                .orElseThrow(()-> new RuntimeException("Venue Not Found with: "+ eventDTO.getVenueId()));
         Event event = new Event();
         event.setOrganizer(organizer);
         event.setCategory(eventCategory);
@@ -140,19 +142,46 @@ public class EventServiceImpl implements EventService {
             event.setImages(eventImages);
 
         }
-//        List<TicketType> ticketTypes = new ArrayList<>();
-//        if(eventDTO.getTicketTypes()!=null){
-//            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
-//                TicketType type = new TicketType();
-//                type.setEvent(event);
-//                type.setTypeName(ticketTypeDto.getTypeName());
-//                type.setPrice(ticketTypeDto.getPrice());
-//                type.setDescription(ticketTypeDto.getDescription());
-//                ticketTypes.add(type);
-//            }
-//        }
-//        event.setTicketTypes(ticketTypes);
+        List<TicketType> ticketTypes = new ArrayList<>();
+        if(eventDTO.getTicketTypes()!=null){
+            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
+                TicketType type = new TicketType();
+                VenueZone zone = venueZoneRepository.findById(ticketTypeDto.getZoneID())
+                        .orElseThrow(()->new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
+                type.setZone(zone);
+                type.setEvent(event);
+                type.setTypeName(ticketTypeDto.getTypeName());
+                type.setPrice(ticketTypeDto.getPrice());
+                type.setCreatedBy(organizer.getEmail());
+                type.setStock(Math.toIntExact(ticketTypeDto.getStock()));
+                type.setDescription(ticketTypeDto.getDescription());
+                ticketTypes.add(type);
+
+            }
+        }
+        event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
+        CreateTicket(ticketTypes,organizer.getEmail());
+    }
+    public void CreateTicket(List<TicketType> ticketTypeList,String emailUser ){
+        for (TicketType type : ticketTypeList){
+            for (int i = 0; i< type.getStock();i++){
+                Ticket ticket = new Ticket();
+                ticket.setTicketType(type);
+                ticket.setStatus(TicketStatus.UNSOLD);
+                ticket.setCreatedBy(emailUser);
+                ticket.setIsCheckedIn(false);
+                do{
+                    String code = UUID.randomUUID()
+                            .toString()
+                            .replace("-", "")
+                            .substring(0, 12)
+                            .toUpperCase();
+                    ticket.setQrCode(type.getTypeName()+code);
+                } while(tickRepository.existsByQrCode(ticket.getQrCode()));
+                tickRepository.save(ticket);
+            }
+        }
     }
 
     @Override
