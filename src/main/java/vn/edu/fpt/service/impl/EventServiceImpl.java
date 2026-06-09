@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -283,5 +285,49 @@ public class EventServiceImpl implements EventService {
                     endOfDay
         );
     }
+    @Override
+    public Page<EventCardDTO> getEventCards(Long organizerId,String[] statuses, String keyword, int page) {
+        // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
+        List<String> statusList = statuses == null
+                ? List.of()
+                : Arrays.stream(statuses)
+                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(Collectors.toList());
 
+        Pageable pageable = PageRequest.of(
+                Math.max(page - 1, 0),
+                9
+        );
+        Page<Event> entityPage = eventRepository
+                .findByMultiStatusAndKeyword(organizerId,statusList, keyword, pageable);
+        return entityPage.map(this::toDTO);
+    }
+    private EventCardDTO toDTO(Event event) {
+        EventCardDTO dto = new EventCardDTO();
+        dto.setId(event.getEventId());
+        dto.setEventName(event.getTitle());
+        dto.setThumnail(event.getThumbnailUrl());
+        dto.setDate(event.getDate());
+        dto.setStartime(event.getStartTime().toLocalTime());
+        dto.setEndtime(event.getEndTime().toLocalTime());
+        dto.setStatusEvent(event.getStatus().name());
+        dto.setEventCatagory(event.getCategory().getCategoryName());
+        dto.setVenueName(event.getVenue().getVenueName());
+
+        List<TicketType> ticketTypes = event.getTicketTypes();
+        int stock = 0;
+        int numSelled = 0;
+        for (TicketType tt : ticketTypes) {
+            stock     += tt.getStock();
+            numSelled += tickRepository.getNumTicketSelled(tt.getTicketTypeId());
+        }
+
+        dto.setStock(stock);
+        dto.setTicketSelled(numSelled);
+        dto.setPercent(stock == 0 ? 0 : numSelled * 100 / stock);
+
+        return dto;
+    }
 }

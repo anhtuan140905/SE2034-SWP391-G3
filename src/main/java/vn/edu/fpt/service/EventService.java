@@ -8,10 +8,7 @@ import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
-import vn.edu.fpt.modelview.request.organizer.AddressDto;
-import vn.edu.fpt.modelview.request.organizer.EventDTO;
-import vn.edu.fpt.modelview.request.organizer.VenueDto;
-import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
+import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.FeaturedEventDTO;
@@ -32,4 +29,5 @@ public interface EventService {
     DashboardStatsDTO getDashboardStats();
     List<Event> getTopThreePendingEvents();
     List<Event> getTodayActiveEvents();
+    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
 }
