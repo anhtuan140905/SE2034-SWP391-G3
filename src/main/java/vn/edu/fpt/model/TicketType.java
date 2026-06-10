@@ -38,7 +38,4 @@ public class TicketType extends BaseAuditEntity {
 
     @Column(name = "stock", nullable = false)
     private Integer stock; // Auto-fill = rows × seats_per_row
-
-    @OneToMany(mappedBy = "ticketType")
-    private List<OrderDetail> orderDetails;
 }

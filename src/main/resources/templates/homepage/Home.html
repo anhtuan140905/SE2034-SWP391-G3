@@ -29,7 +29,20 @@
     </nav>
 </div>
 
+<section class="hero-section-video">
+    <video class="hero-video" autoplay muted loop playsinline>
+        <source
+                src="https://res.cloudinary.com/dep1nnstf/video/upload/q_auto/f_auto/v1780903981/anhtraisaygex_hdxiva.mp4"
+                type="video/mp4">
+    </video>
+
+    <!-- Overlay tối để đọc chữ -->
+    <div class="hero-overlay"></div>
+</section>
+
 <section class="hero-section">
+    <!-- Video Background -->
+
     <div class="hero-glow-back"></div>
     <div class="container">
         <div class="row align-items-center gy-5">
@@ -45,8 +58,8 @@
                     Tham gia với rất nhiều người nổi tiếng, nhà sáng tạo, streamer, và cả các buổi gặp gỡ sức khỏe
                 </p>
                 <div class="hero-buttons-col d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-                    <a href="#discoverSection" class="btn btn-grad-cta">
-                        Explore Festivals <i class="fa-solid fa-arrow-right"></i>
+                    <a th:href="@{/events}" class="btn btn-grad-cta">
+                        Khám phá sự kiện <i class="fa-solid fa-arrow-right"></i>
                     </a>
                     <a href="#" th:href="@{/favorites}" class="btn btn-glass-secondary">
                         <i class="fa-solid fa-heart text-pink"></i> Sự kiện yêu thích
@@ -56,36 +69,56 @@
 
             <!-- Hero Right Preview Card (Premium Glassmorphic) -->
             <div class="col-lg-6" th:if="${featuredEvent != null}">
-                <div class="glass-hero-preview mx-auto" style="max-width: 500px;">
-                    <span class="preview-tag">Sự kiện HOT</span>
+                <div class="card-event">
 
-                    <img th:src="${featuredEvent.thumbnail_url}" alt="Hero Featured Event" class="glass-card-img mb-3">
-
-                    <div class="event-hosts">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" alt="Host avatar" class="host-mini-avatar">
-
-                        <span class="host-name" th:text="${'BY ' + #strings.toUpperCase(featuredEvent.organizer_name)}">BY STARGATE PRODUCTIONS</span>
-                    </div>
-
-                    <h4 class="mb-2" style="font-family: 'Space Grotesk', sans-serif;">
-                        <a th:href="@{/events/{id}(id=${featuredEvent.event_id})}"
-                           class="text-white text-decoration-none hover-pink"
-                           th:text="${featuredEvent.title}">Cosmic Resonance Phase IV</a>
-                    </h4>
-
-                    <p class="text-secondary-light small mb-2" th:if="${featuredEvent.sold_count > 0}">
-                        <i class="fa-solid fa-fire text-dangerme"></i> Đã bán: <span th:text="${featuredEvent.sold_count}">0</span> vé
-                    </p>
-
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <div class="text-secondary-light small font-medium d-flex align-items-center gap-2">
-                            <i class="fa-regular fa-clock text-pink"></i>
-                            <span th:text="${#temporals.format(featuredEvent.start_time, 'dd/MM/yyyy HH:mm')}">May 28 • 8:30 PM</span>
+                    <div class="event-img-wrap">
+                <span class="event-badge-category">
+                    <i class="fa-solid fa-tag"></i>
+                    <span th:text="${featuredEvent.categoryName}">Category</span>
+                </span>
+                        <span class="event-badge-price"
+                              th:text="${featuredEvent.minPrice == 0
+                                ? 'Free'
+                                : 'From ' + #numbers.formatDecimal(featuredEvent.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                    Price
+                </span>
+                        <div class="event-date-badge">
+                    <span class="month"
+                          th:text="${#temporals.format(featuredEvent.startTime, 'MMM').toUpperCase()}">JUN</span>
+                            <span class="day"
+                                  th:text="${#temporals.format(featuredEvent.startTime, 'dd')}">12</span>
                         </div>
-
-                        <span class="text-pink font-bold"
-                              th:text="${#numbers.formatDecimal(featuredEvent.min_price, 0, 'POINT', 0, 'POINT')} + ' đ'">$49.00</span>
+                        <img th:src="${featuredEvent.thumbnail_url}" class="event-img" th:alt="${featuredEvent.title}">
                     </div>
+
+                    <div class="event-card-body">
+                        <h5 class="event-card-title">
+                            <a th:href="@{/events/{id}(id=${featuredEvent.event_id})}"
+                               th:text="${featuredEvent.title}">Event Title</a>
+                        </h5>
+                        <div class="event-details-meta">
+                            <div class="meta-element">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span th:text="${featuredEvent.venueName + ', ' + featuredEvent.name}">Địa điểm, Thành phố</span>
+                            </div>
+                            <div class="meta-element">
+                                <i class="fa-regular fa-clock"></i>
+                                <span th:text="${#temporals.format(featuredEvent.startTime, 'HH:mm')}">00:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="event-card-footer">
+                        <div class="attendee-preview">
+                    <span class="att-more"
+                          th:text="${'+' + featuredEvent.soldCount + ' đã bán'}">+0 đã bán</span>
+                        </div>
+                        <a class="btn btn-book-now"
+                           th:href="@{/events/{id}(id=${featuredEvent.event_id})}">
+                            Mua vé <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -99,7 +132,7 @@
         <!-- Category Filtering Toolbar with Soft Typography -->
         <div class="row align-items-end mb-4 gy-4">
             <div class="col-md-6">
-                <h2 class="section-title">Sự kiện phổ biến sắp diễn ra</h2>
+                <h2 class="section-title" style="color: #ff87bf !important;">Sự kiện phổ biến sắp diễn ra</h2>
             </div>
             <div class="col-md-6 text-md-end">
                 <div class="category-filter-container justify-content-md-end">
@@ -136,7 +169,7 @@
 
                     <div class="event-card-body">
                         <h5 class="event-card-title">
-                            <a th:href="@{/events/{id}(id=${event.id})}"
+                            <a th:href="@{/events/detail/{id}(id=${event.id})}"
                                th:text="${event.title}">Event Title</a>
                         </h5>
                         <div class="event-details-meta">
@@ -157,7 +190,7 @@
                           th:text="${'+' + event.soldCount + ' đã bán'}">+0 đã bán</span>
                         </div>
                         <a class="btn btn-book-now"
-                           th:href="@{/events/{id}(id=${event.id})}">
+                           th:href="@{/events/detail/{id}(id=${event.id})}">
                             Mua vé <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>

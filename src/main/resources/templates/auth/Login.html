@@ -34,22 +34,22 @@
         </div>
 
         <div class="lp-hero">
-            <div class="lp-tag"><span class="dot"></span>Live events near you</div>
-            <h2>Discover <em>Amazing</em><br/>Events Around You</h2>
-            <p>Book tickets, connect with people, and create memories that last a lifetime.</p>
+            <div class="lp-tag"><span class="dot"></span>Sự kiện trực tiếp gần bạn</div>
+            <h2>Khám phá <em>sự kiện tuyệt vời</em><br/>xung quanh bạn</h2>
+            <p>Đặt vé, kết nối với mọi người, tạo kỉ niệm cho cuộc sống</p>
 
             <div class="lp-stats">
                 <div class="stat-item">
                     <span class="stat-num">2.4K+</span>
-                    <span class="stat-label">Events</span>
+                    <span class="stat-label">Sự kiện</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num">180K</span>
-                    <span class="stat-label">Attendees</span>
+                    <span class="stat-label">Người tham gia</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num">98%</span>
-                    <span class="stat-label">Satisfaction</span>
+                    <span class="stat-label">Mức độ hài lòng</span>
                 </div>
             </div>
         </div>
@@ -87,8 +87,8 @@
 
             <div class="panel-login" id="pLogin">
                 <div class="form-head">
-                    <h1>Welcome back 👋</h1>
-                    <p>Sign in to your EventHub account to continue</p>
+                    <h1>Chào mừng quay trở lại 👋</h1>
+                    <p>Đăng nhập để tiếp tục</p>
                 </div>
 
 
@@ -105,7 +105,7 @@
                     </a>
                 </div>
 
-                <div class="divider"><span>or sign in with email</span></div>
+                <div class="divider"><span>Đăng nhập bằng email</span></div>
 
                 <form th:action="@{/auth/login}" method="post">
                     <div th:if="${error}" class="alert-error" >
@@ -121,13 +121,13 @@
                     <div class="field">
                         <input type="email" id="email" name="username"
                                placeholder=" " autocomplete="email"/>
-                        <label for="email">Email Address</label>
+                        <label for="email">Tên đăng nhập</label>
                     </div>
 
                     <div class="field field-pw">
                         <input type="password" id="pw" name="password"
                                placeholder=" " autocomplete="current-password"/>
-                        <label for="pw">Password</label>
+                        <label for="pw">Mật khẩu</label>
                     </div>
 
                     <button class="btn-primary" type="submit">
@@ -144,11 +144,11 @@
                             <input type="checkbox" name="remember-me"/>
                             Remember me
                         </label>
-                        <button type="button" class="text-btn" id="forgotBtn" th:onclick="|location.href='@{/auth/forgot-password}'|">Forgot password</button>                    </div>
+                        <button type="button" class="text-btn" id="forgotBtn" th:onclick="|location.href='@{/auth/forgot-password}'|">Quên mật khẩu</button>                    </div>
                 </form>
 
-                <p class="reg-link">New to EventHub? <a th:href = "@{/auth/register}">Create an account</a></p>
-                <p class="terms">By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+                <p class="reg-link">New to EventHub? <a th:href = "@{/auth/register}">Tạo tài khoản</a></p>
+                <p class="terms">Để đăng kí, bạn phải chấp nhận <a href="#">Terms of Service</a> and <a href="#">chính sách</a></p>
             </div>
 
             <div class="panel-forgot" id="pForgot">

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
+import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.EventCategoryService;
 import vn.edu.fpt.service.EventService;
@@ -47,4 +49,12 @@ public class AttendeeEventController {
         model.addAttribute("cities", this.cityService.getListCityHaveApprovedEvents());
         return "homepage/ListPublicEvents";
     }
+
+    @GetMapping("/events/detail/{id}")
+    public String viewDetailEvent(@PathVariable long id, Model model) {
+        EventSummaryProjection event = this.eventService.findEventDetailById(id);
+        model.addAttribute("event", event);
+        return "homepage/ViewPubliclEvent";
+    }
+
 }

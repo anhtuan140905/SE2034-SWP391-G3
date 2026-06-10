@@ -9,6 +9,8 @@ public interface EventSummaryProjection {
     LocalDateTime getStartTime();
     Double getMinPrice();
     String getCategoryName();
+    String getCompany_name();
+    String getDescription();
     String getVenueName();
     String getCityName();
     Long getSoldCount();

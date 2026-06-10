@@ -7,8 +7,12 @@ public interface FeaturedEventDTO {
     Long getEvent_id();
     String getTitle();
     String getThumbnail_url();
-    LocalDateTime getStart_time();
-    BigDecimal getMin_price();
-    String getOrganizer_name();
-    Integer getSold_count();
+    LocalDateTime getStartTime();
+    String getVenueName();
+    String getSpecificAddress();
+    String getName();
+    BigDecimal getMinPrice();
+    String getCategoryName();
+    String getOrganizerName();
+    Integer getSoldCount();
 }

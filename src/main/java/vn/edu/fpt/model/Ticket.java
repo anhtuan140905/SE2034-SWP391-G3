@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.edu.fpt.common.SecurityUtil;
+import vn.edu.fpt.model.constant.TicketStatus;
 
 import java.time.Instant;
 
@@ -30,6 +31,9 @@ public class Ticket {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "is_checked_in")
+    private boolean isCheckedIn;
+
     @Column(name = "qr_code", nullable = false, unique = true)
     private String qrCode;
 
@@ -41,6 +45,9 @@ public class Ticket {
 
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @Column(name = "status")
+    private TicketStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_type_id")

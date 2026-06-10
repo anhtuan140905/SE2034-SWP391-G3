@@ -215,7 +215,7 @@
 
         <div class="col-12 text-center py-5 border border-white/5 rounded-4 p-5 glass-panel" th:if="${eventPage.isEmpty()}">
             <i class="fa-solid fa-calendar-xmark text-pink display-4 mb-3"></i>
-            <h5 class="text-white font-extrabold">Không tìm thấy sự kiện nào</h5>
+            <h5 class="text-white font-extrabold" style="color: red !important;">Không tìm thấy sự kiện nào</h5>
             <p class="text-secondary-light text-sm max-w-md mx-auto">Chúng tôi hiện chưa tìm thấy hoạt động nào phù hợp với bộ lọc bạn yêu cầu. Hãy thử đổi tiêu chí tìm kiếm nhé!</p>
             <a th:href="@{/events}" class="btn btn-grad-cta text-xs px-4 rounded-pill text-white font-bold mt-3">Xem tất cả sự kiện</a>
         </div>

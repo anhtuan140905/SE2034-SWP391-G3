@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getActivatedOrganizers() {
-        return this.userRepository.findActiveOrganizers("ACTIVE");
+        return this.userRepository.findActiveOrganizers("APPROVED");
     }
 
     @Override

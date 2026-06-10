@@ -12,6 +12,7 @@ import vn.edu.fpt.model.constant.EventStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event>{
@@ -40,18 +41,25 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             nativeQuery = true)
     List<EventSummaryProjection> findTopFeaturedEvents();
 
-    @Query(value="SELECT TOP 1 e.event_id, e.title, e.thumbnail_url, e.start_time,\n" +
-            "       MIN(tt.price) as min_price,\n" +
-            "       CONCAT(u.first_name, ' ', u.last_name) as organizer_name,\n" +
-            "       COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
-            "FROM events e\n" +
-            "JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-            "JOIN users u ON u.id = e.organizer_id\n" +
-            "LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-            "LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-            "WHERE e.status = 'APPROVED' AND e.start_time > GETDATE()\n" +
-            "GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, u.first_name, u.last_name\n" +
-            "ORDER BY sold_count DESC\n", nativeQuery = true)
+    @Query(value="SELECT TOP 1 e.event_id, e.title, e.thumbnail_url, e.start_time as startTime, v.venue_name as venueName, a.specific_address, c.name AS [cityName],\n" +
+            "                  MIN(tt.price) as minPrice,\n" +
+            "\t\t\t\t  ec.category_name,\n" +
+            "                  CONCAT(u.first_name, ' ', u.last_name) as organizer_name,\n" +
+            "                  COUNT(DISTINCT od.order_detail_id) as soldCount\n" +
+            "            FROM events e\n" +
+            "\t\t\tJOIN event_categories ec ON e.category_id = ec.category_id\n" +
+            "            JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+            "\t\t\tJOIN venues v ON e.venue_id = v.venue_id\n" +
+            "            JOIN users u ON e.organizer_id = u.id\n" +
+            "\t\t\tJOIN addresses a ON v.address_id = a.id\n" +
+            "\t\t\tJOIN wards w ON a.ward_id = w.id\n" +
+            "\t\t\tJOIN city c ON w.city_id = c.id\n" +
+            "            LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+            "            LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+            "            WHERE e.status = 'APPROVED' AND e.start_time > GETDATE()\n" +
+            "            GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, u.first_name, u.last_name, v.venue_name,\n" +
+            "\t\t\ta.specific_address, c.name, ec.category_name\n" +
+            "            ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 
 
@@ -80,5 +88,27 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countByOrganizerId(Long organizerId);
 
     long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
+
+    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
+            "           MIN(tt.price) as min_price,\n" +
+            "           ec.category_name as category_name,\n" +
+            "           v.venue_name as venue_name,\n" +
+            "           ci.name as city_name,\n" +
+            "           COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
+            "           FROM events e \n" +
+            "           JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+            "           JOIN event_categories ec ON ec.category_id = e.category_id\n" +
+            "           JOIN venues v ON v.venue_id = e.venue_id\n" +
+            "           JOIN addresses a ON a.id = v.address_id\n" +
+            "           JOIN wards w ON w.id = a.ward_id\n" +
+            "           JOIN city ci ON ci.id = w.city_id\n" +
+            "\t\t   JOIN users u  ON e.organizer_id = u.id\n" +
+            "\t\t   JOIN organizer_profiles op ON u.id = op.user_id\n" +
+            "           LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+            "           LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+            "           WHERE e.status = 'APPROVED' AND e.start_time > GETDATE() AND e.event_id = :id\n" +
+            "           GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name, op.company_name, e.description",
+            nativeQuery = true)
+    EventSummaryProjection findEventDetailById(Long id);
 
 }

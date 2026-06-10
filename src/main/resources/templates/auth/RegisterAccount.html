@@ -29,25 +29,25 @@
         </div>
 
         <div class="lp-hero">
-            <div class="lp-tag"><span class="dot"></span>Join the community</div>
-            <h2>Start Your <em>Event</em><br/>Journey Today</h2>
-            <p>Choose your role and get access to thousands of events or start hosting your own.</p>
+            <div class="lp-tag"><span class="dot"></span>Tham gia cộng đồng</div>
+            <h2>Bắt đầu <em>sự kiện</em><br/> của bạn hôm nay</h2>
+            <p>Chọn role attendee để tham gia hàng nghìn sự kiện hấp dẫn</p>
         </div>
 
         <div class="role-cards" id="leftRoleCards">
             <div class="role-card selected" data-role="user" onclick="selectLeftRole('user',this)">
                 <div class="rc-icon user">🎟️</div>
                 <div class="rc-body">
-                    <div class="rc-t">Attendee</div>
-                    <div class="rc-s">Discover & book events near you</div>
+                    <div class="rc-t">Người tham gia</div>
+                    <div class="rc-s">Khám phá sự kiện gần bạn</div>
                 </div>
                 <div class="rc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
             <div class="role-card" data-role="organizer" onclick="selectLeftRole('organizer',this)">
                 <div class="rc-icon org">🎪</div>
                 <div class="rc-body">
-                    <div class="rc-t">Organizer</div>
-                    <div class="rc-s">Host & manage your own events</div>
+                    <div class="rc-t">Tổ chức</div>
+                    <div class="rc-s">Tạo và quản lí sự kiện của bạn</div>
                 </div>
                 <div class="rc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
@@ -61,8 +61,8 @@
             <!-- ════ REGISTER PANEL ════ -->
             <div class="panel active" id="panelRegister">
                 <div class="form-head">
-                    <h1>Create account ✨</h1>
-                    <p>Join EventHub and start exploring amazing events</p>
+                    <h1>Tạo tài khoản ✨</h1>
+                    <p>Tham gia EventHub để tận hưởng các sự kiện</p>
                 </div>
 
                 <!-- Role toggle -->
@@ -171,7 +171,7 @@
                         <button class="btn-primary"
                                 type="submit"
                                 style="margin-top:.625rem;">
-                            Create Account
+                            Tạo tài khoản
                             <svg width="15" height="15"
                                  fill="none"
                                  stroke="currentColor"
@@ -330,7 +330,7 @@
                         <button class="btn-primary"
                                 type="submit"
                                 style="margin-top:.625rem;">
-                            Create Organizer Account
+                            Tao tài khoản tổ chức
                             <svg width="15"
                                  height="15"
                                  fill="none"
@@ -344,8 +344,8 @@
                         </button>
                     </div>
                 </form>
-                <p class="reg-link">Already have an account? <a href="#">Sign in</a></p>
-                <p class="terms">By creating an account, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></p>
+                <p class="reg-link">Bạn đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></p>
+                <p class="terms">Để tạo tài khoản bạn cần tuân thủ các  <a href="#">Terms</a> and <a href="#">chính sách</a></p>
             </div>
 
             <!-- ════ FORGOT — STEP 1: EMAIL ════ -->
@@ -362,7 +362,7 @@
                 </div>
 
                 <div class="form-head">
-                    <h1>Forgot password? 🔐</h1>
+                    <h1>Quên mật khẩu 🔐</h1>
                     <p>Enter your registered email and we'll send you a 6-digit OTP code</p>
                 </div>
 

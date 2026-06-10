@@ -7,6 +7,7 @@ import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.VenueZone;
 import vn.edu.fpt.modelview.request.admin.VenueZoneDTO;
+import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.request.organizer.AddressDto;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
@@ -14,6 +15,7 @@ import vn.edu.fpt.modelview.request.organizer.VenueDto;
 import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 
 import java.time.LocalDate;
@@ -32,4 +34,7 @@ public interface EventService {
     DashboardStatsDTO getDashboardStats();
     List<Event> getTopThreePendingEvents();
     List<Event> getTodayActiveEvents();
+    Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
+    EventSummaryProjection findEventDetailById(Long id);
+
 }
