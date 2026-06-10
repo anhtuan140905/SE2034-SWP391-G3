@@ -88,6 +88,50 @@ public class FinanceServiceImpl implements FinanceService {
     public List<Event> getEventsByStatus(EventStatus status) {
         return eventRepository.findByStatus(status);
     }
+    @Override
+    public List<EventSettlementDTO> getUnsettledEvents() {
+        return eventRepository.findByStatus(EventStatus.ENDED)
+                .stream()
+                .filter(e -> !settlementRepository.existsByEvent(e))
+                .map(e -> new EventSettlementDTO(
+                        e.getEventId(),
+                        e.getTitle(),
+                        e.getOrganizer().getFirstName() + " " + e.getOrganizer().getLastName(),
+                        calculateRevenue(e)
+                ))
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void createSettlement(Long eventId, Double refundDeduction, String paymentMethod, String notes) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+        if (settlementRepository.existsByEvent(event)) {
+            throw new IllegalStateException("Settlement already exists for this event.");
+        }
+
+        BigDecimal grossRevenue = orderRepository.sumTotalAmountByEventAndStatus(event, OrderStatus.PAID);
+        if (grossRevenue == null) grossRevenue = BigDecimal.ZERO;
+        grossRevenue = grossRevenue.subtract(BigDecimal.valueOf(refundDeduction));
+
+        BigDecimal platformFee  = grossRevenue.multiply(BigDecimal.valueOf(0.10));
+        BigDecimal payoutAmount = grossRevenue.subtract(platformFee);
+
+        Settlement settlement = new Settlement();
+        settlement.setEvent(event);
+        settlement.setGrossRevenue(grossRevenue);
+        settlement.setPlatformFee(platformFee);
+        settlement.setPayoutAmount(payoutAmount);
+        settlement.setStatus(SettlementStatus.PENDING);
+        settlementRepository.save(settlement);
+    }
+    private BigDecimal calculateRevenue(Event event) {
+        BigDecimal revenue = orderRepository.sumTotalAmountByEventAndStatus(event, OrderStatus.PAID);
+        return revenue != null ? revenue : BigDecimal.ZERO;
+    }
+
 
 
 

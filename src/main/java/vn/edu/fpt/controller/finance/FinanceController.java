@@ -76,6 +76,28 @@ public class FinanceController {
         model.addAttribute("totalRevenue",       financeService.getTotalRevenue());
         return "finance/ListEndedEvents";
     }
+    @GetMapping("/settlement/create")
+    public String createSettlementPage(Model model) {
+        model.addAttribute("unsettledEvents", financeService.getUnsettledEvents());
+        return "finance/CreateSettlement";
+    }
+
+    @PostMapping("/settlement/create")
+    public String createSettlement(
+            @RequestParam Long eventId,
+            @RequestParam(defaultValue = "0") Double refundDeduction,
+            @RequestParam String paymentMethod,
+            @RequestParam(required = false) String notes,
+            RedirectAttributes ra) {
+        try {
+            financeService.createSettlement(eventId, refundDeduction, paymentMethod, notes);
+            ra.addFlashAttribute("successMessage", "Settlement created successfully!");
+            return "redirect:/finance/settlements";
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/finance/settlement/create";
+        }
+    }
 
 
 

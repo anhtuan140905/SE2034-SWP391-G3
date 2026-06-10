@@ -19,6 +19,9 @@ public interface FinanceService {
     Set<Long> getSettledEventIds(List<Event> events);
     long countAwaitingSettlement(List<Event> events);
     double getTotalRevenue();
+    List<EventSettlementDTO> getUnsettledEvents();
+    void createSettlement(Long eventId, Double refundDeduction, String paymentMethod, String notes);
+
 
 
 
