@@ -165,4 +165,5 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("keyword")      String keyword,
             Pageable pageable
     );
+
 }
