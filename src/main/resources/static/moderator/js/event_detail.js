@@ -11,23 +11,27 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ──────────────────────────────────────────
-       1. APPROVE EVENT
+       1. APPROVE EVENT (Duyệt sự kiện + Lời nhắn đi kèm)
     ────────────────────────────────────────── */
     window.approveEvent = async (eventId) => {
-        if (!eventId) return;
+        if (eventId === null || eventId === undefined) return;
 
         const confirmed = confirm('Are you sure you want to APPROVE this event?');
         if (!confirmed) return;
+
+        // Lấy lời nhắn động từ textarea (nếu có)
+        const textarea = document.getElementById('reviewMessage');
+        const message  = textarea ? textarea.value.trim() : '';
 
         try {
             const res = await fetch(`/moderator/events/${eventId}/approve`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Spring Security CSRF — thymeleaf injects this via meta tag if configured
                     [document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN']:
                         document.querySelector('meta[name="_csrf"]')?.content || ''
-                }
+                },
+                body: JSON.stringify({ message: message }) // Gửi lời nhắn lên Server
             });
 
             if (res.ok) {
@@ -44,15 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* ──────────────────────────────────────────
-       2. REJECT EVENT
+       2. REJECT EVENT (Từ chối sự kiện - Bắt buộc nhập lời nhắn)
     ────────────────────────────────────────── */
     window.rejectEvent = async (eventId) => {
-        if (!eventId) return;
+        if (eventId === null || eventId === undefined) return;
 
-        const textarea = document.getElementById('rejectReason');
-        const reason   = textarea ? textarea.value.trim() : '';
+        const textarea = document.getElementById('reviewMessage');
+        const message   = textarea ? textarea.value.trim() : '';
 
-        if (!reason) {
+        // Từ chối thì BẮT BUỘC phải viết lý do
+        if (!message) {
             textarea?.classList.add('textarea-error');
             textarea?.focus();
             showToast('Please provide a reason for rejection.', 'error');
@@ -72,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     [document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN']:
                         document.querySelector('meta[name="_csrf"]')?.content || ''
                 },
-                body: JSON.stringify({ reason })
+                body: JSON.stringify({ message: message }) // Gửi lý do lên Server
             });
 
             if (res.ok) {
@@ -87,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
     /* ──────────────────────────────────────────
        3. TEXTAREA ERROR STYLE
     ────────────────────────────────────────── */
@@ -100,7 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-    document.getElementById('rejectReason')?.addEventListener('input', function () {
+    // -----------------
+    document.getElementById('reviewMessage')?.addEventListener('input', function () {
         if (this.value.trim()) this.classList.remove('textarea-error');
     });
 

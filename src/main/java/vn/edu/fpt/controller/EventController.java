@@ -2,6 +2,7 @@ package vn.edu.fpt.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 @Controller
 //@RestController
@@ -79,5 +81,37 @@ public class EventController {
     @GetMapping("api/address")
     public VenueDto getAddressbyAddressid(@RequestParam Long venueid){
         return  eventService.getVenuebyId(venueid);
+    }
+    @GetMapping("list/event")
+    public String ListEvent(
+            // Spring MVC tự gom nhiều ?status=APPROVED&status=ENDED
+            // vào mảng String[]
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(value = "status", required = false) String[] statuses,
+            @RequestParam(defaultValue = "")                  String   keyword,
+            @RequestParam(defaultValue = "1")                 int      page,
+            Model model){
+        model.addAttribute("activeMenu", "listevent");
+        if (statuses == null || statuses.length == 0) {
+            statuses = new String[]{};
+        }
+        List<String> selectedStatuses = Arrays.asList(statuses);
+        Long organizerId = userDetails.getUser().getId();
+        Page<EventCardDTO> pageResult = eventService.getEventCards(organizerId,statuses, keyword, page);
+        model.addAttribute("eventCards",        pageResult.getContent());
+        model.addAttribute("currentPage",       pageResult.getNumber() + 1);
+        model.addAttribute("totalPages",        pageResult.getTotalPages());
+        model.addAttribute("totalItems",        pageResult.getTotalElements());
+
+        long from = pageResult.getTotalElements() == 0 ? 0
+                : (long) pageResult.getNumber() * pageResult.getSize() + 1;
+        long to   = Math.min(from + pageResult.getSize() - 1,
+                pageResult.getTotalElements());
+        model.addAttribute("fromIndex",         from);
+        model.addAttribute("toIndex",           to);
+
+        model.addAttribute("selectedStatuses",  selectedStatuses); // ["APPROVED","ENDED"]
+        model.addAttribute("keyword",           keyword);
+        return "organizer/event/ListOrganizerEvents";
     }
 }

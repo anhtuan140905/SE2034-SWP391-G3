@@ -845,7 +845,7 @@ select.field-input {
 }
 .btn-free-toggle.is-paid {
     background: #f1f5f9;
-    color: var(--slate-600, #475569);
+    color: var( #475569);
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 .btn-free-toggle.is-paid:hover {

@@ -18,15 +18,15 @@
         body {
             display: flex;
             min-height: 100vh;
-            background: #090014;
-            color: white;
+            background: #fff0f5;
+            color: #1e0e34;
         }
 
         /* ================= SIDEBAR ================= */
 
         .sidebar {
             width: 260px;
-            background: #140021;
+            background: #ffffff;
             border-right: 1px solid rgba(236, 72, 153, 0.3);
             padding: 20px;
             position: fixed;
@@ -51,7 +51,7 @@
 
         .portal-text {
             font-size: 13px;
-            color: #9ca3af;
+            color: #84759b;
             letter-spacing: 1px;
         }
 
@@ -60,7 +60,7 @@
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: #d1d5db;
+            color: #4b3d60;
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 10px;
@@ -89,7 +89,7 @@
             position: sticky;
             top: 0;
             z-index: 90;
-            background: #0d001a;
+            background: #ffffff;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             padding: 12px 25px;
             display: flex;
@@ -100,17 +100,16 @@
         .topbar .search-box-top {
             flex: 1;
             max-width: 500px;
-            background: #140021;
+            background: #fff0f5;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 10px;
             padding: 10px 15px;
-            color: white;
+            color: #1e0e34;
             outline: none;
             font-size: 14px;
         }
-
         .topbar .search-box-top::placeholder {
-            color: #9ca3af;
+            color: #84759b;
         }
 
         .topbar-right {
@@ -124,7 +123,7 @@
             position: relative;
             background: none;
             border: none;
-            color: #d1d5db;
+            color: #ff1b8d;
             font-size: 20px;
             cursor: pointer;
         }
@@ -137,7 +136,7 @@
             height: 9px;
             background: #ff1b8d;
             border-radius: 50%;
-            border: 2px solid #0d001a;
+            border: 2px solid #ffffff;
         }
 
         .profile {
@@ -162,13 +161,9 @@
         .profile-info .name {
             font-size: 14px;
             font-weight: bold;
-            color: white;
+            color: #1e0e34;
         }
 
-        .profile-info .role {
-            font-size: 12px;
-            color: #9ca3af;
-        }
 
         /* ================= MAIN ================= */
 
@@ -197,16 +192,16 @@
             height: 45px;
             border: none;
             border-radius: 12px;
-            background: #1e0035;
-            color: #d1d5db;
+            background: #fff0f5;
+            color: #4b3d60;
             cursor: pointer;
             transition: 0.3s;
             font-size: 18px;
         }
 
         .back-btn:hover {
-            background: #ff1b8d;
-            color: white;
+            background: rgba(255, 27, 141, 0.15);
+            color: #ff1b8d;
         }
 
         .page-header h1 {
@@ -217,6 +212,13 @@
         .page-header p {
             color: #9ca3af;
             margin-top: 5px;
+        }
+        .page-header-left a,
+        .page-header > a {
+            text-decoration: none;
+            border: none;
+            outline: none;
+            display: inline-flex;
         }
 
         .edit-btn {
@@ -240,7 +242,7 @@
         /* ================= BANNER ================= */
 
         .banner {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.3);
             border-radius: 22px;
             overflow: hidden;
@@ -267,7 +269,7 @@
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
-            color: #d1d5db;
+            color: #4b3d60;
         }
 
         .venue-meta div {
@@ -276,16 +278,28 @@
             gap: 10px;
         }
 
-        .status-badge {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 7px 18px;
+        .status {
+            padding: 6px 14px;
             border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status.active {
             background: rgba(34, 197, 94, 0.2);
             color: #4ade80;
-            font-weight: bold;
-            font-size: 14px;
         }
+
+        .status.inactive {
+            background: rgba(220, 53, 69, 0.15);
+            color: #d11127;
+        }
+
+        .status.maintenance {
+            background: rgba(234, 179, 8, 0.2);
+            color: #e8ba05;
+        }
+
 
         /* ================= STATS ================= */
 
@@ -297,7 +311,7 @@
         }
 
         .stat-card {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 18px;
             padding: 22px;
@@ -318,9 +332,10 @@
         }
 
         .stat-title {
-            color: #9ca3af;
+            color: #2d3748;
             font-size: 13px;
             margin-bottom: 8px;
+            font-weight: bold;
         }
 
         .stat-value {
@@ -338,7 +353,7 @@
         }
 
         .card {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 20px;
             padding: 25px;
@@ -351,7 +366,7 @@
         }
 
         .card p {
-            color: #d1d5db;
+            color: #4b3d60;
             line-height: 1.8;
             font-size: 14px;
         }
@@ -362,7 +377,7 @@
         /* ================= TABLE CARD ================= */
 
         .table-card {
-            background: #140021;
+            background: #ffffff;
             border: 1px solid rgba(236, 72, 153, 0.25);
             border-radius: 20px;
             padding: 25px;
@@ -408,7 +423,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #d1d5db;
+            color: #4b3d60;
+
         }
         .address-info {
             display: flex;
@@ -417,7 +433,7 @@
 
         .specific-address {
             font-size: 12px;
-            color: #9ca3af;
+            color: #4b3d60;
             margin-top: 3px;
         }
         /* ================= RESPONSIVE ================= */
@@ -516,7 +532,7 @@
                     <p>Xem thông tin chi tiết và thống kê hoạt động của địa điểm</p>
                 </div>
             </div>
-            <a th:href="@{/admin/editvenue}">
+            <a th:href="@{/admin/editvenue(id=${venues.venueId})}">
                 <button class="edit-btn">
                     <i class="fa-solid fa-pen"></i>
                     Chỉnh Sửa Địa Điểm
@@ -564,12 +580,19 @@
 
                     <div th:if="${venues.address != null and venues.address.specificAddress != null}"
 
-                         style="font-size:12px; color:#9ca3af; margin-top:3px; padding-left:20px;"
+                         style="font-size:12px; color:#4b3d60; margin-top:3px; padding-left:20px;"
 
                          th:text="${venues.address.specificAddress}">
 
                     </div>
-                    <div class="status-badge">Đang Hoạt Động</div>
+                    <div class="status" >
+                        <td>
+                            <span th:if="${venues.status != null and venues.status.name() == 'ACTIVE'}" class="status active">Đang Hoạt Động</span>
+                            <span th:if="${venues.status != null and venues.status.name() == 'INACTIVE'}" class="status inactive">Ngừng Hoạt Động</span>
+                            <span th:if="${venues.status != null and venues.status.name() == 'MAINTAIN'}" class="status maintenance">Bảo Trì</span>
+                            <span th:if="${venues.status == null}" class="status">Chưa Xác Định</span>
+                        </td>
+                    </div>
 
                 </div>
 
@@ -577,29 +600,42 @@
         </div>
 
         <!-- STATS -->
-        <div class="stats">
+        <div class="stats" >
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-calendar"></i></div>
                 <div class="stat-title">Tổng Sự Kiện </div>
                 <div class="stat-value">
-                    <span th:text="${venues.events != null ? #lists.size(venues.events)  : '0'}">
-                    0 </span>
+                    <span th:text="${venueEvents.eventCount}">
+                    0
+                    </span>
                 </div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" >
                 <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                 <div class="stat-title">Tổng Số Lượng Người Tham Gia</div>
-                <div class="stat-value">94.2K</div>
+                <div class="stat-value">
+                    <span th:text="${venueEvents.participantCount}">
+                        0
+                    </span>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="stat-title">Tổng Doanh Thu</div>
-                <div class="stat-value">$1.2M</div>
+                <div class="stat-value">
+                    <span th:text="${venueEvents.revenue}">
+                        0
+                    </span>
+                </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
                 <div class="stat-title">Tỉ Lệ Sử Dụng Địa Điểm</div>
-                <div class="stat-value">87%</div>
+                <div class="stat-value">
+                    <span th:text="${venueEvents.usageRate}">
+                        0
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -616,12 +652,41 @@
             <!-- Chart -->
             <div class="card">
                 <h2>Thống Kê Doanh Thu Theo Tháng</h2>
-                <img
-                        src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],datasets:[{label:'Doanh thu',data:[45,52,68,71,55,67,54,100,23,45,32,12]}]}}"
-                        alt="Monthly Performance Chart"
-                        style="width:100%; border-radius:15px;"
-                />
+                <canvas id="revenueChart"></canvas>
             </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script th:inline="javascript">
+                const monthlyData = /*[[${mothEvent}]]*/ [];
+
+                const revenueByMonth = Array(12).fill(0);
+                monthlyData.forEach(item => {
+                    revenueByMonth[item.month - 1] = item.revenue;
+                });
+
+                new Chart(document.getElementById('revenueChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
+                            'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: revenueByMonth,
+                            backgroundColor: '#8b5cf6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { labels: { color: '#1e0e34' } },
+                            title: { display: false }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#4b3d60' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            y: { ticks: { color: '#4b3d60' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                        }
+                    }
+                });
+            </script>
 
         </div>
 
@@ -638,35 +703,16 @@
                     <th>Doanh Thu</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>Summer Music Festival</td>
-                    <td>2026-06-15</td>
-                    <td>2026-06-16</td>
-                    <td>4,800</td>
-                    <td class="revenue">$48,000</td>
+                <tbody >
+                <tr th:each="event : ${event}" >
+                    <td th:text="${event.title}"></td>
+                    <td th:text="${event.startTime}"></td>
+                    <td th:text="${event.endTime}"></td>
+                    <td th:text="${event.participantCount}"></td>
+                    <td class="revenue" th:text="${event.revenue}"></td>
                 </tr>
-                <tr>
-                    <td>Food &amp; Wine Fair</td>
-                    <td>2026-05-22</td>
-                    <td>2026-05-23</td>
-                    <td>3,200</td>
-                    <td class="revenue">$32,000</td>
-                </tr>
-                <tr>
-                    <td>Tech Summit 2026</td>
-                    <td>2026-04-10</td>
-                    <td>2026-04-12</td>
-                    <td>4,500</td>
-                    <td class="revenue">$67,500</td>
-                </tr>
-                <tr>
-                    <td>Spring Concert Series</td>
-                    <td>2026-03-15</td>
-                    <td>2026-03-17</td>
-                    <td>4,200</td>
-                    <td class="revenue">$42,000</td>
-                </tr>
+
+
                 </tbody>
             </table>
         </div>

@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
                            PasswordEncoderConfig passwordEncoderConfig,
                            OrganizerProfileRepository organizerProfileRepository,
                            OrganizerProfileService organizerProfileService,
-                            WardService wardService,
+                           WardService wardService,
                            CloudinaryService cloudinaryService,
                            @Lazy UserDetailsService userDetailsService,
                            EmailService emailService,

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.edu.fpt.common.SecurityUtil;
 import vn.edu.fpt.model.constant.TicketStatus;
+import vn.edu.fpt.model.constant.EventStatus;
 
 import java.time.Instant;
 
@@ -24,18 +25,38 @@ public class Ticket {
     private Long ticketId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_detail_id", unique = true)
-    private OrderDetail orderDetail;
+    @JoinColumn(name = "order_detail_id"
+//            , nullable = false
+            , unique = true)
+    private OrderDetail orderDetail; // FK Ticket → OrderDetail (không phải ngược lại)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "user_id"
+//            , nullable = false
+    )
+    private User user; // Người sở hữu vé
 
     @Column(name = "is_checked_in")
     private boolean isCheckedIn;
 
     @Column(name = "qr_code", nullable = false, unique = true)
-    private String qrCode;
+    private String qrCode; // QR code độc lập mỗi vé
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "checked_in_by")
+//    private User checkedInBy; // Staff thực hiện check-in — nullable trước khi check-in
+
+    //    @Column(name = "checked_in_at")
+//    private Instant checkedInAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id")
+    private TicketType ticketType;
+    @Column(name = "status", nullable = false, length = 20)
+    private TicketStatus status;
+
+//    @Version
+//    @Column(name = "version", nullable = false)
+//    private Integer version; // OptimisticLock — xử lý 2 Staff scan QR cùng lúc
 
     @Column(name = "created_by")
     private String createdBy;
@@ -46,21 +67,13 @@ public class Ticket {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Column(name = "status")
-    private TicketStatus status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_type_id")
-    private TicketType ticketType;
-
     @PrePersist
     protected void onCreate() {
-        this.createdBy = SecurityUtil.getCurrentUsername();
-        this.createdAt = Instant.now();
+        createdAt = Instant.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = Instant.now();
+        updatedAt = Instant.now();
     }
 }

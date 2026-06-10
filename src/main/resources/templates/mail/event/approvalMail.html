@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Approved</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f111a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #ffffff;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0f111a; padding: 40px 20px;">
+    <tr>
+        <td align="center">
+            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #161925; border-radius: 12px; overflow: hidden; border: 1px solid #2b3046; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <tr>
+                    <td style="background: linear-gradient(135deg, #a855f7, #6366f1); padding: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 1px;">EVENT APPROVED</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 40px 30px;">
+                        <p style="font-size: 16px; line-height: 1.6; color: #b9be9b; margin-top: 0;">Xin chào <strong style="color: #ffffff;" th:text="${organizerName}">Ban tổ chức</strong>,</p>
+                        <p style="font-size: 15px; line-height: 1.6; color: #acb2c7;">Hội đồng kiểm duyệt của <strong>EventHubCentral</strong> đã xem xét hồ sơ và chính thức cấp phép hoạt động cho sự kiện của bạn:</p>
+
+                        <div style="background-color: #0f111a; border-left: 4px solid #10b981; padding: 15px; margin: 25px 0; border-radius: 4px;">
+                            <span style="font-size: 12px; color: #10b981; font-weight: 700; display: block; letter-spacing: 0.5px;">TÊN SỰ KIỆN</span>
+                            <span style="font-size: 16px; color: #ffffff; font-weight: 600; display: block; margin-top: 5px;" th:text="${eventTitle}">Neon Night Music Festival</span>
+                        </div>
+
+                        <div th:if="${reviewMessage != null and !reviewMessage.isEmpty()}" style="margin: 25px 0; padding: 18px; background-color: #1e1b2e; border: 1px dashed #a855f7; border-radius: 8px;">
+                            <span style="font-size: 13px; color: #c084fc; font-weight: 700; display: block;">📝 LỜI NHẮN TỪ KIỂM DUYỆT VIÊN:</span>
+                            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin: 8px 0 0 0; font-style: italic;" th:text="${reviewMessage}">Chúc sự kiện của bạn diễn ra thành công tốt đẹp!</p>
+                        </div>
+
+                        <p style="font-size: 14px; line-height: 1.6; color: #acb2c7; margin-bottom: 0;">Hiện tại sự kiện đã được công khai bán vé trên hệ thống chính thức. Vui lòng truy cập vào Dashboard để quản lý tình hình đặt vé.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 20px 30px; background-color: #0f111a; border-top: 1px solid #2b3046; text-align: center; font-size: 12px; color: #626980;">
+                        Thư điện tử tự động từ hệ thống quản trị Central Grid — EventHub 2026.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
