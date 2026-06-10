@@ -130,7 +130,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
         """, nativeQuery = true)
     List<EventSummaryProjection> getEventStatisticsByVenue(@Param("venueId") Long id);
 
-
+    List<Event> findByVenue_VenueId(Long id);
 
     @Query(value = """
         SELECT
@@ -170,4 +170,20 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
         ORDER BY month
         """, nativeQuery = true)
     List<VenueSummaryProjection> getMonthlyRevenueByVenue(@Param("venueId") Long venueId);
+
+    @Query("""
+        SELECT e FROM Event e
+        WHERE e.organizer.id = :organizerId 
+          AND (:#{#statusList.size()} = 0
+               OR e.status IN :statusList)
+          AND (:keyword IS NULL OR :keyword = ''
+               OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+    """)
+
+    Page<Event> findByMultiStatusAndKeyword(
+            @Param("organizerId") Long organizerId, // Thêm param này
+            @Param("statusList") List<String> statusList,
+            @Param("keyword")      String keyword,
+            Pageable pageable
+    );
 }

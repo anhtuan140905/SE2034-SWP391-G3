@@ -146,11 +146,11 @@ public class EventServiceImpl implements EventService {
 
         }
         List<TicketType> ticketTypes = new ArrayList<>();
-        if(eventDTO.getTicketTypes()!=null){
-            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
+        if (eventDTO.getTicketTypes() != null) {
+            for (TicketTypeRequestDTO ticketTypeDto : eventDTO.getTicketTypes()) {
                 TicketType type = new TicketType();
                 VenueZone zone = venueZoneRepository.findById(ticketTypeDto.getZoneID())
-                        .orElseThrow(()->new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
+                        .orElseThrow(() -> new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
                 type.setZone(zone);
                 type.setEvent(event);
                 type.setTypeName(ticketTypeDto.getTypeName());
@@ -164,25 +164,25 @@ public class EventServiceImpl implements EventService {
         }
         event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
-        CreateTicket(ticketTypes,organizer.getEmail());
+        CreateTicket(ticketTypes, organizer.getEmail());
     }
 
-    public void CreateTicket(List<TicketType> ticketTypeList,String emailUser ){
-        for (TicketType type : ticketTypeList){
-            for (int i = 0; i< type.getStock();i++){
+    public void CreateTicket(List<TicketType> ticketTypeList, String emailUser) {
+        for (TicketType type : ticketTypeList) {
+            for (int i = 0; i < type.getStock(); i++) {
                 Ticket ticket = new Ticket();
                 ticket.setTicketType(type);
                 ticket.setStatus(TicketStatus.UNSOLD);
                 ticket.setCreatedBy(emailUser);
                 ticket.setCheckedIn(false);
-                do{
+                do {
                     String code = UUID.randomUUID()
                             .toString()
                             .replace("-", "")
                             .substring(0, 12)
                             .toUpperCase();
-                    ticket.setQrCode(type.getTypeName()+code);
-                } while(tickRepository.existsByQrCode(ticket.getQrCode()));
+                    ticket.setQrCode(type.getTypeName() + code);
+                } while (tickRepository.existsByQrCode(ticket.getQrCode()));
                 tickRepository.save(ticket);
             }
         }
@@ -302,12 +302,12 @@ public class EventServiceImpl implements EventService {
             predicates.add(cb.equal(root.get("status"), EventStatus.APPROVED));
 
             if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
-                predicates.add( cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
+                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
             }
 
             if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
                 Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
-                predicates.add( cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
+                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
             }
 
             if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
@@ -333,7 +333,7 @@ public class EventServiceImpl implements EventService {
                     LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
                             .withHour(23).withMinute(59).withSecond(59);
 
-                    predicates.add( cb.between(root.get("startTime"), startOfMonth, endOfMonth));
+                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
                 } catch (Exception e) {
                     System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
                 }
@@ -354,16 +354,16 @@ public class EventServiceImpl implements EventService {
 
                 switch (criteria.getPrice()) {
                     case "free":
-                        predicates.add( cb.equal(minPriceExpr, 0D));
+                        predicates.add(cb.equal(minPriceExpr, 0D));
                         break;
                     case "under200":
                         predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
                         break;
                     case "200to1000":
-                        predicates.add( cb.between(minPriceExpr, 200000D, 1000000D));
+                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
                         break;
                     case "over1000":
-                        predicates.add( cb.greaterThan(minPriceExpr, 1000000D));
+                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
                         break;
                 }
             }
@@ -390,14 +390,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
+    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id) {
         return eventRepository.getMonthlyRevenueByVenue(id);
     }
 
 
-}
     @Override
-    public Page<EventCardDTO> getEventCards(Long organizerId,String[] statuses, String keyword, int page) {
+    public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
         // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
         List<String> statusList = statuses == null
                 ? List.of()
@@ -412,7 +411,7 @@ public class EventServiceImpl implements EventService {
                 9
         );
         Page<Event> entityPage = this.eventRepository
-                .findByMultiStatusAndKeyword(organizerId,statusList, keyword, pageable);
+                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
 
@@ -442,18 +441,8 @@ public class EventServiceImpl implements EventService {
 
         return dto;
     }
-    public List<EventSummaryProjection> getEventStatisticsByVenue(Long id){
-        return eventRepository.getEventStatisticsByVenue(id);
-    }
 
-    public VenueSummaryProjection getVenueStatisticSummary( Long id){
-        return  eventRepository.getVenueStatisticSummary(id);
-    }
 
-    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
-        return eventRepository.getMonthlyRevenueByVenue(id);
-    }
 }
-
 
 
