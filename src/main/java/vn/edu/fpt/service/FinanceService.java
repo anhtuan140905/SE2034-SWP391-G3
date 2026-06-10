@@ -14,6 +14,12 @@ public interface FinanceService {
     FinanceDashBoardDTO getDashboardStats();
     List<Settlement> getRecentSettlements();
     List<Event> getAllEvents();
+    List<Event> getEndedEvents();
+    List<Event> getEventsByStatus(EventStatus status);
+    Set<Long> getSettledEventIds(List<Event> events);
+    long countAwaitingSettlement(List<Event> events);
+    double getTotalRevenue();
+
 
 
 }

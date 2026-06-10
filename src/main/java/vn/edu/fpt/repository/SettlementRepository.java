@@ -43,4 +43,5 @@ public interface SettlementRepository extends JpaRepository<Settlement, Long> {
         WHERE s.settlementId = :id
     """)
     Optional<Settlement> findByIdWithEventAndOrganizer(@Param("id") Long id);
+    boolean existsByEvent(Event event);
 }

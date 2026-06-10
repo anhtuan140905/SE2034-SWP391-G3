@@ -62,6 +62,34 @@ public class FinanceServiceImpl implements FinanceService {
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
+    @Override
+    public List<Event> getEndedEvents() {
+        return eventRepository.findByStatus(EventStatus.ENDED);
+    }
+    @Override
+    public Set<Long> getSettledEventIds(List<Event> events) {
+        return events.stream()
+                .filter(e -> settlementRepository.existsByEvent(e))
+                .map(Event::getEventId)
+                .collect(Collectors.toSet());
+    }
+    @Override
+    public long countAwaitingSettlement(List<Event> events) {
+        return events.stream()
+                .filter(e -> !settlementRepository.existsByEvent(e))
+                .count();
+    }
+    @Override
+    public double getTotalRevenue() {
+        BigDecimal total = settlementRepository.getTotalRevenue();
+        return total != null ? total.doubleValue() : 0.0;
+    }
+    @Override
+    public List<Event> getEventsByStatus(EventStatus status) {
+        return eventRepository.findByStatus(status);
+    }
+
+
 
 
 }

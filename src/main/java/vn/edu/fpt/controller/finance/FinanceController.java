@@ -27,6 +27,56 @@ public class FinanceController {
         model.addAttribute("events",            financeService.getAllEvents());
         return "finance/DashboardFinance";
     }
+    @GetMapping("/events")
+    public String events(
+            @RequestParam(defaultValue = "ALL") String status,
+            @RequestParam(defaultValue = "")   String keyword,
+            Model model) {
 
-    
+
+        List<Event> allEnded = financeService.getEndedEvents();
+
+
+        List<Event> events;
+        switch (status.toUpperCase()) {
+            case "UNSETTLED":
+                events = allEnded.stream()
+                        .filter(e -> !financeService.getSettledEventIds(allEnded).contains(e.getEventId()))
+                        .toList();
+                break;
+            case "SETTLED":
+                events = allEnded.stream()
+                        .filter(e -> financeService.getSettledEventIds(allEnded).contains(e.getEventId()))
+                        .toList();
+                break;
+            default:
+                events = allEnded;
+                break;
+        }
+
+
+        if (keyword != null && !keyword.isBlank()) {
+            String kw = keyword.trim().toLowerCase();
+            events = events.stream()
+                    .filter(e -> e.getTitle().toLowerCase().contains(kw)
+                            || (e.getOrganizer().getFirstName() + " " + e.getOrganizer().getLastName())
+                            .toLowerCase().contains(kw))
+                    .toList();
+        }
+
+
+        java.util.Set<Long> settledIds = financeService.getSettledEventIds(allEnded);
+
+        model.addAttribute("events",             events);
+        model.addAttribute("settledEventIds",    settledIds);
+        model.addAttribute("selectedStatus",     status);
+        model.addAttribute("keyword",            keyword);
+        model.addAttribute("totalEvents",        events.size());
+        model.addAttribute("awaitingSettlement", financeService.countAwaitingSettlement(allEnded));
+        model.addAttribute("totalRevenue",       financeService.getTotalRevenue());
+        return "finance/ListEndedEvents";
+    }
+
+
+
 }
