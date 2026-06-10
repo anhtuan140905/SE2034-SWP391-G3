@@ -17,6 +17,7 @@ import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
+import vn.edu.fpt.repository.VenueSummaryProjection;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,5 +37,8 @@ public interface EventService {
     List<Event> getTodayActiveEvents();
     Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     EventSummaryProjection findEventDetailById(Long id);
+    List<EventSummaryProjection> getEventStatisticsByVenue(Long id);
+    VenueSummaryProjection getVenueStatisticSummary(Long id);
+    List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id);
 
 }

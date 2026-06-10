@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import vn.edu.fpt.model.constant.VenueStatus;
 
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class CreateVenueDTO {
     public String description;
 
     public String imageUrl;
+
+    private VenueStatus status;
 
     @NotEmpty(message = "Venue cần có Zone")
     @Valid

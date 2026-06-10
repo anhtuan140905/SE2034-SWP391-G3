@@ -341,5 +341,20 @@ public class EventServiceImpl implements EventService {
         return this.eventRepository.findEventDetailById(id);
     }
 
+    @Override
+    public List<EventSummaryProjection> getEventStatisticsByVenue(Long id) {
+        return List.of();
+    }
+
+    @Override
+    public VenueSummaryProjection getVenueStatisticSummary(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
+        return eventRepository.getMonthlyRevenueByVenue(id);
+    }
+
 
 }
