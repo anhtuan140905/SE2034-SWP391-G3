@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface SettlementRepository extends JpaRepository<Settlement, Long> {
 
     Long countByStatus(SettlementStatus status);
+    List<Settlement> findByStatus(SettlementStatus status);
 
 
 

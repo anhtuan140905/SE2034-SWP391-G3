@@ -21,6 +21,8 @@ public interface FinanceService {
     double getTotalRevenue();
     List<EventSettlementDTO> getUnsettledEvents();
     void createSettlement(Long eventId, Double refundDeduction, String paymentMethod, String notes);
+    List<Settlement> getAllSettlements();
+    List<Settlement> getSettlementsByStatus(String status);
 
 
 

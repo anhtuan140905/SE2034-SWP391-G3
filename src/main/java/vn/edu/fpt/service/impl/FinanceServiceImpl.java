@@ -131,6 +131,22 @@ public class FinanceServiceImpl implements FinanceService {
         BigDecimal revenue = orderRepository.sumTotalAmountByEventAndStatus(event, OrderStatus.PAID);
         return revenue != null ? revenue : BigDecimal.ZERO;
     }
+    @Override
+    public List<Settlement> getAllSettlements() {
+        return settlementRepository.findAll();
+    }
+
+    @Override
+    public List<Settlement> getSettlementsByStatus(String status) {
+        if (status == null || status.equalsIgnoreCase("ALL")) {
+            return settlementRepository.findAll();
+        }
+        try {
+            return settlementRepository.findByStatus(SettlementStatus.valueOf(status.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return settlementRepository.findAll();
+        }
+    }
 
 
 

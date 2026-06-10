@@ -98,6 +98,14 @@ public class FinanceController {
             return "redirect:/finance/settlement/create";
         }
     }
+    @GetMapping("/settlements")
+    public String settlements(
+            @RequestParam(defaultValue = "ALL") String status,
+            Model model) {
+        model.addAttribute("settlements",    financeService.getSettlementsByStatus(status));
+        model.addAttribute("selectedStatus", status);
+        return "finance/ListSettlement";
+    }
 
 
 
