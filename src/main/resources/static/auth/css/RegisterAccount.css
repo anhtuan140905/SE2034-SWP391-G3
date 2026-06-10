@@ -40,7 +40,7 @@
         .lp-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(167,108,255,.15);border:1px solid rgba(167,108,255,.25);border-radius:999px;padding:5px 14px;font-size:.7rem;font-weight:700;color:#c4a0ff;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.5rem;width:fit-content;}
         .lp-tag .dot{width:6px;height:6px;border-radius:50%;background:#a76cff;animation:dp 2s ease-in-out infinite;}
         @keyframes dp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.5);}}
-        .lp-hero h2{font-family:'Outfit',sans-serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;line-height:1.1;letter-spacing:-.05em;color:#fff;margin-bottom:1rem;}
+        .lp-hero h2{font-family:'Outfit',sans-serif;font-size:clamp(1.8rem,3vw,2.6rem);line-height:1.1;letter-spacing:-.05em;color:#fff;margin-bottom:1rem;}
         .lp-hero h2 em{font-style:normal;background:linear-gradient(135deg,#c4a0ff 0%,#ff9fd4 50%,#ffb97a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
         .lp-hero p{font-size:.875rem;color:rgba(255,255,255,.5);line-height:1.7;max-width:280px;}
 
@@ -70,7 +70,7 @@
 
         /* Form head */
         .form-head{margin-bottom:1.5rem;}
-        .form-head h1{font-family:'Outfit',sans-serif;font-size:clamp(1.4rem,2.2vw,1.75rem);font-weight:800;letter-spacing:-.04em;color:#1a0a2e;margin-bottom:.35rem;}
+        .form-head h1{font-family:'Outfit',sans-serif;font-size:clamp(1.4rem,2.2vw,1.75rem);letter-spacing:-.04em;color:#1a0a2e;margin-bottom:.35rem;}
         .form-head p{font-size:.8rem;color:#9b8bb0;}
 
         /* Role toggle */

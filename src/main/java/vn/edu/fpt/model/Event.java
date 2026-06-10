@@ -59,7 +59,6 @@ public class Event extends BaseAuditEntity {
     private EventStatus status;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("isPrimary DESC") // ảnh primary lên trước
     private List<EventImage> images; // List vì có thứ tự, ảnh primary trước
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

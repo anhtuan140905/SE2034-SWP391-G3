@@ -1,0 +1,887 @@
+/*
+ * EventHub — Event Detail Page
+ * Rewritten: enforces dark background, polished glass panels,
+ * clean sidebar layout, consistent typography.
+ */
+
+/* ── 1. DESIGN TOKENS ─────────────────────────────────────────── */
+:root {
+    --eh-bg-base:         #07010f;
+    --eh-bg-surface:      #0d0120;
+    --eh-bg-card:         #110228;
+
+    --eh-pink:            #ff2a7a;
+    --eh-pink-dim:        rgba(255, 42, 122, 0.15);
+    --eh-pink-border:     rgba(255, 42, 122, 0.25);
+    --eh-violet:          #8c2bff;
+    --eh-violet-dim:      rgba(140, 43, 255, 0.15);
+    --eh-violet-border:   rgba(140, 43, 255, 0.25);
+    --eh-orange:          #ff7700;
+    --eh-orange-dim:      rgba(255, 119, 0, 0.12);
+    --eh-orange-border:   rgba(255, 119, 0, 0.28);
+    --eh-neon-blue:       #00f0ff;
+
+    --eh-grad-cta:        linear-gradient(135deg, #ff2a7a 0%, #8c2bff 55%, #ff7700 100%);
+    --eh-grad-badge:      linear-gradient(135deg, #ff2a7a 0%, #8c2bff 100%);
+
+    --eh-glass-bg:        rgba(255, 255, 255, 0.028);
+    --eh-glass-border:    rgba(255, 255, 255, 0.07);
+    --eh-glass-border-h:  rgba(255, 255, 255, 0.14);
+    --eh-glass-shadow:    0 12px 40px rgba(0, 0, 0, 0.55);
+
+    --eh-text-bright:     #f6f2ff;
+    --eh-text-mid:        #b8abcf;
+    --eh-text-muted:      #6e6285;
+
+    --eh-radius-card:     20px;
+    --eh-radius-md:       12px;
+    --eh-radius-sm:       8px;
+
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body:    'Outfit', sans-serif;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Bo góc mượt mà cho card chính */
+.rounded-4 {
+  border-radius: 20px !important;
+}
+
+/* Hiệu ứng Gradient phủ mờ lên ảnh nền */
+.bg-gradient-to-t {
+  background: var(--gradient-overlay) !important;
+}
+
+/* Định dạng Badge danh mục (Music) phía trên bên trái */
+.text-brand-pink {
+  color: var(--color-brand-pink) !important;
+}
+.bg-dark\/80 {
+  background-color: rgba(15, 10, 28, 0.75) !important;
+}
+
+/* Định dạng Nút Trái tim */
+.hover\:text-pink:hover {
+  color: var(--color-brand-pink) !important;
+  transform: scale(1.05);
+}
+
+/* Định dạng Khối ngày tháng (Jun 12) ở góc dưới bên phải */
+.bg-gradient-primary-box {
+  background: var(--gradient-primary) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 20px rgba(255, 42, 122, 0.3) !important;
+  padding: 12px 16px !important;
+}
+
+/* Định dạng lại Badge Organizer (BY ELEVATION GROUP) */
+.badge-organizer {
+  background: rgba(255, 115, 0, 0.15) !important;
+  border: 1px solid rgba(255, 115, 0, 0.3) !important;
+  color: #ff8c32 !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Căn chỉnh khoảng cách chữ Tiêu đề */
+.font-heading {
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* ── 2. GLOBAL DARK SURFACE ───────────────────────────────────── */
+/*
+ * This section MUST override home.css body background.
+ * Uses html selector for higher specificity.
+ */
+html,
+body {
+    background-color: #fff6f9 !important;
+    color: var(--eh-text-mid) !important;
+    font-family: var(--font-body), sans-serif;
+}
+
+/* Ambient glow blobs — carried over from home.css pattern */
+.background-glows {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.glow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+}
+
+.glow-blob-1 {
+    width: 500px; height: 500px;
+    background: var(--eh-pink);
+    top: -120px; left: -100px;
+}
+
+.glow-blob-2 {
+    width: 400px; height: 400px;
+    background: var(--eh-violet);
+    top: 40%; right: -80px;
+}
+
+.glow-blob-3 {
+    width: 350px; height: 350px;
+    background: var(--eh-orange);
+    bottom: 0; left: 35%;
+}
+
+main.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── 3. GLASS CARD PANEL ──────────────────────────────────────── */
+.glass-panel {
+    background: var(--eh-glass-bg) !important;
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid var(--eh-glass-border) !important;
+    border-radius: var(--eh-radius-card);
+    box-shadow: var(--eh-glass-shadow);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.glass-panel:hover {
+    border-color: var(--eh-pink-border) !important;
+    box-shadow: var(--eh-glass-shadow), 0 0 28px rgba(255, 42, 122, 0.07);
+    transform: translateY(-2px);
+}
+
+/* ── 4. TYPOGRAPHY HELPERS ────────────────────────────────────── */
+.eh-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--eh-text-muted);
+    font-family: 'Space Mono', monospace, var(--font-body);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.eh-section-title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--eh-text-bright);
+    margin: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.text-white {
+    color: var(--text-primary) !important;
+}
+
+.text-bright  { color: var(--eh-text-bright) !important; }
+.text-mid     { color: var(--eh-text-mid)    !important; }
+.text-muted   { color: var(--eh-text-muted)  !important; }
+.text-pink    { color: var(--eh-pink)         !important; }
+.text-violet  { color: var(--eh-violet)       !important; }
+.text-orange  { color: var(--eh-orange)       !important; }
+
+/* ── 5. SECTION ICON BADGE ────────────────────────────────────── */
+.section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--eh-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+}
+
+.section-icon.pink {
+    background: var(--eh-pink-dim);
+    border: 1px solid var(--eh-pink-border);
+    color: var(--eh-pink);
+}
+
+.section-icon.violet {
+    background: var(--eh-violet-dim);
+    border: 1px solid var(--eh-violet-border);
+    color: var(--eh-violet);
+}
+
+.section-icon.orange {
+    background: var(--eh-orange-dim);
+    border: 1px solid var(--eh-orange-border);
+    color: var(--eh-orange);
+}
+
+.btn-outline-light {
+    font-size: larger;
+    color: var(--eh-pink);
+}
+
+.rounded-pill {
+border-radius: 2px solid green;
+}
+
+/* ── 6. HERO BANNER ───────────────────────────────────────────── */
+.detail-hero-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--eh-radius-card);
+    border: 1px solid var(--eh-glass-border);
+    height: 380px;
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5);
+}
+
+.detail-hero-wrap img.hero-main-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.detail-hero-bg-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px);
+    opacity: 0.18;
+    transform: scale(1.15);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Gradient overlays for readability */
+.detail-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(7, 1, 15, 0.95) 0%,
+        rgba(7, 1, 15, 0.35) 50%,
+        rgba(7, 1, 15, 0.05) 100%
+    );
+    z-index: 1;
+}
+
+/* Floating pills inside banner */
+.hero-category-pill {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 3;
+    background: rgba(7, 1, 15, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--eh-glass-border-h);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--eh-pink);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-fav-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 3;
+    background: rgba(7, 1, 15, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--eh-glass-border-h);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eh-text-mid);
+    text-decoration: none;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-fav-btn:hover {
+    color: var(--eh-pink);
+    border-color: var(--eh-pink-border);
+}
+
+/* Bottom-of-banner content row */
+.hero-bottom-row {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.hero-title-block h1 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 800;
+    color: var(--eh-text-bright);
+    margin: 0;
+    line-height: 1.25;
+}
+
+.hero-organizer-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--eh-orange);
+    background: var(--eh-orange-dim);
+    border: 1px solid var(--eh-orange-border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    display: inline-block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Mini date box in banner corner */
+.date-badge-box {
+    background: var(--eh-grad-badge);
+    min-width: 68px;
+    flex-shrink: 0;
+    border-radius: var(--eh-radius-md);
+    padding: 10px 12px;
+    box-shadow: 0 8px 24px rgba(255, 42, 122, 0.35);
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.date-badge-box:hover {
+    transform: scale(1.06) rotate(2deg);
+}
+
+.date-badge-box .date-month {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    display: block;
+}
+
+.date-badge-box .date-day {
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+
+/* ── 7. FEATURE CHECKS ROW ────────────────────────────────────── */
+.feature-check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--eh-text-mid);
+}
+
+.feature-check-item .fa-circle-check {
+    color: #22c55e;
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.feature-check-item h5 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--eh-text-bright);
+    margin: 0 0 2px 0;
+}
+
+.feature-check-item p {
+    font-size: 11px;
+    color: var(--eh-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ── 8. TIMELINE / AGENDA ─────────────────────────────────────── */
+.timeline-track {
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 2px dashed rgba(140, 43, 255, 0.28);
+    margin-left: 0.4rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.75rem;
+    transition: transform 0.2s ease;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item:hover {
+    transform: translateX(4px);
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -1.855rem;
+    top: 5px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--eh-violet);
+    border: 2px solid var(--eh-bg-base);
+    box-shadow: 0 0 10px var(--eh-violet);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+    background: var(--eh-pink);
+    box-shadow: 0 0 14px var(--eh-pink);
+}
+
+.timeline-time-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+    color: var(--eh-pink);
+    background: var(--eh-pink-dim);
+    border: 1px solid var(--eh-pink-border);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-bottom: 4px;
+}
+
+.timeline-item h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--eh-text-bright);
+    margin: 0 0 4px 0;
+}
+
+.timeline-item p {
+    font-size: 12px;
+    color: var(--eh-text-muted);
+    margin: 0;
+    line-height: 1.55;
+}
+
+/* ── 9. ATTENDEE AVATARS ──────────────────────────────────────── */
+.attendee-stack-preview {
+    display: flex;
+    align-items: center;
+}
+
+.attendee-avatar-overlap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--eh-bg-base);
+    margin-right: -10px;
+    transition: transform 0.25s ease;
+    cursor: pointer;
+}
+
+.attendee-avatar-overlap:hover {
+    transform: translateY(-5px) scale(1.12);
+    z-index: 10;
+}
+
+/* ── 10. SIDEBAR BOOKING CARD ─────────────────────────────────── */
+.booking-sidebar-sticky {
+    position: sticky;
+    top: 90px;
+    z-index: 10;
+}
+
+@media (max-width: 991.98px) {
+    .booking-sidebar-sticky {
+        position: static;
+    }
+}
+
+/* Price display */
+.booking-price {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--eh-pink);
+    /* subtle text glow */
+    text-shadow: 0 0 24px rgba(255, 42, 122, 0.4);
+    line-height: 1;
+}
+
+/* Sidebar info rows (time, location) */
+.booking-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--eh-text-mid);
+}
+
+.booking-info-row .info-icon {
+    font-size: 16px;
+    color: var(--eh-pink);
+    margin-top: 2px;
+    flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+}
+
+.booking-info-row .info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--eh-text-bright);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.booking-info-row .info-value {
+    font-size: 12px;
+    color: var(--eh-text-mid);
+    display: block;
+}
+
+/* CTA Buy Button */
+.btn-book-now {
+    background: var(--eh-grad-cta) !important;
+    border: none !important;
+    border-radius: var(--eh-radius-md) !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px !important;
+    color: #fff !important;
+    box-shadow: 0 8px 28px rgba(255, 42, 122, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-book-now::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    transition: background 0.2s ease;
+}
+
+.btn-book-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(255, 42, 122, 0.50);
+}
+
+.btn-book-now:hover::before {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.btn-book-now:active {
+    transform: translateY(0px);
+}
+
+/* SSL trust note */
+.booking-ssl-note {
+    font-size: 11px;
+    color: var(--eh-text-muted);
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* ── 11. ORGANIZER CARD ───────────────────────────────────────── */
+.organizer-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--eh-radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--eh-pink-border);
+    flex-shrink: 0;
+}
+
+.organizer-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--eh-text-bright);
+    margin: 0;
+}
+
+.organizer-sub {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--eh-text-muted);
+    text-transform: uppercase;
+}
+
+.organizer-desc {
+    font-size: 11.5px;
+    color: var(--eh-text-muted);
+    line-height: 1.65;
+    margin: 0;
+}
+
+.btn-organizer-contact {
+    background: rgba(255, 255, 255, 0.025) !important;
+    border: 1px solid var(--eh-glass-border) !important;
+    border-radius: var(--eh-radius-sm) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: var(--eh-text-mid) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 9px !important;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.btn-organizer-contact:hover {
+    border-color: var(--eh-glass-border-h) !important;
+    color: var(--eh-text-bright) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ── 12. GPS / MAP SIMULATION ─────────────────────────────────── */
+.gps-simulation-map {
+    position: relative;
+    overflow: hidden;
+    background-color: #03000a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--eh-radius-md);
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gps-grid-opacity {
+    position: absolute;
+    inset: 0;
+    opacity: 0.07;
+    background-image:
+        linear-gradient(to right, #ffffff 1px, transparent 1px),
+        linear-gradient(to bottom, #ffffff 1px, transparent 1px);
+    background-size: 14px 14px;
+}
+
+/* Road lines */
+.gps-road-h {
+    position: absolute;
+    height: 10px;
+    left: 0; right: 0;
+    top: 45%;
+    background: rgba(255, 255, 255, 0.04);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.gps-road-v {
+    position: absolute;
+    width: 10px;
+    top: 0; bottom: 0;
+    left: 34%;
+    background: rgba(255, 255, 255, 0.04);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Radar pulse */
+.gps-radar-ring {
+    position: absolute;
+    border: 1px solid var(--eh-pink);
+    border-radius: 50%;
+    animation: gps_radar_pulse 2.8s infinite ease-out;
+    opacity: 0;
+}
+
+@keyframes gps_radar_pulse {
+    0%   { width: 0;     height: 0;     opacity: 0.55; }
+    100% { width: 160px; height: 160px; opacity: 0;    }
+}
+
+.gps-live-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--eh-pink);
+    border-radius: 50%;
+    box-shadow: 0 0 14px var(--eh-pink), 0 0 6px rgba(255,42,122,0.5);
+}
+
+.gps-destination-pin {
+    position: absolute;
+    left: 34%;
+    top: 40%;
+    text-align: center;
+    transform: translate(-50%, -100%);
+}
+
+.gps-destination-pin i {
+    font-size: 22px;
+    color: var(--eh-orange);
+    display: block;
+    filter: drop-shadow(0 2px 6px rgba(255, 119, 0, 0.5));
+    animation: pin_bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes pin_bounce {
+    0%, 100% { transform: translateY(0);    }
+    50%       { transform: translateY(-5px); }
+}
+
+.gps-venue-label {
+    font-size: 8px;
+    font-weight: 800;
+    font-family: monospace;
+    color: var(--eh-orange);
+    text-transform: uppercase;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+.gps-active-badge {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    font-size: 8px;
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--eh-text-muted);
+    background: rgba(3, 0, 10, 0.85);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+/* Map directions button */
+.btn-map-directions {
+    background: var(--eh-pink-dim) !important;
+    border: 1px solid var(--eh-pink-border) !important;
+    border-radius: var(--eh-radius-sm) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: var(--eh-pink) !important;
+    padding: 9px !important;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.btn-map-directions:hover {
+    background: rgba(255, 42, 122, 0.25) !important;
+    border-color: rgba(255, 42, 122, 0.45) !important;
+    color: var(--eh-pink) !important;
+}
+
+/* ── 13. BREADCRUMB / TOP BAR ─────────────────────────────────── */
+.btn-back-list {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--eh-glass-border) !important;
+    color: var(--eh-text-mid) !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 8px 18px !important;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.btn-back-list:hover {
+    border-color: var(--eh-glass-border-h) !important;
+    color: var(--eh-text-bright) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.category-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--eh-pink);
+    background: var(--eh-pink-dim);
+    border: 1px solid var(--eh-pink-border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ── 14. ATTENDEE / RSVP SECTION ──────────────────────────────── */
+.btn-rsvp {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--eh-glass-border) !important;
+    color: var(--eh-text-mid) !important;
+    border-radius: var(--eh-radius-sm) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 7px 14px !important;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-rsvp:hover {
+    border-color: var(--eh-glass-border-h) !important;
+    color: var(--eh-text-bright) !important;
+}
+
+.attendee-row-bg {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: var(--eh-radius-sm);
+    padding: 10px 14px;
+}
+
+/* ── 15. DIVIDERS ─────────────────────────────────────────────── */
+hr.eh-divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 1rem 0;
+}
+
+/* ── 16. CUSTOM SCROLLBAR ─────────────────────────────────────── */
+.custom-scrollbar-narrow::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar-narrow::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar-narrow::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+}
+
+/* ── 17. RESPONSIVE TWEAKS ────────────────────────────────────── */
+@media (max-width: 575.98px) {
+    .detail-hero-wrap {
+        height: 260px;
+    }
+
+    .hero-bottom-row {
+        padding: 1rem;
+    }
+
+    .booking-price {
+        font-size: 22px;
+    }
+}

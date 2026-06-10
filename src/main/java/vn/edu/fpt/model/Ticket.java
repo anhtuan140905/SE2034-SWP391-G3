@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.common.SecurityUtil;
 import vn.edu.fpt.model.constant.TicketStatus;
+import vn.edu.fpt.model.constant.EventStatus;
 
 import java.time.Instant;
 
@@ -35,11 +36,11 @@ public class Ticket {
     )
     private User user; // Người sở hữu vé
 
+    @Column(name = "is_checked_in")
+    private boolean isCheckedIn;
+
     @Column(name = "qr_code", nullable = false, unique = true)
     private String qrCode; // QR code độc lập mỗi vé
-
-    @Column(name = "is_checked_in", nullable = false)
-    private Boolean isCheckedIn;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "checked_in_by")
@@ -64,7 +65,7 @@ public class Ticket {
     private Instant createdAt;
 
     @Column(name = "updated_at")
-    private Instant updatedAt; // Hữu ích để biết thời điểm check-in, không có updated_by
+    private Instant updatedAt;
 
     @PrePersist
     protected void onCreate() {

@@ -7,26 +7,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Venue;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
+
 import vn.edu.fpt.model.constant.TicketStatus;
 import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
-import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
-import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
+import vn.edu.fpt.repository.EventRepository;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -147,11 +146,11 @@ public class EventServiceImpl implements EventService {
 
         }
         List<TicketType> ticketTypes = new ArrayList<>();
-        if(eventDTO.getTicketTypes()!=null){
-            for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
+        if (eventDTO.getTicketTypes() != null) {
+            for (TicketTypeRequestDTO ticketTypeDto : eventDTO.getTicketTypes()) {
                 TicketType type = new TicketType();
                 VenueZone zone = venueZoneRepository.findById(ticketTypeDto.getZoneID())
-                        .orElseThrow(()->new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
+                        .orElseThrow(() -> new RuntimeException("Zone not found with ID: " + ticketTypeDto.getZoneID()));
                 type.setZone(zone);
                 type.setEvent(event);
                 type.setTypeName(ticketTypeDto.getTypeName());
@@ -165,25 +164,25 @@ public class EventServiceImpl implements EventService {
         }
         event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
-        CreateTicket(ticketTypes,organizer.getEmail());
+        CreateTicket(ticketTypes, organizer.getEmail());
     }
 
-    public void CreateTicket(List<TicketType> ticketTypeList,String emailUser ){
-        for (TicketType type : ticketTypeList){
-            for (int i = 0; i< type.getStock();i++){
+    public void CreateTicket(List<TicketType> ticketTypeList, String emailUser) {
+        for (TicketType type : ticketTypeList) {
+            for (int i = 0; i < type.getStock(); i++) {
                 Ticket ticket = new Ticket();
                 ticket.setTicketType(type);
                 ticket.setStatus(TicketStatus.UNSOLD);
                 ticket.setCreatedBy(emailUser);
-                ticket.setIsCheckedIn(false);
-                do{
+                ticket.setCheckedIn(false);
+                do {
                     String code = UUID.randomUUID()
                             .toString()
                             .replace("-", "")
                             .substring(0, 12)
                             .toUpperCase();
-                    ticket.setQrCode(type.getTypeName()+code);
-                } while(tickRepository.existsByQrCode(ticket.getQrCode()));
+                    ticket.setQrCode(type.getTypeName() + code);
+                } while (tickRepository.existsByQrCode(ticket.getQrCode()));
                 tickRepository.save(ticket);
             }
         }
@@ -258,9 +257,49 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public List<Event> findEventbyVenueID(Long id) {
+        return eventRepository.findByVenue_VenueId(id);
+    }
+
+    @Override
+    public DashboardStatsDTO getDashboardStats() {
+
+        DashboardStatsDTO stats = new DashboardStatsDTO();
+        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.PENDING));
+        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.APPROVED));
+        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.REJECTED));
+
+        return stats;
+    }
+
+    @Override
+    public List<Event> getTopThreePendingEvents() {
+        return eventRepository.findByStatusOrderByCreatedAtDesc(
+                EventStatus.PENDING,
+                org.springframework.data.domain.PageRequest.of(0, 3)
+        );
+    }
+
+    @Override
+    public List<Event> getTodayActiveEvents() {
+
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+
+        return eventRepository.findByStatusAndStartTimeBetween(
+                EventStatus.APPROVED,
+                startOfDay,
+                endOfDay
+        );
+    }
+
+    @Override
     public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
         Specification<Event> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(root.get("status"), EventStatus.APPROVED));
 
             if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
@@ -336,45 +375,28 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> findEventbyVenueID(Long id) {
-        return eventRepository.findByVenue_VenueId(id);
+    public EventSummaryProjection findEventDetailById(Long id) {
+        return this.eventRepository.findEventDetailById(id);
     }
 
     @Override
-    public DashboardStatsDTO getDashboardStats() {
-
-        DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.PENDING));
-        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.APPROVED));
-        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.REJECTED));
-
-        return stats;
+    public List<EventSummaryProjection> getEventStatisticsByVenue(Long id) {
+        return List.of();
     }
 
     @Override
-    public List<Event> getTopThreePendingEvents() {
-        return eventRepository.findByStatusOrderByCreatedAtDesc(
-                EventStatus.PENDING,
-                org.springframework.data.domain.PageRequest.of(0, 3)
-        );
+    public VenueSummaryProjection getVenueStatisticSummary(Long id) {
+        return null;
     }
 
     @Override
-    public List<Event> getTodayActiveEvents() {
-
-        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-
-        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-
-        return eventRepository.findByStatusAndStartTimeBetween(
-                EventStatus.APPROVED,
-                startOfDay,
-                endOfDay
-        );
+    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id) {
+        return eventRepository.getMonthlyRevenueByVenue(id);
     }
 
+
     @Override
-    public Page<EventCardDTO> getEventCards(Long organizerId,String[] statuses, String keyword, int page) {
+    public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
         // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
         List<String> statusList = statuses == null
                 ? List.of()
@@ -388,8 +410,8 @@ public class EventServiceImpl implements EventService {
                 Math.max(page - 1, 0),
                 9
         );
-        Page<Event> entityPage = eventRepository
-                .findByMultiStatusAndKeyword(organizerId,statusList, keyword, pageable);
+        Page<Event> entityPage = this.eventRepository
+                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
 
@@ -419,18 +441,8 @@ public class EventServiceImpl implements EventService {
 
         return dto;
     }
-    public List<EventSummaryProjection> getEventStatisticsByVenue(Long id){
-        return eventRepository.getEventStatisticsByVenue(id);
-    }
 
-    public VenueSummaryProjection getVenueStatisticSummary( Long id){
-        return  eventRepository.getVenueStatisticSummary(id);
-    }
 
-    public List<VenueSummaryProjection> getMonthlyRevenueByVenue(Long id){
-        return eventRepository.getMonthlyRevenueByVenue(id);
-    }
 }
-
 
 

@@ -173,7 +173,7 @@
         .form-head { margin-bottom: 2rem; }
         .form-head h1 {
           font-family: 'Outfit', sans-serif; font-size: clamp(1.5rem, 2.5vw, 1.875rem);
-          font-weight: 800; letter-spacing: -.04em; color: #1a0a2e; margin-bottom: .4rem;
+          letter-spacing: -.04em; color: #1a0a2e; margin-bottom: .4rem;
         }
         .form-head p { font-size: .8375rem; color: #9b8bb0; }
 

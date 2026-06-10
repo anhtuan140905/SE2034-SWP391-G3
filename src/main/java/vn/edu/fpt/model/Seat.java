@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.edu.fpt.common.SecurityUtil;
 
 import java.time.Instant;
 @Entity
@@ -38,7 +39,8 @@ public class Seat {
 
     @PrePersist
     protected void onCreate() {
-        createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUsername();
+        this.createdAt = Instant.now();
     }
 
 }

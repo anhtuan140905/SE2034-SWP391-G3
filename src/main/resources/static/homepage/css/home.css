@@ -55,8 +55,8 @@
     --text-muted: #84759b;           /* Chữ chú thích: Tím nhạt vừa phải */
 
     /* Fonts */
-    --font-heading: 'Space Grotesk', sans-serif;
-    --font-body: 'Outfit', sans-serif;
+    --font-heading: sans-serif;
+        --font-body: sans-serif;
 }
 
 /* General Layout Options */
@@ -562,8 +562,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title {
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 4.5rem;
+    color: ##ff7300;
 }
 
 .category-filter-container {
@@ -1578,4 +1578,42 @@ footer {
         .pagination-container .btn-page:disabled {
             opacity: 0.4;
             cursor: not-allowed;
+        }
+
+        .hero-section-video {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(15,15,30,0.75),
+                    rgba(80,0,120,0.45)
+                );
+
+
+        }
+
+        .hero-section-video .container {
+            position: relative;
+            z-index: 2;
         }
