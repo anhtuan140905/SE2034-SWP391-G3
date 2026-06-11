@@ -20,20 +20,19 @@
         <div class="ed-header-left">
             <a th:href="@{/moderator/events}" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>BACK TO LIST</span>
+                <span>QUAY TRỞ LẠI</span>
             </a>
             <div class="ed-title-block">
-                <p class="ed-label">EVENT REVIEW PANEL</p>
-                <h1 class="ed-title" th:text="${event != null ? event.title : 'Neon Night Music Festival'}">
-                    Neon Night Music Festival
+
+                <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}">
+
                 </h1>
             </div>
         </div>
         <span class="ed-status-badge"
               th:classappend="${event != null and event.status == 'APPROVED'} ? 'status-approved' :
                              (${event != null and event.status == 'REJECTED'} ? 'status-rejected' : 'status-pending')">
-            <i class="fa-regular fa-calendar-check"></i>
-            <span th:text="${event != null ? event.status + ' APPROVAL' : 'PENDING APPROVAL'}">PENDING APPROVAL</span>
+            <span th:text="${event != null ? event.status : 'PENDING'}"></span>
         </span>
     </div>
 
@@ -54,7 +53,7 @@
                          class="ed-cover-placeholder"></div>
                     <div class="ed-cover-overlays">
                         <span class="tag-category"
-                              th:text="${event != null ? event.category : 'Live Music'}">Live Music</span>
+                              th:text="${event != null ? event.category : 'Live Music'}"></span>
                     </div>
                 </div>
             </div>
@@ -63,13 +62,13 @@
             <div class="ed-card ed-content-card">
                 <!-- Event Overview -->
                 <div class="ed-section">
-                    <h2 class="ed-section-title">EVENT OVERVIEW</h2>
+                    <h2 class="ed-section-title">TỔNG QUAN VỀ SỰ KIỆN</h2>
                     <div class="ed-overview-text">
                         <th:block th:if="${event != null}">
-                            <p th:text="${event.description}">Description here.</p>
+                            <p th:text="${event.description}">Mô tả:</p>
                         </th:block>
                         <th:block th:if="${event == null}">
-                            <p>Nothing for showing</p>
+                            <p>Không có gì để trình bày</p>
                         </th:block>
                     </div>
                 </div>
@@ -77,24 +76,21 @@
                 <!-- Date / Time / Duration row -->
                 <div class="ed-date-row">
                     <div class="ed-date-item">
-                        <span class="ed-date-label">CIRCUIT PROPOSED DATE</span>
+                        <span class="ed-date-label">Ngày tổ chức</span>
                         <span class="ed-date-value"
-                              th:text="${event != null ? #temporals.format(event.startTime, 'MMM dd, yyyy') : 'Oct 24, 2026'}">
-                            Oct 24, 2026
+                              th:text="${event != null ? #temporals.format(event.startTime, 'dd-MM-yyyy') : 'Oct 24, 2026'}">
                         </span>
                     </div>
                     <div class="ed-date-item">
-                        <span class="ed-date-label">DOORS STANDARD OPEN</span>
+                        <span class="ed-date-label">Thời gian mở cửa</span>
                         <span class="ed-date-value"
-                              th:text="${event != null ? #temporals.format(event.startTime, 'HH:mm') + ' PM' : '19:00 PM'}">
-                            19:00 PM
+                              th:text="${event != null ? #temporals.format(event.startTime, 'HH:mm') : '19:00 PM'}">
                         </span>
                     </div>
                     <div class="ed-date-item">
-                        <span class="ed-date-label">NOCTURNAL DURATION</span>
+                        <span class="ed-date-label">Thời lượng</span>
                         <span class="ed-date-value"
                               th:text="${event != null ? event.duration : '8 Hours'}">
-                            8 Hours
                         </span>
                     </div>
                 </div>
@@ -109,18 +105,17 @@
             <div class="ed-info-card">
                 <div class="ed-info-card-title">
                     <i class="fa-solid fa-location-dot"></i>
-                    <span>VENUE &amp; LOCATION</span>
+                    <span>Địa điểm</span>
                 </div>
                 <p class="ed-venue-name"
-                   th:text="${event != null ? event.venueName : 'Cyber Docklands'}">Cyber Docklands</p>
+                   th:text="${event != null ? event.venueName : 'Cyber Docklands'}"></p>
                 <p class="ed-venue-address"
                    th:text="${event != null ? event.venueAddress : '404 Neon Blvd, District 9, Metropolis'}">
-                    404 Neon Blvd, District 9, Metropolis
                 </p>
                 <div class="ed-capacity-row">
-                    <span class="ed-capacity-label">SAFE CAPACITY</span>
+                    <span class="ed-capacity-label">SỨC CHỨA</span>
                     <span class="ed-capacity-value"
-                          th:text="${event != null ? #numbers.formatInteger(event.capacity, 0, 'COMMA') + ' Persons' : '5,000 Persons'}">
+                          th:text="${event != null ? #numbers.formatInteger(event.capacity, 0, 'COMMA') + ' Người' : '5,000 Persons'}">
                         5,000 Persons
                     </span>
                 </div>
@@ -130,15 +125,14 @@
             <div class="ed-info-card ed-ticket-card">
                 <div class="ed-info-card-title">
                     <i class="fa-solid fa-ticket"></i>
-                    <span>TOTAL TICKETS</span>
+                    <span>TỔNG SỐ VÉ</span>
                 </div>
                 <p class="ed-ticket-count"
-                   th:text="${event != null ? #numbers.formatInteger(event.totalTickets, 0, 'COMMA') + ' Persons' : '5,000 Persons'}">
-                    5,000 Persons
+                   th:text="${event != null ? #numbers.formatInteger(event.totalTickets, 0, 'COMMA') : '5,000'}">
+                    5,000
                 </p>
-                <p class="ed-ticket-sub">TOTAL AVAILABLE CAPACITY</p>
                 <div class="ed-divider"></div>
-                <p class="ed-organized-label">ORGANIZED BY</p>
+                <p class="ed-organized-label">Tổ chức bởi</p>
                 <p class="ed-organized-name"
                    th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company</p>
             </div>
@@ -147,7 +141,7 @@
             <div class="ed-info-card">
                 <div class="ed-info-card-title">
                     <i class="fa-solid fa-shield-halved"></i>
-                    <span>ORGANIZER</span>
+                    <span>Người Tổ Chức</span>
                 </div>
                 <div class="ed-organizer-row">
                     <div class="ed-organizer-avatar">
@@ -178,7 +172,7 @@
     <div class="ed-reject-box" th:if="${event == null or event.status == 'PENDING'}">
         <div class="ed-reject-label">
             <i class="fa-solid fa-envelope-open-text"></i>
-            <span>REVIEW MESSAGE / NOTE TO ORGANIZER (OPTIONAL FOR APPROVE, REQUIRED FOR REJECT)</span>
+            <span>Thông điệp/ghi chú cho người tổ chức. Bắt buộc nếu bị từ chối</span>
         </div>
         <textarea id="reviewMessage"
                   class="ed-reject-textarea"
@@ -191,13 +185,13 @@
             <button class="btn-reject"
                     th:if="${event == null or event?.status?.toString() != 'REJECTED'}"
                     th:onclick="|rejectEvent(${event?.id ?: 0})|">
-                REJECT EVENT
+                Từ chối
             </button>
 
             <button class="btn-approve"
                     th:if="${event == null or event?.status?.toString() != 'APPROVED'}"
                     th:onclick="|approveEvent(${event?.id ?: 0})|">
-                APPROVE EVENT
+                Phê duyệt
             </button>
 
         </div>

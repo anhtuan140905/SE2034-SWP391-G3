@@ -16,11 +16,11 @@
 .em-heading { flex: 1; min-width: 0; }
 
 .page-title {
-    font-family: var(--font-display), serif;
+    font-family: 'Inter', 'Segoe UI', sans-serif;;
     font-size: 26px;
     font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     margin-bottom: 6px;
 }
 .page-subtitle {
@@ -260,30 +260,24 @@
 
 /* Status badges */
 .event-badge {
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 4px 12px;
     border-radius: 20px;
-    border: 1.5px solid transparent;
+    border: 2px solid transparent;
     white-space: nowrap;
     display: inline-block;
+    justify-content: center;
 }
 .badge-pending {
-    background: #FFF4E0;
-    color: #D4840A;
-    border-color: #F5C560;
+
 }
 .badge-approved {
-    background: #E3FBF0;
-    color: #1A9C5B;
-    border-color: #5CE8A8;
+
 }
 .badge-rejected {
-    background: #FDE8F0;
-    color: #C0225A;
-    border-color: #F5A0C0;
+
 }
 
 /* View Details button */
@@ -390,11 +384,6 @@
    CẬP NHẬT BỔ SUNG: BADGE PULSE, PAGINATION DOTS & EMPTY STATE
    ============================================================ */
 
-/* 1. Hiệu ứng nhấp nháy cho badge PENDING (Đã dời hoàn toàn từ JS sang CSS) */
-@keyframes pendingPulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.55; }
-}
 .badge-pending {
     animation: pendingPulse 2s infinite ease-in-out;
 }
