@@ -16,8 +16,8 @@
 
     <!-- Page Heading -->
     <div class="page-heading">
-        <h1 class="page-title">COMMAND CENTER DASHBOARD</h1>
-        <p class="page-subtitle">Real-time ecosystem monitoring, system notifications, and queue action protocols.</p>
+        <h1 class="page-title">TỔNG QUAN SỐ LIỆU</h1>
+        <p class="page-subtitle">Theo dõi hiệu suất kiểm duyệt và các yêu cầu phê duyệt mới nhất.</p>
     </div>
 
     <!-- Stats Grid -->
@@ -64,22 +64,16 @@
                 <tr th:each="event : ${pendingEvents}" th:if="${pendingEvents != null and !pendingEvents.isEmpty()}">
                     <td th:text="${event.title}">Tên sự kiện chờ duyệt</td>
                     <td style="text-align: right;">
-                        <a th:href="@{/moderator/event/detail/{id}(id=${event.eventId})}" class="link-action">REVIEW</a>
+                        <a th:href="@{/moderator/event/detail/{id}(id=${event.eventId})}" class="link-action">Chi Tiết</a>
                     </td>
                 </tr>
 
                 <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
-                    <td>Neon Nights Rave: Tokyo Edition</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
+                    <td colspan="3" style="text-align: center;">
+                        Không có sự kiện nào diễn ra hôm nay
+                    </td>
                 </tr>
-                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
-                    <td>FutureTech Summit 2026</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
-                </tr>
-                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
-                    <td>Underground Bites Festival</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">REVIEW</a></td>
-                </tr>
+
                 </tbody>
             </table>
         </div>
@@ -104,25 +98,17 @@
                     <td th:text="${upEvent.title}">Tên sự kiện trong ngày</td>
                     <td th:text="${#temporals.format(upEvent.startTime, 'HH:mm') + ' PM'}">19:00 PM</td>
                     <td style="text-align: right;">
-                        <a th:href="@{/moderator/event/detail/{id}(id=${upEvent.eventId})}" class="link-action">DETAIL</a>
+                        <a th:href="@{/moderator/event/detail/{id}(id=${upEvent.eventId})}" class="link-action">Chi
+                            Tiết</a>
                     </td>
                 </tr>
 
                 <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
-                    <td>Vietnam Esports Championship</td>
-                    <td>14:00 PM</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
+                    <td colspan="3" style="text-align: center;">
+                        Không có sự kiện nào diễn ra hôm nay
+                    </td>
                 </tr>
-                <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
-                    <td>Rap Viet All-Star Concert</td>
-                    <td>19:30 PM</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
-                </tr>
-                <tr th:if="${todayEvents == null or todayEvents.isEmpty()}">
-                    <td>International Art Expo</td>
-                    <td>09:00 AM</td>
-                    <td style="text-align: right;"><a href="#" class="link-action">DETAIL</a></td>
-                </tr>
+
                 </tbody>
             </table>
         </div>

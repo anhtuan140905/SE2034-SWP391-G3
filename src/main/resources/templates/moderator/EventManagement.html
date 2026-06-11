@@ -16,41 +16,40 @@
 
     <div class="em-topbar">
         <div class="em-heading">
-            <h1 class="page-title">EVENT LIST</h1>
-            <p class="page-subtitle">Review and certify incoming event applications submitted for the central midnight
-                grid.</p>
+            <h1 class="page-title">SỰ KIỆN CHỜ DUYỆT</h1>
+            <p class="page-subtitle">Xem xét và xác nhận các đơn đăng ký tham gia sự kiện đến.</p>
         </div>
         <div class="em-filters">
             <div class="filter-group">
-                <label class="filter-label">SEARCH EVENTS</label>
+                <label class="filter-label">TÌM KIẾM SỰ KIỆN</label>
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="searchInput"
-                           aria-label="Search Event, Host"
-                           placeholder="Search Event, Host."
+                           aria-label="Tìm kiếm sự kiện, tên."
+                           placeholder="Tìm kiếm sự kiện, tên."
                            th:value="${keyword}"
                            autocomplete="off"/>
                 </div>
             </div>
             <div class="filter-group">
-                <label class="filter-label" for="statusSelect">STATUS FILTER</label>
+                <label class="filter-label" for="statusSelect">Lọc trạng thái</label>
                 <div class="select-wrapper">
                     <select id="statusSelect">
-                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">All Statuses
+                        <option value="" th:selected="${statusFilter == null or statusFilter == ''}">Tất cả
                         </option>
-                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">Pending</option>
-                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">Approved</option>
-                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">Rejected</option>
+                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">Đang chờ</option>
+                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">Đã duyệt</option>
+                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">Đã từ chối</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-arrow"></i>
                 </div>
             </div>
 
             <div class="filter-group">
-                <label class="filter-label" for="statusSelect">Category Filter</label>
+                <label class="filter-label" for="statusSelect">DANH MỤC</label>
                 <div class="select-wrapper">
                     <select id="categorySelect" name="categoryId" class="form-select">
-                        <option value="">All Categories</option>
+                        <option value="">Tất cả danh mục</option>
                         <option th:each="cate : ${categories}"
                                 th:value="${cate.categoryId}"
                                 th:text="${cate.categoryName}"
@@ -70,7 +69,7 @@
                 <i class="fa-regular fa-calendar-check"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Awaiting Review</span>
+                <span class="em-stat-label">Đang chờ duyệt</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.awaitingReview : 0}">0</span>
             </div>
         </div>
@@ -79,7 +78,7 @@
                 <i class="fa-regular fa-circle-check"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Approved Today</span>
+                <span class="em-stat-label">Phê duyệt hôm nay</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.approvedToday : 0}">0</span>
             </div>
         </div>
@@ -88,7 +87,7 @@
                 <i class="fa-regular fa-circle-xmark"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Rejected Today</span>
+                <span class="em-stat-label">Từ chối hôm nay</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.rejectedToday : 0}">0</span>
             </div>
         </div>
@@ -97,7 +96,7 @@
                 <i class="fa-solid fa-arrow-trend-up"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Active Events</span>
+                <span class="em-stat-label">Sự kiện hoạt động</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.activeEvents : 0}">0</span>
             </div>
         </div>
@@ -107,21 +106,21 @@
         <table class="em-table">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>EVENT TITLE</th>
-                <th>ORGANIZER</th>
-                <th>START TIME</th>
-                <th>STATUS</th>
-                <th>ACTION</th>
+                <th style="width: 8%;">STT</th>
+                <th>TÊN SỰ KIỆN</th>
+                <th>TỔ CHỨC</th>
+                <th>THỜI GIAN BẮT ĐẦU</th>
+                <th>TRẠNG THÁI</th>
+                <th>THAO TÁC</th>
             </tr>
             </thead>
             <tbody>
 
             <th:block th:if="${events != null and events.totalElements > 0}">
-                <tr th:each="event : ${events}">
+                <tr th:each="event, loopStatus : ${events}">
                     <td>
                         <span class="event-id"
-                              th:text="${event?.eventId != null ?  event.eventId : '#EV-0000'}">#EV-0000</span>
+                              th:text="${(events.number * events.size) + loopStatus.count}">1</span>
                     </td>
                     <td>
                         <span class="event-title" th:text="${event?.title ?: 'Chưa cập nhật tên'}">Event Title</span>
@@ -143,7 +142,7 @@
                     </td>
                     <td>
                         <a th:href="@{/moderator/event/detail/{id}(id=${event?.eventId ?: 0})}" class="btn-view">
-                            View Details
+                            Chi Tiết
                         </a>
                     </td>
                 </tr>
@@ -155,9 +154,8 @@
                         <div class="em-empty-icon">
                             <i class="fa-regular fa-folder-open"></i>
                         </div>
-                        <h3 class="em-empty-title">No events found</h3>
-                        <p class="em-empty-text">We couldn't find any events matching your search or filter
-                            criteria.</p>
+                        <h3 class="em-empty-title">Không tìm thấy sự kiện nào.</h3>
+                        <p class="em-empty-text">Chúng tôi không tìm thấy sự kiện nào phù hợp.</p>
                     </td>
                 </tr>
             </th:block>
@@ -167,9 +165,9 @@
 
         <div class="em-pagination">
             <div class="pagination-info">
-                Showing <strong th:text="${events != null ? events.numberOfElements : 0}">0</strong> to
-                <strong th:text="${events != null ? events.size : 0}">0</strong> of
-                <strong th:text="${events != null ? events.totalElements : 0}">0</strong> results
+                Đang hiển thị <strong th:text="${events != null ? events.numberOfElements : 0}">0</strong> trên
+                <strong th:text="${events != null ? events.size : 0}">0</strong> của
+                <strong th:text="${events != null ? events.totalElements : 0}">0</strong> kết quả
             </div>
             <div class="pagination-controls">
 

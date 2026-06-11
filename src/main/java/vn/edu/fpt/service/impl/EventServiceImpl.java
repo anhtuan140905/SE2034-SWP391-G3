@@ -226,7 +226,7 @@ public class EventServiceImpl implements EventService {
         // Tinh toan thoi luong Duration
         if (event.getStartTime() != null && event.getEndTime() != null) {
             long hours = Duration.between(event.getStartTime(), event.getEndTime()).toHours();
-            eventDetailModeratorDTO.setDuration(hours + " hours");
+            eventDetailModeratorDTO.setDuration(hours + " Tiếng");
         } else {
             eventDetailModeratorDTO.setDuration("N/A");
         }

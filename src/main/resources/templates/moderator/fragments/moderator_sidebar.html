@@ -11,7 +11,7 @@
     <div class="sidebar-brand">
         <div class="brand-text">
             <span class="brand-name">EVENTHUB</span>
-            <span class="brand-role">MODERATOR PORTAL</span>
+            <span class="brand-role">CỔNG KIỂM DUYỆT</span>
         </div>
     </div>
 
@@ -21,32 +21,18 @@
             <li th:classappend="${activePage == 'dashboard'} ? 'active' : ''">
                 <a th:href="@{/moderator/dashboard}">
                     <span class="nav-icon"><i class="fa-solid fa-table-cells-large"></i></span>
-                    <span class="nav-label">Dashboard</span>
+                    <span class="nav-label">Bảng điều khiển</span>
                 </a>
             </li>
             <li th:classappend="${activePage == 'event-management'} ? 'active' : ''">
                 <a th:href="@{/moderator/events}">
                     <span class="nav-icon"><i class="fa-regular fa-calendar-days"></i></span>
-                    <span class="nav-label">Pending Event</span>
+                    <span class="nav-label">Sự kiện đang chờ xử lý</span>
                 </a>
             </li>
 
-            <li th:classappend="${activePage == 'profile'} ? 'active' : ''">
-                <a th:href="@{/moderator/profile}">
-                    <span class="nav-icon"><i class="fa-regular fa-user"></i></span>
-                    <span class="nav-label">Profile</span>
-                </a>
-            </li>
         </ul>
     </nav>
-
-    <!-- Logout -->
-    <div class="sidebar-footer">
-        <a th:href="@{/auth/logout}" class="logout-btn">
-            <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
-            <span class="nav-label">Logout</span>
-        </a>
-    </div>
 
 </aside>
 

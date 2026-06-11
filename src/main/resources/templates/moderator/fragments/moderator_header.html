@@ -7,21 +7,39 @@
 
 <header th:fragment="header" class="mod-header">
 
-    <!-- Page title breadcrumb -->
     <div class="header-breadcrumb">
-        <span th:text="${pageTitle != null ? pageTitle : 'MORDERATOR CONTROL CENTER'}">MODERATOR CONTROL CENTER</span>
+        <span th:text="${pageTitle != null ? pageTitle : 'TRANG QUẢN TRỊ KIỂM DUYỆT'}">TRANG QUẢN TRỊ KIỂM DUYỆT</span>
     </div>
 
-    <!-- Right side actions -->
     <div class="header-actions">
 
-        <!-- Greeting -->
-        <span class="header-greeting">
-            HELLO,
-            <strong th:if="${#authentication != null}"
-                    th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">ALICE
-            </strong>
-        </span>
+        <div class="user-dropdown">
+            <input type="checkbox" id="dropdown-trigger" class="dropdown-checkbox" style="display: none;">
+
+            <label th:for="dropdown-trigger" class="dropdown-toggle">
+                <span class="header-greeting">
+                    Xin Chào,
+                    <strong th:if="${#authentication != null}"
+                            th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">ALICE
+                    </strong>
+                </span>
+                <i class="fa-solid fa-chevron-down arrow-icon"></i>
+            </label>
+
+            <ul class="dropdown-menu">
+                <li>
+                    <a th:href="@{/moderator/profile}">
+                        <i class="fa-regular fa-user"></i> Hồ sơ cá nhân
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a th:href="@{/auth/logout}" class="logout-link">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
 
     </div>
 
