@@ -106,6 +106,47 @@ public class FinanceController {
         model.addAttribute("selectedStatus", status);
         return "finance/ListSettlement";
     }
+    @GetMapping("/settlement/{id}")
+    public String settlementDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("settlement", financeService.getSettlementById(id));
+        return "finance/ViewSettlementDetails";
+    }
+
+
+    @PostMapping("/settlement/{id}/approve")
+    public String approveSettlement(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            financeService.approveSettlement(id);
+            ra.addFlashAttribute("successMessage", "Settlement approved successfully.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/finance/settlement/" + id;
+    }
+
+
+    @PostMapping("/settlement/{id}/pay")
+    public String markAsPaid(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            financeService.markSettlementAsPaid(id);
+            ra.addFlashAttribute("successMessage", "Payment recorded successfully.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/finance/settlement/" + id;
+    }
+
+
+    @PostMapping("/settlement/{id}/send-email")
+    public String sendEmailToOrganizer(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            financeService.sendPaymentEmailToOrganizer(id);
+            ra.addFlashAttribute("successMessage", "Email sent to organizer successfully.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/finance/settlement/" + id;
+    }
 
 
 

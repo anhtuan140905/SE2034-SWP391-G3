@@ -23,6 +23,11 @@ public interface FinanceService {
     void createSettlement(Long eventId, Double refundDeduction, String paymentMethod, String notes);
     List<Settlement> getAllSettlements();
     List<Settlement> getSettlementsByStatus(String status);
+    Settlement getSettlementById(Long id);
+    void approveSettlement(Long id);
+    void markSettlementAsPaid(Long id);
+    void sendPaymentEmailToOrganizer(Long id);
+
 
 
 

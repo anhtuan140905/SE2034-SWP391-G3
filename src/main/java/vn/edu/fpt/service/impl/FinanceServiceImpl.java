@@ -150,6 +150,66 @@ public class FinanceServiceImpl implements FinanceService {
 
 
 
+    @Override
+    public Settlement getSettlementById(Long id) {
+        return settlementRepository.findByIdWithEventAndOrganizer(id)
+                .orElseThrow(() -> new IllegalArgumentException("Settlement not found: " + id));
+    }
+
+    @Override
+    @Transactional
+    public void approveSettlement(Long id) {
+        Settlement settlement = settlementRepository.findByIdWithEventAndOrganizer(id)
+                .orElseThrow(() -> new IllegalArgumentException("Settlement not found: " + id));
+
+        if (settlement.getStatus() != SettlementStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING settlements can be approved.");
+        }
+
+        settlement.setStatus(SettlementStatus.COMPLETED);
+        settlement.setPaidAt(Instant.now());
+        settlementRepository.save(settlement);
+    }
+
+    @Override
+    @Transactional
+    public void markSettlementAsPaid(Long id) {
+        Settlement s = settlementRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Settlement not found: " + id));
+        if (s.getStatus() == SettlementStatus.COMPLETED) {
+            throw new IllegalStateException("Settlement is already completed.");
+        }
+        if (s.getStatus() == SettlementStatus.PENDING) {
+            throw new IllegalStateException("Settlement must be approved before marking as paid.");
+        }
+        s.setStatus(SettlementStatus.COMPLETED);
+        s.setPaidAt(Instant.now());
+        settlementRepository.save(s);
+    }
+
+    @Override
+    public void sendPaymentEmailToOrganizer(Long id) {
+        Settlement s = settlementRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Settlement not found: " + id));
+
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(s.getEvent().getOrganizer().getEmail());
+        mail.setSubject("[EventHub] Payment Confirmation – " + s.getEvent().getTitle());
+        mail.setText(
+                "Dear " + s.getEvent().getOrganizer().getFirstName() + ",\n\n" +
+                        "Your settlement for event \"" + s.getEvent().getTitle() + "\" has been processed.\n\n" +
+                        "Payout Amount: $" + s.getPayoutAmount() + "\n" +
+                        "Status: " + s.getStatus() + "\n\n" +
+                        "Thank you for organizing with EventHub.\n\n" +
+                        "Best regards,\nEventHub Finance Team"
+        );
+        mailSender.send(mail);
+    }
+
+
+
+
+
 
 
 }
