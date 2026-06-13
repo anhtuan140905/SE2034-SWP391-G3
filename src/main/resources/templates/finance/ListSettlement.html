@@ -450,13 +450,12 @@
                     </td>
                 </tr>
 
-                <tr th:each="s : ${settlements}">
+                <tr th:each="s, iterStat : ${settlements}">
 
                     <td>
-                        <span class="mono"
-                              th:text="'#SET-' + ${s.settlementId}">
-                            #SET-1
-                        </span>
+                       <span class="mono"
+                             th:text="${iterStat.count}">
+</span>
                     </td>
 
                     <td th:text="${s.event.title}">
