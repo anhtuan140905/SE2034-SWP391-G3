@@ -22,4 +22,7 @@ public class OrganizerProfileServiceImpl implements OrganizerProfileService {
     public boolean existsByTaxCode(String taxCode) {
         return this.organizerProfileRepository.existsByTaxCode(taxCode);
     }
+
+    public static class FinanceServiceImpl {
+    }
 }

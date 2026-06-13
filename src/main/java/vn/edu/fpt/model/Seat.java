@@ -21,9 +21,8 @@ public class Seat {
     private Long seatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_id", nullable = false)
-    private VenueZone zone;
-    // Không FK thẳng vào Venue — chỉ cần zone_id là đủ
+    @JoinColumn(name = "ticket_type_id", nullable = false)
+    private TicketType ticketType;
 
     @Column(name = "row_label", nullable = false, length = 5)
     private String rowLabel; // A, B, C...
@@ -31,16 +30,6 @@ public class Seat {
     @Column(name = "seat_number", nullable = false)
     private Integer seatNumber; // 1, 2, 3...
 
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "created_at", updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdBy = SecurityUtil.getCurrentUsername();
-        this.createdAt = Instant.now();
-    }
-
+    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
+    private Ticket ticket;
 }

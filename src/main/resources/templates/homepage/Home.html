@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" th:href="@{/homepage/css/home.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
 </head>
 <body>
 <div class="background-glows">
@@ -29,16 +31,16 @@
     </nav>
 </div>
 
-<section class="hero-section-video">
-    <video class="hero-video" autoplay muted loop playsinline>
-        <source
-                src="https://res.cloudinary.com/dep1nnstf/video/upload/q_auto/f_auto/v1780903981/anhtraisaygex_hdxiva.mp4"
-                type="video/mp4">
-    </video>
+<!--<section class="hero-section-video">-->
+<!--    <video class="hero-video" autoplay muted loop playsinline>-->
+<!--        <source-->
+<!--                src="https://res.cloudinary.com/dep1nnstf/video/upload/q_auto/f_auto/v1780903981/anhtraisaygex_hdxiva.mp4"-->
+<!--                type="video/mp4">-->
+<!--    </video>-->
 
-    <!-- Overlay tối để đọc chữ -->
-    <div class="hero-overlay"></div>
-</section>
+<!--    &lt;!&ndash; Overlay tối để đọc chữ &ndash;&gt;-->
+<!--    <div class="hero-overlay"></div>-->
+<!--</section>-->
 
 <section class="hero-section">
     <!-- Video Background -->
@@ -47,9 +49,6 @@
     <div class="container">
         <div class="row align-items-center gy-5">
             <div class="col-lg-6 text-center text-lg-start">
-                    <span class="badge-gradient-sub">
-                        <i class="fa-solid fa-sparkles text-pink-glow"></i> Reimagining Live Gatherings
-                    </span>
                 <h1 class="hero-title">
                     <span class="text-gradient-purple-pink">Khám phá</span> <br>
                     <span class="emphasis">sự kiện xa hoa</span> <span class="text-gradient-purple-pink">gần bạn</span>
@@ -93,7 +92,7 @@
 
                     <div class="event-card-body">
                         <h5 class="event-card-title">
-                            <a th:href="@{/events/{id}(id=${featuredEvent.event_id})}"
+                            <a th:href="@{/events/detail/{id}(id=${featuredEvent.event_id})}"
                                th:text="${featuredEvent.title}">Event Title</a>
                         </h5>
                         <div class="event-details-meta">
@@ -132,7 +131,7 @@
         <!-- Category Filtering Toolbar with Soft Typography -->
         <div class="row align-items-end mb-4 gy-4">
             <div class="col-md-6">
-                <h2 class="section-title" style="color: #ff87bf !important;">Sự kiện phổ biến sắp diễn ra</h2>
+                <h4 class="section-title" style="color: #ff87bf !important;">Sự kiện phổ biến sắp diễn ra</h4>
             </div>
             <div class="col-md-6 text-md-end">
                 <div class="category-filter-container justify-content-md-end">
@@ -279,5 +278,9 @@
 
 <!-- Bootstrap 5 JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/homepage/js/header.js}"></script>
+<script th:src="@{/homepage/js/home.js}"></script>
+<script th:src="@{/homepage/js/footer.js}"></script>
+
 </body>
 </html>

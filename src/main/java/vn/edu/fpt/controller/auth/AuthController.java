@@ -8,19 +8,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.fpt.common.error.CheckDuplicateException;
-import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.Ward;
 import vn.edu.fpt.model.constant.TokenType;
-import vn.edu.fpt.modelview.request.auth.RegisterOrgDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.VerifyTokenService;
 import vn.edu.fpt.service.WardService;
 import vn.edu.fpt.service.impl.security.PasswordResetService;
-import vn.edu.fpt.service.impl.security.RegistrationService;
 
 import java.util.List;
 import java.util.Map;
@@ -33,20 +29,20 @@ public class AuthController {
     private final CityService cityService;
     private final PasswordResetService passwordResetService;
     private final VerifyTokenService  verifyTokenService;
-    private final RegistrationService registrationService;
+
 
     public AuthController(UserService userService,
                           WardService wardService,
                           CityService cityService,
                           PasswordResetService passwordResetService,
-                          VerifyTokenService verifyTokenService,
-                          RegistrationService registrationService) {
+                          VerifyTokenService verifyTokenService
+                          ) {
         this.userService = userService;
         this.wardService = wardService;
         this.cityService = cityService;
         this.passwordResetService = passwordResetService;
         this.verifyTokenService = verifyTokenService;
-        this.registrationService = registrationService;
+
     }
     @GetMapping("/login")
     public String getLoginPage(
@@ -89,7 +85,6 @@ public class AuthController {
     public String getRegisterPage(Model model) {
         model.addAttribute("cities", this.cityService.getCityList());
         model.addAttribute("registerUserDTO", new RegisterUserDTO());
-        model.addAttribute("registerOrgDTO", new RegisterOrgDTO());
         return "auth/RegisterAccount";
     }
 
@@ -100,39 +95,12 @@ public class AuthController {
             Model model) {
         if(result.hasErrors()) {
             model.addAttribute("registerUserDTO", dto);
-            model.addAttribute("registerOrgDTO", new  RegisterOrgDTO());
             model.addAttribute("activeRole", "user");
             return "auth/RegisterAccount";
         }
         this.userService.handleCreateUser(dto);
         return "auth/Login";
     }
-
-    @PostMapping("/register/organizer")
-    public String registerOrganizer(
-            @Valid RegisterOrgDTO dto,
-            BindingResult result,
-            Model model) {
-        if(result.hasErrors()) {
-            model.addAttribute("cities", this.cityService.getCityList());
-            model.addAttribute("registerOrgDTO", dto);
-            model.addAttribute("registerUserDTO", new  RegisterUserDTO());
-            model.addAttribute("activeRole", "organizer");
-            return "auth/RegisterAccount";
-        }
-        try {
-            this.registrationService.registerOrganizer(dto);
-        } catch (CheckDuplicateException | MessagingException e) {
-            model.addAttribute("errorMsg", e.getMessage());
-            model.addAttribute("cities", this.cityService.getCityList());
-            model.addAttribute("registerOrgDTO", dto);
-            model.addAttribute("registerUserDTO", new  RegisterUserDTO());
-            model.addAttribute("activeRole", "organizer");
-            return "auth/RegisterAccount";
-        }
-        return "auth/Login";
-    }
-
 
     @GetMapping("/activate")
     public String activeOrganizer(

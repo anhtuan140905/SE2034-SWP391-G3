@@ -1,4 +1,7 @@
 package vn.edu.fpt.repository;
 
-public class TicketTypeRepository {
+import org.springframework.data.repository.CrudRepository;
+import vn.edu.fpt.model.TicketType;
+
+public interface TicketTypeRepository extends CrudRepository<TicketType, Integer> {
 }

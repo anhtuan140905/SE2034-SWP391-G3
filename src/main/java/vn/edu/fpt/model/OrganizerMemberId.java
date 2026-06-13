@@ -1,0 +1,18 @@
+package vn.edu.fpt.model;
+
+import jakarta.persistence.Embeddable;
+import lombok.*;
+
+import java.io.Serializable;
+
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class OrganizerMemberId implements Serializable {
+    private Long organizerId;
+    private Long userId;
+}
+

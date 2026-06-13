@@ -11,15 +11,15 @@ public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfi
 
     boolean existsByTaxCode(String  taxCode);
 
-    @Query("SELECT o FROM OrganizerProfile o JOIN o.user u WHERE " +
-            "(:status IS NULL OR o.status = :status) AND " +
-            "(:keyword IS NULL OR :keyword = '' OR " +
-            "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(o.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    Page<OrganizerProfile> searchAndFilterOrganizers(
-            @Param("keyword") String keyword,
-            @Param("status") String status,
-            Pageable pageable);
+//    @Query("SELECT o FROM OrganizerProfile o JOIN o.user u WHERE " +
+//            "(:status IS NULL OR o.status = :status) AND " +
+//            "(:keyword IS NULL OR :keyword = '' OR " +
+//            "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+//            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+//            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+//            "LOWER(o.companyName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+//    Page<OrganizerProfile> searchAndFilterOrganizers(
+//            @Param("keyword") String keyword,
+//            @Param("status") String status,
+//            Pageable pageable);
 }

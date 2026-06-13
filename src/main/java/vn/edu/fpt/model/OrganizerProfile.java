@@ -27,6 +27,24 @@ public class OrganizerProfile {
     @Column(name = "company_name", columnDefinition = "NVARCHAR(500)")
     private String companyName;
 
+//  Thông tin thanh toán
+
+    @Column(name = "bank_account_name", columnDefinition = "NVARCHAR(100)")
+    private String bankAccountName;
+
+    @Column(name = "bank_account_number", columnDefinition = "NVARCHAR(30)")
+    private String bankAccountNumber;
+
+    @Column(name = "bank_name", columnDefinition = "NVARCHAR(100)")
+    private String bankName;
+
+    @Column(name = "bank_branch", columnDefinition = "NVARCHAR(100)")
+    private String bankBranch;
+
+//  Company
+    @Column(name = "business_type", columnDefinition = "NVARCHAR(50)")
+    private String businessType;
+
     @Column(name = "tax_code", length = 20, unique = true)
     @NotBlank(message = "Mã số thuế không được để trống")
     @Pattern(
@@ -35,9 +53,9 @@ public class OrganizerProfile {
     )
     private String taxCode;
 
-    @Column(name = "bank_account")
-    private String bankAccount;
+    @Column(name = "legal_name", length = 200)
+    private String legalName;             // Họ tên / Tên công ty trên hoá đơn
 
-    @Column(name = "status", nullable = false, length = 20)
-    private String status;
+    @Column(name = "legal_address", length = 300)
+    private String legalAddress;          // Địa chỉ xuất hoá đơn
 }

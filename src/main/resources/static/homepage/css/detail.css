@@ -1,15 +1,7 @@
-/*
- * EventHub — Event Detail Page
- * Rewritten: enforces dark background, polished glass panels,
- * clean sidebar layout, consistent typography.
- */
-
-/* ── 1. DESIGN TOKENS ─────────────────────────────────────────── */
 :root {
     --eh-bg-base:         #07010f;
     --eh-bg-surface:      #0d0120;
     --eh-bg-card:         #110228;
-
     --eh-pink:            #ff2a7a;
     --eh-pink-dim:        rgba(255, 42, 122, 0.15);
     --eh-pink-border:     rgba(255, 42, 122, 0.25);
@@ -20,25 +12,50 @@
     --eh-orange-dim:      rgba(255, 119, 0, 0.12);
     --eh-orange-border:   rgba(255, 119, 0, 0.28);
     --eh-neon-blue:       #00f0ff;
-
     --eh-grad-cta:        linear-gradient(135deg, #ff2a7a 0%, #8c2bff 55%, #ff7700 100%);
     --eh-grad-badge:      linear-gradient(135deg, #ff2a7a 0%, #8c2bff 100%);
-
     --eh-glass-bg:        rgba(255, 255, 255, 0.028);
     --eh-glass-border:    rgba(255, 255, 255, 0.07);
     --eh-glass-border-h:  rgba(255, 255, 255, 0.14);
     --eh-glass-shadow:    0 12px 40px rgba(0, 0, 0, 0.55);
-
     --eh-text-bright:     #f6f2ff;
     --eh-text-mid:        #b8abcf;
     --eh-text-muted:      #6e6285;
-
     --eh-radius-card:     20px;
     --eh-radius-md:       12px;
     --eh-radius-sm:       8px;
-
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body:    'Outfit', sans-serif;
+    /* Background */
+        --bg-dark-primary:    #fff0f5;
+        --bg-dark-secondary:  #ffffff;
+        --bg-dark-tertiary:   #ffe3ee;
+
+        /* Accent */
+        --color-pink:        #ff2a7a;
+        --color-pink-glowing:#ff4fa2;
+        --color-violet:      #8b3ff3;
+        --color-orange:      #f17329;
+        --color-neon-blue:   #0284c7;
+        --color-coral:       #ff4d6d;
+        /* Gradients */
+        --gradient-primary:
+            linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 50%, #f17329 100%);
+        --gradient-pink-purple:
+            linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 100%);
+        --gradient-violet-blue:
+            linear-gradient(135deg, #8b3ff3 0%, #0284c7 100%);
+        --gradient-neon:
+            linear-gradient(135deg, #ff2a7a 0%, #0284c7 100%);
+        /* Glass */
+        --glass-background:   rgba(255, 255, 255, 0.75);
+        --glass-border:       rgba(45, 27, 78, 0.08);
+        --glass-border-hover: rgba(255, 42, 122, 0.3);
+        --glass-shadow:       0 10px 30px rgba(255, 42, 122, 0.06);
+        /* Text */
+        --text-primary:   #1e0e34;
+        --text-secondary: #4b3d60;
+        --text-muted:     #84759b;
 }
 
 body {
@@ -589,6 +606,7 @@ border-radius: 2px solid green;
     inset: 0;
     background: rgba(255, 255, 255, 0);
     transition: background 0.2s ease;
+    pointer-events: none;
 }
 
 .btn-book-now:hover {
