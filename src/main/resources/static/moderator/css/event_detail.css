@@ -71,9 +71,9 @@
     margin-top: 4px;
 }
 .ed-status-badge i { font-size: 14px; }
-.status-pending  { background: #FFF4E0; color: #D4840A; border-color: #F5C560; }
-.status-approved { background: #E3FBF0; color: #1A9C5B; border-color: #5CE8A8; }
-.status-rejected { background: #FDE8F0; color: #C0225A; border-color: #F5A0C0; }
+.status-pending  { border-color: #F5C560; }
+.status-approved { border-color: #5CE8A8; }
+.status-rejected { border-color: #F5A0C0; }
 
 /* ---------- 2-col Body ---------- */
 .ed-body {
