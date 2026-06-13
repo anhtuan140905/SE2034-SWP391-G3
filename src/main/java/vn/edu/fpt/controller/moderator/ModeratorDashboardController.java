@@ -16,16 +16,16 @@ public class ModeratorDashboardController {
     private final EventServiceImpl eventService;
     private EventRepository eventRepository;
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-
-        model.addAttribute("stats", eventService.getDashboardStats());
-        model.addAttribute("pendingEvents", eventService.getTopThreePendingEvents());
-        model.addAttribute("todayEvents", eventService.getTodayActiveEvents());
-        model.addAttribute("activePage", "dashboard");
-
-        return "moderator/DashboardModerator";
-
-    }
+//    @GetMapping("/dashboard")
+//    public String dashboard(Model model) {
+//
+//        model.addAttribute("stats", eventService.getDashboardStats());
+//        model.addAttribute("pendingEvents", eventService.getTopThreePendingEvents());
+//        model.addAttribute("todayEvents", eventService.getTodayActiveEvents());
+//        model.addAttribute("activePage", "dashboard");
+//
+//        return "moderator/DashboardModerator";
+//
+//    }
 
 }

@@ -1,74 +1,61 @@
 /*
- * EventHub CSS Stylesheet
- * Elegant Light Pink & Rose Glowing Theme
+ * EventHub — Home Page Styles
+ * Phạm vi: global/base, background glows, hero section, event cards,
+ *           statistics banner, organizers spotlight, filter bar, pagination, video hero
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700;800&family=Space+Grotesk:wght=300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
+/* ================================================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ================================================================ */
 :root {
-    /* Background - Tông nền trắng hồng ngọt ngào và cao cấp */
-    --bg-dark-primary: #fff0f5;      /* Nền phụ hồng pastel nhạt (Lavender Blush) */
-    --bg-dark-secondary: #ffffff;    /* Nền chính của các thẻ Card (Trắng tinh để nổi bật) */
-    --bg-dark-tertiary: #ffe3ee;     /* Nền nhấn, hover hoặc phân cách */
+    /* Background */
+    --bg-dark-primary:    #fff0f5;
+    --bg-dark-secondary:  #ffffff;
+    --bg-dark-tertiary:   #ffe3ee;
 
-    /* Accent - Màu nhấn hồng & neon tinh chỉnh lại độ đậm để dễ đọc trên nền sáng */
-    --color-pink: #ff2a7a;           /* Hồng đậm sắc nét */
-    --color-pink-glowing: #ff4fa2;
-    --color-violet: #8b3ff3;         /* Tím sang trọng */
-    --color-orange: #f17329;
-    --color-neon-blue: #0284c7;
-    --color-coral: #ff4d6d;
-
-    /* Gradient - Tươi sáng, mịn màng */
+    /* Accent */
+    --color-pink:        #ff2a7a;
+    --color-pink-glowing:#ff4fa2;
+    --color-violet:      #8b3ff3;
+    --color-orange:      #f17329;
+    --color-neon-blue:   #0284c7;
+    --color-coral:       #ff4d6d;
+    /* Gradients */
     --gradient-primary:
-        linear-gradient(135deg,
-        #ff2a7a 0%,
-        #8b3ff3 50%,
-        #f17329 100%);
-
+        linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 50%, #f17329 100%);
     --gradient-pink-purple:
-        linear-gradient(135deg,
-        #ff2a7a 0%,
-        #8b3ff3 100%);
-
+        linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 100%);
     --gradient-violet-blue:
-        linear-gradient(135deg,
-        #8b3ff3 0%,
-        #0284c7 100%);
-
+        linear-gradient(135deg, #8b3ff3 0%, #0284c7 100%);
     --gradient-neon:
-        linear-gradient(135deg,
-        #ff2a7a 0%,
-        #0284c7 100%);
-
-    /* Glass - Hiệu ứng kính mờ đổ bóng trên nền sáng */
-    --glass-background: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(45, 27, 78, 0.08);
+        linear-gradient(135deg, #ff2a7a 0%, #0284c7 100%);
+    /* Glass */
+    --glass-background:   rgba(255, 255, 255, 0.75);
+    --glass-border:       rgba(45, 27, 78, 0.08);
     --glass-border-hover: rgba(255, 42, 122, 0.3);
-
-    --glass-shadow:
-        0 10px 30px rgba(255, 42, 122, 0.06);
-
-    /* Text - Đã sửa thành hệ màu Tím Đen đậm, chống mờ, cực kỳ nịnh mắt */
-    --text-primary: #1e0e34;         /* Chữ tiêu đề: Tím đen thẫm cứng cáp */
-    --text-secondary: #4b3d60;       /* Chữ nội dung: Tím xám đậm dễ đọc */
-    --text-muted: #84759b;           /* Chữ chú thích: Tím nhạt vừa phải */
-
+    --glass-shadow:       0 10px 30px rgba(255, 42, 122, 0.06);
+    /* Text */
+    --text-primary:   #1e0e34;
+    --text-secondary: #4b3d60;
+    --text-muted:     #84759b;
     /* Fonts */
-    --font-heading: sans-serif;
-        --font-body: sans-serif;
+    --font-heading: 'Inter', sans-serif;
+    --font-body:    'Space Grotesk', sans-serif;
 }
 
-/* General Layout Options */
+/* ================================================================
+   GLOBAL / BASE
+   ================================================================ */
 body {
-    background-color: #fff6f9;       /* Màu nền toàn trang ngả hồng mịn */
+    background-color: #fff6f9;
     color: var(--text-secondary);
     font-family: var(--font-body);
     overflow-x: hidden;
     margin: 0;
     padding: 0;
     min-height: 100vh;
-
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -78,35 +65,30 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: -0.02em;
 }
 
-/* Custom Selection */
 ::selection {
     background-color: var(--color-pink);
     color: #fff;
 }
 
-/* Scrollbar customization */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg-dark-primary);
-}
-::-webkit-scrollbar-thumb {
-    background: var(--bg-dark-tertiary);
-    border-radius: 10px;
-    border: 2px solid var(--bg-dark-primary);
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--color-pink);
-}
+/* Scrollbar */
+::-webkit-scrollbar              { width: 8px; }
+::-webkit-scrollbar-track        { background: var(--bg-dark-primary); }
+::-webkit-scrollbar-thumb        { background: var(--bg-dark-tertiary); border-radius: 10px; border: 2px solid var(--bg-dark-primary); }
+::-webkit-scrollbar-thumb:hover  { background: var(--color-pink); }
 
-/* Deep Cosmic Glowing Background Bleeds */
+/* Accent utilities */
+.text-pink           { color: var(--color-pink); }
+.text-violet         { color: var(--color-violet); }
+.text-orange         { color: var(--color-orange); }
+.text-secondary-light{ color: var(--text-muted); }
+
+/* ================================================================
+   BACKGROUND GLOW BLOBS
+   ================================================================ */
 .background-glows {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     z-index: -2;
     overflow: hidden;
     pointer-events: none;
@@ -116,260 +98,31 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     border-radius: 50%;
     filter: blur(140px);
-    opacity: 0.25; /* Tăng nhẹ độ đậm để nổi bật trên nền sáng */
-    mix-blend-mode: multiply; /* Đổi sang multiply để hòa trộn đẹp mắt trên nền trắng */
+    opacity: 0.25;
+    mix-blend-mode: multiply;
 }
 
 .glow-blob-1 {
-    top: -10%;
-    right: 5%;
-    width: 600px;
-    height: 600px;
+    top: -10%; right: 5%;
+    width: 600px; height: 600px;
     background: radial-gradient(circle, #ffb6c1 0%, rgba(255,255,255,0) 70%);
 }
 
 .glow-blob-2 {
-    top: 30%;
-    left: -10%;
-    width: 500px;
-    height: 500px;
+    top: 30%; left: -10%;
+    width: 500px; height: 500px;
     background: radial-gradient(circle, #e6d5ff 0%, rgba(255,255,255,0) 70%);
 }
 
 .glow-blob-3 {
-    bottom: 5%;
-    right: -10%;
-    width: 550px;
-    height: 550px;
+    bottom: 5%; right: -10%;
+    width: 550px; height: 550px;
     background: radial-gradient(circle, #ffe4e1 0%, rgba(255,255,255,0) 70%);
 }
 
-/* ---------------- HEADER FRAGMENT STYLES ---------------- */
-.navbar-custom {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--glass-border);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    transition: all 0.3s ease;
-}
-
-.navbar-custom.scrolled {
-    background: rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid rgba(255, 42, 122, 0.15);
-    box-shadow: 0 10px 30px rgba(255, 42, 122, 0.05);
-}
-
-.navbar-brand {
-    font-weight: 800;
-    font-size: 1.6rem;
-    font-family: var(--font-heading);
-    letter-spacing: -0.03em;
-}
-
-.brand-dots {
-    display: flex;
-    gap: 4px;
-    margin-right: 8px;
-}
-
-.brand-dots .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.brand-dots .dot.pink { background-color: var(--color-pink); box-shadow: 0 0 10px rgba(255, 42, 122, 0.4); }
-.brand-dots .dot.violet { background-color: var(--color-violet); box-shadow: 0 0 10px rgba(139, 63, 243, 0.4); }
-.brand-dots .dot.orange { background-color: var(--color-orange); box-shadow: 0 0 10px rgba(241, 115, 41, 0.4); }
-
-.navbar-brand .brand-text {
-    color: var(--text-primary);
-}
-
-.navbar-brand .highlight {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 2px rgba(255, 42, 122, 0.1));
-}
-
-.nav-link {
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.95rem;
-    padding: 0.6rem 1rem !important;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.nav-icon {
-    font-size: 0.9rem;
-    transition: transform 0.3s ease;
-}
-
-.nav-link:hover {
-    color: var(--color-pink);
-    background: rgba(255, 42, 122, 0.05);
-}
-
-.nav-link:hover .nav-icon {
-    transform: translateY(-2px);
-}
-
-.nav-link.active {
-    color: var(--color-pink) !important;
-    background: rgba(255, 42, 122, 0.08);
-    border: 1px solid rgba(255, 42, 122, 0.15);
-}
-
-.text-pink-glow {
-    color: var(--color-pink);
-    text-shadow: 0 0 8px rgba(255, 42, 122, 0.2);
-}
-
-.btn-outline-light {
-    background: var(--text-secondary);
-    color: #fff;
-}
-
-/* Glass Search Bar in Navbar */
-.navbar-search .input-group {
-    background: rgba(45, 27, 78, 0.04);
-    border: 1px solid var(--glass-border);
-    border-radius: 30px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.navbar-search .input-group:focus-within {
-    border-color: var(--color-pink);
-    box-shadow: 0 0 12px rgba(255, 42, 122, 0.15);
-    background: rgba(255, 255, 255, 1);
-}
-
-.search-icon-container {
-    background: transparent !important;
-    border: none !important;
-    padding-left: 1rem;
-    color: var(--text-muted);
-}
-
-.nav-search-input {
-    background: transparent !important;
-    border: none !important;
-    color: var(--text-primary) !important;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem 0.5rem 0.2rem !important;
-    box-shadow: none !important;
-}
-
-.nav-search-input::placeholder {
-    color: var(--text-muted);
-}
-
-
-
-/* User Profile Dropdown Header */
-.profile-trigger {
-    cursor: pointer;
-    padding: 0.25rem 0.5rem !important;
-    border-radius: 50px;
-    background: rgba(45, 27, 78, 0.03);
-    border: 1px solid var(--glass-border);
-}
-
-.profile-trigger:hover {
-    border-color: rgba(255, 42, 122, 0.3);
-    background: rgba(255, 42, 122, 0.04);
-}
-
-.user-avatar-wrap {
-    position: relative;
-    width: 34px;
-    height: 34px;
-}
-
-.user-avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid var(--color-pink);
-}
-
-.status-indicator {
-    position: absolute;
-    bottom: -1px;
-    right: -1px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--bg-dark-secondary);
-}
-
-.status-indicator.online {
-    background-color: #10b981; /* Đổi sang màu xanh lá chuẩn light mode để nhìn rõ */
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
-}
-
-.glass-dropdown {
-    background: rgba(255, 255, 255, 0.98) !important; /* Chuyển dropdown sang nền trắng */
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 40px rgba(45, 27, 78, 0.08) !important;
-    backdrop-filter: blur(15px);
-    padding: 0.5rem !important;
-}
-
-.dropdown-item {
-    border-radius: 8px !important;
-    padding: 0.6rem 1rem !important;
-    font-size: 0.9rem !important;
-    font-weight: 500;
-    transition: all 0.2s ease !important;
-    color: var(--text-secondary) !important;
-}
-
-.dropdown-item:hover {
-    background: rgba(255, 42, 122, 0.06) !important;
-    color: var(--color-pink) !important;
-    transform: translateX(3px);
-}
-
-.dropdown-icon {
-    width: 18px;
-    margin-right: 10px;
-}
-
-.text-danger-glowing:hover {
-    background: #fff5f5 !important;
-    color: #dc3545 !important;
-}
-
-.collapse-btn {
-    border: 1px solid var(--glass-border);
-    padding: 0.4rem 0.6rem;
-    border-radius: 8px;
-    color: var(--text-primary);
-}
-
-.collapse-btn:focus {
-    box-shadow: 0 0 10px var(--color-pink);
-}
-
-.navbar-nav li a {
-    color: black
-}
-
-
-/* ---------------- GLASSMORPHIC HERO SECTION ---------------- */
+/* ================================================================
+   HERO SECTION
+   ================================================================ */
 .hero-section {
     position: relative;
     padding: 8rem 0 6rem 0;
@@ -378,11 +131,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-glow-back {
     position: absolute;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(255, 42, 122, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-    top: 50%;
-    left: 50%;
+    width: 450px; height: 450px;
+    background: radial-gradient(circle, rgba(255, 42, 122, 0.15) 0%, rgba(255,255,255,0) 70%);
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
     filter: blur(70px);
@@ -407,7 +158,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-title {
     font-size: 4rem;
-    font-weight: 800;
     line-height: 1.1;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
@@ -430,14 +180,12 @@ h1, h2, h3, h4, h5, h6 {
 .hero-title .emphasis::after {
     content: '';
     position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 100%;
-    height: 8px;
+    bottom: 5px; left: 0;
+    width: 100%; height: 8px;
     background: linear-gradient(90deg, var(--color-pink), var(--color-orange));
     border-radius: 4px;
     z-index: -1;
-    opacity: 0.2; /* Giảm opacity gạch chân để không đè chữ sáng */
+    opacity: 0.2;
 }
 
 .hero-lead {
@@ -493,7 +241,7 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-2px);
 }
 
-/* Glasscard Preview on Hero Right */
+/* Glass Hero Preview Card */
 .glass-hero-preview {
     background: #ffffff;
     border: 1px solid var(--glass-border);
@@ -507,19 +255,17 @@ h1, h2, h3, h4, h5, h6 {
 .glass-hero-preview::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 150%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 150%; height: 100%;
     background: linear-gradient(45deg, transparent, rgba(255, 42, 122, 0.1), transparent);
     transform: translateX(-100%);
     animation: shine-sweep 6s infinite ease-in-out;
 }
 
 @keyframes shine-sweep {
-    0% { transform: translateX(-100%) rotate(25deg); }
-    15% { transform: translateX(100%) rotate(25deg); }
-    100% { transform: translateX(100%) rotate(25deg); }
+    0%   { transform: translateX(-100%) rotate(25deg); }
+    15%  { transform: translateX(100%)  rotate(25deg); }
+    100% { transform: translateX(100%)  rotate(25deg); }
 }
 
 .glass-card-img {
@@ -532,8 +278,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .preview-tag {
     position: absolute;
-    top: 3rem;
-    right: 3rem;
+    top: 3rem; right: 3rem;
     background: var(--gradient-pink-purple);
     color: #fff;
     font-size: 0.75rem;
@@ -545,11 +290,10 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 12px rgba(255, 42, 122, 0.2);
 }
 
-
-/* ---------------- QUICK FILTERS & CATEGORIES ---------------- */
-.section-header-wrap {
-    margin-bottom: 3.5rem;
-}
+/* ================================================================
+   SECTION SHARED ELEMENTS
+   ================================================================ */
+.section-header-wrap { margin-bottom: 3.5rem; }
 
 .section-label {
     text-transform: uppercase;
@@ -562,10 +306,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title {
-    font-size: 4.5rem;
-    color: ##ff7300;
+    font-size: 2.5rem;
+    color: #f53535;
 }
 
+/* ================================================================
+   CATEGORY FILTER PILLS
+   ================================================================ */
 .category-filter-container {
     display: flex;
     overflow-x: auto;
@@ -573,9 +320,7 @@ h1, h2, h3, h4, h5, h6 {
     gap: 12px;
 }
 
-.category-filter-container::-webkit-scrollbar {
-    height: 4px;
-}
+.category-filter-container::-webkit-scrollbar { height: 4px; }
 
 .btn-cat-filter {
     background: #ffffff;
@@ -593,9 +338,7 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 10px rgba(45, 27, 78, 0.02);
 }
 
-.btn-cat-filter .cat-icon {
-    transition: transform 0.3s ease;
-}
+.btn-cat-filter .cat-icon { transition: transform 0.3s ease; }
 
 .btn-cat-filter:hover {
     background: var(--bg-dark-primary);
@@ -603,9 +346,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
-.btn-cat-filter:hover .cat-icon {
-    transform: scale(1.1);
-}
+.btn-cat-filter:hover .cat-icon { transform: scale(1.1); }
 
 .btn-cat-filter.active {
     background: var(--gradient-pink-purple);
@@ -614,10 +355,11 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 20px rgba(255, 42, 122, 0.2);
 }
 
-
-/* ---------------- PREMIUM EVENT CARD GRID ---------------- */
+/* ================================================================
+   EVENT CARD GRID
+   ================================================================ */
 .card-event {
-    background: var(--bg-dark-secondary); /* Thẻ màu trắng tinh */
+    background: var(--bg-dark-secondary);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
     height: 100%;
@@ -635,6 +377,7 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 20px 40px rgba(255, 42, 122, 0.08);
 }
 
+/* Image wrapper */
 .event-img-wrap {
     position: relative;
     width: 100%;
@@ -643,8 +386,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .event-img {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
     transition: transform 0.6s ease;
 }
@@ -653,11 +395,11 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.08) rotate(1deg);
 }
 
+/* Badges */
 .event-badge-category {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    background: rgba(255, 255, 255, 0.9); /* Chuyển sang nền sáng */
+    top: 1rem; left: 1rem;
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(45, 27, 78, 0.08);
     color: var(--text-primary);
@@ -672,8 +414,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .event-badge-price {
     position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+    bottom: 1rem; right: 1rem;
     background: var(--gradient-pink-purple);
     color: #fff;
     font-weight: 700;
@@ -685,8 +426,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .event-date-badge {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1rem; right: 1rem;
     background: rgba(255, 42, 122, 0.95);
     color: #fff;
     font-weight: 700;
@@ -698,14 +438,10 @@ h1, h2, h3, h4, h5, h6 {
     min-width: 50px;
 }
 
-.event-date-badge span {
-    display: block;
-}
+.event-date-badge span   { display: block; }
+.event-date-badge .day   { font-size: 1.1rem; }
 
-.event-date-badge .day {
-    font-size: 1.1rem;
-}
-
+/* Card body */
 .event-card-body {
     padding: 1.5rem;
     flex-grow: 1;
@@ -713,16 +449,8 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
 }
 
-.event-hosts {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 0.8rem;
-}
-
 .host-mini-avatar {
-    width: 22px;
-    height: 22px;
+    width: 22px; height: 22px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid var(--color-pink);
@@ -746,9 +474,7 @@ h1, h2, h3, h4, h5, h6 {
     transition: color 0.2s ease;
 }
 
-.event-card-title a:hover {
-    color: var(--color-pink);
-}
+.event-card-title a:hover { color: var(--color-pink); }
 
 .event-details-meta {
     display: flex;
@@ -773,6 +499,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 14px;
 }
 
+/* Card footer */
 .event-card-footer {
     padding: 0 1.5rem 1.5rem 1.5rem;
     display: flex;
@@ -786,17 +513,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .att-avatar {
-    width: 26px;
-    height: 26px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--bg-dark-secondary);
     margin-left: -8px;
 }
 
-.att-avatar:first-child {
-    margin-left: 0;
-}
+.att-avatar:first-child { margin-left: 0; }
 
 .att-more {
     font-size: 0.75rem;
@@ -805,7 +529,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
 }
 
-/* Rounded Cards Booking CTA Button */
 .btn-book-now {
     background: var(--text-secondary);
     border: 1px solid var(--glass-border);
@@ -827,10 +550,10 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 15px rgba(255, 42, 122, 0.25);
 }
 
-
-/* ---------------- RE-DESIGNED STATISTICAL CALLOUT BANNER ---------------- */
+/* ================================================================
+   STATISTICS CALLOUT BANNER
+   ================================================================ */
 .cta-banner-glass {
-    /* Đổi banner từ đen tối sang nền Gradient hồng mịn thanh lịch */
     background: linear-gradient(135deg, #fff0f5 0%, #ffe3ee 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -844,17 +567,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .cta-banner-glow {
     position: absolute;
-    width: 400px;
-    height: 400px;
+    width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(255, 42, 122, 0.1) 0%, rgba(255,255,255,0) 70%);
-    top: -50px;
-    right: -100px;
+    top: -50px; right: -100px;
     z-index: -1;
 }
 
-.stat-counter-wrap {
-    text-align: center;
-}
+.stat-counter-wrap { text-align: center; }
 
 .stat-number {
     font-size: 3.5rem;
@@ -875,8 +594,9 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 0.05em;
 }
 
-
-/* ---------------- FEATURED ORGANIZERS SPOTLIGHT ---------------- */
+/* ================================================================
+   FEATURED ORGANIZERS SPOTLIGHT
+   ================================================================ */
 .host-spot-card {
     background: #ffffff;
     border: 1px solid var(--glass-border);
@@ -896,8 +616,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .host-spot-avatar {
-    width: 60px;
-    height: 60px;
+    width: 60px; height: 60px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--color-pink);
@@ -932,15 +651,12 @@ h1, h2, h3, h4, h5, h6 {
     border-color: transparent;
 }
 
-
-/* ---------------- INTENSIVE HOST CTA BANNER ---------------- */
-.host-cta-section {
-    position: relative;
-    padding: 6rem 0;
-}
+/* ================================================================
+   HOST CTA BANNER
+   ================================================================ */
+.host-cta-section { position: relative; padding: 6rem 0; }
 
 .host-cta-box {
-    /* Đổi từ tím đen sang khối gradient hồng-tím sáng */
     background: linear-gradient(135deg, #fff0f5 0%, #f6ebff 100%);
     border: 1px solid rgba(139, 63, 243, 0.15);
     border-radius: 30px;
@@ -952,11 +668,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .host-cta-glow-bg {
     position: absolute;
-    width: 500px;
-    height: 500px;
+    width: 500px; height: 500px;
     background: radial-gradient(circle, rgba(255, 42, 122, 0.08) 0%, rgba(139, 63, 243, 0.04) 40%, rgba(255,255,255,0) 70%);
-    bottom: -150px;
-    right: -150px;
+    bottom: -150px; right: -150px;
     z-index: 10;
     pointer-events: none;
 }
@@ -975,283 +689,9 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1.5rem;
 }
 
-
-
-/* ---------------- FOOTER STYLES ---------------- */
-footer {
-    background-color: #070112;
-    padding: 6rem 0 3rem 0;
-    border-top: 1px solid var(--glass-border);
-    position: relative;
-    color: black !important;
-}
-
-.footer-glow-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.footer-glow-circle {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.15;
-    width: 300px;
-    height: 300px;
-}
-
-.footer-glow-circle.circle-left {
-    background: var(--color-pink);
-    left: -5%;
-    top: 10%;
-}
-
-.footer-glow-circle.circle-right {
-    background: var(--color-violet);
-    right: -5%;
-    bottom: 10%;
-}
-
-.footer-content-wrap {
-    position: relative;
-    z-index: 10;
-}
-
-.footer-brand {
-    font-size: 1.5rem;
-    font-weight: 800;
-    font-family: var(--font-heading);
-    letter-spacing: -0.02em;
-    text-decoration: none;
-    color: var(--text-primary);
-}
-
-.footer-brand .highlight {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.footer-tagline {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-.social-circle {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid var(--glass-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    color: var(--text-secondary);
-    text-decoration: none;
-}
-
-.social-circle:hover {
-    background: var(--gradient-pink-purple);
-    border-color: transparent;
-    color: #fff;
-    transform: translateY(-4px) scale(1.08);
-    box-shadow: 0 4px 15px rgba(255, 42, 122, 0.3);
-}
-
-.social-icon {
-    font-size: 0.9rem;
-}
-
-.footer-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    position: relative;
-    padding-bottom: 0.5rem;
-    color: #fff;
-}
-
-.footer-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background: var(--gradient-pink-purple);
-    border-radius: 2px;
-}
-
-.footer-links-list li {
-    margin-bottom: 0.8rem;
-}
-
-.footer-links-list a {
-   color: #fff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.footer-links-list a:hover {
-    color: #fff;
-    transform: translateX(3px);
-}
-
-.link-bullet {
-    font-size: 0.75rem;
-}
-
-.newsletter-form {
-    background: #ffffff;
-    border: 1px solid var(--glass-border);
-    border-radius: 30px;
-    padding: 0.25rem 0.25rem 0.25rem 1rem;
-    transition: all 0.3s ease;
-}
-
-.newsletter-form:focus-within {
-    border-color: var(--color-pink);
-    box-shadow: 0 0 12px rgba(255, 42, 122, 0.15);
-        background: rgba(255, 255, 255, 0.06);
-}
-
-.newsletter-input-group {
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-
-.newsletter-input {
-    background: transparent !important;
-    border: none !important;
-    color: var(--text-primary) !important;
-    padding: 0.4rem 0.5rem !important;
-    font-size: 0.9rem;
-    box-shadow: none !important;
-}
-
-.newsletter-input::placeholder {
-    color: var(--text-muted);
-}
-
-.btn-newsletter-submit {
-    background: var(--gradient-pink-purple) !important;
-    border: none !important;
-    width: 40px;
-    height: 40px;
-    border-radius: 50% !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 10px rgba(255, 42, 122, 0.3);
-}
-
-.btn-newsletter-submit:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 42, 122, 0.5);
-}
-
-.footer-divider {
-    border-color: rgba(255, 255, 255, 0.06);
-    margin: 4rem 0 2rem 0;
-}
-
-.footer-bottom {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.footer-legal-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.footer-legal-links a:hover {
-    color: #fff;
-}
-
-.pulse {
-    display: inline-block;
-    animation: Heartbeat 1.5s infinite;
-}
-
-@keyframes Heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-}
-
-
-/* ---------------- ACCENT UTILITIES ---------------- */
-.text-pink { color: var(--color-pink); }
-.text-violet { color: var(--color-violet); }
-.text-orange { color: var(--color-orange); }
-.text-secondary-light { color: var(--text-muted); }
-
-/* Responsive adjustments */
-@media (max-width: 991.98px) {
-    .navbar-search {
-        margin: 1rem 0;
-        width: 100%;
-    }
-    .profile-trigger {
-        width: 100%;
-        justify-content: center;
-        padding: 0.5rem 1rem !important;
-        border-radius: 8px;
-    }
-    .hero-section {
-        padding: 6rem 0 4rem 0;
-        text-align: center;
-    }
-    .hero-title {
-        font-size: 2.8rem;
-    }
-    .badge-gradient-sub {
-        margin-bottom: 0px;
-    }
-    .hero-buttons-col {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: center;
-    }
-    .btn-grad-cta, .btn-glass-secondary {
-        width: 100%;
-        justify-content: center;
-    }
-    .cta-banner-glass {
-        padding: 3rem 2rem;
-    }
-    .stat-counter-wrap {
-        margin-bottom: 2.5rem;
-    }
-    .stat-counter-wrap:last-child {
-        margin-bottom: 0;
-    }
-    .host-cta-box {
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-    }
-}
-
 /* ================================================================
-   FILTER BAR — thêm vào cuối home.css
+   FILTER BAR
    ================================================================ */
-
 .filter-bar {
     display: flex;
     align-items: center;
@@ -1271,7 +711,7 @@ footer {
     box-shadow: 0 6px 30px rgba(255, 42, 122, 0.1);
 }
 
-/* ── Search area ── */
+/* Search area */
 .filter-bar__search {
     position: relative;
     display: flex;
@@ -1290,9 +730,7 @@ footer {
     transition: color 0.2s ease;
 }
 
-.filter-bar__search:focus-within .filter-bar__search-icon {
-    color: var(--color-pink);
-}
+.filter-bar__search:focus-within .filter-bar__search-icon { color: var(--color-pink); }
 
 .filter-bar__search-input {
     width: 100%;
@@ -1307,15 +745,12 @@ footer {
     font-weight: 400;
 }
 
-.filter-bar__search-input::placeholder {
-    color: var(--text-muted);
-}
+.filter-bar__search-input::placeholder { color: var(--text-muted); }
 
 .filter-bar__search-clear {
     position: absolute;
     right: 0.6rem;
-    width: 24px;
-    height: 24px;
+    width: 24px; height: 24px;
     border-radius: 50%;
     border: none;
     background: rgba(45, 27, 78, 0.08);
@@ -1334,16 +769,15 @@ footer {
     color: var(--color-pink);
 }
 
-/* ── Divider ── */
+/* Divider */
 .filter-bar__divider {
-    width: 1px;
-    height: 28px;
+    width: 1px; height: 28px;
     background: var(--glass-border);
     flex-shrink: 0;
     margin: 0 0.25rem;
 }
 
-/* ── Select wrapper ── */
+/* Select wrapper */
 .filter-bar__select-wrap {
     position: relative;
     display: flex;
@@ -1387,44 +821,71 @@ footer {
     border-left: 1px solid var(--glass-border);
 }
 
-.filter-bar__select:hover {
-    color: var(--text-primary);
-}
+.filter-bar__select:hover,
+.filter-bar__select:focus   { color: var(--text-primary); }
 
-.filter-bar__select:focus {
-    color: var(--text-primary);
-}
-
-/* Active state khi có giá trị khác default */
 .filter-bar__select.is-active {
     color: var(--color-pink);
     font-weight: 600;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ff2a7a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
 }
 
-/* ── Clear button ── */
-.filter-bar__clear-btn {
-    flex-shrink: 0;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 42, 122, 0.25);
-    background: transparent;
-    color: var(--color-pink);
-    font-size: 0.85rem;
+/* Filter actions */
+.filter-bar__actions {
     display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding-left: 10px;
+}
+
+.btn-filter-submit {
+    background: linear-gradient(135deg, var(--color-pink, #ff758c), #8a2be2);
+    color: #ffffff !important;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
+}
+
+.btn-filter-submit:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+    box-shadow: 0 6px 16px rgba(138, 43, 226, 0.35);
+}
+
+.btn-filter-submit:active { transform: translateY(1px); }
+
+.btn-filter-clear {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-pink, #ff758c);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    width: 42px; height: 42px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.25s ease;
-    margin-left: 0.35rem;
+    transition: all 0.2s ease-in-out;
 }
 
-.filter-bar__clear-btn:hover {
-    background: rgba(255, 42, 122, 0.08);
-    border-color: var(--color-pink);
-    transform: rotate(-30deg);
+.btn-filter-clear:hover {
+    background: rgba(255, 117, 140, 0.1);
+    border-color: rgba(255, 117, 140, 0.3);
+    color: #ff4757;
+    transform: translateY(-1px);
 }
+
+.btn-filter-clear:active { transform: translateY(1px); }
 
 /* Result count badge */
 .result-count-badge {
@@ -1440,8 +901,89 @@ footer {
     color: var(--text-secondary);
 }
 
-/* ── Responsive ── */
+/* ================================================================
+   PAGINATION
+   ================================================================ */
+.pagination-container .btn-page {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    margin: 0 4px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.pagination-container .btn-page:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ff007f;
+}
+
+.pagination-container .btn-page.active {
+    background: linear-gradient(135deg, #ff007f, #7f00ff);
+    border: none;
+    color: #fff;
+}
+
+.pagination-container .btn-page:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ================================================================
+   VIDEO HERO (optional section)
+   ================================================================ */
+.hero-section-video {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15,15,30,0.75), rgba(80,0,120,0.45));
+}
+
+.hero-section-video .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
 @media (max-width: 991.98px) {
+    .hero-section        { padding: 6rem 0 4rem 0; text-align: center; }
+    .hero-title          { font-size: 2.8rem; font-weight: bold !important; }
+    .badge-gradient-sub  { margin-bottom: 0; }
+
+    .hero-buttons-col {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .btn-grad-cta,
+    .btn-glass-secondary { width: 100%; justify-content: center; }
+
+    .cta-banner-glass  { padding: 3rem 2rem; }
+
+    .stat-counter-wrap              { margin-bottom: 2.5rem; }
+    .stat-counter-wrap:last-child   { margin-bottom: 0; }
+
+    .host-cta-box { padding: 2.5rem 1.5rem; text-align: center; }
+
+    /* Filter bar */
     .filter-bar {
         flex-wrap: wrap;
         border-radius: 20px;
@@ -1484,136 +1026,5 @@ footer {
 }
 
 @media (max-width: 575.98px) {
-    .filter-bar__select-wrap {
-        flex: 1 1 100%;
-    }
+    .filter-bar__select-wrap { flex: 1 1 100%; }
 }
-
-/* --- CSS CĂN CHỈNH BỘ ĐÔI NÚT LỌC --- */
-
-/* Khối bao bọc 2 nút: Đảm bảo luôn nằm ngang và căn giữa theo chiều dọc */
-.filter-bar__actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto; /* Đẩy cụm nút về sát rìa phải nếu cần */
-    padding-left: 10px;
-}
-
-/* Nút Lọc (Gradient màu hồng tím) */
-.btn-filter-submit {
-    background: linear-gradient(135deg, var(--color-pink, #ff758c), #8a2be2);
-    color: #ffffff !important;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    padding: 0 20px;
-    height: 42px; /* Chiều cao bằng với các ô select/input trong filter-bar */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
-}
-
-.btn-filter-submit:hover {
-    transform: translateY(-1px);
-    box-sizing: border-box;
-    opacity: 0.9;
-    box-shadow: 0 6px 16px rgba(138, 43, 226, 0.35);
-}
-
-.btn-filter-submit:active {
-    transform: translateY(1px);
-}
-
-/* Nút Thùng rác (Xóa bộ lọc) */
-.btn-filter-clear {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--color-pink, #ff758c);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    width: 42px;  /* Tạo thành nút vuông */
-    height: 42px; /* Chiều cao bằng nút Lọc */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-
-.btn-filter-clear:hover {
-    background: rgba(255, 117, 140, 0.1); /* Đổi nền hồng nhẹ khi hover */
-    border-color: rgba(255, 117, 140, 0.3);
-    color: #ff4757;
-    transform: translateY(-1px);
-}
-
-.btn-filter-clear:active {
-    transform: translateY(1px);
-}
-
-/* CSS bổ sung để nút phân trang đồng bộ giao diện Glassmorphism */
-        .pagination-container .btn-page {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px border rgba(255, 255, 255, 0.1);
-            color: var(--text-primary, #fff);
-            padding: 8px 16px;
-            margin: 0 4px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        .pagination-container .btn-page:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.15);
-            color: #ff007f;
-        }
-        .pagination-container .btn-page.active {
-            background: linear-gradient(135deg, #ff007f, #7f00ff);
-            border: none;
-            color: #fff;
-        }
-        .pagination-container .btn-page:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .hero-section-video {
-            position: relative;
-            height: 100vh;
-            overflow: hidden;
-
-        }
-
-        .hero-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-            z-index: -2;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(15,15,30,0.75),
-                    rgba(80,0,120,0.45)
-                );
-
-
-        }
-
-        .hero-section-video .container {
-            position: relative;
-            z-index: 2;
-        }

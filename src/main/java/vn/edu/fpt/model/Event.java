@@ -33,10 +33,6 @@ public class Event extends BaseAuditEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private EventCategory category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "venue_id", nullable = false)
-    private Venue venue;
-
     @Column(name = "title", nullable = false, columnDefinition = "NVARCHAR(500)")
     private String title;
 

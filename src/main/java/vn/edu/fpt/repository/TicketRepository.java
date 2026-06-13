@@ -6,9 +6,9 @@ import org.springframework.data.repository.query.Param;
 import vn.edu.fpt.model.Ticket;
 
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
-    @Query("SELECT COUNT(*) FROM Ticket")
-    long ticketIssued();
-//
+//    @Query("SELECT COUNT(*) FROM Ticket")
+//    long ticketIssued();
+////
 //    long countByUserId(Long userId);
 //
 //    @Query("""
@@ -18,4 +18,9 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 //        AND t.isCheckedIn = true
 //        """)
 //    long countDistinctEventCheckedInByUserId(@Param("userId") Long userId);
+
+
+//boolean existsByQrCode(String qrCode);
+//    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.ticketType.ticketTypeId = :ticketTypeId AND t.status <> 0")
+//    Integer getNumTicketSelled(Long ticketTypeId);
 }

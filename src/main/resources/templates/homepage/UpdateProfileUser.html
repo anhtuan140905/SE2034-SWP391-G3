@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" th:href="@{/homepage/css/profile.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
 </head>
 <body>
-
 <div class="background-glows">
     <div class="glow-blob glow-blob-1"></div>
-    <div class="glow-blob glow-blob-2" style="background: radial-gradient(circle, var(--color-violet) 0%, rgba(0,0,0,0) 70%);"></div>
+    <div class="glow-blob glow-blob-2"></div>
     <div class="glow-blob glow-blob-3"></div>
 </div>
-
 <div th:replace="~{homepage/fragments/header :: header('')}">
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
@@ -41,15 +41,9 @@
         <div class="col-lg-4 col-md-5">
             <div class="glass-profile-card text-center d-flex flex-column justify-content-between h-100 anim-fade-in-up">
                 <div class="w-100">
-                    <div class="mb-3">
-                            <span class="tier-pill-badge">
-                                <i class="fa-solid fa-gem text-pink-glow animate-pulse"></i> VIP PREMIUM MEMBER
-                            </span>
-                    </div>
-
                     <div class="avatar-preview-container">
                         <div class="avatar-preview-wrapper" id="avatarPreviewContainer">
-                            <img th:src="${userUpdateDTO.avatar != null ? userUpdateDTO.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop'}"
+                            <img th:src="${userUpdateDTO.avatar != null ? userUpdateDTO.avatar : ''}"
                                  alt="Profile Avatar"
                                  class="avatar-preview-image"
                                  id="avatarPreviewImage">
@@ -64,7 +58,7 @@
 
                     <h3 class="text-white font-heading font-extrabold h4 mb-1 username-text" th:text="${userUpdateDTO != null ? userUpdateDTO.lastName : 'Alex Rivera'}"></h3>
                     <p class="text-secondary-light font-mono text-xs d-flex align-items-center justify-content-center gap-1 mb-4" style="letter-spacing: 0.05em;">
-                        <span class="opacity-70">@</span><span th:text="${userUpdateDTO != null ? userUpdateDTO.email : 'alex_rivera'}"></span>
+                        <span class="opacity-70"></span><span th:text="${userUpdateDTO != null ? userUpdateDTO.email : 'alex_rivera'}"></span>
                     </p>
 
                     <div class="bg-black/20 rounded-4 p-3 border border-white/5 my-4 text-start font-sans">
@@ -100,8 +94,7 @@
 
         <div class="col-lg-8 col-md-7">
             <div class="glass-profile-card h-100 anim-fade-in-up" style="animation-delay: 0.15s;">
-                <span class="section-label mb-2">My account management</span>
-                <h2 class="profile-heading mb-4">Update profile</h2>
+                <h2 class="profile-heading mb-4" style="color: black !important;">Update profile</h2>
 
                 <form id="profileForm"
                       th:action="@{/attendee/update/profile}"
@@ -109,7 +102,7 @@
                       th:object="${userUpdateDTO}"
                       enctype="multipart/form-data">
                     <div class="row g-4 text-start">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="profile-input-group">
                                 <label for="firstName" class="profile-input-label">First Name:</label>
                                 <input type="text"
@@ -120,7 +113,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="profile-input-group">
                                 <label for="middleName" class="profile-input-label">Middle Name:</label>
                                 <input type="text"
@@ -131,7 +124,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="profile-input-group">
                                 <label for="lastName" class="profile-input-label">Last Name:</label>
                                 <input type="text"
@@ -177,41 +170,6 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="u_city" class="profile-input-label">City</label>
-                                <select id="u_city" class="profile-input-control" th:field="*{city}" onchange="handleSelect(this,'cityField')">
-                                    <option value="">Chọn Tỉnh/Thành Phố</option>
-                                    <option th:each="city : ${cities}"
-                                            th:value="${city.id}"
-                                            th:text="${city.name}">
-                                    </option>
-                                </select>
-                                <span class="error-msg" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="profile-input-group">
-                                <label for="u_ward" class="profile-input-label">Ward</label>
-                                <select id="u_ward"
-                                        class="profile-input-control"
-                                        th:field="*{ward}"
-                                        th:data-selected-ward="*{ward}"
-                                        onchange="handleSelect(this,'wardField')">
-                                    <option value="">Chọn Phường/Xã</option>
-                                </select>
-                                <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="profile-input-group">
-                                <label for="u_specificAddress" class="profile-input-label">Specific Address</label>
-                                <input type="text" id="u_specificAddress" class="profile-input-control" placeholder="" autocomplete="email" th:field="*{specificAddress}"/>
-                                <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="profile-input-group">
                                 <label for="u_dob" class="profile-input-label">Date of Birth</label>
                                 <input type="date"
                                        id="u_dob"
@@ -225,6 +183,41 @@
                             </div>
                         </div>
 
+                        <div class="col-md-4">
+                            <div class="profile-input-group">
+                                <label for="u_city" class="profile-input-label">City</label>
+                                <select id="u_city" class="profile-input-control" th:field="*{city}" onchange="handleSelect(this,'cityField')">
+                                    <option value="">Chọn Tỉnh/Thành Phố</option>
+                                    <option th:each="city : ${cities}"
+                                            th:value="${city.id}"
+                                            th:text="${city.name}">
+                                    </option>
+                                </select>
+                                <span class="error-msg" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="profile-input-group">
+                                <label for="u_ward" class="profile-input-label">Ward</label>
+                                <select id="u_ward"
+                                        class="profile-input-control"
+                                        th:field="*{ward}"
+                                        th:data-selected-ward="*{ward}"
+                                        onchange="handleSelect(this,'wardField')">
+                                    <option value="">Chọn Phường/Xã</option>
+                                </select>
+                                <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="profile-input-group">
+                                <label for="u_specificAddress" class="profile-input-label">Specific Address</label>
+                                <input type="text" id="u_specificAddress" class="profile-input-control" placeholder="Nhập địa chỉ cụ thể" autocomplete="email" th:field="*{specificAddress}"/>
+                                <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="profile-input-group">
                                 <label for="password" class="profile-input-label">Password</label>
@@ -251,7 +244,7 @@
 
                         <div class="border-top border-white/5 pt-4 mt-4 text-end">
                             <button type="submit" class="btn btn-save-changes cursor-pointer" id="btnSaveChanges">
-                                <i class="fa-solid fa-floppy-disk me-1.5"></i> Lưu các thay đổi
+                                Lưu
                             </button>
                         </div>
                     </div>
@@ -280,5 +273,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/homepage/js/profile.js}"></script>
+<script th:src="@{/homepage/js/header.js}"></script>
+<script th:src="@{/homepage/js/footer.js}"></script>
+
 </body>
 </html>

@@ -26,32 +26,32 @@ public class ModeratorController {
     @Autowired
     private OrganizerProfileRepository organizerProfileRepository;
 
-    @GetMapping("/organizers")
-    public String getOrganizerApprovals(
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            Model model) {
-
-        OrganizerStatus organizerStatus = null;
-        if (status != null && !status.trim().isEmpty()) {
-            try {
-                organizerStatus = OrganizerStatus.valueOf(status.trim().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                // Tránh crash hệ thống nếu người dùng tự ý sửa bậy status trên URL
-            }
-        }
-
-        Pageable pageable = PageRequest.of(page, 10);
-
-        Page<OrganizerProfile> organizers = organizerProfileRepository.searchAndFilterOrganizers(keyword, status, pageable);
-
-        model.addAttribute("organizers", organizers);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("statusFilter", status);
-
-        return "moderator/OrganizerApproval";
-
-    }
+//    @GetMapping("/organizers")
+//    public String getOrganizerApprovals(
+//            @RequestParam(value = "keyword", required = false) String keyword,
+//            @RequestParam(value = "status", required = false) String status,
+//            @RequestParam(value = "page", defaultValue = "0") int page,
+//            Model model) {
+//
+//        OrganizerStatus organizerStatus = null;
+//        if (status != null && !status.trim().isEmpty()) {
+//            try {
+//                organizerStatus = OrganizerStatus.valueOf(status.trim().toUpperCase());
+//            } catch (IllegalArgumentException e) {
+//                // Tránh crash hệ thống nếu người dùng tự ý sửa bậy status trên URL
+//            }
+//        }
+//
+//        Pageable pageable = PageRequest.of(page, 10);
+//
+//        Page<OrganizerProfile> organizers = organizerProfileRepository.searchAndFilterOrganizers(keyword, status, pageable);
+//
+//        model.addAttribute("organizers", organizers);
+//        model.addAttribute("keyword", keyword);
+//        model.addAttribute("statusFilter", status);
+//
+//        return "moderator/OrganizerApproval";
+//
+//    }
 
 }

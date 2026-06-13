@@ -20,22 +20,23 @@ public class TicketType extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_type_id")
     private Long ticketTypeId;
+
     @Column(name = "description", columnDefinition = "NVARCHAR(255)")
     private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_id", nullable = false)
-    private VenueZone zone; // Bridge để query giá khi User chọn ghế theo zone
+    @Column(name = "zone_name", nullable = false, length = 100)
+    private String zoneName; // Organizer tự đặt: VIP, Standard...
 
-    @Column(name = "type_name", nullable = false, columnDefinition = "NVARCHAR(255)")
-    private String typeName; // Auto-fill từ zone_name khi Organizer setup pricing
+    @Column(name = "total_quantity", nullable = false)
+    private Integer totalQuantity;
 
-    @Column(name = "price", nullable = false, precision = 15, scale = 2)
-    private BigDecimal price;
+    @Column(name = "sold_quantity", nullable = false)
+    private Integer soldQuantity; // đếm tự động khi Ticket được tạo
 
-    @Column(name = "stock", nullable = false)
-    private Integer stock; // Auto-fill = rows × seats_per_row
+    @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY)
+    private List<Seat> seats;
 }

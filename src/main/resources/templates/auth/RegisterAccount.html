@@ -31,23 +31,15 @@
         <div class="lp-hero">
             <div class="lp-tag"><span class="dot"></span>Tham gia cộng đồng</div>
             <h2>Bắt đầu <em>sự kiện</em><br/> của bạn hôm nay</h2>
-            <p>Chọn role attendee để tham gia hàng nghìn sự kiện hấp dẫn</p>
+            <p>Khám phá và tham gia hàng nghìn sự kiện hấp dẫn gần bạn</p>
         </div>
 
-        <div class="role-cards" id="leftRoleCards">
-            <div class="role-card selected" data-role="user" onclick="selectLeftRole('user',this)">
+        <div class="role-cards">
+            <div class="role-card selected" data-role="user">
                 <div class="rc-icon user">🎟️</div>
                 <div class="rc-body">
                     <div class="rc-t">Người tham gia</div>
                     <div class="rc-s">Khám phá sự kiện gần bạn</div>
-                </div>
-                <div class="rc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            </div>
-            <div class="role-card" data-role="organizer" onclick="selectLeftRole('organizer',this)">
-                <div class="rc-icon org">🎪</div>
-                <div class="rc-body">
-                    <div class="rc-t">Tổ chức</div>
-                    <div class="rc-s">Tạo và quản lí sự kiện của bạn</div>
                 </div>
                 <div class="rc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
             </div>
@@ -65,18 +57,6 @@
                     <p>Tham gia EventHub để tận hưởng các sự kiện</p>
                 </div>
 
-                <!-- Role toggle -->
-                <div class="role-toggle">
-                    <button type="button" class="role-tab active" id="tabUser" onclick="switchRole('user')">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                        Attendee
-                    </button>
-                    <button type="button" class="role-tab" id="tabOrg" onclick="switchRole('organizer')">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        Organizer
-                    </button>
-                </div>
-
                 <!-- Social sign up -->
                 <div class="social-row">
                     <a href="#" class="btn-social">
@@ -92,7 +72,7 @@
                 <div class="divider"><span>or fill in your details</span></div>
 
                 <!-- ── USER FORM ── -->
-                <form id="formUserRaw" method="post" th:action = "@{/auth/register/user}" th:object="${registerUserDTO}">
+                <form id="formUserRaw" method="post" th:action="@{/auth/register/user}" th:object="${registerUserDTO}">
                     <div id="formUser">
                         <div class="field-grid">
                             <div class="field">
@@ -134,9 +114,7 @@
                                 <label for="u_gender">Gender</label>
                             </div>
                             <div class="field">
-                                <span th:if="${#fields.hasErrors('*{dob}')}"
-                                      th:errors="*{dob}">
-                                </span>
+                                <span th:if="${#fields.hasErrors('*{dob}')}" th:errors="*{dob}"></span>
                                 <input type="date" id="u_dob" placeholder=" " onchange="this.setAttribute('placeholder',' ')" th:field="*{dob}"/>
                                 <label for="u_dob">Date of Birth</label>
                             </div>
@@ -168,184 +146,18 @@
                                 <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
                             </button>
                         </div>
-                        <button class="btn-primary"
-                                type="submit"
-                                style="margin-top:.625rem;">
+
+                        <button class="btn-primary" type="submit" style="margin-top:.625rem;">
                             Tạo tài khoản
-                            <svg width="15" height="15"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2.5"
-                                      d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </button>
                     </div>
                 </form>
 
-                <!-- ── ORGANIZER FORM ── -->
-                <form id="formOrgRaw" method="post" th:action="@{/auth/register/organizer}" th:object="${registerOrgDTO}">
-                    <div id="formOrg">
-                        <div class="org-badge">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#f97316"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Organizer accounts require verification. You'll be able to publish events after approval.</span>
-                        </div>
-
-                        <div class="section-sep"><span>Personal Info</span></div>
-
-                        <div class="field-grid">
-
-                            <div class="field">
-
-                                <input type="text" id="o_firstName" placeholder=" " autocomplete="name" th:field="*{firstName}"/>
-                                <label for="o_firstName">First Name</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
-                            </div>
-
-                            <div class="field">
-                                <input type="text" id="o_middleName" placeholder=" " autocomplete="name" th:field="*{middleName}"/>
-                                <label for="o_middleName">Middle Name</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
-                            </div>
-
-                            <div class="field">
-
-                                <input type="text" id="o_lastName" placeholder=" " autocomplete="name" th:field="*{lastName}"/>
-                                <label for="o_lastName">Last Name</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
-                            </div>
-
-                            <div class="field">
-
-                                <input type="tel" id="o_phone" placeholder=" " autocomplete="tel" th:field="*{phone}"/>
-                                <label for="o_phone">Phone Number</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
-                            </div>
-
-                        </div>
-
-                        <div th:if="${errorMsg}"
-                             style="background:#fff0f0;border:1px solid #fca5a5;border-radius:10px;
-                            padding:.75rem 1rem;margin-bottom:.75rem;font-size:.8rem;
-                            color:#dc2626;font-weight:600;">
-                            <span th:text="${errorMsg}"></span>
-                        </div>
-                        <div class="field">
-
-                            <input type="email" id="o_email" placeholder=" " autocomplete="email" th:field="*{username}"/>
-                            <label for="o_email">Email Address</label>
-                            <span class="error-msg" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-                        </div>
-
-                        <div class="field">
-
-                            <input type="date" id="o_dob" placeholder=" " th:field="*{dob}"/>
-                            <label for="o_dob">Date of Establishment</label>
-                            <span th:if="${#fields.hasErrors('*{dob}')}"
-                                  th:errors="*{dob}">
-                            </span>
-                        </div>
-
-                        <div class="section-sep"><span>Business Info</span></div>
-
-                        <div class="field">
-
-                            <input type="text" id="o_company" placeholder=" " th:field="*{companyName}"/>
-                            <label for="o_company">Company Name</label>
-                            <span class="error-msg" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></span>
-                        </div>
-
-                        <div class="field-grid">
-                            <div class="field">
-
-                                <input type="text" id="o_tax" placeholder=" " th:field="*{taxCode}"/>
-                                <label for="o_tax">Tax Code</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('taxCode')}" th:errors="*{taxCode}"></span>
-                            </div>
-                            <div class="field">
-
-                                <input type="text" id="o_bank" placeholder=" " th:field="*{bankAccount}"/>
-                                <label for="o_bank">Bank Account</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('bankAccount')}" th:errors="*{bankAccount}"></span>
-                            </div>
-                        </div>
-
-                        <div class="field-grid">
-                            <div class="field field-select" id="cityField">
-                                <select id="u_city"  th:field="*{city}" onchange="handleSelect(this,'cityField')">
-                                    <option value=""></option>
-                                    <option th:each="city : ${cities}"
-                                            th:value="${city.id}"
-                                            th:text="${city.name}">
-                                    </option>
-                                </select>
-                                <label for="u_city">City</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
-                            </div>
-                            <div class="field field-select" id="wardField">
-                                <select id="u_ward"
-                                        th:field="*{ward}" onchange="handleSelect(this,'wardField')">
-                                    <option value=""></option>
-                                </select>
-                                <label for="u_ward">Ward</label>
-                                <span class="error-msg" th:if="${#fields.hasErrors('ward')}" th:errors="*{ward}"></span>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
-                            <input type="text" id="u_specificAddress" placeholder="" autocomplete="email" th:field="*{specificAddress}"/>
-                            <label for="u_specificAddress">Specific Address</label>
-                        </div>
-
-                        <div class="section-sep"><span>Set Password</span></div>
-
-                        <div class="field field-pw">
-                            <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-                            <input type="password" id="o_pw" placeholder=" " autocomplete="new-password" oninput="checkStrength(this.value,'pwStrengthOrg','strengthLabelOrg')" th:field="*{password}"/>
-                            <label for="o_pw">Password</label>
-                            <button class="eye-btn" type="button" onclick="toggleEye('o_pw',this)">
-                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                            </button>
-                        </div>
-                        <div class="pw-strength strength-0" id="pwStrengthOrg">
-                            <div class="strength-bars">
-                                <div class="strength-bar"></div><div class="strength-bar"></div>
-                                <div class="strength-bar"></div><div class="strength-bar"></div>
-                            </div>
-                            <div class="strength-label" id="strengthLabelOrg">Enter a password</div>
-                        </div>
-
-                        <div class="field field-pw">
-                            <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
-                            <input type="password" id="o_cpw" placeholder=" " autocomplete="new-password" th:field="*{confirmPassword}"/>
-                            <label for="o_cpw">Confirm Password</label>
-                            <button class="eye-btn" type="button" onclick="toggleEye('o_cpw',this)">
-                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                            </button>
-                        </div>
-                        <button class="btn-primary"
-                                type="submit"
-                                style="margin-top:.625rem;">
-                            Tao tài khoản tổ chức
-                            <svg width="15"
-                                 height="15"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2.5"
-                                      d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
                 <p class="reg-link">Bạn đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></p>
-                <p class="terms">Để tạo tài khoản bạn cần tuân thủ các  <a href="#">Terms</a> and <a href="#">chính sách</a></p>
+                <p class="terms">Để tạo tài khoản bạn cần tuân thủ các <a href="#">Terms</a> and <a href="#">chính sách</a></p>
             </div>
 
             <!-- ════ FORGOT — STEP 1: EMAIL ════ -->
@@ -478,9 +290,9 @@
             </div>
 
         </div><!-- /form-inner -->
-        <input type="hidden" id="activeRoleVal" th:value="${activeRole} ?: 'user'"/>
     </div><!-- /lp-right -->
 </div><!-- /lp-root -->
+
 <script th:src="@{/auth/js/RegisterAccount.js}"></script>
 </body>
 </html>
