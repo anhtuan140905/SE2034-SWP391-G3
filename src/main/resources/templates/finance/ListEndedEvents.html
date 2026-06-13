@@ -559,7 +559,7 @@
                     </div>
 
                     <div class="stat-mini-value"
-                         th:text="${'$' + #numbers.formatDecimal(totalRevenue,1,2)}">
+                         th:text="${#numbers.formatDecimal(totalRevenue,1,'COMMA',0,'POINT') + 'đ'}">
                     </div>
                 </div>
 

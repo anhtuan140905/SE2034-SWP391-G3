@@ -573,7 +573,7 @@
 
                         <span class="val"
                               id="c-revenue">
-                            $0
+                            0đ
                         </span>
                     </div>
 
@@ -584,7 +584,7 @@
 
                         <span class="val neg"
                               id="c-fee">
-                            -$0
+                            -0đ
                         </span>
                     </div>
 
@@ -595,7 +595,7 @@
 
                         <span class="val neg"
                               id="c-refund">
-                            -$0
+                            -0đ
                         </span>
                     </div>
 
@@ -609,7 +609,7 @@
 
                         <div class="net-value"
                              id="c-net">
-                            $0
+                            0đ
                         </div>
 
                     </div>
@@ -633,6 +633,11 @@
 </div>
 
 <script>
+    const formatVND = value =>
+        value.toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
 
     function updateCalc() {
 
@@ -644,10 +649,10 @@
             document.getElementById("organizerField").value = "";
             document.getElementById("revenueField").value = "";
             document.getElementById("feeField").value = "";
-            document.getElementById("c-revenue").textContent = "$0";
-            document.getElementById("c-fee").textContent = "-$0";
-            document.getElementById("c-refund").textContent = "-$0";
-            document.getElementById("c-net").textContent = "$0";
+            document.getElementById("c-revenue").textContent = formatVND(0);
+            document.getElementById("c-fee").textContent = "-" + formatVND(0);
+            document.getElementById("c-refund").textContent = "-" + formatVND(0);
+            document.getElementById("c-net").textContent = formatVND(0);
             btn.disabled = true;
             return;
         }
@@ -658,14 +663,13 @@
         const net = Math.max(0, revenue - fee - refund);
 
         document.getElementById("organizerField").value = opt.dataset.organizer;
-        document.getElementById("revenueField").value = revenue.toLocaleString();
-        document.getElementById("feeField").value = fee.toLocaleString();
+        document.getElementById("revenueField").value = formatVND(revenue);
+        document.getElementById("feeField").value = formatVND(fee);
 
-        document.getElementById("c-revenue").textContent = "$" + revenue.toLocaleString();
-        document.getElementById("c-fee").textContent = "-$" + fee.toLocaleString();
-        document.getElementById("c-refund").textContent = "-$" + refund.toLocaleString();
-        document.getElementById("c-net").textContent = "$" + net.toLocaleString();
-
+        document.getElementById("c-revenue").textContent = formatVND(revenue);
+        document.getElementById("c-fee").textContent = "-" + formatVND(fee);
+        document.getElementById("c-refund").textContent = "-" + formatVND(refund);
+        document.getElementById("c-net").textContent = formatVND(net);
         btn.disabled = false;
     }
 

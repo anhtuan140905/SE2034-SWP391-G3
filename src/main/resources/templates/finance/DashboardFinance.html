@@ -575,8 +575,8 @@
                 </div>
 
                 <div class="stat-value"
-                     th:text="${stats != null ? '$' + #numbers.formatDecimal(stats.totalRevenue,1,'COMMA',2,'POINT') : '$0.00'}">
-                    $0.00
+                     th:text="${stats != null ? #numbers.formatDecimal(stats.totalRevenue,1,'COMMA',0,'POINT') + 'đ' : '0 đ'}">
+                    0đ
                 </div>
 
                 <div class="stat-note note-green">
@@ -617,8 +617,8 @@
                 </div>
 
                 <div class="stat-value"
-                     th:text="${stats != null ? '$' + #numbers.formatDecimal(stats.paidAmount,1,'COMMA',2,'POINT') : '$0.00'}">
-                    $0.00
+                     th:text="${stats != null ? #numbers.formatDecimal(stats.paidAmount,1,'COMMA',0,'POINT') + 'đ' : '0 đ'}">
+                    0đ
                 </div>
 
                 <div class="stat-note note-green">
@@ -698,8 +698,8 @@
                         </td>
 
                         <td class="amt"
-                            th:text="${'$' + #numbers.formatDecimal(s.payoutAmount,1,'COMMA',2,'POINT')}">
-                            $0.00
+                            th:text="${#numbers.formatDecimal(s.payoutAmount,1,'COMMA',0,'POINT') + 'đ'}">
+                            0đ
                         </td>
 
                         <td>

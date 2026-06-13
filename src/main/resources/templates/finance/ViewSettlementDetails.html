@@ -361,8 +361,8 @@
             <div>
                 <div style="color:var(--muted);font-size:.9rem">Số Tiền Ròng</div>
                 <div class="ph-amount"
-                     th:text="${'$' + settlement.payoutAmount}">
-                    $0
+                     th:text="${#numbers.formatDecimal(settlement.payoutAmount,1,'COMMA',0,'POINT') + 'đ'}">
+                    0đ
                 </div>
             </div>
 
@@ -436,7 +436,7 @@
 
                 <div class="detail-row">
                     <span class="dr-label">Số tiền thực nhận</span>
-                    <span class="dr-value" th:text="${settlement.payoutAmount}"></span>
+                    <span class="dr-value" th:text="${#numbers.formatDecimal(settlement.payoutAmount,1,'COMMA',0,'POINT') + 'đ'}">></span>
                 </div>
             </div>
 
