@@ -16,8 +16,8 @@
 
     <div class="em-topbar">
         <div class="em-heading">
-            <h1 class="page-title">SỰ KIỆN CHỜ DUYỆT</h1>
-            <p class="page-subtitle">Xem xét và xác nhận các đơn đăng ký tham gia sự kiện đến.</p>
+            <h1 class="page-title">QUẢN LÝ SỰ KIỆN</h1>
+            <p class="page-subtitle">Theo dõi và quản lý toàn bộ sự kiện trong hệ thống.</p>
         </div>
         <div class="em-filters">
             <div class="filter-group">
@@ -37,9 +37,9 @@
                     <select id="statusSelect">
                         <option value="" th:selected="${statusFilter == null or statusFilter == ''}">Tất cả
                         </option>
-                        <option value="PENDING" th:selected="${statusFilter == 'PENDING'}">Đang chờ</option>
-                        <option value="APPROVED" th:selected="${statusFilter == 'APPROVED'}">Đã duyệt</option>
-                        <option value="REJECTED" th:selected="${statusFilter == 'REJECTED'}">Đã từ chối</option>
+                        <option value="ACTIVE" th:selected="${statusFilter == 'ACTIVE'}">Đang hoạt động</option>
+                        <option value="INACTIVE" th:selected="${statusFilter == 'INACTIVE'}"> Đã đóng</option>
+                        <option value="ENDED" th:selected="${statusFilter == 'ENDED'}">Đã kết thúc</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-arrow"></i>
                 </div>
@@ -69,8 +69,8 @@
                 <i class="fa-regular fa-calendar-check"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Đang chờ duyệt</span>
-                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.awaitingReview : 0}">0</span>
+                <span class="em-stat-label">Tổng sự kiện</span>
+                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.totalEvents : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
@@ -78,8 +78,8 @@
                 <i class="fa-regular fa-circle-check"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Phê duyệt hôm nay</span>
-                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.approvedToday : 0}">0</span>
+                <span class="em-stat-label">Diễn ra hôm nay</span>
+                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.eventsToday : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
@@ -87,8 +87,8 @@
                 <i class="fa-regular fa-circle-xmark"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Từ chối hôm nay</span>
-                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.rejectedToday : 0}">0</span>
+                <span class="em-stat-label">Sự kiện bị tắt</span>
+                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.inactiveEvents : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
@@ -96,8 +96,8 @@
                 <i class="fa-solid fa-arrow-trend-up"></i>
             </div>
             <div class="em-stat-info">
-                <span class="em-stat-label">Sự kiện hoạt động</span>
-                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.activeEvents : 0}">0</span>
+                <span class="em-stat-label">Kết thúc tháng này</span>
+                <span class="em-stat-value" th:text="${eventStats != null ? eventStats.endedThisMonth : 0}">0</span>
             </div>
         </div>
     </div>
@@ -137,8 +137,12 @@
                     </td>
                     <td>
                         <span class="event-badge"
-                              th:classappend="${event?.status?.name() == 'APPROVED' ? 'badge-approved' : (event?.status?.name() == 'PENDING' ? 'badge-pending' : 'badge-rejected')}"
-                              th:text="${event?.status ?: 'PENDING'}">STATUS</span>
+                              th:classappend="${event?.status?.name() == 'ACTIVE' ? 'badge-active'
+                                    : (event?.status?.name() == 'INACTIVE' ? 'badge-inactive' : 'badge-ended')}"
+                              th:text="${event?.status?.name() == 'ACTIVE' ? 'Hoạt động'
+                                    : (event?.status?.name() == 'INACTIVE' ? 'Đã đóng' : 'Kết thúc')}">
+                            STATUS
+                        </span>
                     </td>
                     <td>
                         <a th:href="@{/moderator/event/detail/{id}(id=${event?.eventId ?: 0})}" class="btn-view">

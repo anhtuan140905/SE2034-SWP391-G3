@@ -31,6 +31,9 @@ public class TicketType extends BaseAuditEntity {
     @Column(name = "zone_name", nullable = false, length = 100)
     private String zoneName; // Organizer tự đặt: VIP, Standard...
 
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
+
     @Column(name = "total_quantity", nullable = false)
     private Integer totalQuantity;
 

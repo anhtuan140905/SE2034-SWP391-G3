@@ -38,4 +38,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "ORDER BY COUNT(e.event_id) DESC", nativeQuery = true)
     List<FeaturedOrganizerDto> getTopFeaturedOrganizer(Pageable pageable);
 
+    // Dem so account Organizer con hoat dong tren nen tang
+    @Query(value = "SELECT COUNT(u.id) FROM users u " +
+            "JOIN user_roles ur ON u.id = ur.user_id " +
+            "JOIN roles r ON ur.role_id = r.id " +
+            "WHERE r.role_name = 'ROLE_ORGANIZER' AND u.is_active = 1", nativeQuery = true)
+    Long countActiveOrganizers();
 }
