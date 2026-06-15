@@ -1,39 +1,14 @@
 package vn.edu.fpt.service.impl;
 
-import jakarta.persistence.criteria.*;
-import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
-import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
-import vn.edu.fpt.model.constant.TicketStatus;
-import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
-import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
-import vn.edu.fpt.repository.EventSummaryProjection;
-import vn.edu.fpt.repository.FeaturedEventDTO;
+import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 
-import org.springframework.web.multipart.MultipartFile;
-import vn.edu.fpt.model.*;
-import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
-import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service("EventService")
 @AllArgsConstructor
@@ -122,39 +97,6 @@ public class EventServiceImpl implements EventService {
 //    @Override
 //    public List<Event> findEventbyVenueID(Long id) {
 //        return eventRepository.findByVenue_VenueId(id);
-//    }
-
-//    @Override
-//    public DashboardStatsDTO getDashboardStats() {
-//
-//        DashboardStatsDTO stats = new DashboardStatsDTO();
-//        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.ACTIVE));
-//        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.ENDED));
-//        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.INACTIVE));
-//
-//        return stats;
-//    }
-
-//    @Override
-//    public List<Event> getTopThreePendingEvents() {
-//        return eventRepository.findByStatusOrderByCreatedAtDesc(
-//                EventStatus.PENDING,
-//                org.springframework.data.domain.PageRequest.of(0, 3)
-//        );
-//    }
-
-//    @Override
-//    public List<Event> getTodayActiveEvents() {
-//
-//        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-//
-//        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-//
-//        return eventRepository.findByStatusAndStartTimeBetween(
-//                EventStatus.APPROVED,
-//                startOfDay,
-//                endOfDay
-//        );
 //    }
 
 //    @Override

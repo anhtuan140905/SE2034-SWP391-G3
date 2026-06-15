@@ -14,43 +14,40 @@
 
 <section id="dashboard-content" th:fragment="content">
 
-    <!-- Page Heading -->
     <div class="page-heading">
         <h1 class="page-title">TỔNG QUAN SỐ LIỆU</h1>
-        <p class="page-subtitle">Theo dõi hiệu suất kiểm duyệt và các yêu cầu phê duyệt mới nhất.</p>
+        <p class="page-subtitle">Theo dõi hoạt động của các Đối tác và Sự kiện trên hệ thống.</p>
     </div>
 
-    <!-- Stats Grid -->
     <div class="stats-grid">
 
         <div class="stat-card">
-            <p class="stat-label">Sự kiện chờ duyệt</p>
-            <p class="stat-value" th:text="${stats != null ? stats.pendingEvents : 142}">142</p>
+            <p class="stat-label">Đối tác đang hoạt động</p>
+            <p class="stat-value" th:text="${stats != null ? stats.activeOrganizers : 0}">142</p>
         </div>
 
         <div class="stat-card">
             <p class="stat-label">Sự kiện đang hoạt động</p>
-            <p class="stat-value" th:text="${stats != null ? stats.activeEvents : 2840}">2840</p>
+            <p class="stat-value" th:text="${stats != null ? stats.activeEvents : 0}">2840</p>
         </div>
 
         <div class="stat-card">
-            <p class="stat-label">Duyệt trong ngày</p>
-            <p class="stat-value" th:text="${stats != null ? stats.approvedToday : 864}">864</p>
+            <p class="stat-label">Sự kiện mới trong ngày</p>
+            <p class="stat-value" th:text="${stats != null ? stats.newEventsToday : 0}">864</p>
         </div>
 
         <div class="stat-card">
-            <p class="stat-label">Sự kiện bị từ chối</p>
-            <p class="stat-value" th:text="${stats != null ? stats.rejectedEvents : 512}">512</p>
+            <p class="stat-label">Sự kiện bị tắt (vi phạm)</p>
+            <p class="stat-value" th:text="${stats != null ? stats.inactiveEvents : 0}">512</p>
         </div>
     </div>
 
-    <!-- Activity Stream -->
     <div class="dashboard-panels">
 
         <div class="panel-section">
             <div class="panel-header">
-                <span class="panel-title">SỰ KIỆN CHỜ DUYỆT MỚI NHẤT</span>
-                <a th:href="@{/moderator/events?status=PENDING}" class="view-all-link">Xem tất cả</a>
+                <span class="panel-title">SỰ KIỆN MỚI ĐĂNG GẦN ĐÂY</span>
+                <a th:href="@{/moderator/events?status=ACTIVE}" class="view-all-link">Xem tất cả</a>
             </div>
 
             <table class="minimal-table">
@@ -61,16 +58,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="event : ${pendingEvents}" th:if="${pendingEvents != null and !pendingEvents.isEmpty()}">
-                    <td th:text="${event.title}">Tên sự kiện chờ duyệt</td>
+                <tr th:each="event : ${recentEvents}" th:if="${recentEvents != null and !recentEvents.isEmpty()}">
+                    <td th:text="${event.title}">Tên sự kiện mới đăng</td>
                     <td style="text-align: right;">
-                        <a th:href="@{/moderator/event/detail/{id}(id=${event.eventId})}" class="link-action">Chi Tiết</a>
+                        <a th:href="@{/moderator/event/detail/{id}(id=${event.eventId})}" class="link-action">Kiểm
+                            tra</a>
                     </td>
                 </tr>
 
-                <tr th:if="${pendingEvents == null or pendingEvents.isEmpty()}">
-                    <td colspan="3" style="text-align: center;">
-                        Không có sự kiện nào diễn ra hôm nay
+                <tr th:if="${recentEvents == null or recentEvents.isEmpty()}">
+                    <td colspan="2" style="text-align: center;">
+                        Chưa có sự kiện nào mới đăng gần đây
                     </td>
                 </tr>
 
@@ -81,7 +79,7 @@
         <div class="panel-section">
             <div class="panel-header">
                 <span class="panel-title">SỰ KIỆN DIỄN RA HÔM NAY</span>
-                <a th:href="@{/moderator/events?status=APPROVED}" class="view-all-link">Xem tất cả</a>
+                <a th:href="@{/moderator/events?status=ACTIVE}" class="view-all-link">Xem tất cả</a>
             </div>
 
             <table class="minimal-table">
@@ -96,10 +94,10 @@
                 <tbody>
                 <tr th:each="upEvent : ${todayEvents}" th:if="${todayEvents != null and !todayEvents.isEmpty()}">
                     <td th:text="${upEvent.title}">Tên sự kiện trong ngày</td>
-                    <td th:text="${#temporals.format(upEvent.startTime, 'HH:mm') + ' PM'}">19:00 PM</td>
+                    <td th:text="${#temporals.format(upEvent.startTime, 'HH:mm')}">19:00</td>
                     <td style="text-align: right;">
-                        <a th:href="@{/moderator/event/detail/{id}(id=${upEvent.eventId})}" class="link-action">Chi
-                            Tiết</a>
+                        <a th:href="@{/moderator/event/detail/{id}(id=${upEvent.eventId})}" class="link-action">Theo
+                            dõi</a>
                     </td>
                 </tr>
 
