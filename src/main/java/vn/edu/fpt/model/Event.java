@@ -45,6 +45,7 @@ public class Event extends BaseAuditEntity {
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
 
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;

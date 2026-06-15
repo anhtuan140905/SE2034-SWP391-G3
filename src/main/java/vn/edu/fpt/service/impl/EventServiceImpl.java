@@ -2,6 +2,8 @@ package vn.edu.fpt.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.model.constant.EventStatus;
 
 import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
@@ -9,6 +11,8 @@ import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
+
+import java.util.List;
 
 @Service("EventService")
 @AllArgsConstructor
@@ -235,7 +239,12 @@ public class EventServiceImpl implements EventService {
 //        return dto;
 //    }
 
-
+    public List<EventSummaryDto> findTop10Events() {
+        return eventRepository.findTop10Events()
+                .stream()
+                .map(EventSummaryDto::new)
+                .toList();
+    }
 }
 
 
