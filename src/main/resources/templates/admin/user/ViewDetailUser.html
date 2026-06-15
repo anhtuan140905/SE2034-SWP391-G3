@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -52,6 +52,7 @@
             font-size: 13px;
             color: #84759b;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .menu a {
@@ -368,6 +369,7 @@
         .activity {
             display: flex;
             align-items: flex-start;
+            flex-wrap: wrap;
             gap: 18px;
             padding: 18px 0;
             border-bottom: 1px solid rgba(236, 72, 153, 0.1);
@@ -388,16 +390,29 @@
             color: #ff1b8d;
             font-size: 18px;
             flex-shrink: 0;
+            flex-basis: 50px;
         }
 
         .activity-content h4 {
             color: #1e0e34;
         }
 
+        .activity-content {
+            flex: 1 1 calc(100% - 68px);
+            min-width: 0;
+        }
+
         .activity-content p {
             color: #9ca3af;
             font-size: 13px;
         }
+
+        .activity-content + .activity-content {
+            margin-top: 14px;
+            margin-left: 68px;
+            flex-basis: 100%;
+        }
+
         .email {
             display: flex;
             align-items: center;
@@ -409,6 +424,68 @@
         .email i {
             color: #ff2a85 ;
             font-size: 16px;
+        }
+
+
+        .profile-dropdown { position: relative; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover,
+        .dropdown-logout:hover {
+            background: rgba(255, 27, 141, 0.07);
+            color: #ff1b8d;
+        }
+
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+
+        .divider {
+            border-top: 1px solid rgba(255, 42, 122, 0.1);
+            margin: 6px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
         /* ================= RESPONSIVE ================= */
         @media (max-width: 1100px) {
@@ -451,10 +528,8 @@
 
     <div class="menu">
         <a th:href="@{/admin/dashboard}" ><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
-        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
-        <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
+        <a th:href="@{/admin/listuser}" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
+
     </div>
 
 </div>
@@ -469,17 +544,51 @@
 
         <div class="topbar-right">
 
-            <button class="notif-btn" aria-label="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span class="dot"></span>
-            </button>
+            <!-- Thay thế phần .profile trong topbar -->
+            <div class="profile-dropdown" style="position: relative;">
+                <div class="profile" onclick="toggleDropdown()" style="cursor:pointer;">
+                    <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         th:src="${currentUser.avatar}" alt="avatar"/>
+                    <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
+                    <div class="profile-info">
+                        <div class="name" th:text="${currentUser != null ? currentUser.email : 'Quản Trị Viên'}">
+                            Quản Trị Viên
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
+                </div>
 
-            <div class="profile">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
-                <div class="profile-info">
-                    <div class="name">Quản Trị Viên </div>
+                <!-- Dropdown menu -->
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li>
+                            <a th:href="@{/admin/profile}">
+                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-shield"></i> Kênh Quản Trị
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/settings}">
+                                <i class="fa-solid fa-sliders"></i> Cài Đặt
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" th:action="@{/auth/logout}">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
 
         </div>
 
@@ -501,7 +610,7 @@
                     <p>Thông tin chi tiết và lịch sử hoạt động</p>
                 </div>
             </div>
-            <a th:href="@{/admin/edituser}">
+            <a th:href="@{/admin/edituser(id=${users.id})}">
                 <button class="edit-btn">
                     <i class="fa-solid fa-pen"></i> Cập nhật người dùng
                 </button>
@@ -554,14 +663,17 @@
                         <div class="info-item"><span>Vai Trò</span>
                             <p >
                                 <strong th:each="role, stat : ${users.roles}">
-                                    <span style="color:#1e0e34;" th:text="${role.roleName}"></span>
+
+                                    <span style="color:#1e0e34;"  th:text="${#strings.replace(role.roleName, 'ROLE_', '')}"></span>
                                     <span style="color:#1e0e34;" th:if="${!stat.last}">, </span>
 
                                 </strong>
                             </p>
                         </div>
                         <div class="info-item"><span>Ngày Đăng Kí</span>
-                            <p th:text="${users.createdAt}"></p>
+
+                            <p th:text="${#temporals.format(users.createdAt, 'dd/MM/yyyy')}"></p>
+
                         </div>
 
                     </div>
@@ -587,37 +699,71 @@
 
             <!-- ACTIVITY -->
             <div class="activity-card">
-                <h2>Hoạt Động Gần Đây</h2>
 
-                <div class="activity">
-                    <div class="activity-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                    <div class="activity-content">
-                        <h4>Created New Event</h4>
-                        <p>Summer Music Festival 2026 • 2 hours ago</p>
+                <h2 th:switch="${role}">
+                    <span th:case="'ROLE_ATTENDEE'">Hoạt động gần đây</span>
+                    <span th:case="'ROLE_ORGANIZER'">Hoạt động gần đây</span>
+                    <span th:case="'ROLE_ADMIN'">Hoạt động gần đây</span>
+                    <span th:case="'ROLE_MODERATOR'">Hoạt động gần đây</span>
+                    <span th:case="'ROLE_FINANCE'">Hoạt động gần đây</span>
+                    <span th:case="*">Hoạt động gần đây</span>
+                </h2>
+
+                <div class="activity" th:each="act : ${activities}">
+
+                    <div class="activity-icon">
+                        <i class="fa-solid fa-bell"></i>
                     </div>
+
+                    <div class="activity-content">
+
+                        <!-- LABEL theo action -->
+                        <h4 th:switch="${act.action}">
+                            <span th:case="'TICKET_PURCHASED'">Mua vé sự kiện</span>
+                            <span th:case="'TICKET_CANCELLED'">Hủy vé</span>
+                            <span th:case="'EVENT_CREATED'">Tạo sự kiện</span>
+                            <span th:case="'EVENT_UPDATED'">Chỉnh sửa sự kiện</span>
+                            <span th:case="'USER_LOCKED'">Khóa tài khoản</span>
+                            <span th:case="'USER_UPDATED'">Cập nhật người dùng</span>
+                            <span th:case="'VIEW_REVENUE_REPORT'">Xem báo cáo doanh thu</span>
+                            <span th:case="'LOGIN'">Đăng nhập hệ thống</span>
+                            <span th:case="'LOGOUT'">Đăng xuất hệ thống</span>
+                            <span th:case="'VIEW_PROFILE'">Xem thông tin cá nhân</span>
+                            <span th:case="'SEARCH'">Tìm kiếm dữ liệu</span>
+                            <span th:case="'SYSTEM'">Hoạt động hệ thống</span>
+                            <span th:case="*">Hoạt động</span>
+                        </h4>
+
+                        <p>
+                            <span th:text="${act.description}"></span>
+                            •
+                            <span th:text="${#temporals.format(act.time, 'dd/MM/yyyy HH:mm')}"></span>
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div class="activity">
-                    <div class="activity-icon"><i class="fa-solid fa-ticket"></i></div>
-                    <div class="activity-content">
-                        <h4>Updated Ticket Pricing</h4>
-                        <p>Food &amp; Wine Fair • Yesterday</p>
-                    </div>
-                </div>
-
-                <div class="activity">
-                    <div class="activity-icon"><i class="fa-solid fa-user-check"></i></div>
-                    <div class="activity-content">
-                        <h4>Logged Into System</h4>
-                        <p>Successfully signed in from Chrome Browser • Today</p>
-                    </div>
-                </div>
 
             </div>
+        </div>
 
-        </div><!-- /main -->
+    </div>
 
-    </div><!-- /wrapper -->
 
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        }
+
+
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.profile-dropdown');
+            if (!dropdown.contains(e.target)) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

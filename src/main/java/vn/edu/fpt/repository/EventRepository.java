@@ -1,18 +1,13 @@
 package vn.edu.fpt.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
-import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event>{
@@ -186,4 +181,29 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 //            @Param("keyword")      String keyword,
 //            Pageable pageable
 //    );
+List<Event> findTop10ByOrganizerIdOrderByCreatedAtDesc(Long userId);
+
+    @Query(value = """
+    SELECT TOP 10
+        e.event_id        AS id,
+        e.title           AS title,
+        e.thumbnail_url   AS thumbnailUrl,
+        e.start_time      AS startTime,
+        e.end_time        AS endTime,
+        e.venue_name      AS venueName,
+        NULL              AS cityName,
+        NULL              AS categoryName,
+        NULL              AS minPrice,
+        COUNT(ord.order_detail_id) AS soldCount,
+        COUNT(ord.order_detail_id) AS participantCount,
+        NULL              AS revenue
+    FROM events e
+    LEFT JOIN orders o ON e.event_id = o.event_id
+    LEFT JOIN order_details ord ON o.order_id = ord.order_id
+    GROUP BY
+        e.event_id, e.title, e.thumbnail_url,
+        e.start_time, e.end_time, e.venue_name
+    ORDER BY e.end_time DESC
+    """, nativeQuery = true)
+    List<EventSummaryProjection> findTop10Events();
 }

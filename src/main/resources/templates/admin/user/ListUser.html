@@ -53,6 +53,7 @@
             font-size: 13px;
             color: #84759b;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
         .menu a {
@@ -120,25 +121,6 @@
             gap: 18px;
         }
 
-        .notif-btn {
-            position: relative;
-            background: none;
-            border: none;
-            color: #ff1b8d;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .notif-btn .dot {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 9px;
-            height: 9px;
-            background: #ff1b8d;
-            border-radius: 50%;
-            border: 2px solid #ffffff;
-        }
 
         .profile {
             display: flex;
@@ -299,20 +281,18 @@
 
         .status {
             padding: 6px 14px;
-            border-radius: 20px;
             font-size: 13px;
             font-weight: bold;
             display: inline-block;
         }
 
         .status.active {
-            background: rgba(34, 197, 94, 0.2);
+
             color: #4ade80;
         }
 
         .status.inactive {
             color: #ff4d4d;
-            background: rgba(34, 197, 94, 0.2);
         }
 
         .actions {
@@ -357,6 +337,67 @@
             flex-shrink: 0;
         }
 
+        .profile-dropdown { position: relative; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover,
+        .dropdown-logout:hover {
+            background: rgba(255, 27, 141, 0.07);
+            color: #ff1b8d;
+        }
+
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+
+        .divider {
+            border-top: 1px solid rgba(255, 42, 122, 0.1);
+            margin: 6px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         /* ================= RESPONSIVE ================= */
 
         @media (max-width: 900px) {
@@ -388,40 +429,70 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text">Admin Portal</div>
+        <div class="portal-text">Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
         <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển</a>
-        <a th:href="@{/admin/listvenue}"><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm</a>
         <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng</a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
     </div>
 
 </div>
 
 <!-- ================= WRAPPER ================= -->
-<div class="wrapper">
+<div class="wrapper" >
 
     <!-- TOPBAR -->
-    <div class="topbar">
+    <div class="topbar" >
 
         <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức sự kiện, người dùng..."/>
 
         <div class="topbar-right">
 
-            <button class="notif-btn" aria-label="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span class="dot"></span>
-            </button>
+            <div class="profile-dropdown" style="position: relative;">
+                <div class="profile" onclick="toggleDropdown()" style="cursor:pointer;">
+                    <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         th:src="${currentUser.avatar}" alt="avatar"/>
+                    <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
+                    <div class="profile-info">
+                        <div class="name" th:text="${currentUser != null ? currentUser.email : 'Quản Trị Viên'}">
+                            Quản Trị Viên
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
+                </div>
 
-            <div class="profile">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
-                <div class="profile-info">
-                    <div class="name">Quản Trị Viên </div>
+                <!-- Dropdown menu -->
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li>
+                            <a th:href="@{/admin/profile}">
+                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-shield"></i> Kênh Quản Trị
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/settings}">
+                                <i class="fa-solid fa-sliders"></i> Cài Đặt
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" th:action="@{/auth/logout}">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
 
         </div>
 
@@ -466,6 +537,7 @@
 
                 <thead>
                 <tr>
+                    <th>STT</th>
                     <th>Họ Tên</th>
                     <th>Email</th>
                     <th>Vai Trò</th>
@@ -477,15 +549,21 @@
 
                 <tbody>
 
-                <tr th:each="user : ${users}">
+                <tr th:each="user, userStat : ${users}">
+                    <td>
+                        <div>
+                            <SPAN th:text="${userStat.count}"></SPAN>
+
+                        </div>
+                    </td>
                     <td>
                         <div class="user">
                             <img th:if="${user.avatar != null and !user.avatar.isEmpty()}"
                                  th:src="${user.avatar}"
-                                 th:alt="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}">
-                        </div>
-
-                        <div>
+                                 th:alt="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"/>
+                            <img th:unless="${user.avatar != null and !user.avatar.isEmpty()}"
+                                 src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                                 alt="Default Avatar"/>
                             <strong th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></strong>
                         </div>
                     </td>
@@ -499,17 +577,17 @@
 
                     <td>
                      <span th:each="role, stat : ${user.roles}">
-                        <span th:text="${role.roleName}"></span>
+                        <span th:text="${#strings.replace(role.roleName, 'ROLE_', '')}"></span>
                         <span th:if="${!stat.last}">, </span>
                      </span>
                     </td>
-
                     <td>
-                        <span th:text="${user.createdAt}"></span>
+                        <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></span>
                     </td>
 
                     <td>
-                        <span class="status active">Đang Hoạt Động</span>
+                        <span th:if="${user.isActive == true }" class="status active">Đang Hoạt Động</span>
+                        <span th:if="${user.isActive == false }" class="status inactive">Ngừng Hoạt Động</span>
                     </td>
 
 
@@ -547,6 +625,18 @@
             "/admin/listuser?keyword=" + encodeURIComponent(keyword)
         );
 
+    });
+
+    function toggleDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('show');
+    }
+
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.profile-dropdown');
+        if (!dropdown.contains(e.target)) {
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
     });
 </script>
 </body>

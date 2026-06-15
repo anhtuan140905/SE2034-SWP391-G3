@@ -8,4 +8,5 @@ import vn.edu.fpt.repository.RoleRepository;
 @Service
 public interface RoleService {
     public Role getRoleByName(RoleName name);
+
 }
