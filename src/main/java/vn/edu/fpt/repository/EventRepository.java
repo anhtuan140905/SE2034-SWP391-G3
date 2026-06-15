@@ -7,10 +7,12 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event>{
+public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 
 //    @Query("SELECT COUNT(e) FROM Event e WHERE e.status IN :statuses")
 //    long countHostedEvents(@Param("statuses") List<EventStatus> statuses);
@@ -56,33 +58,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 //            "\t\t\ta.specific_address, c.name, ec.category_name\n" +
 //            "            ORDER BY soldCount DESC", nativeQuery = true)
 //    FeaturedEventDTO findFeaturedEvent();
-//
-//
-//    //---------------------------------------------------------------------------------------
-//    @Query("SELECT e FROM Event e WHERE " +
-//            "(:status IS NULL OR e.status = :status) " +
-//            "AND " +
-//            "(:categoryId IS NULL OR e.category.categoryId = :categoryId) " +
-//            "AND " +
-//            "(:keyword IS NULL OR :keyword = '' OR e.title LIKE CONCAT('%', :keyword, '%'))")
-//    Page<Event> searchAndFilterEvents(
-//            @Param("keyword") String keyword,
-//            @Param("status") EventStatus status,
-//            @Param("categoryId") Long categoryId,
-//            Pageable pageable);
-//
-//    // Đếm số lượng sự kiện theo trạng thái
-//    long countByStatus(EventStatus status);
-//
-//    // Lấy 3 sự kiện Pending mới nhất
-//    List<Event> findByStatusOrderByCreatedAtDesc(EventStatus status, Pageable pageable);
-//
-//    // Lấy sự kiện diễn ra trong ngày (status = APPROVED)
-//    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
-//
-//    long countByOrganizerId(Long organizerId);
-//
-////    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 //
 //    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
 //            "           MIN(tt.price) as min_price,\n" +
@@ -206,4 +181,54 @@ List<Event> findTop10ByOrganizerIdOrderByCreatedAtDesc(Long userId);
     ORDER BY e.end_time DESC
     """, nativeQuery = true)
     List<EventSummaryProjection> findTop10Events();
+
+
+    //----------------------------------------------------------------------------------------------------
+    // MODERATOR
+    //----------------------------------------------------------------------------------------------------
+
+    // 1. Dem so su kien theo trang thai
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.status = :status")
+    long countEventsByStatus(@Param("status") EventStatus status);
+
+    // 2. Dem so su kien moi dang trong ngay
+    @Query(value = "SELECT COUNT(*) FROM events WHERE CAST(created_at AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
+    long countNewEventsToday();
+
+    // 3. Lay ra 5 su kien moi dang tai len nen tang
+    @Query(value = "SELECT * FROM events WHERE CAST(created_at AS DATE) = CAST(GETDATE() AS DATE) ORDER BY created_at DESC", nativeQuery = true)
+    List<Event> findTopFiveNewEventsToday(Pageable pageable);
+
+    // 4. Lay ra 5 su kien dien ra hom nay
+    @Query("SELECT e FROM Event e WHERE e.status = :status AND CAST(e.date AS date) = CURRENT_DATE ORDER BY e.startTime ASC")
+    List<Event> findTopFiveEventsToday(@Param("status") EventStatus status, Pageable pageable);
+
+    // ---------------------------------------- EVENT MANAGEMENT --------
+    // 1. Dem tong tat ca su kien
+    @Query("SELECT COUNT(e) FROM Event e")
+    long countAllEvents();
+
+    // 2. Dem su kien dien ra hom nay
+    @Query("SELECT COUNT(e) FROM Event e WHERE CAST(e.date AS date) = CURRENT_DATE")
+    long countEventsToday();
+
+    // 3. Dem su kien Ket Thuc trong thang nay
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.status = :status " +
+            "AND MONTH(e.date) = MONTH(CURRENT_DATE) " +
+            "AND YEAR(e.date) = YEAR(CURRENT_DATE)")
+    long countEndedThisMonth(@Param("status") EventStatus status);
+
+    // 4. Lay danh sach su kien: Filter + Search + Pagination
+    @Query("SELECT e FROM Event e " +
+            "WHERE (:status IS NULL OR e.status = :status) " +
+            "AND (:keyword IS NULL OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:categoryId IS NULL OR e.category.categoryId = :categoryId) " +
+            "ORDER BY e.createdAt DESC")
+    Page<Event> findEventsWithFilterAndSearch(
+            @Param("status") EventStatus status,
+            @Param("keyword") String keyword,
+            @Param("categoryId") Long categoryId,
+            Pageable pageable   
+    );
+
 }

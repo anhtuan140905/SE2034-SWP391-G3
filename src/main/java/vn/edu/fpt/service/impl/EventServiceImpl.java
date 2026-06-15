@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.model.constant.EventStatus;
+
+import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
+
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
@@ -97,39 +101,6 @@ public class EventServiceImpl implements EventService {
 //    @Override
 //    public List<Event> findEventbyVenueID(Long id) {
 //        return eventRepository.findByVenue_VenueId(id);
-//    }
-
-//    @Override
-//    public DashboardStatsDTO getDashboardStats() {
-//
-//        DashboardStatsDTO stats = new DashboardStatsDTO();
-//        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.ACTIVE));
-//        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.ENDED));
-//        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.INACTIVE));
-//
-//        return stats;
-//    }
-
-//    @Override
-//    public List<Event> getTopThreePendingEvents() {
-//        return eventRepository.findByStatusOrderByCreatedAtDesc(
-//                EventStatus.PENDING,
-//                org.springframework.data.domain.PageRequest.of(0, 3)
-//        );
-//    }
-
-//    @Override
-//    public List<Event> getTodayActiveEvents() {
-//
-//        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-//
-//        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-//
-//        return eventRepository.findByStatusAndStartTimeBetween(
-//                EventStatus.APPROVED,
-//                startOfDay,
-//                endOfDay
-//        );
 //    }
 
 //    @Override
