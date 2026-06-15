@@ -45,20 +45,6 @@ public class ModeratorEventListServiceImpl implements ModeratorEventListService 
                 .map(this::mapToDTO);
     }
 
-    private ModeratorEventListDTO mapToDTO(Event event) {
-
-        ModeratorEventListDTO dto = new ModeratorEventListDTO();
-
-        dto.setEventId(event.getEventId());
-        dto.setTitle(event.getTitle());
-        dto.setOrganizerName(event.getOrganizer().getFirstName() + " "
-                + event.getOrganizer().getLastName());
-        dto.setStartTime(event.getStartTime());
-        dto.setStatus(event.getStatus());
-
-        return dto;
-    }
-
     @Override
     @Transactional
     public void deactivateEvent(Long eventId) {
@@ -73,5 +59,19 @@ public class ModeratorEventListServiceImpl implements ModeratorEventListService 
         event.setStatus(EventStatus.INACTIVE);
         eventRepository.save(event);
 
+    }
+
+    private ModeratorEventListDTO mapToDTO(Event event) {
+
+        ModeratorEventListDTO dto = new ModeratorEventListDTO();
+
+        dto.setEventId(event.getEventId());
+        dto.setTitle(event.getTitle());
+        dto.setOrganizerName(event.getOrganizer().getFirstName() + " "
+                + event.getOrganizer().getLastName());
+        dto.setStartTime(event.getStartTime());
+        dto.setStatus(event.getStatus());
+
+        return dto;
     }
 }

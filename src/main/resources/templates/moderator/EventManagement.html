@@ -127,7 +127,7 @@
                     </td>
                     <td>
                         <span class="event-organizer"
-                              th:text="${event?.organizer != null ? (event.organizer.firstName + ' ' + event.organizer.lastName) : 'Unknown Host'}">Organizer</span>
+                              th:text="${event.organizerName}">Organizer</span>
                     </td>
                     <td>
                         <span class="event-date"
