@@ -201,13 +201,12 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     @Query("SELECT e FROM Event e " +
             "WHERE (:status IS NULL OR e.status = :status) " +
             "AND (:keyword IS NULL OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:categoryId IS NULL OR e.category.categoryId = :categoryId) " +
-            "ORDER BY e.createdAt DESC")
+            "AND (:categoryId IS NULL OR e.category.categoryId = :categoryId)")
     Page<Event> findEventsWithFilterAndSearch(
             @Param("status") EventStatus status,
             @Param("keyword") String keyword,
             @Param("categoryId") Long categoryId,
-            Pageable pageable   
+            Pageable pageable
     );
 
 }
