@@ -18,31 +18,18 @@
 </div>
 
 <div class="lp-root">
+    <!-- bên left -->
     <div class="lp-left">
-        <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
 
         <div class="lp-brand">
-            <div class="lp-logo">
-                <svg fill="none" stroke="#fff" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </div>
             <span class="lp-logo-name">EventHub</span>
         </div>
 
         <div class="lp-hero">
-            <div class="lp-tag"><span class="dot"></span>Tham gia cộng đồng</div>
-            <h2>Bắt đầu <em>sự kiện</em><br/> của bạn hôm nay</h2>
-            <p>Khám phá và tham gia hàng nghìn sự kiện hấp dẫn gần bạn</p>
-        </div>
-
-        <div class="role-cards">
-            <div class="role-card selected" data-role="user">
-                <div class="rc-icon user">🎟️</div>
-                <div class="rc-body">
-                    <div class="rc-t">Người tham gia</div>
-                    <div class="rc-s">Khám phá sự kiện gần bạn</div>
-                </div>
-                <div class="rc-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            </div>
+            <h2>Khám phá <em>sự kiện tuyệt vời</em><br/>xung quanh bạn</h2>
         </div>
     </div>
 
@@ -53,23 +40,8 @@
             <!-- ════ REGISTER PANEL ════ -->
             <div class="panel active" id="panelRegister">
                 <div class="form-head">
-                    <h1>Tạo tài khoản ✨</h1>
-                    <p>Tham gia EventHub để tận hưởng các sự kiện</p>
+                    <h1>Tạo tài khoản </h1>
                 </div>
-
-                <!-- Social sign up -->
-                <div class="social-row">
-                    <a href="#" class="btn-social">
-                        <span class="g-pill"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
-                        Google
-                    </a>
-                    <a href="#" class="btn-social">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        Facebook
-                    </a>
-                </div>
-
-                <div class="divider"><span>or fill in your details</span></div>
 
                 <!-- ── USER FORM ── -->
                 <form id="formUserRaw" method="post" th:action="@{/auth/register/user}" th:object="${registerUserDTO}">
@@ -78,52 +50,52 @@
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
                                 <input type="text" id="u_firstName" placeholder=" " autocomplete="name" th:field="*{firstName}"/>
-                                <label for="u_firstName">First Name</label>
+                                <label for="u_firstName">Họ</label>
                             </div>
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
                                 <input type="text" id="u_middlename" placeholder=" " autocomplete="name" th:field="*{middleName}"/>
-                                <label for="u_middlename">Middle Name</label>
+                                <label for="u_middlename">Tên đệm</label>
                             </div>
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
                                 <input type="text" id="u_lastname" placeholder=" " autocomplete="name" th:field="*{lastName}"/>
-                                <label for="u_lastname">Last Name</label>
+                                <label for="u_lastname">Tên</label>
                             </div>
                             <div class="field">
                                 <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
                                 <input type="tel" id="u_phone" placeholder=" " autocomplete="tel" th:field="*{phone}"/>
-                                <label for="u_phone">Phone Number</label>
+                                <label for="u_phone">Số điện thoại</label>
                             </div>
                         </div>
 
                         <div class="field">
                             <span class="error-msg" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
                             <input type="email" id="u_email" placeholder=" " autocomplete="email" th:field="*{username}"/>
-                            <label for="u_email">Email Address</label>
+                            <label for="u_email">Địa chỉ email</label>
                         </div>
 
                         <div class="field-grid">
                             <div class="field field-select" id="genderField">
                                 <select id="u_gender" onchange="handleSelect(this,'genderField')" th:field="*{gender}">
                                     <option value="" selected></option>
-                                    <option value="MALE">Male</option>
-                                    <option value="FEMALE">Female</option>
-                                    <option value="OTHER">Other</option>
+                                    <option value="MALE">Nam</option>
+                                    <option value="FEMALE">Nữ</option>
+                                    <option value="OTHER">Khác</option>
                                 </select>
-                                <label for="u_gender">Gender</label>
+                                <label for="u_gender">Giới tính</label>
                             </div>
                             <div class="field">
                                 <span th:if="${#fields.hasErrors('*{dob}')}" th:errors="*{dob}"></span>
                                 <input type="date" id="u_dob" placeholder=" " onchange="this.setAttribute('placeholder',' ')" th:field="*{dob}"/>
-                                <label for="u_dob">Date of Birth</label>
+                                <label for="u_dob">Ngày sinh</label>
                             </div>
                         </div>
 
                         <div class="field field-pw">
                             <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                             <input type="password" id="u_pw" placeholder=" " autocomplete="new-password" oninput="checkStrength(this.value,'pwStrength','strengthLabel')" th:field="*{password}"/>
-                            <label for="u_pw">Password</label>
+                            <label for="u_pw">Mật khẩu</label>
                             <button class="eye-btn" type="button" onclick="toggleEye('u_pw',this)" aria-label="Toggle password">
                                 <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
@@ -134,13 +106,12 @@
                                 <div class="strength-bar"></div><div class="strength-bar"></div>
                                 <div class="strength-bar"></div><div class="strength-bar"></div>
                             </div>
-                            <div class="strength-label" id="strengthLabel">Enter a password</div>
                         </div>
 
                         <div class="field field-pw">
                             <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
                             <input type="password" id="u_cpw" placeholder=" " autocomplete="new-password" th:field="*{confirmPassword}"/>
-                            <label for="u_cpw">Confirm Password</label>
+                            <label for="u_cpw">Xác nhận mật khẩu</label>
                             <button class="eye-btn" type="button" onclick="toggleEye('u_cpw',this)" aria-label="Toggle confirm password">
                                 <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
@@ -149,150 +120,15 @@
 
                         <button class="btn-primary" type="submit" style="margin-top:.625rem;">
                             Tạo tài khoản
-                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                            </svg>
                         </button>
                     </div>
                 </form>
 
                 <p class="reg-link">Bạn đã có tài khoản? <a th:href="@{/auth/login}">Đăng nhập</a></p>
-                <p class="terms">Để tạo tài khoản bạn cần tuân thủ các <a href="#">Terms</a> and <a href="#">chính sách</a></p>
             </div>
-
-            <!-- ════ FORGOT — STEP 1: EMAIL ════ -->
-            <div class="panel" id="panelForgot1">
-                <button class="back-link" onclick="showPanel('panelRegister')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    Back to sign in
-                </button>
-
-                <div class="step-indicator">
-                    <div class="step-dot active"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                </div>
-
-                <div class="form-head">
-                    <h1>Quên mật khẩu 🔐</h1>
-                    <p>Enter your registered email and we'll send you a 6-digit OTP code</p>
-                </div>
-
-                <div class="field">
-                    <input type="email" id="f_email" placeholder=" " autocomplete="email"/>
-                    <label for="f_email">Email Address</label>
-                </div>
-
-                <button class="btn-primary" type="button" onclick="goOtp()">
-                    Send OTP Code
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                </button>
-                <p class="reg-link" style="margin-top:.875rem;">Remember your password? <a href="#">Sign in</a></p>
-            </div>
-
-            <!-- ════ FORGOT — STEP 2: OTP ════ -->
-            <div class="panel" id="panelForgot2">
-                <button class="back-link" onclick="showPanel('panelForgot1')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    Back
-                </button>
-
-                <div class="step-indicator">
-                    <div class="step-dot done"></div>
-                    <div class="step-dot active"></div>
-                    <div class="step-dot"></div>
-                </div>
-
-                <div class="form-head">
-                    <h1>Enter OTP code 📬</h1>
-                </div>
-                <p class="otp-hint">We sent a 6-digit code to <strong id="otpEmail">your email</strong>. Check your inbox (and spam folder).</p>
-
-                <div class="otp-wrap">
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp0"/>
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp1"/>
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp2"/>
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp3"/>
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp4"/>
-                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" id="otp5"/>
-                </div>
-
-                <button class="btn-primary" type="button" onclick="verifyOtp()">
-                    Verify Code
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </button>
-
-                <p class="otp-resend">Didn't receive it? <button onclick="resendOtp()">Resend</button> <span id="otpTimer"></span></p>
-            </div>
-
-            <!-- ════ FORGOT — STEP 3: NEW PASSWORD ════ -->
-            <div class="panel" id="panelForgot3">
-                <button class="back-link" onclick="showPanel('panelForgot2')">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    Back
-                </button>
-
-                <div class="step-indicator">
-                    <div class="step-dot done"></div>
-                    <div class="step-dot done"></div>
-                    <div class="step-dot active"></div>
-                </div>
-
-                <div class="form-head">
-                    <h1>New password 🔑</h1>
-                    <p>Create a strong password for your account</p>
-                </div>
-
-                <div class="field field-pw">
-                    <input type="password" id="np_pw" placeholder=" " autocomplete="new-password" oninput="checkStrengthNew(this.value)"/>
-                    <label for="np_pw">New Password</label>
-                    <button class="eye-btn" type="button" onclick="toggleEye('np_pw',this)">
-                        <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                    </button>
-                </div>
-                <div class="pw-strength strength-0" id="pwStrengthNew">
-                    <div class="strength-bars">
-                        <div class="strength-bar"></div><div class="strength-bar"></div>
-                        <div class="strength-bar"></div><div class="strength-bar"></div>
-                    </div>
-                    <div class="strength-label" id="strengthLabelNew">Enter a password</div>
-                </div>
-
-                <div class="field field-pw" style="margin-top:.25rem;">
-                    <input type="password" id="np_cpw" placeholder=" " autocomplete="new-password"/>
-                    <label for="np_cpw">Confirm New Password</label>
-                    <button class="eye-btn" type="button" onclick="toggleEye('np_cpw',this)">
-                        <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        <svg class="eye-hide" style="display:none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                    </button>
-                </div>
-
-                <button class="btn-primary" type="button" style="margin-top:.875rem;" onclick="resetDone()">
-                    Reset Password
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                </button>
-            </div>
-
-            <!-- ════ SUCCESS ════ -->
-            <div class="panel" id="panelSuccess">
-                <div class="success-screen">
-                    <div class="success-icon">
-                        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <h2 id="successTitle">Password Reset!</h2>
-                    <p id="successMsg">Your password has been updated successfully. You can now sign in with your new password.</p>
-                    <button class="btn-primary" type="button" onclick="showPanel('panelRegister')" style="max-width:280px;margin:0 auto;">
-                        Back to Sign In
-                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                    </button>
-                </div>
-            </div>
-
-        </div><!-- /form-inner -->
-    </div><!-- /lp-right -->
-</div><!-- /lp-root -->
-
+        </div>
+    </div>
+</div>
 <script th:src="@{/auth/js/RegisterAccount.js}"></script>
 </body>
 </html>

@@ -104,7 +104,7 @@
         .lp-hero h2 {
           font-family: 'Outfit', sans-serif;
           font-size: clamp(1.8rem, 3vw, 2.75rem);
-          font-weight: 900; line-height: 1.1; letter-spacing: -.05em;
+          font-weight: bold; line-height: 1.1; letter-spacing: -.05em;
           color: #fff; margin-bottom: 1rem;
         }
         .lp-hero h2 em {
@@ -174,11 +174,12 @@
         .form-head h1 {
           font-family: 'Outfit', sans-serif; font-size: clamp(1.5rem, 2.5vw, 1.875rem);
           letter-spacing: -.04em; color: #1a0a2e; margin-bottom: .4rem;
+          text-align: center;
         }
         .form-head p { font-size: .8375rem; color: #9b8bb0; }
 
         /* Social buttons */
-        .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1.375rem; }
+        .social-row { display: grid; grid-template-columns: 1fr; gap: .75rem; margin-bottom: 1.375rem; }
         .btn-social {
           display: flex; align-items: center; justify-content: center; gap: .5rem;
           height: 46px;

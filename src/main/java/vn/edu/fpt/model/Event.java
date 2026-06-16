@@ -39,8 +39,16 @@ public class Event extends BaseAuditEntity {
     @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
+    @Column(name = "venue_name", columnDefinition = "NVARCHAR(500)", nullable = false)
+    private String venueName;
+
     @Column(name = "thumbnail_url")
     private String thumbnailUrl;
+
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
 
     // LocalDateTime vì đây là giờ hiển thị với user VN — không phải audit timestamp
     @Column(name = "start_time", nullable = false)

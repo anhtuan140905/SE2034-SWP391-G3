@@ -45,7 +45,9 @@
 
     <!-- Breadcrumb / Back button -->
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-        <a th:href="@{/events}" href="/templates/events.html" class="btn btn-outline-light border-white/10 text-xs px-4 rounded-pill font-bold d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); transition: all 0.3s ease;">
+        <a th:href="@{/events}" href="/templates/events.html"
+           class="btn btn-outline-light border-white/10 text-xs px-4 rounded-pill font-bold d-flex align-items-center gap-2"
+           style="background: rgb(16 1 1 / 13%) !important; color: #da6464;backdrop-filter: blur(10px); transition: all 0.3s ease;">
             <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
         </a>
 
@@ -100,11 +102,6 @@
                  display: inline-flex;
                  align-items: center;
                  gap: 6px;">
-        <i class="fa-solid" th:classappend="${
-            event.categoryName == 'Âm nhạc' ? 'fa-music' :
-            event.categoryName == 'Hội thảo & Công nghệ' ? 'fa-laptop-code' :
-            event.categoryName == 'Phim & Truyền thông' ? 'fa-film' :
-            event.categoryName == 'Giáo dục & Kỹ năng' ? 'fa-book' : 'fa-star'}"></i>
         <span th:text="${event.categoryName}">MUSIC</span>
     </span>
 
@@ -173,10 +170,8 @@
                     background: var(--gradient-primary, linear-gradient(135deg, #a855f7, #ec4899));
                     min-width: 76px;
                     flex-shrink: 0;">
-            <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; line-height: 1;"
-                  th:text="${#temporals.format(event.startTime, 'MMM').toUpperCase()}">JUN</span>
                         <span style="font-size: 30px; font-weight: 900; line-height: 1.1; margin-top: 3px;"
-                              th:text="${#temporals.format(event.startTime, 'dd')}">12</span>
+                              th:text="${#temporals.format(event.startTime, 'dd/MM')}">12/07</span>
                     </div>
                 </div>
             </div>
@@ -333,7 +328,7 @@
                         <div>
                             <p style="color: #1a1a2e; font-weight: 700; font-size: 16px; margin: 0 0 2px 0;">Địa điểm tổ chức</p>
                             <p style="color: #666; font-size: 14.5px; margin: 0; line-height: 1.4;"
-                               th:text="${event.venueName + ', ' + event.cityName}">
+                               th:text="${event.venue + ', ' + event.cityName}">
                                 Nhà hát Thành phố Hồ Chí Minh
                             </p>
                         </div>
@@ -342,19 +337,14 @@
                 </div>
 
                 <!-- CTA Button -->
-                <a th:href="@{/events/book/{id}(id=${event.id})}" href="#" class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5" style="border-radius: 12px; margin-bottom: 20px;">
+                <a th:href="@{/events/{id}/choose_seat(id=${event.id})}" class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5" style="   border-radius: 12px; margin-bottom: 20px;">
                     Mua vé ngay
                 </a>
-
                 <!-- Trust badge -->
                 <p class="text-center mb-0" style="color: #1a1a2e; font-size: 14px; line-height: 1.6;">
-                    <i class="fa-solid fa-shield-halved me-1"></i>
                     Vé điện tử QR code gửi ngay vào Email.
                 </p>
-
             </div>
-
-            <!-- ORGANIZER / HOST DETAILS -->
             <div class="glass-panel p-4 rounded-4 border border-white/10 text-start">
                 <span class="text-secondary-light font-bold font-mono uppercase tracking-wider mb-3 d-block" style="font-size: 14px;">THÔNG TIN BAN TỔ CHỨC</span>
                 <div class="d-flex align-items-center gap-3">
@@ -362,7 +352,6 @@
                     <div class="space-y-0.5 truncate text-start">
                         <div class="d-flex align-items-center gap-1.5 flex-wrap">
                             <h4 class="text-white text-xs font-bold mb-0 truncate" style="max-w: 160px;" th:text="${event.company_name}">Neon Wave Recs </h4>
-                            <i class="fa-solid fa-circle-check text-info font-xs" title="Verified Organizer Partner"></i>
                         </div>
                         <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider font-mono">ORGANIZER PARTNER</span>
                     </div>
@@ -370,24 +359,18 @@
                 <p class="text-secondary-light leading-relaxed mt-3" style="font-size: 14px; color: #1a0a2e;">
                     Đơn vị vận hành, giám sát chuyên nghiệp được định danh & kiểm duyệt chặt chẽ bởi EventHub, hỗ trợ tận tâm quý khách trong suốt sự kiện.
                 </p>
-                <button type="button" class="btn btn-outline-light border-white/5 text-xs text-white uppercase w-100 py-2.5 rounded-3 font-bold" style="background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 10px; tracking-wide" onclick="window.showEventToast('Tin nhắn gửi đi', 'Mở luồng giải đáp ưu tiên tới đại diện ban tổ chức!', 'info')">
-                    Gửi câu hỏi cho BTC
-                </button>
             </div>
-
-            <!-- SIMULATED NAVIGATION / ROADMAP -->
             <div class="glass-panel p-4 rounded-4 border border-white/10 text-start">
                 <div class="rounded-3 overflow-hidden mb-3" style="height: 220px;">
                     <iframe
-                            th:src="@{'https://maps.google.com/maps?q=' + ${#strings.replace(event.venueName, ' ', '+')} + '&output=embed&z=15'}"
+                            th:src="@{'https://maps.google.com/maps?q=' + ${#strings.replace(event.venue, ' ', '+')} + '&output=embed&z=15'}"
                             width="100%" height="100%"
                             style="border: 0;"
                             allowfullscreen=""
                             loading="lazy">
                     </iframe>
                 </div>
-
-                <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${#strings.replace(event.venueName, ' ', '+')}}"
+                <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${#strings.replace(event.venue, ' ', '+')}}"
                    target="_blank"
                    class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5"
                    style="border-radius: 12px; margin-bottom: 20px; background: var(--color-violet) !important;">
@@ -414,7 +397,6 @@
 
 <!-- Interactive scripts to trigger toast simulations -->
 <script th:src="@{/homepage/js/header.js}"></script>
-<script th:src="@{/homepage/js/home.js}"></script>
 <script th:src="@{/homepage/js/footer.js}"></script>
 
 </body>

@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
             String lastName
     );
 
-    @Query(value = "SELECT u.* FROM users u JOIN organizer_profiles op ON u.id = op.user_id WHERE op.status = :status", nativeQuery = true)
-    List<User> findActiveOrganizers(@Param("status") String status);
+    @Query(value = "SELECT u.* FROM users u JOIN organizer_profiles op ON u.id = op.user_id", nativeQuery = true)
+    List<User> findActiveOrganizers();
 
     @Query(value = "SELECT CONCAT(u.first_name, ' ', u.last_name) AS fullName,\n" +
             "       op.company_name AS companyName,\n" +

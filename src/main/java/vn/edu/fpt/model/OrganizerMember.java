@@ -22,9 +22,9 @@ public class OrganizerMember {
     private OrganizerMemberId id;
 
     @ManyToOne
-    @MapsId("organizerId")
-    @JoinColumn(name = "organizer_profile_id")
-    private OrganizerProfile organizerProfile;
+    @MapsId("eventId")
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     @ManyToOne
     @MapsId("userId")

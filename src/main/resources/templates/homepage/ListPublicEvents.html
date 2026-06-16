@@ -153,15 +153,10 @@
     </form>
 
     <div class="row g-4" id="eventsGrid">
-
         <div class="col-lg-4 col-md-6 event-list-item" th:each="event : ${eventPage.content}">
             <div class="card-event">
                 <div class="event-img-wrap">
                     <span class="event-badge-category">
-                        <i class="fa-solid" th:classappend="${
-                            #strings.toLowerCase(event.category.categoryName) == 'music' ? 'fa-music' :
-                            #strings.toLowerCase(event.category.categoryName) == 'tech' ? 'fa-laptop-code' :
-                            #strings.toLowerCase(event.category.categoryName) == 'art' ? 'fa-palette' : 'fa-spa'}"></i>
                         <span th:text="${event.category.categoryName.toUpperCase()}">MUSIC</span>
                     </span>
 
@@ -171,8 +166,7 @@
 </span>
 
                     <div class="event-date-badge">
-                        <span class="month" th:text="${#temporals.format(event.date, 'MMM').toUpperCase()}">JUN</span>
-                        <span class="day" th:text="${#temporals.format(event.date, 'dd')}">12</span>
+                        <span class="day" th:text="${#temporals.format(event.date, 'dd/MM')}">12/07</span>
                     </div>
 
                     <img th:src="${event.thumbnailUrl != null ? event.thumbnailUrl : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=600'}" class="event-img" alt="Event cover image">
@@ -193,7 +187,7 @@
                     <div class="event-details-meta">
                         <div class="meta-element">
                             <i class="fa-solid fa-location-dot text-pink"></i>
-                            <span th:text="${event.venue.venueName + ', ' + event.venue.address.ward.city.name}">Venue</span>
+                            <span th:text="${event.venueName + ', ' + event.address.ward.city.name}">Venue</span>
                         </div>
                         <div class="meta-element">
                             <i class="fa-regular fa-clock text-pink"></i>
