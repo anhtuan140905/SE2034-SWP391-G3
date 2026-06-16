@@ -26,47 +26,42 @@ import java.util.List;
 public class EventController {
     private EventServiceImpl eventService;
     private final UserService userService;
-//    @GetMapping("/create/event")
-//    public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
-//        User user = this.userService.findByUsername(userDetails.getUsername());
-//        OrganizerDTO dto = new OrganizerDTO();
-//        dto.setOrganizerID(user.getId());
-//        dto.setFirstName(user.getFirstName());
-//        dto.setMiddleName(user.getMiddleName());
-//        dto.setLastName(user.getLastName());
-//        dto.setPhone(user.getPhone());
-//        dto.setEmail(user.getEmail());
-//        dto.setDob(user.getDob());
-//        dto.setGender(user.getGender());
-//        dto.setAvatar(user.getAvatar());
-//        if(user.getAddress() != null){
-//            dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
-//            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
-//            dto.setSpecificAddress(user.getAddress().getSpecificAddress());
-//        }
-//        model.addAttribute("organizerdto",dto);
-//        List<EventCategory> eventCategoryList = eventService.getListEventCategory();
-//        EventDTO eventDTO = new EventDTO();
-//        eventDTO.setOrganizerDtoID(dto.getOrganizerID());
-//        model.addAttribute("eventCategoryList",eventCategoryList);
-//        model.addAttribute(
-//                "event",
-//                eventDTO
-//        );
-//        return "organizer/event/CreateOrganizerEvent";
-//    }
+    @GetMapping("/create/event")
+    public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
+        List<EventCategory> eventCategoryList = eventService.getListEventCategory();
+        List<cityDto> listCity = eventService.getListcity();
+        User user = this.userService.findByUsername(userDetails.getUsername());
+        model.addAttribute("eventCategoryList",eventCategoryList);
+        model.addAttribute("citys",listCity);
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.setOrganizerId(user.getId());
+        model.addAttribute("event", eventDTO);
+        return "organizer/event/CreateOrganizerEvent";
+    }
 
-//    @PostMapping("create/event")
-//    public String SaveEvent(@Valid @ModelAttribute("event") EventDTO eventDTO,
-//                            BindingResult result) {
-//        if (result.hasErrors()) {
-//            return "/organizer/create/event";
-//        }
-//        eventService.saveEvent(eventDTO);
-//
-//        return "redirect:/organizer/dashboard";
-//    }
+    @PostMapping("create/event")
+    public String SaveEvent(@Valid @ModelAttribute("event") EventDTO eventDTO,
+                            BindingResult result,Model model,@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (result.hasErrors()) {
+            List<EventCategory> eventCategoryList = eventService.getListEventCategory();
+            List<cityDto> listCity = eventService.getListcity();
+            User user = this.userService.findByUsername(userDetails.getUsername());
+            eventDTO.setOrganizerId(user.getId());
+            model.addAttribute("eventCategoryList",eventCategoryList);
+            model.addAttribute("citys",listCity);
+            model.addAttribute(eventDTO);
+            return "organizer/event/CreateOrganizerEvent";
+        }
 
+        eventService.saveEvent(eventDTO);
+
+        return "redirect:/organizer/dashboard";
+    }
+    @ResponseBody
+    @GetMapping("/api/city")
+    public List<wardDTO> listWard(@RequestParam Long cityId){
+        return eventService.listWardDtos(cityId);
+    }
 
 
 //    @GetMapping("list/event")

@@ -1,31 +1,21 @@
 package vn.edu.fpt.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import vn.edu.fpt.model.Event;
+
 import vn.edu.fpt.model.EventCategory;
-import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
-import vn.edu.fpt.modelview.request.moderator.DashboardStatsDTO;
-import vn.edu.fpt.modelview.request.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
-import vn.edu.fpt.modelview.request.organizer.VenueDto;
-import vn.edu.fpt.modelview.request.organizer.VenueZoneOrganizerDTO;
-import vn.edu.fpt.modelview.request.moderator.EventDetailModeratorDTO;
-import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
-import vn.edu.fpt.repository.EventSummaryProjection;
-import vn.edu.fpt.repository.FeaturedEventDTO;
-import vn.edu.fpt.repository.VenueSummaryProjection;
+import vn.edu.fpt.modelview.request.organizer.cityDto;
+import vn.edu.fpt.modelview.request.organizer.wardDTO;
 
-import java.time.LocalDate;
 import java.util.List;
-
 
 public interface EventService {
 //    long countHostedEvents();
 //    List<EventSummaryDto> findTopFeaturedEvents();
 //    FeaturedEventDTO findFeaturedEvent();
-//    List<EventCategory> getListEventCategory();
-//    void saveEvent(EventDTO eventDTO);
+    List<cityDto> getListcity();
+    List<EventCategory> getListEventCategory();
+    List<wardDTO> listWardDtos(Long cityId);
+    void saveEvent(EventDTO eventDTO);
 //    EventDetailModeratorDTO getEventDetailById(Long id);
 //    DashboardStatsDTO getDashboardStats();
 //    List<Event> getTopThreePendingEvents();
