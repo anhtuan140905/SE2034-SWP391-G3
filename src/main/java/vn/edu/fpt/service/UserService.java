@@ -1,11 +1,18 @@
 package vn.edu.fpt.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import vn.edu.fpt.model.OrganizerProfile;
+import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.modelview.request.admin.ActivityDTO;
+import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
+import vn.edu.fpt.repository.OrganizerProfileRepository;
+import vn.edu.fpt.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,4 +31,7 @@ public interface UserService {
     public List<User> getActivatedOrganizers();
     public List<FeaturedOrganizerDto> getFeaturedOrganizers();
     public User handleSaveUser(User user);
+    public void updateUser(Long id, UpdateUserStatusDTO request);
+    public List<ActivityDTO> getUserActivities(Long userId);
+
 }

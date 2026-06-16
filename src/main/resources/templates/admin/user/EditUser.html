@@ -53,6 +53,7 @@
             font-size:13px;
             color:#84759b;
             letter-spacing:1px;
+            font-weight: bold;
         }
 
         .menu a{
@@ -130,25 +131,6 @@
             gap:18px;
         }
 
-        .notif-btn{
-            position:relative;
-            background:none;
-            border:none;
-            color:#ff1b8d;
-            font-size:20px;
-            cursor:pointer;
-        }
-
-        .notif-btn .dot{
-            position:absolute;
-            top:0;
-            right:0;
-            width:9px;
-            height:9px;
-            background:#ff1b8d;
-            border-radius:50%;
-            border:2px solid #ffffff;
-        }
 
         .profile{
             display:flex;
@@ -250,19 +232,8 @@
             margin-bottom:15px;
         }
 
-        .upload-btn{
-            display:inline-block;
-            padding:10px 18px;
-            background:rgba(236,72,153,0.15);
-            border:1px solid rgba(236,72,153,0.3);
-            border-radius:12px;
-            cursor:pointer;
-            transition:0.3s;
-        }
 
-        .upload-btn:hover{
-            background:#ec4899;
-        }
+
 
         input[type=file]{
             display:none;
@@ -292,7 +263,7 @@
         }
 
 
-        input,
+        span,
         select,
         textarea {
             padding: 14px;
@@ -308,8 +279,7 @@
             resize:none;
             height:120px;
         }
-
-        input:focus,
+        span:focus,
         select:focus,
         textarea:focus{
             border-color:#ff1b8d;
@@ -329,18 +299,7 @@
             gap:15px;
             margin-top:35px;
         }
-        .button-group {
-            padding: 13px 24px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+
         .save-btn{
             padding: 13px 24px;
             border: none;
@@ -381,6 +340,69 @@
             color: #1e0e34;
         }
 
+        .profile-dropdown { position: relative; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover,
+        .dropdown-logout:hover {
+            background: rgba(255, 27, 141, 0.07);
+            color: #ff1b8d;
+        }
+
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+
+        .divider {
+            border-top: 1px solid rgba(255, 42, 122, 0.1);
+            margin: 6px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+
+
     </style>
 </head>
 
@@ -397,10 +419,7 @@
 
     <div class="menu">
         <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
-        <a th:href="@{/admin/listvenue}" ><i class="fa-solid fa-building"></i> Quản Lý Địa Điểm </a>
-        <a href="#" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
-        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống Kê </a>
-        <a href="#"><i class="fa-solid fa-gear"></i> Cài Đặt </a>
+        <a th:href="@{/admin/listuser}" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
     </div>
 
 </div>
@@ -416,16 +435,53 @@
         </div>
 
         <div class="topbar-right">
-            <button class="notif-btn" aria-label="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span class="dot"></span>
-            </button>
-            <div class="profile">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
-                <div class="profile-info">
-                    <div class="name">Quản Trị Viên </div>
+
+
+            <div class="profile-dropdown" style="position: relative;">
+                <div class="profile" onclick="toggleDropdown()" style="cursor:pointer;">
+                    <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         th:src="${currentUser.avatar}" alt="avatar"/>
+                    <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
+                    <div class="profile-info">
+                        <div class="name" th:text="${currentUser != null ? currentUser.email : 'Quản Trị Viên'}">
+                            Quản Trị Viên
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
+                </div>
+
+                <!-- Dropdown menu -->
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li>
+                            <a th:href="@{/admin/profile}">
+                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-shield"></i> Kênh Quản Trị
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/settings}">
+                                <i class="fa-solid fa-sliders"></i> Cài Đặt
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" th:action="@{/auth/logout}">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+
         </div>
     </div>
 
@@ -448,72 +504,77 @@
 
         <div class="card">
 
-            <h2>User Information</h2>
+            <h2>Thông Tin Người Dùng</h2>
+            <form method="post" enctype="multipart/form-data" th:action="@{/admin/edituser(id=${user.id})}"
+                  th:object="${UpdateUserStatusDTO}">
 
-            <!-- Avatar -->
+                <!-- Avatar -->
 
-            <div class="avatar-upload">
+                <div class="avatar-upload">
 
-                <img src="https://i.pravatar.cc/300?img=12" alt="User Avatar">
+                    <img th:if="${user != null and user.avatar != null and !user.avatar.isEmpty()}"
+                         th:src="${user.avatar}">
+                    <img th:unless="${user != null and user.avatar != null and !user.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" />
+                    <br>
 
-                <br>
+                </div>
 
-                <label class="upload-btn">
-                    <i class="fa-solid fa-upload"></i>
-                    Change Avatar
-                    <input type="file">
-                </label>
+                <!-- Form -->
 
-            </div>
 
-            <!-- Form -->
-
-            <form>
 
                 <div class="form-grid">
 
                     <div class="form-group">
                         <label>Họ Và Tên</label>
-                        <input type="text" value="Emma Watson">
+                        <span th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></span>
+
                     </div>
 
                     <div class="form-group">
                         <label>Địa Chỉ Email</label>
-                        <input type="email" value="emma@gmail.com">
+                        <span th:text="${user.email}"></span>
+
                     </div>
 
                     <div class="form-group">
                         <label>Số Điện Thoại</label>
-                        <input type="text" value="+1 234 567 890">
+                        <span th:text="${user.phone}"></span>
+
                     </div>
 
                     <div class="form-group">
                         <label>Phân Quyền Người Dùng</label>
 
-                        <select>
-                            <option>Quản Trị Viên</option>
-                            <option selected>Nhà Tổ Chức </option>
-                            <option> Người Dùng </option>
+                        <select name="roleName">
+                            <option value="ROLE_MODERATOR" th:selected = "${userrole.name() == 'ROLE_MODERATOR'}">Kiểm Duyệt Viên</option>
+                            <option value="ROLE_ORGANIZER" th:selected = "${userrole.name() == 'ROLE_ORGANIZER'}">Nhà Tổ Chức</option>
+
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Trạng Thái Hoạt Động</label>
 
-                        <select>
-                            <option selected>Đang Hoạt Động </option>
-                            <option>Ngừng Hoạt Động </option>
+                        <select name="isActive">
+                            <option value="true" th:selected = "${user.isActive == true}">Đang Hoạt Động</option>
+                            <option value="false" th:selected = "${user.isActive == false}">Ngừng Hoạt Động</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Ngày Sinh</label>
-                        <input type="date" value="1998-06-12">
+                        <span th:text="${user.dob}"></span>
                     </div>
 
                     <div class="form-group full">
                         <label>Địa Chỉ</label>
-                        <input type="text" value="New York, USA">
+                        <span th:if="${user.address != null}"
+                              th:text="|${user.address.specificAddress}, ${user.address.ward.name}, ${user.address.ward.city.name}|">
+                        </span>
+
+                        <span th:unless="${user.address != null}">Chưa cập nhật địa chỉ</span>
                     </div>
 
 
@@ -539,6 +600,19 @@
         </div>
 
     </div>
+    <script>
+        function toggleDropdown() {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        }
+
+
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.profile-dropdown');
+            if (!dropdown.contains(e.target)) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+    </script>
 
 </body>
 </html>

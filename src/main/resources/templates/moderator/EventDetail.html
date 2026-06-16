@@ -23,17 +23,21 @@
                 <span>QUAY TRỞ LẠI</span>
             </a>
             <div class="ed-title-block">
-
                 <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}">
-
                 </h1>
+
+                <p class="ed-event-id">
+                    <i class="fa-solid fa-hashtag" style="margin-right: 4px;"></i> Event ID:
+                    <span th:text="${event != null ? event.id : 'N/A'}"></span>
+                </p>
             </div>
         </div>
+
         <span class="ed-status-badge"
               th:classappend="${event != null and event.status == 'APPROVED'} ? 'status-approved' :
-                             (${event != null and event.status == 'REJECTED'} ? 'status-rejected' : 'status-pending')">
-            <span th:text="${event != null ? event.status : 'PENDING'}"></span>
-        </span>
+                         (${event != null and event.status == 'REJECTED'} ? 'status-rejected' : 'status-pending')">
+        <span th:text="${event != null ? event.status : 'PENDING'}"></span>
+    </span>
     </div>
 
     <!-- ── Main 2-col layout ── -->

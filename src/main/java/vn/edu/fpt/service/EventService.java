@@ -10,6 +10,7 @@ import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 
 import java.util.List;
+import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 
 
 public interface EventService {
@@ -26,4 +27,5 @@ public interface EventService {
     Event getEventById(Long id);
     EventSummaryProjection findEventDetailById(Long id);
 //    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
+List<EventSummaryDto> findTop10Events();
 }

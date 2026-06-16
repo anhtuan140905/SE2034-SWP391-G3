@@ -1,0 +1,25 @@
+package vn.edu.fpt.model.constant;
+
+public enum ActivityAction {
+    TICKET_PURCHASED,
+    TICKET_CANCELLED,
+    PROFILE_UPDATED,
+    PASSWORD_CHANGED,
+    LOGIN,
+    LOGOUT,
+    VIEW_PROFILE,
+    SEARCH,
+    SYSTEM,
+
+    EVENT_CREATED,
+    EVENT_UPDATED,
+    TICKET_PRICE_UPDATED,
+    TICKET_SOLD,
+
+    ORGANIZER_APPROVED,
+    USER_LOCKED,
+    USER_UNLOCKED,
+
+    REPORT_VIEWED,
+    REPORT_EXPORTED
+}

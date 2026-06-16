@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 
 import java.util.List;
@@ -38,4 +39,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "ORDER BY COUNT(e.event_id) DESC", nativeQuery = true)
     List<FeaturedOrganizerDto> getTopFeaturedOrganizer(Pageable pageable);
 
+
+    List<User>findTop10ByOrderByUpdatedAtDesc();
+
+    List<User> findTop10ByRoles_RoleNameOrderByUpdatedAtDesc(RoleName roleName);;
+    // Dem so account Organizer con hoat dong tren nen tang
+    @Query(value = "SELECT COUNT(u.id) FROM users u " +
+            "JOIN user_roles ur ON u.id = ur.user_id " +
+            "JOIN roles r ON ur.role_id = r.id " +
+            "WHERE r.role_name = 'ROLE_ORGANIZER' AND u.is_active = 1", nativeQuery = true)
+    Long countActiveOrganizers();
 }

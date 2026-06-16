@@ -291,6 +291,84 @@
             color: #d11127;
         }
 
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid rgba(236, 72, 153, 0.35);
+            color: #ff1b8d;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+
+
+        .profile-dropdown { position: relative; }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover,
+        .dropdown-logout:hover {
+            background: rgba(255, 27, 141, 0.07);
+            color: #ff1b8d;
+        }
+
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+
+        .divider {
+            border-top: 1px solid rgba(255, 42, 122, 0.1);
+            margin: 6px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
         /* ================= RESPONSIVE ================= */
         @media (max-width: 900px) {
             .sidebar { width: 220px; }
@@ -316,17 +394,9 @@
         <a href="#" class="active">
             <i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển
         </a>
-        <a th:href="@{/admin/listvenue}">
-            <i class="fa-solid fa-building"></i> Quản Lý Địa Điểm
-        </a>
+
         <a th:href="@{/admin/listuser}">
             <i class="fa-solid fa-users"></i> Quản Lý Người Dùng
-        </a>
-        <a href="#">
-            <i class="fa-solid fa-chart-pie"></i> Thống Kê
-        </a>
-        <a href="#">
-            <i class="fa-solid fa-gear"></i> Cài Đặt
         </a>
     </div>
 </div>
@@ -339,16 +409,51 @@
         <input type="text" class="search-box" placeholder="Tìm kiếm địa điểm tổ chức, người dùng..."/>
 
         <div class="topbar-right">
-            <button class="notif-btn" aria-label="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span class="dot"></span>
-            </button>
 
-            <div class="profile">
-                <img src="https://i.pravatar.cc/100?img=12" alt="Admin User"/>
-                <div class="profile-info">
-                    <div class="name">Quản Trị Viên </div>
+            <div class="profile-dropdown" style="position: relative;">
+                <div class="profile" onclick="toggleDropdown()" style="cursor:pointer;">
+                    <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         th:src="${currentUser.avatar}" alt="avatar"/>
+                    <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
+                    <div class="profile-info">
+                        <div class="name" th:text="${currentUser != null ? currentUser.email: 'Quản Trị Viên'}">
+                            Quản Trị Viên
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
                 </div>
+
+                <!-- Dropdown menu -->
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li>
+                            <a th:href="@{/admin/profile}">
+                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-shield"></i> Kênh Quản Trị
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/settings}">
+                                <i class="fa-solid fa-sliders"></i> Cài Đặt
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" th:action="@{/auth/logout}">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div >
             </div>
         </div>
     </div>
@@ -385,16 +490,7 @@
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-top">
-                    <div>
-                        <p style="color:#9ca3af;">Tổng Địa Điểm </p>
-                        <div class="value">124</div>
-                        <div class="green"><i class="fa-solid fa-arrow-up"></i> +4.1%</div>
-                    </div>
-                    <div class="icon pink"><i class="fa-solid fa-building"></i></div>
-                </div>
-            </div>
+
 
             <div class="card">
                 <div class="card-top">
@@ -426,42 +522,29 @@
             <table>
                 <thead>
                 <tr>
+                    <th>STT</th>
                     <th>Tên Sự Kiện</th>
                     <th>Địa Điểm </th>
                     <th>Ngày Diễn Ra </th>
+                    <th>Ngày Kết Thúc </th>
                     <th>Số Lượng Vé </th>
                     <th>Trạng Thái </th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>Summer Music Festival</td>
-                    <td>Central Park Arena</td>
-                    <td>2026-06-15</td>
-                    <td>2500</td>
-                    <td><span class="badge active">Active</span></td>
+                <tbody >
+                <tr th:each="event, eventStat : ${events}">
+                    <td th:text="${eventStat.count}"></td>
+                    <td th:text="${event.title}"></td>
+                    <td th:text="${event.venueName}"></td>
+                    <td th:text="${event.startTime}"></td>
+                    <td th:text="${event.endTime}"></td>
+                    <td th:text="${event.totalTickets}"></td>
+                    <td>
+                        <span class="badge active" th:text="${event.status}"></span>
+                    </td>
                 </tr>
-                <tr>
-                    <td>Tech Conference 2026</td>
-                    <td>Convention Center</td>
-                    <td>2026-07-20</td>
-                    <td>1800</td>
-                    <td><span class="badge active">Active</span></td>
-                </tr>
-                <tr>
-                    <td>Art Exhibition</td>
-                    <td>City Gallery</td>
-                    <td>2026-06-01</td>
-                    <td>450</td>
-                    <td><span class="badge completed">Completed</span></td>
-                </tr>
-                <tr>
-                    <td>Food &amp; Wine Fair</td>
-                    <td>Downtown Plaza</td>
-                    <td>2026-08-10</td>
-                    <td>3200</td>
-                    <td><span class="badge upcoming">Upcoming</span></td>
-                </tr>
+
+
                 </tbody>
             </table>
         </div>
@@ -550,7 +633,22 @@
             scales: {
                 x: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 }}, grid: { color: 'rgba(255,255,255,0.05)' } },
                 y: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+
             }
+        }
+    });
+
+
+
+    function toggleDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('show');
+    }
+
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.profile-dropdown');
+        if (!dropdown.contains(e.target)) {
+            document.getElementById('profileDropdown').classList.remove('show');
         }
     });
 </script>
