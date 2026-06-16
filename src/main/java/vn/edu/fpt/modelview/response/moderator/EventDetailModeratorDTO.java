@@ -1,7 +1,6 @@
-package vn.edu.fpt.modelview.request.moderator;
+package vn.edu.fpt.modelview.response.moderator;
 
 import lombok.Data;
-import vn.edu.fpt.model.EventCategory;
 
 import java.time.LocalDateTime;
 

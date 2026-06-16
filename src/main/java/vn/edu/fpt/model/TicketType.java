@@ -31,8 +31,10 @@ public class TicketType extends BaseAuditEntity {
 
     @Column(name = "zone_name", nullable = false, length = 100)
     private String zoneName; // Organizer tự đặt: VIP, Standard...
+
     @Column(name = "price", nullable = false)
     private BigDecimal price;
+
     @Column(name = "total_quantity", nullable = false)
     private Integer totalQuantity;
 
@@ -41,4 +43,7 @@ public class TicketType extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Seat> seats;
+
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder;
 }

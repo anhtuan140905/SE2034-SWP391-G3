@@ -3,76 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sơ đồ chỗ ngồi & Chọn ghế - EventHub</title>
+    <title th:text="|Chọn ghế — ${event.title} - EventHub|">Chọn ghế - EventHub</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" th:href="@{/homepage/css/choose_seat.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/choose_seat.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}"/>
 </head>
 <body>
+
 <div class="background-glows">
     <div class="glow-blob glow-blob-1"></div>
     <div class="glow-blob glow-blob-2"></div>
     <div class="glow-blob glow-blob-3"></div>
 </div>
-<div th:replace="~{homepage/fragments/header :: header('')}">
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <div class="brand-dots me-2">
-                    <span class="dot pink"></span>
-                    <span class="dot violet"></span>
-                    <span class="dot orange"></span>
-                </div>
-                <span class="brand-text text-white">Event<span class="highlight">Hub</span></span>
-            </a>
-        </div>
-    </nav>
-</div>
 
-<!-- Main Workspace body -->
-<div class="container main-container mt-4">
+<div th:replace="~{homepage/fragments/header :: header('')}"></div>
 
-    <!-- Tab Toggles (As requested, Tab 2 "Chọn ghế trên sơ đồ" active with filled style, Tab 1 background transparent) -->
+<!-- Root container: inject eventId để JS fetch API -->
+<div class="container main-container mt-4"
+     id="seat-map-root"
+     th:data-event-id="${event.eventId}">
+
+    <!-- Tab Toggles -->
     <div class="tab-toggle-container text-center text-sm-start">
         <div class="pills-toggle-wrap">
-            <a href="#type" class="pill-btn pill-btn--outline text-decoration-none">Chọn theo loại vé</a>
-            <a href="#diagram" class="pill-btn pill-btn--filled active text-decoration-none">Chọn ghế trên sơ đồ</a>
+            <a th:href="@{/events/{id}/tickets(id=${event.eventId})}"
+               class="pill-btn pill-btn--outline text-decoration-none">
+                Chọn theo loại vé
+            </a>
+            <a href="#diagram"
+               class="pill-btn pill-btn--filled active text-decoration-none">
+                Chọn ghế trên sơ đồ
+            </a>
         </div>
     </div>
 
-    <!-- Event Stripping Meta Bar -->
+    <!-- Event Info Strip — inject data thật từ Thymeleaf -->
     <div class="event-info-strip">
         <div>
-            <h2 class="strip-event-title">Neon Sunset Beats & DJ Festival</h2>
+            <h2 class="strip-event-title" th:text="${event.title}">Tên sự kiện</h2>
             <div class="strip-event-meta">
-                <span><i class="fa-solid fa-calendar-days"></i> Chủ nhật, 12 Tháng 6, 2026</span>
-                <span><i class="fa-solid fa-clock"></i> 18:00 - 02:00</span>
-                <span><i class="fa-solid fa-map-pin"></i> Skye Open Air Plaza, CA</span>
+                <span>
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span th:text="${#temporals.format(event.date, 'EEEE, dd MMMM, yyyy', new java.util.Locale('vi'))}">
+                        Ngày tổ chức
+                    </span>
+                </span>
+                <span>
+                    <i class="fa-solid fa-clock"></i>
+                    <span th:text="${#temporals.format(event.startTime, 'HH:mm')}
+                                  + ' - '
+                                  + ${#temporals.format(event.endTime, 'HH:mm')}">
+                        Giờ
+                    </span>
+                </span>
+                <span>
+                    <i class="fa-solid fa-map-pin"></i>
+                    <span th:text="${event.venueName}
+                                  + ', '
+                                  + ${event.address.ward.city.name}">
+                        Địa điểm
+                    </span>
+                </span>
             </div>
         </div>
         <div>
-                <span class="badge" style="background-color: rgba(255, 42, 122, 0.08); border: 1px solid var(--color-primary); color: var(--color-primary); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; padding: 6px 12px; border-radius: 20px;">
-                    <i class="fa-solid fa-tags me-1 text-pink"></i> MULTI-ZONE SELECT
-                </span>
+            <span class="badge"
+                  style="background-color: rgba(255,42,122,0.08);
+                         border: 1px solid var(--color-primary);
+                         color: var(--color-primary);
+                         font-size: 11px; font-weight: 700;
+                         letter-spacing: 0.5px; padding: 6px 12px; border-radius: 20px;">
+                <i class="fa-solid fa-tags me-1 text-pink"></i> MULTI-ZONE SELECT
+            </span>
         </div>
     </div>
 
-    <!-- Core layout grid -->
+    <!-- Core Layout -->
     <div class="checkout-layout" id="type-container">
 
-        <!-- LEFT SECTION: Seats schematic layout map -->
+        <!-- LEFT: Seat Map -->
         <div class="seats-section">
 
-            <!-- Section title and indicators legend -->
             <div class="seats-header">
                 <h3 class="seats-heading">Sơ đồ chỗ ngồi</h3>
-
                 <div class="legend-container">
                     <div class="legend-item">
                         <span class="legend-square available"></span>
@@ -93,101 +109,97 @@
                 </div>
             </div>
 
-            <!-- Stage banner screen indicator -->
-            <div class="screen-banner">
-                MÀN HÌNH / SÂN KHẤU
-            </div>
+            <div class="screen-banner">MÀN HÌNH / SÂN KHẤU</div>
 
-            <!-- High Capacity Scaling Alert / Info Tip (Reassurance for 1000 seats limit/scaling) -->
-            <div class="alert alert-info border-0 p-3 mb-4 rounded-3 text-start shadow-sm" style="background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15) !important; font-size: 13px;">
+            <div class="alert alert-info border-0 p-3 mb-4 rounded-3 text-start shadow-sm"
+                 style="background-color: rgba(59,130,246,0.08);
+                        border: 1px solid rgba(59,130,246,0.15) !important;
+                        font-size: 13px;">
                 <div class="d-flex gap-3 align-items-center">
-                    <div class="p-2.5 rounded-circle bg-blue bg-opacity-10 text-blue d-flex align-items-center justify-content-center shrink-0" style="width: 36px; height: 36px;">
+                    <div class="p-2.5 rounded-circle d-flex align-items-center justify-content-center"
+                         style="width:36px;height:36px;">
                         <i class="fa-solid fa-expand"></i>
                     </div>
                     <div>
-                        <p class="m-0 text-white font-semibold flex items-center gap-1.5" style="font-size: 13.5px;"><i class="fa-solid fa-circle-check text-success me-1"></i> Tích hợp tính năng chống vỡ sơ đồ lớn (Hỗ trợ hơn 1.000 chỗ ngồi)</p>
-                        <p class="m-0 mt-1 text-muted" style="font-size: 11.5px; line-height: 1.55;">Khán đài được tinh chỉnh với các nhãn hàng rõ ràng trực quan. Sơ đồ tự động kích hoạt tính năng co giãn thông minh, thanh cuộn phụ (scroll overlay) và định dạng lưới linh hoạt giúp hiển thị chính xác &amp; phản hồi mượt mà kể cả khi quy mô tăng cao vượt 1.000 vé.</p>
+                        <p class="m-0 text-white" style="font-size:13.5px;">
+                            <i class="fa-solid fa-circle-check text-success me-1"></i>
+                            Tích hợp tính năng chống vỡ sơ đồ lớn (Hỗ trợ hơn 1.000 chỗ ngồi)
+                        </p>
+                        <p class="m-0 mt-1 text-muted" style="font-size:11.5px;line-height:1.55;">
+                            Sơ đồ tự động kích hoạt tính năng co giãn thông minh, thanh cuộn phụ
+                            và định dạng lưới linh hoạt giúp hiển thị chính xác kể cả khi vượt 1.000 vé.
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Zones layout -->
+            <!-- Zones — render động bởi JS, nhưng giữ 3 container tĩnh cho 3 zone đầu -->
             <div class="zones-container">
 
-                <!-- ZONE 1: Khu A - VIP (Rows 1 to 8, cols 1 to 10) -->
                 <div class="seat-zone zone-1">
                     <div class="zone-title">
-                        <i class="fa-solid fa-crown"></i> Khu A - VIP
+                        <i class="fa-solid fa-crown"></i> Khu A
                     </div>
                     <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneA-grid">
-                            <!-- Javascript generated or static placeholders fallback -->
-                        </div>
+                        <div class="seats-grid" id="zoneA-grid"></div>
                     </div>
                 </div>
 
-                <!-- ZONE 2: Khu B - Standard (Rows 1 to 8, cols 1 to 10) -->
                 <div class="seat-zone zone-2">
                     <div class="zone-title">
-                        <i class="fa-solid fa-star"></i> Khu B - Standard
+                        <i class="fa-solid fa-star"></i> Khu B
                     </div>
                     <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneB-grid">
-                            <!-- Generated dynamically -->
-                        </div>
+                        <div class="seats-grid" id="zoneB-grid"></div>
                     </div>
                 </div>
 
-                <!-- ZONE 3: Khu C - Economy (Rows 1 to 8, cols 1 to 10) -->
                 <div class="seat-zone zone-3">
                     <div class="zone-title">
-                        <i class="fa-solid fa-circle-user"></i> Khu C - Economy
+                        <i class="fa-solid fa-circle-user"></i> Khu C
                     </div>
                     <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneC-grid">
-                            <!-- Generated dynamically -->
-                        </div>
+                        <div class="seats-grid" id="zoneC-grid"></div>
                     </div>
                 </div>
 
             </div>
-
         </div>
 
-        <!-- RIGHT SECTION: Sticky summary invoice sidebar -->
+        <!-- RIGHT: Summary Sidebar -->
         <div class="summary-sidebar">
             <div class="summary-card">
-                <h3 class="summary-title"><i class="fa-solid fa-file-invoice-dollar me-2 text-pink"></i> Tóm tắt đơn hàng</h3>
+                <h3 class="summary-title">
+                    <i class="fa-solid fa-file-invoice-dollar me-2 text-pink"></i> Tóm tắt đơn hàng
+                </h3>
 
                 <div class="summary-divider"></div>
 
-                <!-- Selected seats tracking indicators -->
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white text-xs font-semibold">Danh sách ghế đặt:</span>
-                        <span class="text-pink text-xs font-bold font-mono" id="selected-summary-count">0/6</span>
+                        <span class="text-white" style="font-size:12px;font-weight:600;">Danh sách ghế đặt:</span>
+                        <span class="text-pink" style="font-size:12px;font-weight:700;font-family:monospace;"
+                              id="selected-summary-count">0/6</span>
                     </div>
                     <div class="selected-seats-list" id="selected-seats-badges">
-                        <!-- Badge items loaded dynamically -->
-                        <div class="text-muted text-xs font-medium py-1 italic" id="empty-seats-hint">Chưa chọn ghế nào trên sơ đồ.</div>
+                        <div class="text-muted py-1"
+                             style="font-size:12px;font-style:italic;"
+                             id="empty-seats-hint">
+                            Chưa chọn ghế nào trên sơ đồ.
+                        </div>
                     </div>
                 </div>
 
                 <div class="summary-divider"></div>
 
-                <!-- Dòng thông tin số lượng -->
                 <div class="summary-info-row">
                     <span>Số lượng vé</span>
                     <span class="summary-info-value" id="tickets-count">0</span>
                 </div>
-
-                <!-- Tạm tính -->
                 <div class="summary-info-row">
                     <span>Tạm tính</span>
                     <span class="summary-info-value" id="subtotal-calc">0 ₫</span>
                 </div>
-
-                <!-- Phí dịch vụ (5%) -->
                 <div class="summary-info-row">
                     <span>Phí dịch vụ <span class="fee-badge">5%</span></span>
                     <span class="summary-info-value" id="fee-calc">0 ₫</span>
@@ -195,42 +207,25 @@
 
                 <div class="summary-divider"></div>
 
-                <!-- Tổng cộng -->
                 <div class="total-row">
                     <span class="total-label">Tổng cộng</span>
                     <span class="total-price" id="total-calc">0 ₫</span>
                 </div>
 
-                <!-- CTA payment node -->
                 <button class="btn-payment btn-block" id="btn-submit-booking" disabled>
                     Tiếp tục thanh toán <i class="fa-solid fa-chevron-right ms-1"></i>
                 </button>
-
-                <!-- Refund cancellation policy message -->
-                <div class="refund-policy">
-                    <i class="fa-regular fa-clock text-success"></i> Miễn phí hủy trong vòng 24 giờ
-                </div>
-
             </div>
         </div>
 
     </div>
-
 </div>
 
-<!-- Reusable Thymeleaf Footer Fragment -->
-<div th:replace="~{homepage/fragments/footer :: footer}">
-    <!-- Static Fallback for local files inspection -->
-    <footer class="py-4 mt-5 text-center text-secondary border-top border-dark">
-        <div class="container">
-            <p class="mb-0">&copy; 2026 EventHub. All rights reserved.</p>
-        </div>
-    </footer>
-</div>
+<div th:replace="~{homepage/fragments/footer :: footer}"></div>
 
-<!-- Scripting for fully interactive seats grid mapping and calculations -->
-<script th:src="@{/homepage/js/choose_seat.js}"></script>
-<script th:src="@{/homepage/js/header.js}"></script>
+<!-- Script load order: footer.js → header.js → choose_seat.js -->
 <script th:src="@{/homepage/js/footer.js}"></script>
+<script th:src="@{/homepage/js/header.js}"></script>
+<script th:src="@{/homepage/js/choose_seat.js}"></script>
 </body>
 </html>

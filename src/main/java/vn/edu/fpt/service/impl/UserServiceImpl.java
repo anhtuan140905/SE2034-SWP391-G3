@@ -1,5 +1,6 @@
 package vn.edu.fpt.service.impl;
 
+import io.micrometer.common.lang.NonNull;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -9,14 +10,24 @@ import org.springframework.validation.BindingResult;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.RoleName;
+import vn.edu.fpt.modelview.request.admin.ActivityDTO;
+import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.OrganizerProfileRepository;
 import vn.edu.fpt.repository.UserRepository;
+import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.repository.OrderRepository;
+import vn.edu.fpt.repository.TicketRepository;
 import vn.edu.fpt.service.*;
+import vn.edu.fpt.service.UserService;
 
+import vn.edu.fpt.model.constant.TicketStatus;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("UserService")
 public class UserServiceImpl implements UserService {
@@ -26,7 +37,10 @@ public class UserServiceImpl implements UserService {
     private final OrganizerProfileRepository organizerProfileRepository;
     private final OrganizerProfileService organizerProfileService;
     private final WardService wardService;
-    private final VerifyTokenService  verifyTokenService;
+    private final VerifyTokenService verifyTokenService;
+    private final EventRepository eventRepository;
+    private final OrderRepository orderRepository;
+    private final TicketRepository ticketRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
@@ -37,7 +51,10 @@ public class UserServiceImpl implements UserService {
                            CloudinaryService cloudinaryService,
                            @Lazy UserDetailsService userDetailsService,
                            EmailService emailService,
-                           VerifyTokenService verifyTokenService) {
+                           VerifyTokenService verifyTokenService,
+                           EventRepository eventRepository,
+                           OrderRepository orderRepository,
+                           TicketRepository ticketRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoderConfig = passwordEncoderConfig;
@@ -45,11 +62,16 @@ public class UserServiceImpl implements UserService {
         this.organizerProfileService = organizerProfileService;
         this.wardService = wardService;
         this.verifyTokenService = verifyTokenService;
+        this.eventRepository = eventRepository;
+        this.orderRepository = orderRepository;
+        this.ticketRepository = ticketRepository;
     }
+
 
     public User findByUsername(String username) {
         return userRepository.findByEmail(username);
     }
+
     @Override
     public User handleSaveUser(User user) {
         return this.userRepository.save(user);
@@ -57,7 +79,7 @@ public class UserServiceImpl implements UserService {
 
 
     public User handleCreateUser(RegisterUserDTO dto) {
-        if(findByUsername(dto.getUsername()) != null){
+        if (findByUsername(dto.getUsername()) != null) {
             return null;
         }
         User user = new User();
@@ -91,7 +113,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result) {
         User user = this.findByUsername(dto.getEmail());
-        if(user == null){
+        if (user == null) {
             return;
         }
         if (dto.getPassword() != null && !dto.getPassword().isBlank() && dto.getConfirmPassword() != null && !dto.getConfirmPassword().isBlank()) {
@@ -113,7 +135,7 @@ public class UserServiceImpl implements UserService {
         user.setPhone(dto.getPhone());
         Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
         Address address = user.getAddress();
-        if(address != null){
+        if (address != null) {
             address.setWard(ward);
             address.setSpecificAddress(dto.getSpecificAddress());
         } else {
@@ -122,7 +144,7 @@ public class UserServiceImpl implements UserService {
             address.setSpecificAddress(dto.getSpecificAddress());
         }
         user.setAddress(address);
-        if(dto.getAvatar() != null) {
+        if (dto.getAvatar() != null) {
             user.setAvatar(dto.getAvatar());
         }
         this.userRepository.save(user);
@@ -132,18 +154,19 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findAll();
     }
+
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venue not found: " + id));
     }
 
-    public List<User> searchUser(String keyword){
-        return userRepository.findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(keyword,keyword,keyword);
+    public List<User> searchUser(String keyword) {
+        return userRepository.findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(keyword, keyword, keyword);
     }
 
     @Override
     public List<User> getActivatedOrganizers() {
-        return this.userRepository.findActiveOrganizers("APPROVED");
+        return this.userRepository.findActiveOrganizers();
     }
 
     @Override
@@ -152,5 +175,174 @@ public class UserServiceImpl implements UserService {
         return top3;
     }
 
+    public void updateUser(Long id, @NonNull UpdateUserStatusDTO request) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        Role role = this.roleService.getRoleByName(RoleName.valueOf(request.getRoleName()));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
+
+
+        user.setIsActive(request.getIsActive());
+
+        this.userRepository.save(user);
+    }
+
+
+    @Override
+    public List<ActivityDTO> getUserActivities(Long userId) {
+
+        List<ActivityDTO> result = new ArrayList<>();
+
+        User user = findById(userId);
+
+        Set<String> roles = user.getRoles()
+                .stream()
+                .map(r -> r.getRoleName().name())
+                .collect(Collectors.toSet());
+
+        if (user.getUpdatedAt() != null) {
+            ActivityDTO profile = new ActivityDTO();
+            profile.setAction("PROFILE_UPDATED");
+            profile.setDescription("Cập nhật hồ sơ cá nhân");
+            profile.setTime(LocalDateTime.ofInstant(user.getUpdatedAt(), ZoneId.systemDefault()));
+            profile.setReferenceId(String.valueOf(user.getId()));
+            result.add(profile);
+        }
+        // ================= ATTENDEE =================
+        if (roles.contains("ROLE_ATTENDEE")) {
+
+            List<Order> orders = orderRepository.findTop10ByUserIdOrderByCreatedAtDesc(userId);
+
+            for (Order o : orders) {
+                ActivityDTO dto = new ActivityDTO();
+                dto.setAction("TICKET_PURCHASED");
+                dto.setDescription("Đã mua vé sự kiện " + o.getEvent().getTitle());
+
+                if (o.getCreatedAt() != null) {
+                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
+                }
+                else {
+                    dto.setTime(null);
+                }
+
+                dto.setReferenceId(String.valueOf(o.getOrderId()));
+                result.add(dto);
+            }
+
+
+
+
+
+        }
+
+        // ================= ORGANIZER =================
+        else if (roles.contains("ROLE_ORGANIZER")) {
+
+            List<Event> events = eventRepository.findTop10ByOrganizerIdOrderByCreatedAtDesc(userId);
+
+            for (Event e : events) {
+                ActivityDTO dto = new ActivityDTO();
+                dto.setAction("EVENT_CREATED");
+                dto.setDescription("Đã tạo sự kiện " + e.getTitle());
+
+                if (e.getCreatedAt() != null) {
+                    dto.setTime(LocalDateTime.ofInstant(e.getCreatedAt(), ZoneId.systemDefault()));
+                }
+                else {
+                    dto.setTime(null);
+                }
+
+                dto.setReferenceId(String.valueOf(e.getEventId()));
+                result.add(dto);
+            }
+
+            List<Order> orders = orderRepository.findTop10ByEvent_OrganizerIdOrderByCreatedAtDesc(userId);
+
+            for (Order o : orders) {
+                ActivityDTO dto = new ActivityDTO();
+                dto.setAction("TICKET_SOLD");
+                dto.setDescription("Có người mua vé sự kiện " + o.getEvent().getTitle());
+
+                if (o.getCreatedAt() != null) {
+                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
+                }
+                else {
+                    dto.setTime(null);
+                }
+
+                dto.setReferenceId(String.valueOf(o.getOrderId()));
+                result.add(dto);
+            }
+        }
+
+        // ================= ADMIN =================
+        else if (roles.contains("ROLE_ADMIN")) {
+
+            List<User> users = userRepository.findTop10ByOrderByUpdatedAtDesc();
+
+            for (User u : users) {
+                ActivityDTO dto = new ActivityDTO();
+
+                if (Boolean.TRUE.equals(u.getIsActive())) {
+                    dto.setAction("USER_UPDATED");
+                    dto.setDescription("Cập nhật user " + u.getEmail());
+                }
+                else {
+                    dto.setAction("USER_LOCKED");
+                    dto.setDescription("Khóa tài khoản " + u.getEmail());
+                }
+
+                if (u.getCreatedAt() != null) {
+                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
+                }
+                else {
+                    dto.setTime(null);
+                }
+
+                dto.setReferenceId(String.valueOf(u.getId()));
+                result.add(dto);
+            }
+        }
+
+        // ================= MODERATOR =================
+        else if (roles.contains("ROLE_MODERATOR")) {
+
+            List<User> organizers = userRepository.findTop10ByRoles_RoleNameOrderByUpdatedAtDesc(RoleName.ROLE_ORGANIZER);
+
+            for (User u : organizers) {
+
+                ActivityDTO dto = new ActivityDTO();
+
+                if (Boolean.TRUE.equals(u.getIsActive())) {
+                    dto.setAction("ORGANIZER_APPROVED");
+                    dto.setDescription("Duyệt organizer: " + u.getEmail());
+                }
+                else {
+                    dto.setAction("ORGANIZER_REJECTED");
+                    dto.setDescription("Từ chối organizer: " + u.getEmail());
+                }
+
+
+                if (u.getCreatedAt() != null) {
+                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
+                }
+                else {
+                    dto.setTime(null);
+                }
+
+                dto.setReferenceId(String.valueOf(u.getId()));
+                result.add(dto);
+            }
+        }
+
+        return result;
+    }
+
 
 }
+
+
