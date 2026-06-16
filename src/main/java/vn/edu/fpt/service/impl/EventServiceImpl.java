@@ -1,6 +1,10 @@
 package vn.edu.fpt.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
@@ -8,11 +12,17 @@ import vn.edu.fpt.model.constant.EventStatus;
 
 import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 
+import vn.edu.fpt.model.*;
+import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
 
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("EventService")
 @AllArgsConstructor
@@ -24,28 +34,28 @@ public class EventServiceImpl implements EventService {
     private CloudinaryService cloudinaryService;
     private TicketRepository ticketRepository;
 
-//    @Override
-//    public List<EventCategory> getListEventCategory() {
-//        List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
-//        return listAllEventCategory;
-//    }
-//
-//    @Override
-//    public long countHostedEvents() {
-//        return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
-//    }
-//
-//    @Override
-//    public List<EventSummaryDto> findTopFeaturedEvents() {
-//        List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
-//
-//        return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public FeaturedEventDTO findFeaturedEvent() {
-//        return this.eventRepository.findFeaturedEvent();
-//    }
+    @Override
+    public List<EventCategory> getListEventCategory() {
+        List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
+        return listAllEventCategory;
+    }
+
+    @Override
+    public long countHostedEvents() {
+        return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
+    }
+
+    @Override
+    public List<EventSummaryDto> findTopFeaturedEvents() {
+        List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
+
+        return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public FeaturedEventDTO findFeaturedEvent() {
+        return this.eventRepository.findFeaturedEvent();
+    }
 
 //    @Override
 //    public EventDetailModeratorDTO getEventDetailById(Long eventId) {
@@ -98,96 +108,127 @@ public class EventServiceImpl implements EventService {
 //        return eventDetailModeratorDTO;
 //    }
 
+
+
 //    @Override
-//    public List<Event> findEventbyVenueID(Long id) {
-//        return eventRepository.findByVenue_VenueId(id);
+//    public DashboardStatsDTO getDashboardStats() {
+//
+//        DashboardStatsDTO stats = new DashboardStatsDTO();
+//        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.ACTIVE));
+//        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.ENDED));
+//        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.INACTIVE));
+//
+//        return stats;
 //    }
 
 //    @Override
-//    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
-//        Specification<Event> spec = (root, query, cb) -> {
-//            List<Predicate> predicates = new ArrayList<>();
-//
-//            predicates.add(cb.equal(root.get("status"), EventStatus.ACTIVE));
-//            predicates.add(cb.greaterThan(root.get("endTime"), LocalDateTime.now()));
-//
-//            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
-//                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
-//            }
-//
-//            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
-//                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
-//                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
-//            }
-//
-//            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
-//
-//                Join<Event, Venue> venueJoin = root.join("venue", JoinType.INNER);
-//
-//                Join<Venue, Address> addressJoin = venueJoin.join("address", JoinType.INNER);
-//
-//                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
-//
-//                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
-//
-//                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
-//            }
-//
-//            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
-//                try {
-//                    String[] parts = criteria.getMonth().split("-");
-//                    int year = Integer.parseInt(parts[0]);
-//                    int month = Integer.parseInt(parts[1]);
-//
-//                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
-//                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
-//                            .withHour(23).withMinute(59).withSecond(59);
-//
-//                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
-//                } catch (Exception e) {
-//                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
-//                }
-//            }
-//
-//
-//            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
-//
-//                Subquery<Double> subquery = query.subquery(Double.class);
-//
-//                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
-//
-//                subquery.select(cb.min(ticketRoot.get("price")));
-//
-//                subquery.where(cb.equal(ticketRoot.get("event"), root));
-//
-//                Expression<Double> minPriceExpr = subquery;
-//
-//                switch (criteria.getPrice()) {
-//                    case "free":
-//                        predicates.add(cb.equal(minPriceExpr, 0D));
-//                        break;
-//                    case "under200":
-//                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
-//                        break;
-//                    case "200to1000":
-//                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
-//                        break;
-//                    case "over1000":
-//                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
-//                        break;
-//                }
-//            }
-//
-//            return cb.and(predicates.toArray(new Predicate[0]));
-//        };
-//
-//        return eventRepository.findAll(spec, pageable);
+//    public List<Event> getTopThreePendingEvents() {
+//        return eventRepository.findByStatusOrderByCreatedAtDesc(
+//                EventStatus.PENDING,
+//                org.springframework.data.domain.PageRequest.of(0, 3)
+//        );
 //    }
 
 //    @Override
-//    public EventSummaryProjection findEventDetailById(Long id) {
-//        return this.eventRepository.findEventDetailById(id);
+//    public List<Event> getTodayActiveEvents() {
+//
+//        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+//
+//        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
+//
+//        return eventRepository.findByStatusAndStartTimeBetween(
+//                EventStatus.APPROVED,
+//                startOfDay,
+//                endOfDay
+//        );
 //    }
+
+    @Override
+    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
+        Specification<Event> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(root.get("status"), EventStatus.ACTIVE));
+            predicates.add(cb.greaterThan(root.get("endTime"), LocalDateTime.now()));
+
+            if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));
+            }
+
+            if (criteria.getCategory() != null && !criteria.getCategory().trim().isEmpty()) {
+                Join<Event, EventCategory> categoryJoin = root.join("category", JoinType.INNER);
+                predicates.add(cb.equal(cb.lower(categoryJoin.get("categoryName")), criteria.getCategory().toLowerCase()));
+            }
+
+            if (criteria.getCity() != null && !criteria.getCity().trim().isEmpty() && !criteria.getCity().equals("all")) {
+
+                Join<Event, Address> addressJoin = root.join("address", JoinType.INNER);
+                Join<Address, Ward> wardJoin = addressJoin.join("ward", JoinType.INNER);
+                Join<Ward, City> cityJoin = wardJoin.join("city", JoinType.INNER);
+
+                predicates.add(cb.equal(cb.lower(cityJoin.get("name")), criteria.getCity().toLowerCase()));
+            }
+
+            if (criteria.getMonth() != null && !criteria.getMonth().trim().isEmpty() && !criteria.getMonth().equals("all")) {
+                try {
+                    String[] parts = criteria.getMonth().split("-");
+                    int year = Integer.parseInt(parts[0]);
+                    int month = Integer.parseInt(parts[1]);
+
+                    LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+                    LocalDateTime endOfMonth = startOfMonth.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth())
+                            .withHour(23).withMinute(59).withSecond(59);
+
+                    predicates.add(cb.between(root.get("startTime"), startOfMonth, endOfMonth));
+                } catch (Exception e) {
+                    System.err.println("Lỗi parse định dạng tháng: " + e.getMessage());
+                }
+            }
+
+
+            if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
+
+                Subquery<Double> subquery = query.subquery(Double.class);
+
+                Root<TicketType> ticketRoot = subquery.from(TicketType.class);
+
+                subquery.select(cb.min(ticketRoot.get("price")));
+
+                subquery.where(cb.equal(ticketRoot.get("event"), root));
+
+                Expression<Double> minPriceExpr = subquery;
+
+                switch (criteria.getPrice()) {
+                    case "free":
+                        predicates.add(cb.equal(minPriceExpr, 0D));
+                        break;
+                    case "under200":
+                        predicates.add(cb.lessThanOrEqualTo(minPriceExpr, 200000D));
+                        break;
+                    case "200to1000":
+                        predicates.add(cb.between(minPriceExpr, 200000D, 1000000D));
+                        break;
+                    case "over1000":
+                        predicates.add(cb.greaterThan(minPriceExpr, 1000000D));
+                        break;
+                }
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return eventRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public Event getEventById(Long id) {
+        return this.eventRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public EventSummaryProjection findEventDetailById(Long id) {
+        return this.eventRepository.findEventDetailById(id);
+    }
 
 
 

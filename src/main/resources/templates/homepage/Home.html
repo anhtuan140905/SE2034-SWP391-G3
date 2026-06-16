@@ -82,10 +82,12 @@
                     Price
                 </span>
                         <div class="event-date-badge">
-                    <span class="month"
-                          th:text="${#temporals.format(featuredEvent.startTime, 'MMM').toUpperCase()}">JUN</span>
                             <span class="day"
                                   th:text="${#temporals.format(featuredEvent.startTime, 'dd')}">12</span>
+                            <span>/</span>
+                    <span class="month"
+                          th:text="${#temporals.format(featuredEvent.startTime, 'MM').toUpperCase()}">7</span>
+
                         </div>
                         <img th:src="${featuredEvent.thumbnail_url}" class="event-img" th:alt="${featuredEvent.title}">
                     </div>
