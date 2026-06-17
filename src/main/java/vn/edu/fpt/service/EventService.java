@@ -1,7 +1,12 @@
 package vn.edu.fpt.service;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
+import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.cityDto;
 import vn.edu.fpt.modelview.request.organizer.wardDTO;
@@ -32,6 +37,6 @@ public interface EventService {
     Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     Event getEventById(Long id);
     EventSummaryProjection findEventDetailById(Long id);
-//    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
+    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
 List<EventSummaryDto> findTop10Events();
 }

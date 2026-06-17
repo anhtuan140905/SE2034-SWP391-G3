@@ -1,12 +1,15 @@
 package vn.edu.fpt.service.impl;
 
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
@@ -24,6 +27,7 @@ import vn.edu.fpt.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -359,52 +363,51 @@ public class EventServiceImpl implements EventService {
 
 
 
-//    @Override
-//    public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
-//        // Chuẩn hoá: bỏ "ALL", bỏ null, trim khoảng trắng
-//        List<String> statusList = statuses == null
-//                ? List.of()
-//                : Arrays.stream(statuses)
-//                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
-//                .map(String::toUpperCase)
-//                .distinct()
-//                .collect(Collectors.toList());
-//
-//        Pageable pageable = PageRequest.of(
-//                Math.max(page - 1, 0),
-//                9
-//        );
-//        Page<Event> entityPage = this.eventRepository
-//                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
-//        return entityPage.map(this::toDTO);
-//    }
+    @Override
+    public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
 
-//    private EventCardDTO toDTO(Event event) {
-//        EventCardDTO dto = new EventCardDTO();
-//        dto.setId(event.getEventId());
-//        dto.setEventName(event.getTitle());
-//        dto.setThumnail(event.getThumbnailUrl());
-//        dto.setDate(event.getDate());
-//        dto.setStartime(event.getStartTime().toLocalTime());
-//        dto.setEndtime(event.getEndTime().toLocalTime());
-//        dto.setStatusEvent(event.getStatus().name());
-//        dto.setEventCatagory(event.getCategory().getCategoryName());
-//        dto.setVenueName(event.getVenue().getVenueName());
-//
-//        List<TicketType> ticketTypes = event.getTicketTypes();
-//        int stock = 0;
-//        int numSelled = 0;
-//        for (TicketType tt : ticketTypes) {
-//            stock += tt.getStock();
-//            numSelled += tickRepository.getNumTicketSelled(tt.getTicketTypeId());
-//        }
-//
-//        dto.setStock(stock);
-//        dto.setTicketSelled(numSelled);
-//        dto.setPercent(stock == 0 ? 0 : numSelled * 100 / stock);
-//
-//        return dto;
-//    }
+        List<String> statusList = statuses == null
+                ? List.of()
+                : Arrays.stream(statuses)
+                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
+                .map(String::toUpperCase)
+                .distinct()
+                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(
+                Math.max(page - 1, 0),
+                9
+        );
+        Page<Event> entityPage = this.eventRepository
+                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
+        return entityPage.map(this::toDTO);
+    }
+
+    private EventCardDTO toDTO(Event event) {
+        EventCardDTO dto = new EventCardDTO();
+        dto.setId(event.getEventId());
+        dto.setEventName(event.getTitle());
+        dto.setThumnail(event.getThumbnailUrl());
+        dto.setDate(event.getDate());
+        dto.setStartime(event.getStartTime().toLocalTime());
+        dto.setEndtime(event.getEndTime().toLocalTime());
+        dto.setStatusEvent(event.getStatus().name());
+        dto.setEventCatagory(event.getCategory().getCategoryName());
+        dto.setVenueName(event.getVenueName());
+
+        List<TicketType> ticketTypes = event.getTicketTypes();
+        int stock = 0;
+        int numSelled = 0;
+        for (TicketType ticketType : ticketTypes) {
+            stock =  stock + ticketType.getTotalQuantity();
+            numSelled = numSelled +  ticketType.getSoldQuantity();
+        }
+
+        dto.setStock(stock);
+        dto.setTicketSelled(numSelled);
+        dto.setPercent(stock == 0 ? 0 : numSelled * 100 / stock);
+
+        return dto;
+    }
 
     public List<EventSummaryDto> findTop10Events() {
         return eventRepository.findTop10Events()

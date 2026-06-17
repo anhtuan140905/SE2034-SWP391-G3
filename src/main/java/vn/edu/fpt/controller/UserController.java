@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
-import vn.edu.fpt.modelview.request.admin.CreateVenueDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
