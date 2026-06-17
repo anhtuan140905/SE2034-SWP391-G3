@@ -19,9 +19,6 @@
         <main class="content-wrap">
             <div class="page-inner">
 
-                <!-- ══════════════════════════════════════
-                     HEADER
-                ══════════════════════════════════════ -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                     <div>
                         <h2 class="page-title mb-0">Event Campaign Management</h2>
@@ -34,20 +31,13 @@
                     </div>
                 </div>
 
-                <!-- ══════════════════════════════════════
-                     FILTER FORM
-                     Gộp search + filter vào 1 form GET.
-                     Mỗi khi submit (search hoặc click tab)
-                     → URL: ?status=APPROVED&status=ENDED&keyword=rock&page=1
-                ══════════════════════════════════════ -->
                 <form method="get"
                       th:action="@{/organizer/list/event}"
-                      id="filterForm">
+                      id="filterForm"
+                      th:attr="data-selected-status=${selectedStatus}">
 
-                    <!-- Reset page về 1 mỗi khi filter/search thay đổi -->
                     <input type="hidden" name="page" value="1" id="pageInput"/>
 
-                    <!-- ── Search bar ───────────────────────────── -->
                     <div class="search-filter-row mb-3">
                         <div class="events-search">
                             <span class="material-symbols-outlined search-icon-sm">search</span>
@@ -61,84 +51,62 @@
 
                         <!-- Badge hiển thị số filter đang chọn -->
                         <div class="filter-badge-wrap">
-              <span class="filter-active-label"
-                    th:if="${!#lists.isEmpty(selectedStatuses)}">
-                <span class="material-symbols-outlined">filter_list</span>
-                Đang lọc:
-                  <!-- Hiển thị từng status tag -->
-                  <!--                <span class="status-tag"-->
-                  <!--                      th:each="s : ${selectedStatuses}"-->
-                  <!--                      th:text="${s}"></span>-->
-                  <!-- Nút xoá toàn bộ filter -->
-                <a th:href="@{/organizer/list/event(keyword=${keyword}, page=1)}"
-                   class="clear-filter-btn" title="Bỏ tất cả filter">✕ Xoá filter</a>
-              </span>
+                          <span class="filter-active-label"
+                                th:if="${!#lists.isEmpty(selectedStatuses)}">
+                            <span class="material-symbols-outlined">filter_list</span>
+                            Đang lọc:
+                            <a th:href="@{/organizer/list/event(keyword=${keyword}, page=1)}"
+                               class="clear-filter-btn" title="Bỏ tất cả filter">✕ Xoá filter</a>
+                          </span>
                         </div>
                     </div>
 
-                    <!-- ── Filter tabs (multi-select checkbox style) ── -->
-                    <!--
-                      Mỗi tab là label bọc checkbox ẩn.
-                      Khi user click → checkbox toggle → form tự submit (JS).
-                      th:checked kiểm tra selectedStatuses có chứa value không.
-                    -->
                     <div class="filter-tabs mb-4">
 
-                        <!-- Tab ALL: bỏ chọn hết, submit không có param status -->
+
                         <button type="button"
                                 class="filter-tab"
-                                th:classappend="${#lists.isEmpty(selectedStatuses)} ? ' active' : ''"
+                                th:classappend="${selectedStatus == null} ? ' active' : ''"
                                 onclick="selectAll()">
                             All
                         </button>
 
-                        <!-- Tab APPROVED -->
+
                         <label class="filter-tab filter-tab-check"
-                               th:classappend="${#lists.contains(selectedStatuses, 'APPROVED')} ? ' active' : ''">
-                            <input type="checkbox"
+                               th:classappend="${selectedStatus == 'ACTIVE'} ? ' active' : ''">
+                            <input type="radio"
                                    name="status"
-                                   value="APPROVED"
-                                   th:checked="${#lists.contains(selectedStatuses, 'APPROVED')}"
-                                   onchange="submitFilter()"/>
+                                   value="ACTIVE"
+                                   th:checked="${selectedStatus == 'ACTIVE'}"
+                                   onclick="handleStatusClick(event, this)"/>
                             <span class="material-symbols-outlined tab-icon tab-icon-approved">check_circle</span>
-                            APPROVED
+                            ACTIVE
                             <span class="tab-check-indicator">✓</span>
                         </label>
 
-                        <!-- Tab PENDING -->
+
                         <label class="filter-tab filter-tab-check"
-                               th:classappend="${#lists.contains(selectedStatuses, 'PENDING')} ? ' active' : ''">
-                            <input type="checkbox"
+
+                               th:classappend="${selectedStatus == 'INACTIVE'} ? ' active' : ''">
+                            <input type="radio"
                                    name="status"
-                                   value="PENDING"
-                                   th:checked="${#lists.contains(selectedStatuses, 'PENDING')}"
-                                   onchange="submitFilter()"/>
+                                   value="INACTIVE"
+                                   th:checked="${selectedStatus == 'INACTIVE'}"
+                                   onclick="handleStatusClick(event, this)"/>
                             <span class="material-symbols-outlined tab-icon tab-icon-pending">schedule</span>
-                            PENDING
+                            INACTIVE
                             <span class="tab-check-indicator">✓</span>
                         </label>
 
-                        <!-- Tab REJECTED -->
-                        <label class="filter-tab filter-tab-check"
-                               th:classappend="${#lists.contains(selectedStatuses, 'REJECTED')} ? ' active' : ''">
-                            <input type="checkbox"
-                                   name="status"
-                                   value="REJECTED"
-                                   th:checked="${#lists.contains(selectedStatuses, 'REJECTED')}"
-                                   onchange="submitFilter()"/>
-                            <span class="material-symbols-outlined tab-icon tab-icon-rejected">cancel</span>
-                            REJECTED
-                            <span class="tab-check-indicator">✓</span>
-                        </label>
 
-                        <!-- Tab ENDED -->
+
                         <label class="filter-tab filter-tab-check"
-                               th:classappend="${#lists.contains(selectedStatuses, 'ENDED')} ? ' active' : ''">
-                            <input type="checkbox"
+                               th:classappend="${selectedStatus == 'ENDED'} ? ' active' : ''">
+                            <input type="radio"
                                    name="status"
                                    value="ENDED"
-                                   th:checked="${#lists.contains(selectedStatuses, 'ENDED')}"
-                                   onchange="submitFilter()"/>
+                                   th:checked="${selectedStatus == 'ENDED'}"
+                                   onclick="handleStatusClick(event, this)"/>
                             <span class="material-symbols-outlined tab-icon tab-icon-ended">event_busy</span>
                             ENDED
                             <span class="tab-check-indicator">✓</span>
@@ -146,11 +114,7 @@
 
                     </div>
                 </form>
-                <!-- /filterForm -->
 
-                <!-- ══════════════════════════════════════
-                     EVENTS GRID
-                ══════════════════════════════════════ -->
                 <div class="events-grid">
 
                     <div th:if="${#lists.isEmpty(eventCards)}" class="no-result-msg">
@@ -201,10 +165,6 @@
 
                 </div>
 
-                <!-- ══════════════════════════════════════
-                     PAGINATION
-                     Giữ nguyên status[] và keyword trong URL
-                ══════════════════════════════════════ -->
                 <div class="pagination-wrapper" th:if="${totalItems > 0}">
 
                     <div class="pagination-info">
@@ -214,11 +174,7 @@
 
                     <nav class="pagination-nav" aria-label="Event pagination">
 
-                        <!-- Nút Prev -->
-                        <!--
-                          Thymeleaf không build được URL với List param trực tiếp trong th:href,
-                          nên dùng JS để submit form với page thay đổi.
-                        -->
+
                         <button type="button" class="page-btn page-nav"
                                 th:disabled="${currentPage == 1}"
                                 th:classappend="${currentPage == 1} ? ' disabled'"
@@ -227,7 +183,7 @@
                             <span class="material-symbols-outlined">chevron_left</span>
                         </button>
 
-                        <!-- Số trang -->
+
                         <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
 
                             <th:block th:if="${totalPages <= 7
@@ -248,7 +204,7 @@
 
                         </th:block>
 
-                        <!-- Nút Next -->
+
                         <button type="button" class="page-btn page-nav"
                                 th:disabled="${currentPage == totalPages}"
                                 th:classappend="${currentPage == totalPages} ? ' disabled'"
@@ -267,41 +223,56 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // ── Submit filter form ────────────────────────────────────────
+
     function submitFilter() {
         document.getElementById("pageInput").value = "1"; // reset về trang 1
         document.getElementById("filterForm").submit();
     }
 
-    // ── Nút All: bỏ chọn hết checkbox rồi submit ─────────────────
+
+    // Trạng thái filter đang chọn (đồng bộ với giá trị render từ server)
+    let lastCheckedStatus = document.getElementById("filterForm").dataset.selectedStatus || null;
+
+    function setActiveTab(value) {
+        document.querySelectorAll('#filterForm input[name="status"]').forEach(input => {
+            input.checked = (input.value === value);
+            input.closest(".filter-tab-check").classList.toggle("active", input.value === value);
+        });
+    }
+
     function selectAll() {
-        document.querySelectorAll('#filterForm input[type="checkbox"]')
-            .forEach(cb => cb.checked = false);
+        lastCheckedStatus = null;
+        setActiveTab(null);
         submitFilter();
     }
 
-    // ── Chuyển trang (giữ nguyên filter + keyword) ────────────────
+    // Radio đóng vai trò "chọn đơn": bấm vào tab đang active sẽ bỏ chọn (về lại All),
+    // bấm vào tab khác sẽ chuyển sang tab đó (chỉ giữ 1 lựa chọn duy nhất).
+    function handleStatusClick(event, radio) {
+        event.preventDefault();
+        if (lastCheckedStatus === radio.value) {
+            lastCheckedStatus = null;
+            setActiveTab(null);
+        } else {
+            lastCheckedStatus = radio.value;
+            setActiveTab(radio.value);
+        }
+        submitFilter();
+    }
+
+
     function goToPage(page) {
         document.getElementById("pageInput").value = page;
         document.getElementById("filterForm").submit();
     }
 
-    // ── Search: submit khi nhấn Enter ────────────────────────────
+
     document.getElementById("searchInput")
         .addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
                 e.preventDefault();
                 submitFilter();
             }
-        });
-
-    // ── Sync class "active" khi checkbox thay đổi ────────────────
-    document.querySelectorAll('.filter-tab-check input[type="checkbox"]')
-        .forEach(cb => {
-            cb.addEventListener("change", function() {
-                this.closest(".filter-tab-check")
-                    .classList.toggle("active", this.checked);
-            });
         });
 
     function toggleSidebar(open) {

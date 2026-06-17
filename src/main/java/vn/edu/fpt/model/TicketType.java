@@ -44,6 +44,4 @@ public class TicketType extends BaseAuditEntity {
     @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Seat> seats;
 
-    @Column(name = "display_order", nullable = false)
-    private Integer displayOrder;
 }

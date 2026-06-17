@@ -1,10 +1,14 @@
 package vn.edu.fpt.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
+import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import java.time.LocalDate;
@@ -190,21 +194,25 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 //        """, nativeQuery = true)
 //    List<VenueSummaryProjection> getMonthlyRevenueByVenue(@Param("venueId") Long venueId);
 //
-//    @Query("""
-//        SELECT e FROM Event e
-//        WHERE e.organizer.id = :organizerId
-//          AND (:#{#statusList.size()} = 0
-//               OR e.status IN :statusList)
-//          AND (:keyword IS NULL OR :keyword = ''
-//               OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
-//    """)
-//
-//    Page<Event> findByMultiStatusAndKeyword(
-//            @Param("organizerId") Long organizerId, // Thêm param này
-//            @Param("statusList") List<String> statusList,
-//            @Param("keyword")      String keyword,
-//            Pageable pageable
-//    );
+@Query("""
+    SELECT e FROM Event e
+    WHERE e.organizer.id = :organizerId
+      AND (
+            :#{#statusList.size()} = 0
+            OR e.status IN :statusList
+          )
+      AND (
+            :keyword IS NULL
+            OR :keyword = ''
+            OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          )
+""")
+Page<Event> findByMultiStatusAndKeyword(
+        @Param("organizerId") Long organizerId,
+        @Param("statusList") List<String> statusList,
+        @Param("keyword") String keyword,
+        Pageable pageable
+);
 List<Event> findTop10ByOrganizerIdOrderByCreatedAtDesc(Long userId);
 
     @Query(value = """

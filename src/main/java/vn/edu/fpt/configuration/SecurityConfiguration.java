@@ -69,7 +69,7 @@ public class SecurityConfiguration {
             if      (roles.contains("ROLE_ADMIN"))     redirect = "/admin/dashboard";
             else if (roles.contains("ROLE_MODERATOR")) redirect = "/moderator/dashboard";
             else if (roles.contains("ROLE_FINANCE"))   redirect = "/finance/dashboard";
-            else if (roles.contains("ROLE_ORGANIZER")) redirect = "/organizer/dashboard";
+            else if (roles.contains("ROLE_ORGANIZER")) redirect = "/organizer/list/event";
             else                                        redirect = "/";
             response.sendRedirect(request.getContextPath() + redirect);
         };
