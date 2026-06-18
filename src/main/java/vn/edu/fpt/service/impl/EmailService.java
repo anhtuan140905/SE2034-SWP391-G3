@@ -71,7 +71,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendEventRejectionEmail(String toEmail, String organizerName, String eventTitle, String reviewMessage) throws MessagingException {
+    public void sendDeactivationEmail(String toEmail, String organizerName, String eventTitle, String reviewMessage) throws MessagingException {
         Context context = new Context();
         context.setVariable("organizerName", organizerName);
         context.setVariable("eventTitle", eventTitle);
