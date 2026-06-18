@@ -27,38 +27,33 @@ public class AttendeeEventController {
     private final EventService eventService;
     private final EventCategoryService eventCategoryService;
     private final CityService cityService;
-//    @GetMapping("/events")
-//    public String listEvents(
-//            @PageableDefault(size = 9, sort = "startTime") Pageable pageable,
-//            EventSearchCriteria criteria,
-//            Model model) {
-//
-//        List<String> dynamicMonths = new ArrayList<>();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
-//
-//        for (int i = 0; i < 4; i++) {
-//            dynamicMonths.add(LocalDateTime.now().plusMonths(i).format(formatter));
-//        }
-//
-//        Page<Event> eventPage = eventService.searchEvents(criteria, pageable);
-//
-//        model.addAttribute("eventPage", eventPage);
-//        model.addAttribute("criteria", criteria);
-//        model.addAttribute("dynamicMonths", dynamicMonths);
-//        model.addAttribute("categories", this.eventCategoryService.listEventCategories());
+    @GetMapping("/events")
+    public String listEvents(
+            @PageableDefault(size = 9, sort = "startTime") Pageable pageable,
+            EventSearchCriteria criteria,
+            Model model) {
+
+        List<String> dynamicMonths = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+
+        for (int i = 0; i < 4; i++) {
+            dynamicMonths.add(LocalDateTime.now().plusMonths(i).format(formatter));
+        }
+
+        Page<Event> eventPage = eventService.searchEvents(criteria, pageable);
+
+        model.addAttribute("eventPage", eventPage);
+        model.addAttribute("criteria", criteria);
+        model.addAttribute("dynamicMonths", dynamicMonths);
+        model.addAttribute("categories", this.eventCategoryService.listEventCategories());
 //        model.addAttribute("cities", this.cityService.getListCityHaveApprovedEvents());
-//        return "homepage/ListPublicEvents";
-//    }
+        return "homepage/ListPublicEvents";
+    }
 
-//    @GetMapping("/events/detail/{id}")
-//    public String viewDetailEvent(@PathVariable long id, Model model) {
-//        EventSummaryProjection event = this.eventService.findEventDetailById(id);
-//        model.addAttribute("event", event);
-//        return "homepage/ViewPubliclEvent";
-//    }
-
-    @GetMapping("/events/{id}/choose_seat")
-    public String chooseSeat(){
-        return "homepage/ChooseSeat";
+    @GetMapping("/events/detail/{id}")
+    public String viewDetailEvent(@PathVariable long id, Model model) {
+        EventSummaryProjection event = this.eventService.findEventDetailById(id);
+        model.addAttribute("event", event);
+        return "homepage/ViewPubliclEvent";
     }
 }

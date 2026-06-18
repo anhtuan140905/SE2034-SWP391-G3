@@ -12,7 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class OrganizerMemberId implements Serializable {
-    private Long organizerId;
+    private Long eventId;
     private Long userId;
 }
-

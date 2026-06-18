@@ -1,16 +1,20 @@
 package vn.edu.fpt.modelview.request.organizer;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.edu.fpt.model.Ward;
+import jakarta.validation.constraints.*;
+
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddressDto {
+public class addressDTO {
+    @NotBlank(message = "Địa chỉ chi  tiết không được để trống")
+    private String specieladdress;
+    @Valid
     private wardDTO ward;
-    private String specificAddress;
 }
-

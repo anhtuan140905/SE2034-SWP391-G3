@@ -5,42 +5,6 @@ var currentRole = 'user';
       document.getElementById(id).classList.add('active');
     }
 
-    /* ── ROLE SWITCH (left panel) ── */
-    function selectLeftRole(role, el) {
-      document.querySelectorAll('#leftRoleCards .role-card').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-      switchRole(role);
-    }
-
-    /* ── ROLE TABS (right panel) ── */
-    function switchRole(role) {
-    currentRole = role;
-
-    const isOrg = role === 'organizer';
-
-    document.getElementById('tabUser')
-        .classList.toggle('active', !isOrg);
-
-    document.getElementById('tabOrg')
-        .classList.toggle('active', isOrg);
-
-    // HIDE/SHOW FORM
-    document.getElementById('formUserRaw').style.display =
-        isOrg ? 'none' : 'block';
-
-    document.getElementById('formOrgRaw').style.display =
-        isOrg ? 'block' : 'none';
-
-    // Sync left cards
-    document.querySelectorAll('#leftRoleCards .role-card')
-        .forEach(c => {
-            c.classList.toggle(
-                'selected',
-                c.dataset.role === role
-            );
-        });
-}
-
     /* ── EYE TOGGLE ── */
     function toggleEye(inputId, btn) {
       var inp = document.getElementById(inputId);
@@ -77,72 +41,9 @@ var currentRole = 'user';
       document.getElementById(fieldId).classList.toggle('has-val', el.value !== '');
     }
 
-    /* ── OTP INPUTS ── */
-    var otpInputs = document.querySelectorAll('.otp-input');
-    otpInputs.forEach(function(inp, i) {
-    inp.addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9]/g,'');
-        if (this.value && i < 5) otpInputs[i+1].focus();
-        this.classList.toggle('filled', !!this.value);
-      });
-      inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && !this.value && i > 0) {
-          otpInputs[i-1].focus();
-          otpInputs[i-1].value = '';
-          otpInputs[i-1].classList.remove('filled');
-        }
-      });
-      inp.addEventListener('paste', function(e) {
-        e.preventDefault();
-        var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g,'').slice(0,6);
-        paste.split('').forEach(function(ch, idx) {
-          if (otpInputs[idx]) { otpInputs[idx].value = ch; otpInputs[idx].classList.add('filled'); }
-        });
-        var next = Math.min(paste.length, 5);
-        otpInputs[next].focus();
-      });
-    });
-
-    /* ── FORGOT FLOW ── */
-    function goOtp() {
-      var email = document.getElementById('f_email').value.trim() || 'your email';
-      document.getElementById('otpEmail').textContent = email;
-      showPanel('panelForgot2');
-      startOtpTimer(60);
-    }
-
-    function verifyOtp() {
-      showPanel('panelForgot3');
-    }
-
-    function resetDone() {
-      document.getElementById('successTitle').textContent = 'Password Reset! 🎉';
-      document.getElementById('successMsg').textContent = 'Your password has been updated successfully. You can now sign in with your new password.';
-      showPanel('panelSuccess');
-    }
-
-    /* ── OTP TIMER ── */
-    var timerInterval;
-    function startOtpTimer(seconds) {
-      clearInterval(timerInterval);
-      var timerEl = document.getElementById('otpTimer');
-      timerEl.textContent = '(' + seconds + 's)';
-      timerInterval = setInterval(function() {
-        seconds--;
-        if (seconds <= 0) { clearInterval(timerInterval); timerEl.textContent = ''; }
-        else timerEl.textContent = '(' + seconds + 's)';
-      }, 1000);
-    }
-
-    function resendOtp() {
-      otpInputs.forEach(function(inp) { inp.value = ''; inp.classList.remove('filled'); });
-      otpInputs[0].focus();
-      startOtpTimer(60);
-    }
-
     /* ── REGISTER SUCCESS ── */
     function goSuccess() {
-      document.getElementById('successTitle').textContent = 'Account Created! 🎉';
+      document.getElementById('successTitle').textContent = 'Account Created!';
       document.getElementById('successMsg').textContent = 'Welcome to EventHub! Your account is ready. Start exploring amazing events around you.';
       showPanel('panelSuccess');
     }

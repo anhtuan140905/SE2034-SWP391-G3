@@ -9,9 +9,9 @@ import vn.edu.fpt.model.constant.TicketStatus;
 import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
-//    @Query("SELECT COUNT(*) FROM Ticket")
-//    long ticketIssued();
-////
+    @Query("SELECT COUNT(*) FROM Ticket")
+    long ticketIssued();
+
 //    long countByUserId(Long userId);
 //
 //    @Query("""

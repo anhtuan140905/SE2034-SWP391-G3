@@ -47,7 +47,6 @@ public class Event extends BaseAuditEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
-
     // LocalDateTime vì đây là giờ hiển thị với user VN — không phải audit timestamp
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -55,7 +54,8 @@ public class Event extends BaseAuditEntity {
     private LocalDate date;
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
-
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimeLineEvent> timeLine;
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private EventStatus status;

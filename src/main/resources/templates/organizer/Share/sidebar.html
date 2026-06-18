@@ -26,21 +26,6 @@
             <span>Dashboard</span>
         </a>
 
-        <a
-                th:href="@{/organizer/profile}"
-                class="nav-item "
-                th:classappend="${activeMenu == 'profile'} ? ' active' : ''">
-            <span class="material-symbols-outlined">account_circle</span>
-            <span>Organizer Account</span>
-        </a>
-        <a href="#" class="nav-item" onclick="setTab(event, 'events')">
-            <span class="material-symbols-outlined">calendar_today</span>
-            <span>Event Management</span>
-        </a>
-        <a href="#" class="nav-item" onclick="setTab(event, 'tickets')">
-            <span class="material-symbols-outlined">confirmation_number</span>
-            <span>Ticket Configuration</span>
-        </a>
         <a href="#" class="nav-item" onclick="setTab(event, 'vouchers')">
             <span class="material-symbols-outlined">local_offer</span>
             <span>Discount Vouchers</span>
@@ -55,14 +40,4 @@
         </a>
     </nav>
 
-    <div class="sidebar-footer mt-auto pt-3">
-        <button class="btn-create w-100 mb-2" onclick="window.location.href='/organizer/create/event'">
-            <span class="material-symbols-outlined">add</span>
-            Create New Event
-        </button>
-        <a th:href="@{/auth/login}" class="nav-item nav-logout" onclick="handleLogout(event)">
-            <span class="material-symbols-outlined">logout</span>
-            <span>Sign Out</span>
-        </a>
-    </div>
 </aside>
