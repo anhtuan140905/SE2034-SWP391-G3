@@ -11,6 +11,4 @@ public interface ModeratorEventListService {
 
     Page<ModeratorEventListDTO> getEvents(EventStatus status, String keyword, Long categoryId, int page, int size);
 
-    void deactivateEvent(Long eventId);
-
 }

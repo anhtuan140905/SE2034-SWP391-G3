@@ -7,8 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.moderator.DeactivateEventRequestDTO;
 import vn.edu.fpt.modelview.response.moderator.ModeratorEventListDTO;
 import vn.edu.fpt.repository.EventCategoryRepository;
+import vn.edu.fpt.service.ModeratorEventDetailService;
 import vn.edu.fpt.service.ModeratorEventListService;
 
 @Controller
@@ -18,6 +20,7 @@ public class ModeratorEventController {
 
     private final EventCategoryRepository eventCategoryRepository;
     private final ModeratorEventListService moderatorEventListService;
+    private final ModeratorEventDetailService moderatorEventDetailService;
 
     @GetMapping("/events")
     public String evenList(
@@ -45,20 +48,46 @@ public class ModeratorEventController {
         model.addAttribute("statusFilter", status);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("activePage", events);
+        model.addAttribute("eventStats", moderatorEventListService.getEventStats());
 
         return "moderator/EventManagement";
     }
 
-    @PostMapping("/events/{id}/deactive")
+    @GetMapping("/event/detail/{id}")
+    public String eventDetail(@PathVariable Long id, Model model) {
+
+        model.addAttribute("event", moderatorEventDetailService.getEventDetail(id));
+        model.addAttribute("activePage", "events");
+
+        return "moderator/EventDetail";
+    }
+
+    @PostMapping("/events/{id}/deactivate")
     public String deactivateEvent(
             @PathVariable Long id,
+            @ModelAttribute DeactivateEventRequestDTO request,
             RedirectAttributes redirectAttributes
     ){
         try {
-            moderatorEventListService.deactivateEvent(id);
+            moderatorEventDetailService.deactivateEvent(id, request.getReason());
             redirectAttributes.addFlashAttribute("successMessage",
                     "Sự kiện đã được đóng thành công.");
         } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/moderator/events";
+    }
+
+    @PostMapping("/events/{id}/activate")
+    public String activateEvent(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes){
+
+        try {
+            moderatorEventDetailService.activateEvent(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Sự kiện đã được bật lại thành công.");
+        } catch  (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 

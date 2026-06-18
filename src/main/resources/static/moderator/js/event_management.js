@@ -1,20 +1,12 @@
 /**
  * event_management.js
  * Path: src/main/resources/static/moderator/js/event_management.js
- *
- * Handles:
- * - Live search with debounce → submit form to server
- * - Status filter change → auto submit
- * - Table row entrance animation
- * - Stat counter animation
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ──────────────────────────────────────────
-       1. SEARCH + FILTER: auto-submit with debounce
-    ────────────────────────────────────────── */
-    const searchInput  = document.getElementById('searchInput');
+      /* 1. SEARCH + FILTER: Manual submit with Enter key */
+     const searchInput  = document.getElementById('searchInput');
     const statusSelect = document.getElementById('statusSelect');
     const categorySelect = document.getElementById('categorySelect');
 
@@ -41,20 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = url.toString();
     };
 
-    // Debounce helper
-    const debounce = (fn, delay) => {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn(...args), delay);
-        };
-    };
-
     if (searchInput) {
-        searchInput.addEventListener('input', debounce(applyFilters, 500));
-        // Also submit on Enter
         searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') applyFilters();
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
         });
     }
 
@@ -65,10 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if(categorySelect) {
         categorySelect.addEventListener('change', applyFilters);
     }
-    
-    /* ──────────────────────────────────────────
-       2. TABLE ROW STAGGERED ENTRANCE ANIMATION
-    ────────────────────────────────────────── */
+
+    /* 2. TABLE ROW STAGGERED ENTRANCE ANIMATION */
     const rows = document.querySelectorAll('.em-table tbody tr');
 
     rows.forEach((row, i) => {
@@ -85,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    /* ──────────────────────────────────────────
-       3. STAT COUNTER ANIMATION
-    ────────────────────────────────────────── */
+    /*  3. STAT COUNTER ANIMATION */
     const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
     const animateCounter = (el) => {

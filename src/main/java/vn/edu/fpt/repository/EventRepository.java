@@ -1,15 +1,19 @@
 package vn.edu.fpt.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
-import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.model.constant.EventStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
@@ -229,5 +233,17 @@ List<Event> findTop10ByOrganizerIdOrderByCreatedAtDesc(Long userId);
             @Param("categoryId") Long categoryId,
             Pageable pageable
     );
+
+    // 5. Lay thong tin chi tiet của event theo Id
+    // ── EVENT DETAIL ──────────────────────────────────────────
+    @Query("SELECT e FROM Event e " +
+            "JOIN FETCH e.organizer o " +
+            "JOIN FETCH e.category c " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city " +
+            "WHERE e.eventId = :id")
+    Optional<Event> findEventDetailById(@Param("id") Long id);
+
 
 }
