@@ -16,6 +16,7 @@ import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
@@ -289,85 +290,16 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             Pageable pageable
     );
 
-
-    @Query("""
-select count(e.eventId)
-    from Event e
-""")
-    long countAllEvent();
-
-    @Query("""
-select count(u.isActive)
-from Event e
- left join Order o on e.eventId = o.event.eventId
- left join User u on o.user.id = u.id
-where u.isActive = true
-
-""")
-    long countAllUseActive();
-
-
-    @Query("""
-select count(o.orderDetailId)
-from OrderDetail o
-""")
-    long countAllSoldTicket();
-
-
-    @Query("""
-    SELECT MONTH(e.startTime) as month, 
-        COUNT(e.eventId) as total
-    FROM Event e
-    GROUP BY MONTH(e.startTime)
-    ORDER BY MONTH(e.startTime)
-    """)
-    List<CountEventByMonthDTO> countEventByMonth();
-
-
-
-
-    @Query(value = """
-    SELECT
-        MONTH(e.start_time) AS month,
-        SUM(ord.unit_price) AS total
-    FROM order_details ord
-    LEFT JOIN orders o ON ord.order_id = o.order_id
-    LEFT JOIN events e ON o.event_id = e.event_id 
-    GROUP BY MONTH(e.start_time)
-    ORDER BY MONTH(e.start_time)
-""", nativeQuery = true)
-    List<SumRevenueByMonthProjection> sumRevenueByMonth();
-
-    @Query(value = """
-    SELECT TOP 5
-        e.event_id              AS id,
-        e.title                 AS title,
-        NULL                    AS thumbnailUrl,
-        e.start_time            AS startTime,
-        e.end_time              AS endTime,
-        e.venue_name            AS venueName,
-        NULL                    AS cityName,
-        NULL                    AS categoryName,
-        NULL                    AS minPrice,
-        NULL                    AS company_name,
-        NULL                    AS description,
-        COUNT(ord.order_detail_id)      AS soldCount,
-        COUNT(ord.order_detail_id)      AS participantCount,
-        SUM(ord.unit_price)             AS revenue,
-        e.status                AS status,
-        t.total_quantity                   AS capacity,
-        CAST(COUNT(ord.order_detail_id)  AS FLOAT) / NULLIF(t.total_quantity, 0) * 100 AS salesRate
-        
-    FROM order_details ord
-    LEFT JOIN orders o ON ord.order_id = o.order_id
-    LEFT JOIN events e ON o.event_id = e.event_id 
-    LEFT JOIN ticket_types t on e.event_id = t.event_id
-    WHERE e.status IN ('ACTIVE', 'ENDED')
-    GROUP BY e.event_id, e.title, e.start_time, e.end_time, e.venue_name, e.status, t.sold_quantity, t.total_quantity 
-    ORDER BY COUNT(ord.order_detail_id) DESC
-    """, nativeQuery = true)
-    List<EventSummaryProjection> findTop5EventsBySoldCount();
-
+    // 5. Lay thong tin chi tiet của event theo Id
+    // EVENT DETAIL
+    @Query("SELECT e FROM Event e " +
+            "JOIN FETCH e.organizer o " +
+            "JOIN FETCH e.category c " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city " +
+            "WHERE e.eventId = :id")
+    Optional<Event> findEventDetailById(@Param("id") Long id);
 
 
 }

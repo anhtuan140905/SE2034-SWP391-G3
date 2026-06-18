@@ -22,14 +22,16 @@
         <div class="em-filters">
             <div class="filter-group">
                 <label class="filter-label">TÌM KIẾM SỰ KIỆN</label>
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput"
-                           aria-label="Tìm kiếm sự kiện, tên."
-                           placeholder="Tìm kiếm sự kiện, tên."
-                           th:value="${keyword}"
-                           autocomplete="off"/>
-                </div>
+                <form id="search-form" th:action="@{/moderator/events}" method="get" onsubmit="event.preventDefault()">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text"
+                               id="searchInput"
+                               name="keyword"
+                               placeholder="Tìm kiếm sự kiện, tên."
+                               th:value="${keyword}">
+                    </div>
+                </form>
             </div>
             <div class="filter-group">
                 <label class="filter-label" for="statusSelect">Lọc trạng thái</label>
@@ -65,36 +67,24 @@
 
     <div class="em-stats-row">
         <div class="em-stat-item">
-            <div class="em-stat-icon">
-                <i class="fa-regular fa-calendar-check"></i>
-            </div>
             <div class="em-stat-info">
                 <span class="em-stat-label">Tổng sự kiện</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.totalEvents : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
-            <div class="em-stat-icon">
-                <i class="fa-regular fa-circle-check"></i>
-            </div>
             <div class="em-stat-info">
                 <span class="em-stat-label">Diễn ra hôm nay</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.eventsToday : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
-            <div class="em-stat-icon">
-                <i class="fa-regular fa-circle-xmark"></i>
-            </div>
             <div class="em-stat-info">
                 <span class="em-stat-label">Sự kiện bị tắt</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.inactiveEvents : 0}">0</span>
             </div>
         </div>
         <div class="em-stat-item">
-            <div class="em-stat-icon">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-            </div>
             <div class="em-stat-info">
                 <span class="em-stat-label">Kết thúc tháng này</span>
                 <span class="em-stat-value" th:text="${eventStats != null ? eventStats.endedThisMonth : 0}">0</span>
