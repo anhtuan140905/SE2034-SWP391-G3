@@ -21,7 +21,7 @@ public class ModeratorEventDetailServiceImpl implements ModeratorEventDetailServ
     @Transactional (readOnly = true)
     public ModeratorEventDetailDTO getEventDetail(Long eventId) {
 
-        Event event = eventRepository.findEventDetailById(eventId)
+        Event event = eventRepository.moderatorFindEventDetailById(eventId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện."));
         return mapToDTO(event);
     }
