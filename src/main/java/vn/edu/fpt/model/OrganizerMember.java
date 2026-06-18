@@ -37,4 +37,3 @@ public class OrganizerMember {
     private Instant joinedAt;
 
 }
-

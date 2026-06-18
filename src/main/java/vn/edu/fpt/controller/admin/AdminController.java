@@ -6,7 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.repository.SumRevenueByMonthProjection;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 import vn.edu.fpt.service.impl.UserServiceImpl;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
@@ -39,7 +41,27 @@ public class AdminController {
 
         List<EventSummaryDto> events = eventServiceImpl.findTop10Events();
         model.addAttribute("events", events);
+
+        long allEvent = eventServiceImpl.countAllEvent();
+        model.addAttribute("allEvent", allEvent);
+
+        long allUserActive = eventServiceImpl.countAllUseActive();
+        model.addAttribute("allUserActive", allUserActive);
+
+        long allSoldTicket = eventServiceImpl.countAllSoldTicket();
+        model.addAttribute("allSoldTicket", allSoldTicket);
+
+        List<CountEventByMonthDTO> allEventByMonth = eventServiceImpl.countEventByMonth();
+        model.addAttribute("allEventByMonth", allEventByMonth);
+
+        List<SumRevenueByMonthProjection> sumRevenueByMonth = eventServiceImpl.sumRevenueByMonth();
+        model.addAttribute("sumRevenueByMonth",sumRevenueByMonth);
+
+        List<EventSummaryDto> top5Events = eventServiceImpl.findTop5EventsBySoldCount();
+        model.addAttribute("top5Events", top5Events);
+
         return "admin/DashboardAdmin";
+
     }
 
 

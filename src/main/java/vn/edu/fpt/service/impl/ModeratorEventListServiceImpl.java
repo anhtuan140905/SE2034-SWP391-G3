@@ -34,7 +34,7 @@ public class ModeratorEventListServiceImpl implements ModeratorEventListService 
 
     @Override
     @Transactional(readOnly = true)
-     public Page<ModeratorEventListDTO> getEvents(EventStatus status, String keyword, Long categoryId, int page, int size) {
+    public Page<ModeratorEventListDTO> getEvents(EventStatus status, String keyword, Long categoryId, int page, int size) {
 
         String stringKeyword = (keyword != null && !keyword.isBlank()) ? keyword : null;
 

@@ -55,7 +55,7 @@ public class SecurityConfiguration {
         authenticationProvider.setPasswordEncoder(this.passwordEncoderConfig.passwordEncoder());
         authenticationProvider.setUserDetailsService(customUserDetailsService);
         authenticationProvider.setPreAuthenticationChecks(u -> {}); // nhận user nhưng bỏ qua
-                                                            // Thằng này nó nhận vafo 1 thằng UserDetailsChecker mà là interface có đúng 1 hàm duy nhất nên viết lambda đc
+        // Thằng này nó nhận vafo 1 thằng UserDetailsChecker mà là interface có đúng 1 hàm duy nhất nên viết lambda đc
         return authenticationProvider;
     }
     @Bean
@@ -113,13 +113,13 @@ public class SecurityConfiguration {
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                .loginPage("/auth/login").authorizationEndpoint(a -> a
-                                        .authorizationRequestResolver(oAuth2RequestResolver()))
-                .userInfoEndpoint(u -> u
-                        .userService(customOAuth2UserService)
-                )
-                .successHandler(customSuccessHandler())
-                .failureUrl("/auth/login?error=oauth2")
+                        .loginPage("/auth/login").authorizationEndpoint(a -> a
+                                .authorizationRequestResolver(oAuth2RequestResolver()))
+                        .userInfoEndpoint(u -> u
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(customSuccessHandler())
+                        .failureUrl("/auth/login?error=oauth2")
                 )
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
                 .logout(logout -> logout

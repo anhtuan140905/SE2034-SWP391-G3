@@ -41,7 +41,7 @@ public class OrganizerProfile {
     @Column(name = "bank_branch", columnDefinition = "NVARCHAR(100)")
     private String bankBranch;
 
-//  Company
+    //  Company
     @Column(name = "business_type", columnDefinition = "NVARCHAR(50)")
     private String businessType;
 
