@@ -1,324 +1,400 @@
-    const CONFIG = {
-        zoneA: {
-            name: "Khu A - VIP",
-            price: 500000,
-            rows: 8,
-            cols: 10,
-            soldRows: [1, 3, 5, 7],
-            soldSeatsPerRow: {
-                2: [1, 2, 3],
-                4: [1, 2, 3],
-                6: [1, 2, 3],
-                8: [1, 2, 3]
-            }
-        },
-        zoneB: {
-            name: "Khu B - Standard",
-            price: 300000,
-            rows: 8,
-            cols: 10,
-            soldRows: [1, 2], // rows 1 and 2 fully sold
-            customStates: {
-                // Row 3 specials: 1-2 sold, 3 selected, 4 locked
-                3: {
-                    sold: [1, 2],
-                    selected: [3],
-                    locked: [4]
-                }
-            },
-            // Intermittent alternating sold/available pattern for rows 4 to 8
-            intermittentRowSold: {
-                4: [2, 4, 6, 8, 10],
-                5: [1, 3, 5, 7, 9],
-                6: [2, 5, 7, 8],
-                7: [2, 3, 7, 8],
-                8: [1, 4, 6, 9]
-            }
-        },
-        zoneC: {
-            name: "Khu C - Economy",
-            price: 150000,
-            rows: 8,
-            cols: 10,
-            randomSoldRatio: 0.15 // Sparse random sells
-        }
-    };
+/**
+ * choose_seat.js — EventHub
+ * Fetch seat map từ API, render sơ đồ ghế động theo dữ liệu thật từ DB.
+ * Giữ nguyên toàn bộ logic UX/CSS của bản mẫu (states, badges, pricing, maxed).
+ */
 
-    // Track selected state
-    let selectedSeats = [];
-    const MAX_SEATS = 6;
+// ─── Constants ───────────────────────────────────────────────────────────────
 
-    // Initialize state mapping
-    function initGrids() {
-        // Render Zone A (VIP)
-        renderZone('zoneA-grid', 'A', CONFIG.zoneA);
-        // Render Zone B (Standard)
-        renderZone('zoneB-grid', 'B', CONFIG.zoneB);
-        // Render Zone C (Economy)
-        renderZone('zoneC-grid', 'C', CONFIG.zoneC);
+const MAX_SEATS = 6;
+const SERVICE_FEE_RATE = 0.05;
 
-        // Trigger calc to show initial pre-selected seat B3
-        refreshSummary();
+// ─── State ───────────────────────────────────────────────────────────────────
+
+let selectedSeats = []; // { seatId, rowLabel, seatNumber, zoneName, price }
+let zoneConfig = [];    // TicketTypeSeatsDTO[] từ API — dùng để tra zoneName/price khi cần
+
+// ─── Bootstrap ───────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.getElementById('seat-map-root');
+    if (!root) {
+        console.error('[choose_seat] Không tìm thấy #seat-map-root — thiếu thuộc tính data-event-id.');
+        return;
     }
 
-    function renderZone(gridId, prefix, zoneConf) {
-        const gridEl = document.getElementById(gridId);
-        if (!gridEl) return;
-
-        gridEl.innerHTML = '';
-
-        for (let r = 1; r <= zoneConf.rows; r++) {
-            // Determine row label
-            const rowLabel = String.fromCharCode(64 + r); // A, B, C, D...
-
-            // Append Left Row Guideline Label
-            const leftLabel = document.createElement('div');
-            leftLabel.className = 'row-label';
-            leftLabel.innerText = rowLabel;
-            gridEl.appendChild(leftLabel);
-
-            for (let c = 1; c <= zoneConf.cols; c++) {
-                const seatId = `${prefix}-${rowLabel}${c}`;
-                const seatEl = document.createElement('div');
-                seatEl.classList.add('seat');
-                seatEl.innerText = c;
-                seatEl.setAttribute('id', `seat-${seatId}`);
-                seatEl.setAttribute('data-id', seatId);
-                seatEl.setAttribute('data-zone', prefix);
-                seatEl.setAttribute('data-row', rowLabel);
-                seatEl.setAttribute('data-num', c);
-                seatEl.setAttribute('data-price', zoneConf.price);
-
-                let state = 'available';
-
-                // Apply states based on rules
-                if (prefix === 'A') {
-                    // VIP RULES
-                    if (zoneConf.soldRows.includes(r)) {
-                        state = 'sold';
-                    } else if (zoneConf.soldSeatsPerRow[r] && zoneConf.soldSeatsPerRow[r].includes(c)) {
-                        state = 'sold';
-                    }
-                } else if (prefix === 'B') {
-                    // Standard RULES
-                    if (zoneConf.soldRows.includes(r)) {
-                        state = 'sold';
-                    } else if (zoneConf.customStates[r]) {
-                        const spec = zoneConf.customStates[r];
-                        if (spec.sold && spec.sold.includes(c)) state = 'sold';
-                        else if (spec.selected && spec.selected.includes(c)) state = 'selected';
-                        else if (spec.locked && spec.locked.includes(c)) state = 'locked';
-                    } else if (zoneConf.intermittentRowSold[r] && zoneConf.intermittentRowSold[r].includes(c)) {
-                        state = 'sold';
-                    }
-                } else if (prefix === 'C') {
-                    // Economy RULES: scattered random sold seats
-                    // Use deterministic hash so it looks cohesive on reload
-                    const hashVal = (r * 13 + c * 7) % 100;
-                    if (hashVal < 20) {
-                        state = 'sold';
-                    }
-                }
-
-                // Apply layout state
-                if (state === 'sold') {
-                    seatEl.classList.add('seat--sold');
-                    seatEl.setAttribute('title', 'Ghế đã bán');
-                } else if (state === 'locked') {
-                    seatEl.classList.add('seat--locked');
-                    seatEl.setAttribute('title', 'Ghế đang được giữ');
-                } else if (state === 'selected') {
-                    seatEl.classList.add('seat--selected');
-                    seatEl.setAttribute('title', 'Ghế do bạn chọn');
-                    // Track it
-                    selectedSeats.push({
-                        id: seatId,
-                        zoneName: zoneConf.name,
-                        price: zoneConf.price,
-                        row: rowLabel,
-                        col: c
-                    });
-                } else {
-                    seatEl.classList.add('seat--available');
-                    seatEl.setAttribute('title', `Ghế trống - Giá: ${formatVND(zoneConf.price)}`);
-                    // Set listener
-                    seatEl.addEventListener('click', () => handleSeatClick(seatEl));
-                }
-
-                gridEl.appendChild(seatEl);
-            }
-
-            // Append Right Row Guideline Label
-            const rightLabel = document.createElement('div');
-            rightLabel.className = 'row-label';
-            rightLabel.innerText = rowLabel;
-            gridEl.appendChild(rightLabel);
-        }
+    const eventId = root.dataset.eventId;
+    if (!eventId) {
+        console.error('[choose_seat] data-event-id chưa được inject vào #seat-map-root.');
+        return;
     }
 
-    // Click handler for available/selected seats
-    function handleSeatClick(seatEl) {
-        const seatId = seatEl.getAttribute('data-id');
-        const zonePrefix = seatEl.getAttribute('data-zone');
-        const row = seatEl.getAttribute('data-row');
-        const col = parseInt(seatEl.getAttribute('data-num'));
-        const price = parseInt(seatEl.getAttribute('data-price'));
+    loadSeatMap(eventId);
 
-        // Look up zone name
-        const zoneName = zonePrefix === 'A' ? CONFIG.zoneA.name : (zonePrefix === 'B' ? CONFIG.zoneB.name : CONFIG.zoneC.name);
+    document.getElementById('btn-submit-booking')
+        .addEventListener('click', () => handleSubmit(eventId));
+});
 
-        if (seatEl.classList.contains('seat--sold') || seatEl.classList.contains('seat--locked')) {
-            return; // Do nothing
-        }
+// ─── API: Fetch seat map ──────────────────────────────────────────────────────
 
-        if (seatEl.classList.contains('seat--selected')) {
-            // Deselect
-            seatEl.classList.remove('seat--selected');
-            seatEl.classList.add('seat--available');
-            selectedSeats = selectedSeats.filter(s => s.id !== seatId);
+async function loadSeatMap(eventId) {
+    showLoadingState();
 
-            // Clear state restriction if it was maxed
-            if (selectedSeats.length < MAX_SEATS) {
-                clearMaxedState();
-            }
-        } else if (seatEl.classList.contains('seat--available')) {
-            // Check limit
-            if (selectedSeats.length >= MAX_SEATS) {
-                alert(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế cho sự kiện này.`);
-                return;
-            }
-
-            // Select
-            seatEl.classList.remove('seat--available');
-            seatEl.classList.add('seat--selected');
-            selectedSeats.push({
-                id: seatId,
-                zoneName: zoneName,
-                price: price,
-                row: row,
-                col: col
-            });
-
-            // Set maxed restriction if limit met
-            if (selectedSeats.length === MAX_SEATS) {
-                applyMaxedState();
-            }
-        }
-
-        refreshSummary();
-    }
-
-    // Apply maxed state style to all available seats
-    function applyMaxedState() {
-        const availableSeats = document.querySelectorAll('.seat--available');
-        availableSeats.forEach(seat => {
-            seat.classList.add('seat--maxed');
-            seat.classList.remove('seat--available');
+    try {
+        const res = await fetch(`/api/events/${eventId}/seat-map`, {
+            headers: { 'Accept': 'application/json' }
         });
+
+        if (!res.ok) {
+            throw new Error(`Server trả về ${res.status}`);
+        }
+
+        const zones = await res.json(); // List<TicketTypeSeatsDTO>
+        zoneConfig = zones;
+
+        clearLoadingState();
+        renderAllZones(zones);
+        refreshSummary();
+
+    } catch (err) {
+        console.error('[choose_seat] Lỗi load seat map:', err);
+        showErrorState();
     }
+}
 
-    // Revert maxed state style so users can click again
-    function clearMaxedState() {
-        const maxedSeats = document.querySelectorAll('.seat--maxed');
-        maxedSeats.forEach(seat => {
-            seat.classList.remove('seat--maxed');
-            seat.classList.add('seat--available');
-        });
-    }
+// ─── Render ──────────────────────────────────────────────────────────────────
 
-    // Calculate pricing and refresh invoices
-    function refreshSummary() {
-        const count = selectedSeats.length;
+/**
+ * Render tất cả zones từ API response.
+ * Zone container trong HTML đã có sẵn: #zoneA-grid, #zoneB-grid, #zoneC-grid, ...
+ * Nếu API trả nhiều hơn 3 zones thì tạo thêm container động.
+ */
+function renderAllZones(zones) {
+    const zonesContainer = document.querySelector('.zones-container');
 
-        // Subtotal
-        let subtotal = 0;
-        selectedSeats.forEach(s => subtotal += s.price);
+    zones.forEach((zone, index) => {
+        const zonePrefix = String.fromCharCode(65 + index); // A, B, C, ...
+        const gridId = `zone${zonePrefix}-grid`;
 
-        // 5% service fee
-        const serviceFee = Math.round(subtotal * 0.05);
-        const total = subtotal + serviceFee;
+        // Kiểm tra grid container đã tồn tại chưa (từ HTML tĩnh)
+        let gridEl = document.getElementById(gridId);
 
-        // Update DOM
-        document.getElementById('tickets-count').innerText = count;
-        document.getElementById('subtotal-calc').innerText = formatVND(subtotal);
-        document.getElementById('fee-calc').innerText = formatVND(serviceFee);
-        document.getElementById('total-calc').innerText = formatVND(total);
-
-        // Counter
-        document.getElementById('selected-summary-count').innerText = `${count}/${MAX_SEATS}`;
-
-        // Badges mapping
-        const badgesContainer = document.getElementById('selected-seats-badges');
-        const emptyHint = document.getElementById('empty-seats-hint');
-
-        if (count === 0) {
-            emptyHint.style.display = 'block';
-            // Clear existing badge items except hint
-            const badges = badgesContainer.querySelectorAll('.selected-seat-badge');
-            badges.forEach(b => b.remove());
-
-            // Disable CTA button
-            document.getElementById('btn-submit-booking').disabled = true;
+        // Nếu chưa có (zone thứ 4 trở đi) → tạo động
+        if (!gridEl) {
+            const zoneWrapper = buildZoneWrapper(zone, zonePrefix, gridId);
+            zonesContainer.appendChild(zoneWrapper);
+            gridEl = document.getElementById(gridId);
         } else {
-            emptyHint.style.display = 'none';
-            // Remove older badge items
-            const badges = badgesContainer.querySelectorAll('.selected-seat-badge');
-            badges.forEach(b => b.remove());
+            // Cập nhật zone title trong HTML tĩnh theo data thật
+            const zoneEl = gridEl.closest('.seat-zone');
+            if (zoneEl) {
+                const titleEl = zoneEl.querySelector('.zone-title');
+                if (titleEl) titleEl.textContent = `Khu ${zonePrefix} - ${zone.zoneName}`;
+            }
+        }
 
-            // Build new badges
-            selectedSeats.forEach(s => {
-                const badge = document.createElement('div');
-                badge.classList.add('selected-seat-badge');
+        renderZoneGrid(gridEl, zone, zonePrefix);
+    });
+}
 
-                const text = document.createElement('span');
-                text.innerText = `${s.id} (${abbrZone(s.zoneName)})`;
+/**
+ * Tạo zone wrapper động (dùng khi API trả nhiều hơn số zone trong HTML).
+ */
+function buildZoneWrapper(zone, prefix, gridId) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `seat-zone zone-${prefix.toLowerCase()}`;
+    wrapper.innerHTML = `
+        <div class="zone-title">Khu ${prefix} - ${zone.zoneName}</div>
+        <div class="zone-grid-wrapper">
+            <div class="seats-grid" id="${gridId}"></div>
+        </div>
+    `;
+    return wrapper;
+}
 
-                const closeIcon = document.createElement('i');
-                closeIcon.className = 'fa-solid fa-xmark';
-                closeIcon.addEventListener('click', () => {
-                    const seatDom = document.getElementById(`seat-${s.id}`);
-                    if (seatDom) {
-                        handleSeatClick(seatDom);
-                    } else {
-                        // Fallback if not rendered
-                        selectedSeats = selectedSeats.filter(item => item.id !== s.id);
-                        if (selectedSeats.length < MAX_SEATS) clearMaxedState();
-                        refreshSummary();
-                    }
-                });
+/**
+ * Render lưới ghế cho một zone.
+ * Nhóm seats theo rowLabel → vẽ từng hàng kèm label trái/phải.
+ */
+function renderZoneGrid(gridEl, zone, zonePrefix) {
+    gridEl.innerHTML = '';
 
-                badge.appendChild(text);
-                badge.appendChild(closeIcon);
-                badgesContainer.appendChild(badge);
-            });
+    // Nhóm theo rowLabel, giữ thứ tự A→Z
+    const rowMap = new Map();
+    zone.seats.forEach(seat => {
+        if (!rowMap.has(seat.rowLabel)) rowMap.set(seat.rowLabel, []);
+        rowMap.get(seat.rowLabel).push(seat);
+    });
 
-            // Enable CTA button
-            document.getElementById('btn-submit-booking').disabled = false;
+    // Tính số cột thực tế của zone này (để set grid-template-columns đúng)
+    const maxCols = Math.max(...zone.seats.map(s => s.seatNumber));
+    gridEl.style.gridTemplateColumns = `auto repeat(${maxCols}, 1fr) auto`;
+
+    rowMap.forEach((seats, rowLabel) => {
+        // Label trái
+        gridEl.appendChild(buildRowLabel(rowLabel));
+
+        // Các ghế trong hàng — sắp xếp theo seatNumber
+        seats.sort((a, b) => a.seatNumber - b.seatNumber)
+             .forEach(seat => {
+                 gridEl.appendChild(buildSeatElement(seat, zone, zonePrefix));
+             });
+
+        // Label phải
+        gridEl.appendChild(buildRowLabel(rowLabel));
+    });
+}
+
+function buildRowLabel(label) {
+    const el = document.createElement('div');
+    el.className = 'row-label';
+    el.textContent = label;
+    return el;
+}
+
+/**
+ * Tạo một phần tử ghế với đúng CSS class theo status từ API.
+ */
+function buildSeatElement(seat, zone, zonePrefix) {
+    const el = document.createElement('div');
+    el.className = 'seat';
+    el.textContent = seat.seatNumber;
+
+    // data attributes — seatId là PK thật từ DB
+    el.dataset.seatId     = seat.seatId;
+    el.dataset.zone       = zonePrefix;
+    el.dataset.zoneName   = zone.zoneName;
+    el.dataset.rowLabel   = seat.rowLabel;
+    el.dataset.seatNumber = seat.seatNumber;
+    el.dataset.price      = zone.price;
+
+    // id dùng để tìm lại element từ badge (giữ pattern của bản gốc)
+    el.id = `seat-${seat.seatId}`;
+
+    switch (seat.status) {
+        case 'SOLD':
+            el.classList.add('seat--sold');
+            el.title = 'Ghế đã bán';
+            break;
+
+        case 'LOCKED':
+            el.classList.add('seat--locked');
+            el.title = 'Ghế đang được giữ bởi người khác';
+            break;
+
+        case 'AVAILABLE':
+        default:
+            el.classList.add('seat--available');
+            el.title = `Ghế trống — Giá: ${formatVND(Number(zone.price))}`;
+            el.addEventListener('click', () => handleSeatClick(el));
+            break;
+    }
+
+    return el;
+}
+
+// ─── Seat Click Handler ───────────────────────────────────────────────────────
+
+function handleSeatClick(seatEl) {
+    // Guard: sold/locked không làm gì
+    if (seatEl.classList.contains('seat--sold') ||
+        seatEl.classList.contains('seat--locked')) return;
+
+    const seatId     = Number(seatEl.dataset.seatId);
+    const zoneName   = seatEl.dataset.zoneName;
+    const rowLabel   = seatEl.dataset.rowLabel;
+    const seatNumber = Number(seatEl.dataset.seatNumber);
+    const price      = Number(seatEl.dataset.price);
+
+    if (seatEl.classList.contains('seat--selected')) {
+        // Bỏ chọn
+        seatEl.classList.remove('seat--selected');
+        seatEl.classList.add('seat--available');
+        selectedSeats = selectedSeats.filter(s => s.seatId !== seatId);
+
+        if (selectedSeats.length < MAX_SEATS) {
+            clearMaxedState();
+        }
+
+    } else if (seatEl.classList.contains('seat--available')) {
+        // Kiểm tra giới hạn
+        if (selectedSeats.length >= MAX_SEATS) {
+            alert(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế cho sự kiện này.`);
+            return;
+        }
+
+        // Chọn ghế
+        seatEl.classList.remove('seat--available');
+        seatEl.classList.add('seat--selected');
+        selectedSeats.push({ seatId, zoneName, rowLabel, seatNumber, price });
+
+        if (selectedSeats.length === MAX_SEATS) {
+            applyMaxedState();
         }
     }
 
-    // Abbreviate zone representation
-    function abbrZone(name) {
-        if (name.includes('VIP')) return 'VIP';
-        if (name.includes('Standard')) return 'STD';
-        if (name.includes('Economy')) return 'ECO';
-        return name;
+    refreshSummary();
+}
+
+// ─── Maxed State ─────────────────────────────────────────────────────────────
+
+function applyMaxedState() {
+    document.querySelectorAll('.seat--available').forEach(el => {
+        el.classList.replace('seat--available', 'seat--maxed');
+    });
+}
+
+function clearMaxedState() {
+    document.querySelectorAll('.seat--maxed').forEach(el => {
+        el.classList.replace('seat--maxed', 'seat--available');
+    });
+}
+
+// ─── Summary Sidebar ─────────────────────────────────────────────────────────
+
+function refreshSummary() {
+    const count    = selectedSeats.length;
+    const subtotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+    const fee      = Math.round(subtotal * SERVICE_FEE_RATE);
+    const total    = subtotal + fee;
+
+    document.getElementById('tickets-count').textContent       = count;
+    document.getElementById('subtotal-calc').textContent       = formatVND(subtotal);
+    document.getElementById('fee-calc').textContent            = formatVND(fee);
+    document.getElementById('total-calc').textContent          = formatVND(total);
+    document.getElementById('selected-summary-count').textContent = `${count}/${MAX_SEATS}`;
+
+    const badgesContainer = document.getElementById('selected-seats-badges');
+    const emptyHint       = document.getElementById('empty-seats-hint');
+    const btnSubmit       = document.getElementById('btn-submit-booking');
+
+    // Xóa badges cũ
+    badgesContainer.querySelectorAll('.selected-seat-badge').forEach(b => b.remove());
+
+    if (count === 0) {
+        emptyHint.style.display = 'block';
+        btnSubmit.disabled = true;
+    } else {
+        emptyHint.style.display = 'none';
+        btnSubmit.disabled = false;
+
+        selectedSeats.forEach(s => {
+            badgesContainer.appendChild(buildSeatBadge(s));
+        });
     }
+}
 
-    // Format raw currency with commas and currency abbreviation
-    function formatVND(number) {
-        return number.toLocaleString('vi-VN') + ' ₫';
-    }
+function buildSeatBadge(seat) {
+    const badge = document.createElement('div');
+    badge.className = 'selected-seat-badge';
 
-    // Submit action trigger
-    document.getElementById('btn-submit-booking').addEventListener('click', () => {
-        if (selectedSeats.length === 0) return;
+    const label = document.createElement('span');
+    // Hiển thị: "A3 (VIP)" — dùng rowLabel + seatNumber thay vì string ghép tay
+    label.textContent = `${seat.rowLabel}${seat.seatNumber} (${abbrZone(seat.zoneName)})`;
 
-        const seatsListStr = selectedSeats.map(s => s.id).join(', ');
-        alert(`XÁC NHẬN ĐẶT CHỖ THÀNH CÔNG!\n\nBạn đã chọn ${selectedSeats.length} ghế: [${seatsListStr}].\nHệ thống sẽ chuyển tiếp sang cổng thanh toán với giá trị hóa đơn là ${document.getElementById('total-calc').innerText}.`);
+    const closeIcon = document.createElement('i');
+    closeIcon.className = 'fa-solid fa-xmark';
+    closeIcon.addEventListener('click', () => {
+        const seatEl = document.getElementById(`seat-${seat.seatId}`);
+        if (seatEl) {
+            handleSeatClick(seatEl);
+        } else {
+            // Fallback nếu DOM không tìm được
+            selectedSeats = selectedSeats.filter(s => s.seatId !== seat.seatId);
+            if (selectedSeats.length < MAX_SEATS) clearMaxedState();
+            refreshSummary();
+        }
     });
 
-    // Initialize grid layouts on startup
-    document.addEventListener('DOMContentLoaded', () => {
-        initGrids();
+    badge.appendChild(label);
+    badge.appendChild(closeIcon);
+    return badge;
+}
+
+// ─── Submit: Lock seats → redirect checkout ───────────────────────────────────
+
+async function handleSubmit(eventId) {
+    if (selectedSeats.length === 0) return;
+
+    const btnSubmit = document.getElementById('btn-submit-booking');
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Đang xử lý...';
+
+    try {
+        const res = await fetch('/api/seats/lock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                eventId: Number(eventId),
+                seatIds: selectedSeats.map(s => s.seatId)
+            })
+        });
+
+        if (res.status === 409) {
+            // Một hoặc nhiều ghế vừa bị người khác chiếm
+            const data = await res.json();
+            alert(`Một số ghế vừa được đặt bởi người khác:\n${data.conflictedSeats?.join(', ') ?? ''}\n\nSơ đồ sẽ được cập nhật lại.`);
+            // Reload lại seat map để reflect trạng thái mới nhất
+            selectedSeats = [];
+            await loadSeatMap(eventId);
+            return;
+        }
+
+        if (!res.ok) {
+            throw new Error(`Lock thất bại: ${res.status}`);
+        }
+
+        // Thành công → redirect sang trang checkout
+        window.location.href = `/checkout?eventId=${eventId}`;
+
+    } catch (err) {
+        console.error('[choose_seat] Lỗi khi lock ghế:', err);
+        alert('Có lỗi xảy ra khi đặt ghế. Vui lòng thử lại.');
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = 'Tiếp tục thanh toán <i class="fa-solid fa-chevron-right ms-1"></i>';
+    }
+}
+
+// ─── Loading / Error States ───────────────────────────────────────────────────
+
+function showLoadingState() {
+    document.querySelectorAll('.seats-grid').forEach(grid => {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--color-text-muted); font-size: 13px;">
+                <i class="fa-solid fa-spinner fa-spin me-2"></i> Đang tải sơ đồ ghế...
+            </div>
+        `;
     });
+}
+
+function clearLoadingState() {
+    document.querySelectorAll('.seats-grid').forEach(grid => {
+        grid.innerHTML = '';
+    });
+}
+
+function showErrorState() {
+    document.querySelectorAll('.seats-grid').forEach(grid => {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--color-danger); font-size: 13px;">
+                <i class="fa-solid fa-circle-exclamation me-2"></i> Không thể tải sơ đồ ghế. Vui lòng thử lại.
+            </div>
+        `;
+    });
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function abbrZone(name) {
+    if (!name) return '?';
+    const upper = name.toUpperCase();
+    if (upper.includes('VIP'))      return 'VIP';
+    if (upper.includes('STANDARD')) return 'STD';
+    if (upper.includes('ECONOMY'))  return 'ECO';
+    // Fallback: lấy 3 ký tự đầu
+    return name.substring(0, 3).toUpperCase();
+}
+
+function formatVND(number) {
+    return Number(number).toLocaleString('vi-VN') + ' ₫';
+}

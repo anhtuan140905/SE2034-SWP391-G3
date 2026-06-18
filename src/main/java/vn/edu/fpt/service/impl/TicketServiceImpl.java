@@ -9,8 +9,8 @@ import vn.edu.fpt.service.TicketService;
 @AllArgsConstructor
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
-//    @Override
-//    public long issuedTickets() {
-//        return this.ticketRepository.ticketIssued();
-//    }
+    @Override
+    public long issuedTickets() {
+        return this.ticketRepository.ticketIssued();
+    }
 }

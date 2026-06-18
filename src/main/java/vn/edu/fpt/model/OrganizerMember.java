@@ -22,14 +22,14 @@ public class OrganizerMember {
     private OrganizerMemberId id;
 
     @ManyToOne
-    @MapsId("organizerId")
-    @JoinColumn(name = "organizer_profile_id")
-    private OrganizerProfile organizerProfile;
+    @MapsId("userId")
+    @JoinColumn(name = "user_Id")
+    private User userId;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
-    private User user;
+    @MapsId("eventId")
+    @JoinColumn(name = "event_id")
+    private Event eventId;
 
     @Enumerated(EnumType.STRING)
     private OrganizerMemberRole memberRole;
@@ -37,4 +37,3 @@ public class OrganizerMember {
     private Instant joinedAt;
 
 }
-

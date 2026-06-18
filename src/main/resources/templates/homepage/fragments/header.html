@@ -4,11 +4,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#" th:href="@{/}">
-                <div class="brand-dots me-2">
-                    <span class="dot pink"></span>
-                    <span class="dot violet"></span>
-                    <span class="dot orange"></span>
-                </div>
                 <span class="brand-text">Event<span class="highlight">Hub</span></span>
             </a>
 
@@ -20,17 +15,17 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item">
                         <a class="nav-link" th:classappend="${activePage == 'home' ? 'active' : ''}" th:href="@{/}">
-                            <i class="fa-solid fa-house-chimney nav-icon"></i> Trang chủ
+                            Trang chủ
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:classappend="${activePage == 'events' ? 'active' : ''}" th:href="@{/events}">
-                            <i class="fa-solid fa-calendar-days nav-icon"></i> Khám phá
+                            Khám phá
                         </a>
                     </li>
                     <li class="nav-item">
                         <a sec:authorize="isAuthenticated()" class="nav-link" th:classappend="${activePage == 'favorites' ? 'active' : ''}" th:href="@{/favorites}">
-                            <i class="fa-solid fa-heart nav-icon text-pink-glow"></i> Yêu thích
+                            Yêu thích
                         </a>
                     </li>
                 </ul>
@@ -42,7 +37,6 @@
                     </div>
                 </form>
 
-                <!-- Nút tạo sự kiện — chỉ hiện khi đã đăng nhập -->
                 <a sec:authorize="isAuthenticated()"
                    th:href="@{/organizer/create/event}"
                    class="btn btn-create-event ms-lg-2 my-2 my-lg-0 d-flex align-items-center gap-2">
@@ -60,8 +54,7 @@
                     <a class="nav-link dropdown-toggle profile-trigger d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar-wrap">
                             <img th:with="avatar=${#authentication != null ? #authentication.principal.user.avatar : null}"
-                                 th:src="${avatar != null ? avatar : 'https://ui-avatars.com/api/?name=User&amp;background=random'}" alt="" class="user-avatar">
-                            <span class="status-indicator online"></span>
+                                 th:src="${avatar != null ? avatar : ''}" alt="" class="user-avatar">
                         </div>
                         <span class="d-none d-md-inline ms-2 username-text" sec:authentication="name">Username</span>
                     </a>
@@ -83,14 +76,6 @@
                         <li>
                             <a class="dropdown-item" th:href="@{/organizer/list/event}">
                                 <i class="fa-solid fa-calendar-check dropdown-icon text-violet"></i> Sự kiện của tôi
-                            </a>
-                        </li>
-
-                        <li><hr class="dropdown-divider border-secondary-subtle"></li>
-
-                        <li>
-                            <a class="dropdown-item" th:href="@{/settings}">
-                                <i class="fa-solid fa-sliders dropdown-icon text-orange"></i> Settings
                             </a>
                         </li>
                         <li><hr class="dropdown-divider border-secondary-subtle"></li>

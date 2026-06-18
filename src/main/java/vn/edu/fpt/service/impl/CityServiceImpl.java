@@ -31,8 +31,8 @@ public class CityServiceImpl implements CityService {
         return this.cityRepository.getCityById(id);
     }
 
-    @Override
-    public List<City> getListCityHaveApprovedEvents() {
-        return this.cityRepository.findAllCityHaveApprovedEvent();
-    }
+//    @Override
+//    public List<City> getListCityHaveApprovedEvents() {
+//        return this.cityRepository.findAllCityHaveApprovedEvent();
+//    }
 }

@@ -7,14 +7,10 @@
             <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="search-wrap position-relative">
-            <span class="material-symbols-outlined search-icon">search</span>
-            <input
-                    type="text"
-                    class="search-input"
-                    placeholder="Search events, tickets, orders..."
-                    id="searchInput"
-                    oninput="handleSearch(this.value)"
-            />
+            <a th:href="@{/organizer/list/event}" class="breadcrumb-link">
+                <span class="material-symbols-outlined" style="font-size:17px">arrow_back</span>
+                Back to Events
+            </a>
             <button
                     class="search-clear d-none"
                     id="searchClear"
