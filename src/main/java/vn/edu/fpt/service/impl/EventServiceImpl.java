@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
+
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
@@ -45,15 +47,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<cityDto> getListcity() {
-       List<City> citys = cityRepository.findAll();
-       List<cityDto> cityDtos = new ArrayList<>();
-       for(City city: citys){
-           cityDto CityDto = new cityDto();
-           CityDto.setId(city.getId());
-           CityDto.setName(city.getName());
-           cityDtos.add(CityDto);
-       }
-       return cityDtos;
+        List<City> citys = cityRepository.findAll();
+        List<cityDto> cityDtos = new ArrayList<>();
+        for(City city: citys){
+            cityDto CityDto = new cityDto();
+            CityDto.setId(city.getId());
+            CityDto.setName(city.getName());
+            cityDtos.add(CityDto);
+        }
+        return cityDtos;
     }
 
     @Override
@@ -64,20 +66,20 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<wardDTO> listWardDtos(Long cityId) {
-       List<Ward> wards = wardRepository.findByCityId(cityId);
-       City city = cityRepository.getCityById(cityId);
-       cityDto citydto = new cityDto();
-       citydto.setName(city.getName());
-       citydto.setId(city.getId());
-       List<wardDTO> wardDTOS = new ArrayList<>();
-       for (Ward ward :wards){
-           wardDTO dto = new wardDTO();
-           dto.setWardId(ward.getId());
-           dto.setName(ward.getName());
-           dto.setCity(citydto);
-           wardDTOS.add(dto);
-       }
-       return wardDTOS;
+        List<Ward> wards = wardRepository.findByCityId(cityId);
+        City city = cityRepository.getCityById(cityId);
+        cityDto citydto = new cityDto();
+        citydto.setName(city.getName());
+        citydto.setId(city.getId());
+        List<wardDTO> wardDTOS = new ArrayList<>();
+        for (Ward ward :wards){
+            wardDTO dto = new wardDTO();
+            dto.setWardId(ward.getId());
+            dto.setName(ward.getName());
+            dto.setCity(citydto);
+            wardDTOS.add(dto);
+        }
+        return wardDTOS;
     }
 
     @Override
@@ -85,10 +87,10 @@ public class EventServiceImpl implements EventService {
     public void saveEvent(EventDTO eventDTO) {
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
-                                    .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
+                .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
         event.setOrganizer(user);
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
-                                    .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
+                .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
         event.setCategory(eventCategory);
         event.setVenueName(eventDTO.getVenueName());
         event.setTitle(eventDTO.getTitle());
@@ -98,7 +100,7 @@ public class EventServiceImpl implements EventService {
         Address address = new Address();
         address.setSpecificAddress(eventDTO.getAddress().getSpecieladdress());
         Ward ward = wardRepository.findById(eventDTO.getAddress().getWard().getWardId())
-                                    .orElseThrow(()->new RuntimeException("Not Found Ward "));
+                .orElseThrow(()->new RuntimeException("Not Found Ward "));
         City city = cityRepository.getCityById(eventDTO.getAddress().getWard().getCity().getId());
         ward.setCity(city);
         address.setWard(ward);
@@ -107,7 +109,7 @@ public class EventServiceImpl implements EventService {
         event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getStartTime()));
         event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getEndTime()));
         event.setStatus(EventStatus.ACTIVE);
-             List<EventImage> urlImages = new ArrayList<>();
+        List<EventImage> urlImages = new ArrayList<>();
         if(eventDTO.getImageFiles()!=null){
             for (MultipartFile Image: eventDTO.getImageFiles()){
                 EventImage image = new EventImage();
@@ -117,7 +119,7 @@ public class EventServiceImpl implements EventService {
                 urlImages.add(image);
             }
         }
-            event.setImages(urlImages);
+        event.setImages(urlImages);
         List<TimeLineEvent> timeLines  = new ArrayList<>();
         if(eventDTO.getTimeLine()!=null){
             for (timeLineDTO dto: eventDTO.getTimeLine()){
@@ -129,7 +131,7 @@ public class EventServiceImpl implements EventService {
             }
 
         }event.setTimeLine(timeLines);
-             List<TicketType> ticketTypes = new ArrayList<>();
+        List<TicketType> ticketTypes = new ArrayList<>();
         if(eventDTO.getTicketTypes()!=null){
             for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
                 TicketType ticketType = new TicketType();
@@ -150,11 +152,11 @@ public class EventServiceImpl implements EventService {
                 ticketTypes.add(ticketType);
             }
         }
-            event.setTicketTypes(ticketTypes);
+        event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
     }
 
-//
+    //
 //    @Override
 //    public long countHostedEvents() {
 //        return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
@@ -171,6 +173,7 @@ public class EventServiceImpl implements EventService {
 //    public FeaturedEventDTO findFeaturedEvent() {
 //        return this.eventRepository.findFeaturedEvent();
 //    }
+    @Override
     public long countHostedEvents() {
         return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
     }
@@ -273,7 +276,7 @@ public class EventServiceImpl implements EventService {
 //        );
 //    }
 
-    @Override
+   @Override
     public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
         Specification<Event> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -415,6 +418,33 @@ public class EventServiceImpl implements EventService {
                 .map(EventSummaryDto::new)
                 .toList();
     }
+
+    public long countAllEvent(){
+        return eventRepository.countAllEvent();
+    }
+
+    public long countAllUseActive(){
+        return eventRepository.countAllUseActive();
+    }
+
+    public long countAllSoldTicket(){
+        return eventRepository.countAllSoldTicket();
+    }
+
+    public List<CountEventByMonthDTO> countEventByMonth(){
+        return eventRepository.countEventByMonth();
+    }
+
+    public List<SumRevenueByMonthProjection> sumRevenueByMonth(){
+        return eventRepository.sumRevenueByMonth();
+    }
+
+    public  List<EventSummaryDto> findTop5EventsBySoldCount(){
+        return eventRepository.findTop5EventsBySoldCount()
+                .stream()
+                .map(EventSummaryDto::new)
+                .toList();
+    }
+
+
 }
-
-

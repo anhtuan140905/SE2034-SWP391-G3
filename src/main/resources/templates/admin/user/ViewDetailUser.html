@@ -311,6 +311,10 @@
             background: rgba(34, 197, 94, 0.2);
             color: #22c55e;
         }
+        .badge.inactive{
+            background: rgba(255,77,77,0.2);
+            color: #ff4d4d;
+        }
 
         /* ================= INFO GRID ================= */
         .info-grid {
@@ -649,7 +653,8 @@
                             </p>
                         </div>
                     </div>
-                    <span class="badge active">Đang Hoạt Động</span>
+                    <span th:if="${users.isActive}" class="badge active">Đang Hoạt Động</span>
+                    <span th:unless="${users.isActive}" class="badge inactive">Ngừng Hoạt Động</span>
                 </div>
 
                 <!-- INFO GRID -->

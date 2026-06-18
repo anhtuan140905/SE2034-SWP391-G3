@@ -19,7 +19,7 @@ public interface SeatRepository extends JpaRepository<Seat,Long>
             "AND sl.expiresAt > :now \n" +
             "WHERE s.ticketType.event.eventId = :eventId\n" +
             "ORDER BY s.ticketType.ticketTypeId, s.rowLabel, s.seatNumber"
-            )
+    )
     List<Seat> findAllByEventIdWithStatus(
             @Param("eventId") Long eventId,
             @Param("now") Instant now

@@ -13,9 +13,12 @@ public interface EventSummaryProjection {
     String getCategoryName();
     String getCompany_name();
     String getDescription();
-    String getVenue();
+    String getVenueName();
     String getCityName();
     Long getSoldCount();
     Long getParticipantCount();
     BigDecimal getRevenue();
+    String getStatus();
+    Long getCapacity();
+    Double getSalesRate();
 }
