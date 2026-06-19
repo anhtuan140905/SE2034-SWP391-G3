@@ -22,7 +22,7 @@
             <i class="fa-solid fa-arrow-left"></i>
             <span>QUAY LẠI SỰ KIỆN</span>
         </a>
-        <h1 class="od-page-title">ORGANIZER INFORMATION</h1>
+        <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
     </div>
 
     <!-- Top 2 cards row -->
@@ -32,17 +32,17 @@
         <div class="od-card">
             <div class="od-card-title">
                 <i class="fa-solid fa-database"></i>
-                <span>PERSONAL INFORMATION</span>
+                <span>Thông tin cá nhân</span>
             </div>
 
             <!-- Avatar + Name/Email/Company -->
             <div class="od-personal-top">
                 <div class="od-avatar-wrapper">
                     <div class="od-avatar">
-                        <img th:if="${organizer != null and organizer.avatarUrl != null}"
-                             th:src="${organizer.avatarUrl}"
+                        <img th:if="${organizer != null and organizer.avatar != null}"
+                             th:src="${organizer.avatar}"
                              th:alt="${organizer.fullName}"/>
-                        <span th:if="${organizer == null or organizer.avatarUrl == null}"
+                        <span th:if="${organizer == null or organizer.avatar == null}"
                               class="od-avatar-fallback">
                             <i class="fa-solid fa-user"></i>
                         </span>
@@ -51,21 +51,21 @@
 
                 <div class="od-personal-info">
                     <div class="od-info-item">
-                        <span class="od-info-label">FULL NAME</span>
+                        <span class="od-info-label">Họ và Tên</span>
                         <div class="od-info-value-row">
                             <span class="od-info-value"
                                   th:text="${organizer != null ? organizer.fullName : 'Helena Carter'}">Helena Carter</span>
                         </div>
                     </div>
                     <div class="od-info-item">
-                        <span class="od-info-label">CONTACT EMAIL</span>
+                        <span class="od-info-label">Gmail</span>
                         <div class="od-info-value-row">
                             <span class="od-info-value od-mono"
                                   th:text="${organizer != null ? organizer.email : 'admin@hyperion.com'}">admin@hyperion.com</span>
                         </div>
                     </div>
                     <div class="od-info-item">
-                        <span class="od-info-label">COMPANY NAME</span>
+                        <span class="od-info-label">Tên công ty</span>
                         <div class="od-info-value-row">
                             <span class="od-info-value"
                                   th:text="${organizer != null ? organizer.companyName : 'Hyperion Agency Inc.'}">Hyperion Agency Inc.</span>
@@ -77,24 +77,24 @@
             <!-- Address row -->
             <div class="od-address-row">
                 <div class="od-address-item">
-                    <span class="od-info-label">HOME ADDRESS</span>
+                    <span class="od-info-label">Địa chỉ nhà</span>
                     <div class="od-info-value-row">
                         <span class="od-info-value"
                               th:text="${organizer != null ? organizer.homeAddress : '55 Pham Nhat '}">55 Hyperion Heights</span>
                     </div>
                 </div>
                 <div class="od-address-item">
-                    <span class="od-info-label">WARD</span>
+                    <span class="od-info-label">Xã/Phường</span>
                     <div class="od-info-value-row">
                         <span class="od-info-value"
-                              th:text="${organizer != null ? organizer.ward : 'Ben Thanh'}">Ben Thanh Ward</span>
+                              th:text="${organizer != null ? organizer.wardName : 'Ben Thanh'}">Ben Thanh Ward</span>
                     </div>
                 </div>
                 <div class="od-address-item">
-                    <span class="od-info-label">CITY</span>
+                    <span class="od-info-label">Tỉnh/Thành phố</span>
                     <div class="od-info-value-row">
                         <span class="od-info-value"
-                              th:text="${organizer != null ? organizer.city : 'Ho Chi Minh City'}">Ho Chi Minh City</span>
+                              th:text="${organizer != null ? organizer.cityName : 'Ho Chi Minh City'}">Ho Chi Minh City</span>
                     </div>
                 </div>
             </div>
@@ -104,22 +104,22 @@
         <div class="od-card">
             <div class="od-card-title">
                 <i class="fa-solid fa-store"></i>
-                <span>PROMOTER DETAILS</span>
+                <span>Thông tin nhà tổ chức</span>
             </div>
 
             <div class="od-promoter-grid">
 
                 <div class="od-promoter-item">
-                    <span class="od-info-label">TAX NUMBER</span>
+                    <span class="od-info-label">Mã thuế</span>
                     <div class="od-info-value-row">
                         <i class="fa-solid fa-receipt"></i>
                         <span class="od-info-value od-mono"
-                              th:text="${organizer != null ? organizer.taxId : 'TAX-US-9930219'}">TAX-US-9930219</span>
+                              th:text="${organizer != null ? organizer.taxCode : 'TAX-US-9930219'}">TAX-US-9930219</span>
                     </div>
                 </div>
 
                 <div class="od-promoter-item">
-                    <span class="od-info-label">JOINED DATE</span>
+                    <span class="od-info-label">Ngày tham gia</span>
                     <div class="od-info-value-row">
                         <i class="fa-regular fa-calendar"></i>
                         <span class="od-info-value"
@@ -128,7 +128,7 @@
                 </div>
 
                 <div class="od-promoter-item">
-                    <span class="od-info-label">NUMBER OF EVENTS ORGANIZED</span>
+                    <span class="od-info-label">Số sự kiện đã tổ chức</span>
                     <div class="od-info-value-row">
                         <i class="fa-regular fa-calendar-check"></i>
                         <span class="od-info-value od-stat-value"
@@ -137,11 +137,11 @@
                 </div>
 
                 <div class="od-promoter-item">
-                    <span class="od-info-label">NUMBER OF REJECTED EVENTS</span>
+                    <span class="od-info-label">Số sự kiện bị tắt.</span>
                     <div class="od-info-value-row">
                         <i class="fa-regular fa-calendar-xmark"></i>
                         <span class="od-info-value od-stat-value od-stat-rejected"
-                              th:text="${organizer != null ? organizer.totalRejectedEvents : 0}">0</span>
+                              th:text="${organizer != null ? organizer.totalInactiveEvents : 0}">0</span>
                     </div>
                 </div>
 

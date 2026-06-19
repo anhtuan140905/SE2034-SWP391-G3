@@ -314,5 +314,14 @@ EventSummaryProjection findEventDetailById(Long id);
             "WHERE e.eventId = :id")
     Optional<Event> moderatorFindEventDetailById(@Param("id") Long id);
 
+    // ---------------------------------------- ORGANIZER INFORMATION --------
+    // 1, Dem so luong su kien duoc to chuc boi organizer
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.organizer.id = :organizerId")
+    long countEventOrganized(@Param("organizerId") Long organizerId);
+
+    // 2, Dem so luong su kien cua organizer bi tat
+    @Query("SELECT COUNT(e) FROM Event e WHERE e.organizer.id = :organizerId AND e.status = :status")
+    long countEventInactivated(@Param("organizerId") Long organizerId,
+                               @Param("status") EventStatus status);
 
 }
