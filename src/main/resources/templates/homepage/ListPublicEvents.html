@@ -162,8 +162,8 @@
 
                     <span class="event-badge-price"
                           th:text="${!#lists.isEmpty(event.ticketTypes) ? 'Từ ' + #numbers.formatInteger(event.ticketTypes[0].price, 3, 'POINT') + ' đ' : 'Free'}">
-    Từ 2.000.000 VNĐ
-</span>
+                        Từ 2.000.000 VNĐ
+                    </span>
 
                     <div class="event-date-badge">
                         <span class="day" th:text="${#temporals.format(event.date, 'dd/MM')}">12/07</span>

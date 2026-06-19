@@ -18,4 +18,5 @@ public interface EventSummaryProjection {
     Long getSoldCount();
     Long getParticipantCount();
     BigDecimal getRevenue();
+    Long getTotalTickets();
 }

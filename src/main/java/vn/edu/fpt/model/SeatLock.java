@@ -1,9 +1,6 @@
 package vn.edu.fpt.model;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -17,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 )
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@Builder
 public class SeatLock {
     // Bảng kỹ thuật thuần túy — không có audit fields, không extends BaseAuditEntity
 
@@ -41,7 +39,7 @@ public class SeatLock {
     private Instant lockedAt;
 
     @Column(name = "expires_at", nullable = false)
-    private Instant expiresAt; // locked_at + 5 phút — dùng Instant để so sánh NOW() trong @Scheduled
+    private Instant expiresAt;
 
     @PrePersist
     protected void onCreate() {

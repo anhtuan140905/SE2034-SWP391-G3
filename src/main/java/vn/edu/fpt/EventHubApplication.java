@@ -3,10 +3,12 @@ package vn.edu.fpt;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 //(exclude = { SecurityAutoConfiguration.class })
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 public class EventHubApplication {
 
 	public static void main(String[] args) {

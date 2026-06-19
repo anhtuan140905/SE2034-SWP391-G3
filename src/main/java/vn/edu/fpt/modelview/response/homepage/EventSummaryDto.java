@@ -25,6 +25,7 @@ public class EventSummaryDto {
     private Long soldCount;
     private Long participantCount;
     private BigDecimal revenue;
+    private Long totalTickets;
 
     public EventSummaryDto(EventSummaryProjection projection) {
         this.id = projection.getId();
@@ -39,7 +40,7 @@ public class EventSummaryDto {
         this.soldCount = projection.getSoldCount();
         this.participantCount = projection.getParticipantCount();
         this.revenue = projection.getRevenue();
-
+        this.totalTickets = projection.getTotalTickets();
     }
 
 }

@@ -1,12 +1,17 @@
 package vn.edu.fpt.controller.hompage.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import vn.edu.fpt.model.Order;
+import vn.edu.fpt.model.Payment;
 import vn.edu.fpt.service.EventService;
+import vn.edu.fpt.service.OrderService;
 
 @Controller
 @RequestMapping("/events/{eventId}")
@@ -20,19 +25,5 @@ public class BookingController {
     public String chooseSeat(@PathVariable Long eventId, Model model) {
         model.addAttribute("event", eventService.getEventById(eventId));
         return "homepage/ChooseSeat";
-    }
-
-    // Bước 2: Chọn vé theo loại (tab kia)
-    @GetMapping("/tickets")
-    public String chooseTicket(@PathVariable Long eventId, Model model) {
-        model.addAttribute("event", eventService.getEventById(eventId));
-        return "homepage/ChooseSeat";
-    }
-
-    // Bước 3: Trang checkout
-    @GetMapping("/checkout")
-    public String checkout(@PathVariable Long eventId, Model model) {
-        model.addAttribute("event", eventService.getEventById(eventId));
-        return "homepage/checkout";
     }
 }

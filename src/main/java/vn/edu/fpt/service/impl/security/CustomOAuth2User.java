@@ -27,12 +27,15 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleName().toString()))
+        Set<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
+                .map(userRole -> new SimpleGrantedAuthority(
+                        userRole.getRole().getRoleName().toString()))
                 .collect(Collectors.toSet());
 
-        boolean isOrganizer = user.getRoles().stream()
-                .anyMatch(role -> role.getRoleName() == RoleName.ROLE_ORGANIZER);
+        boolean isOrganizer = user.getUserRoles().stream()
+                .anyMatch(userRole ->
+                        userRole.getRole().getRoleName() == RoleName.ROLE_ORGANIZER);
+
 
         if (isOrganizer) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ATTENDEE"));

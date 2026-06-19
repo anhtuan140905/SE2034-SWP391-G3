@@ -11,6 +11,8 @@ public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfi
 
     boolean existsByTaxCode(String  taxCode);
 
+    OrganizerProfile findByUserId(Long userId);
+
 //    @Query("SELECT o FROM OrganizerProfile o JOIN o.user u WHERE " +
 //            "(:status IS NULL OR o.status = :status) AND " +
 //            "(:keyword IS NULL OR :keyword = '' OR " +

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
-import vn.edu.fpt.modelview.request.admin.CreateVenueDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
@@ -85,10 +84,9 @@ public class UserController {
 
         List<ActivityDTO> activities = userServiceImpl.getUserActivities(id);
 
-        String role = users.getRoles()
-                .stream()
+        String role = users.getUserRoles().stream()
                 .findFirst()
-                .map(r -> r.getRoleName().name())
+                .map(ur -> ur.getRole().getRoleName().name())
                 .orElse("UNKNOWN");
 
         model.addAttribute("activities", activities);
@@ -115,7 +113,7 @@ public class UserController {
                 : userServiceImpl.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        RoleName roleName = user.getRoles().iterator().next().getRoleName();
+        RoleName roleName = user.getUserRoles().iterator().next().getRole().getRoleName();
 
         model.addAttribute("userrole", roleName);
         return "admin/user/EditUser";

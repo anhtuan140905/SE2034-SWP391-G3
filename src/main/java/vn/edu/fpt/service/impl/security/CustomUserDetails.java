@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.model.constant.RoleName;
 
 import java.util.Collection;
 import java.util.Set;
@@ -19,15 +20,17 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority((role.getRoleName()).toString()))
+        Set<SimpleGrantedAuthority> authorities = user.getUserRoles().stream()
+                .map(userRole -> new SimpleGrantedAuthority(
+                        userRole.getRole().getRoleName().toString()))
                 .collect(Collectors.toSet());
 
-        boolean isOrganizer = user.getRoles().stream()
-                .anyMatch(role -> role.getRoleName().equals("ROLE_ORGANIZER"));
+        boolean isOrganizer = user.getUserRoles().stream()
+                .anyMatch(userRole ->
+                        userRole.getRole().getRoleName() == RoleName.ROLE_ORGANIZER);
 
-        if(isOrganizer){
-            authorities.add(new SimpleGrantedAuthority("ROLE_ATTENDEE"));
+        if (isOrganizer) {
+            authorities.add(new SimpleGrantedAuthority("ATTENDEE"));
         }
 
         return authorities;

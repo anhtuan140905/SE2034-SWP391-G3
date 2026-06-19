@@ -91,7 +91,8 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/", "/events", "/auth/**", "/css/**",
                                 "/js/**", "/homepage/**",
-                                "/auth/css/**", "/auth/js/**"
+                                "/auth/css/**", "/auth/js/**",
+                                "/api/payment/webhook/sepay"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")

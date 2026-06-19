@@ -16,8 +16,11 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
     User findByEmail(String username);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email = :email")
-    Optional<User> findByEmailWithRoles(String email);
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE u.id = :id")
+    Optional<User> findByIdWithUserRoles(@Param("id") Long id);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE u.email = :email")
+    Optional<User> findByEmailWithUserRoles(@Param("email") String email);
 
     List<User> findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
             String firstName,
@@ -42,11 +45,19 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     List<User>findTop10ByOrderByUpdatedAtDesc();
 
-    List<User> findTop10ByRoles_RoleNameOrderByUpdatedAtDesc(RoleName roleName);;
+    @Query("""
+    SELECT DISTINCT u FROM User u
+    JOIN u.userRoles ur
+    JOIN ur.role r
+    WHERE r.roleName = :roleName
+    ORDER BY u.updatedAt DESC
+    LIMIT 10
+    """)
+    List<User> findTop10ByRoleNameOrderByUpdatedAtDesc(@Param("roleName") RoleName roleName);
     // Dem so account Organizer con hoat dong tren nen tang
     @Query(value = "SELECT COUNT(u.id) FROM users u " +
             "JOIN user_roles ur ON u.id = ur.user_id " +
             "JOIN roles r ON ur.role_id = r.id " +
-            "WHERE r.role_name = 'ROLE_ORGANIZER' AND u.is_active = 1", nativeQuery = true)
+            "WHERE r.role_name = 'ORGANIZER' AND u.is_active = 1", nativeQuery = true)
     Long countActiveOrganizers();
 }
