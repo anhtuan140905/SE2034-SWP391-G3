@@ -27,14 +27,14 @@ public class ModeratorEventListServiceImpl implements ModeratorEventListService 
         stats.setTotalEvents(eventRepository.countAllEvents());
         stats.setEventsToday(eventRepository.countNewEventsToday());
         stats.setInactiveEvents(eventRepository.countEventsByStatus(EventStatus.INACTIVE));
-        stats.setEndedThisMonth(eventRepository.countEventsByStatus(EventStatus.ENDED));
+        stats.setEndedThisMonth(eventRepository.countEndedThisMonth(EventStatus.ACTIVE));
 
         return stats;
     }
 
     @Override
     @Transactional(readOnly = true)
-     public Page<ModeratorEventListDTO> getEvents(EventStatus status, String keyword, Long categoryId, int page, int size) {
+    public Page<ModeratorEventListDTO> getEvents(EventStatus status, String keyword, Long categoryId, int page, int size) {
 
         String stringKeyword = (keyword != null && !keyword.isBlank()) ? keyword : null;
 
@@ -43,21 +43,6 @@ public class ModeratorEventListServiceImpl implements ModeratorEventListService 
         return eventRepository
                 .findEventsWithFilterAndSearch(status, stringKeyword, categoryId, pageable)
                 .map(this::mapToDTO);
-    }
-
-    @Override
-    @Transactional
-    public void deactivateEvent(Long eventId) {
-
-        Event  event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện: " + eventId));
-
-        if(event.getStatus() != EventStatus.ACTIVE) {
-            throw new RuntimeException("Chỉ có thể tắt sự kiện đang hoạt động.");
-        }
-
-        event.setStatus(EventStatus.INACTIVE);
-        eventRepository.save(event);
 
     }
 

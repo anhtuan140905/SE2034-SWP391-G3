@@ -15,8 +15,8 @@
         }
 
         body {
-            background: #fff0f5;   /* --bg-dark-primary của user page */
-            color: #1e0e34;        /* --text-primary */
+            background: #fff0f5;
+            color: #1e0e34;
             display: flex;
             min-height: 100vh;
         }
@@ -26,11 +26,11 @@
         .sidebar {
             background: #ffffff;
             border-right: 1px solid rgba(255, 42, 122, 0.15);
-            /* giữ nguyên các thuộc tính vị trí */
             width: 260px;
             padding: 20px;
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             height: 100vh;
             z-index: 100;
         }
@@ -45,7 +45,7 @@
         }
 
         .portal-text {
-            color: #84759b;   /* --text-muted */
+            color: #84759b;
             font-size: 13px;
             margin-bottom: 40px;
             letter-spacing: 1px;
@@ -53,8 +53,10 @@
         }
 
         .menu a {
-            color: #4b3d60;   /* --text-secondary */
-            display: flex; align-items: center; gap: 12px;
+            color: #4b3d60;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-decoration: none;
             padding: 14px 16px;
             border-radius: 12px;
@@ -82,18 +84,25 @@
         .topbar {
             background: #ffffff;
             border-bottom: 1px solid rgba(255, 42, 122, 0.12);
-            position: sticky; top: 0; z-index: 90;
+            position: sticky;
+            top: 0;
+            z-index: 90;
             padding: 12px 25px;
-            display: flex; align-items: center; gap: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .topbar .search-box {
             background: #fff0f5;
             border: 1px solid rgba(255, 42, 122, 0.2);
             color: #1e0e34;
-            flex: 1; max-width: 500px;
-            border-radius: 10px; padding: 10px 15px;
-            outline: none; font-size: 14px;
+            flex: 1;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 10px 15px;
+            outline: none;
+            font-size: 14px;
         }
 
         .topbar .search-box::placeholder {
@@ -115,16 +124,6 @@
             font-size: 20px;
             cursor: pointer; }
 
-        .notif-btn .dot {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 9px;
-            height: 9px;
-            background: #ff1b8d;
-            border-radius: 50%;
-            border: 2px solid #0d001a;
-        }
 
         .profile {
             display: flex;
@@ -216,10 +215,6 @@
             color: #1e0e34;
         }
 
-        .green {
-            color: #4ade80;
-            font-size: 14px;
-        }
 
         /* ================= CHARTS ================= */
         .charts {
@@ -233,6 +228,7 @@
             border: 1px solid rgba(255, 42, 122, 0.15);
             border-radius: 22px;
             padding: 25px;
+            height: 400px;
         }
 
         .chart-box h2 { color: #1e0e34;
@@ -242,8 +238,8 @@
 
 
         canvas {
-            width: 100% !important;
-            height: 300px !important;
+            width: 100%;
+            height: 300px;
         }
 
         /* ================= TABLE ================= */
@@ -264,7 +260,7 @@
 
         table th {
             color: #84759b;
-            text-align: left; padding: 14px;
+            text-align: left; padding: 20px;
             border-bottom: 1px solid rgba(255, 42, 122, 0.12);
         }
 
@@ -278,34 +274,24 @@
 
         .badge {
             padding: 6px 14px;
-            border-radius: 20px;
             font-size: 13px;
             font-weight: bold;
+            display: inline-block;
         }
 
 
-        .badge.active    { background: rgba(34,197,94,0.2);   color: #4ade80; }
-        .badge.upcoming  { background: rgb(198 170 26 / 0.2);  color: #e89f17; }
-        .badge.completed {
-            background: rgb(165 58 78 / 0.15);
+        .badge.active    {
+            color: #4ade80;;
+        }
+        .badge.completed  {
+            color: #e89f17;
+        }
+        .badge.inactive {
             color: #d11127;
         }
 
 
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            border: 1px solid rgba(236, 72, 153, 0.35);
-            color: #ff1b8d;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+
 
 
 
@@ -326,7 +312,9 @@
             animation: fadeIn 0.2s ease;
         }
 
-        .dropdown-menu.show { display: block; }
+        .dropdown-menu.show {
+            display: block;
+        }
 
         .dropdown-menu ul {
             list-style: none;
@@ -472,8 +460,7 @@
                 <div class="card-top">
                     <div>
                         <p style="color:#9ca3af;">Tổng Sự Kiện </p>
-                        <div class="value">1,284</div>
-                        <div class="green"><i class="fa-solid fa-arrow-up"></i> +12.5%</div>
+                        <div class="value" th:text="${allEvent}"></div>
                     </div>
                     <div class="icon pink"><i class="fa-solid fa-calendar"></i></div>
                 </div>
@@ -483,8 +470,8 @@
                 <div class="card-top">
                     <div>
                         <p style="color:#9ca3af;">Người Dùng Đang Hoạt Động </p>
-                        <div class="value">8,549</div>
-                        <div class="green"><i class="fa-solid fa-arrow-up"></i> +8.2%</div>
+                        <div class="value" th:text="${allUserActive}"></div>
+
                     </div>
                     <div class="icon purple"><i class="fa-solid fa-users"></i></div>
                 </div>
@@ -495,9 +482,9 @@
             <div class="card">
                 <div class="card-top">
                     <div>
-                        <p style="color:#9ca3af;">Số Lượng Vé Đã Bán </p>
-                        <div class="value">$42.8K</div>
-                        <div class="green"><i class="fa-solid fa-arrow-up"></i> +15.3%</div>
+                        <p style="color:#9ca3af;">Tổng Số Lượng Vé Đã Bán </p>
+                        <div class="value" th:text="${allSoldTicket}"></div>
+
                     </div>
                     <div class="icon purple"><i class="fa-solid fa-ticket"></i></div>
                 </div>
@@ -517,7 +504,7 @@
         </div>
 
         <!-- TABLE -->
-        <div class="table-box">
+        <div class="table-box" >
             <h2>Sự Kiện Gần Đây </h2>
             <table>
                 <thead>
@@ -525,8 +512,8 @@
                     <th>STT</th>
                     <th>Tên Sự Kiện</th>
                     <th>Địa Điểm </th>
-                    <th>Ngày Diễn Ra </th>
-                    <th>Ngày Kết Thúc </th>
+                    <th>Thời Gian Diễn Ra </th>
+                    <th>Thời Gian Kết Thúc </th>
                     <th>Số Lượng Vé </th>
                     <th>Trạng Thái </th>
                 </tr>
@@ -536,11 +523,54 @@
                     <td th:text="${eventStat.count}"></td>
                     <td th:text="${event.title}"></td>
                     <td th:text="${event.venueName}"></td>
-                    <td th:text="${event.startTime}"></td>
-                    <td th:text="${event.endTime}"></td>
-                    <td th:text="${event.totalTickets}"></td>
+                    <td th:utext="${#temporals.format(event.startTime, 'dd/MM/yyyy') + '<br>' + #temporals.format(event.startTime, 'HH:mm')}"></td>
+                    <td th:utext="${#temporals.format(event.endTime, 'dd/MM/yyyy') + '<br>' + #temporals.format(event.endTime, 'HH:mm')}"></td>
+                    <td th:text="${event.soldCount}"></td>
                     <td>
-                        <span class="badge active" th:text="${event.status}"></span>
+                        <span class="badge active" th:if="${event.status == 'ACTIVE' }">Đang Hoạt Động</span>
+                        <span class="badge inactive" th:if="${event.status == 'INACTIVE' }">Ngừng Hoạt Động</span>
+                        <span class="badge completed" th:if="${event.status == 'ENDED' }">Đã Kết Thúc</span>
+                    </td>
+
+                </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="table-box" style="margin-top: 30px;">
+            <h2>Top 5 Sự Kiện Bán Vé Nhiều Nhất </h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên Sự Kiện</th>
+                    <th>Địa Điểm </th>
+                    <th>Ngày Diễn Ra </th>
+                    <th>Tổng Vé Phát Hành</th>
+                    <th>Số Lượng Vé Đã Bán</th>
+                    <th>Tỉ Lệ Bán</th>
+                    <th>Doanh Thu</th>
+                    <th>Trạng Thái</th>
+
+                </tr>
+                </thead>
+                <tbody >
+                <tr th:each="event, eventStat : ${top5Events}">
+                    <td th:text="${eventStat.count}"></td>
+                    <td th:text="${event.title}"></td>
+                    <td th:text="${event.venueName}"></td>
+                    <td th:utext="${#temporals.format(event.startTime, 'dd/MM/yyyy') }"></td>
+                    <td th:text="${event.capacity}"></td>
+                    <td th:text="${event.soldCount}"></td>
+                    <td th:text="${#numbers.formatDecimal(event.salesRate, 1, 2) + '%'}"></td>
+                    <td th:text="${#numbers.formatDecimal(event.revenue, 1, 'POINT', 0, 'DEFAULT') + ' đ'}"></td>
+                    <td>
+                        <span class="badge active" th:if="${event.status == 'ACTIVE' }">Đang Hoạt Động</span>
+                        <span class="badge completed" th:if="${event.status == 'ENDED' }">Đã Kết Thúc</span>
                     </td>
                 </tr>
 
@@ -553,67 +583,71 @@
 </div><!-- /wrapper -->
 
 <!-- ================= CHART JS ================= -->
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const eventData = [[${allEventByMonth}]];
+    console.log(eventData);
+
+
+    const allEventByMonthArr = Array(12).fill(0);
+
+    eventData.forEach(item => {
+        allEventByMonthArr[item.month - 1] = item.total;
+    });
+
     const eventCtx = document.getElementById('eventChart');
+
     new Chart(eventCtx, {
         type: 'line',
         data: {
-            labels: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
+            labels: [
+                'Tháng 1','Tháng 2','Tháng 3','Tháng 4',
+                'Tháng 5','Tháng 6','Tháng 7','Tháng 8',
+                'Tháng 9','Tháng 10','Tháng 11','Tháng 12'
+            ],
             datasets: [{
                 label: 'Tổng sự kiện',
-                data: [65, 78, 92, 86, 105, 120,123,234,432,12,21,34],
+                data: allEventByMonthArr,
                 borderColor: '#ff1b8d',
                 backgroundColor: 'rgba(255,27,141,0.35)',
                 fill: true,
                 tension: 0.4,
-                pointRadius: 5,
-                pointHoverRadius: 8,
-                pointBackgroundColor: '#ff1b8d',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: '#ff1b8d',
-                pointHoverBorderWidth: 3
+                pointRadius: 5
             }]
+
+
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#1e0e34',
-                        font: { weight: '600' }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: 'rgba(20,0,33,0.95)',
-                    titleColor: '#ff1b8d',
-                    bodyColor: '#ffffff',
-                    borderColor: 'rgba(255,27,141,0.5)',
-                    borderWidth: 1,
-                    padding: 12,
-                    cornerRadius: 10,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(items) {
-                            return items[0].label;
-                        },
-                        label: function(item) {
-                            return ' Tổng sự kiện: ' + item.raw;
-                        }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
                     }
                 }
-            },
-            scales: {
-                x: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
             }
         }
+
     });
+
+
+
+    const revenueData = [[${sumRevenueByMonth}]];
+    console.log('revenueData:', revenueData);
+    const sumRevenueByMonthArr = Array(12).fill(0);
+
+    revenueData.forEach(item => {
+        sumRevenueByMonthArr[item.month - 1] = item.total;
+    });
+
+    // Hàm format tiền VN
+    console.log('sumRevenueByMonthArr:', sumRevenueByMonthArr);
+    const formatVND = (value) => {
+        if (value >= 1_000_000_000) return new Intl.NumberFormat('vi-VN').format(value / 1_000_000_000) + ' tỷ đ';
+        if (value >= 1_000_000) return new Intl.NumberFormat('vi-VN').format(value / 1_000_000) + ' tr đ';
+        return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+    };
 
     const revenueCtx = document.getElementById('revenueChart');
     new Chart(revenueCtx, {
@@ -622,17 +656,59 @@
             labels: ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'],
             datasets: [{
                 label: 'Doanh thu',
-                data: [32, 42, 51, 48, 68, 80,67,87,90,100,123,10],
+                data: sumRevenueByMonthArr,
                 backgroundColor: '#8b5cf6'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#1e0e34',font: { weight: '600' } } } },
+            plugins: {
+                legend:
+                    {labels:
+                            {
+                                color:
+                                    '#1e0e34',
+                                font: {weight: '600'}
+                            }
+
+                            },
+                        tooltip:{
+                            callbacks:{
+                                label: (context) => ' ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' đ'
+                            }
+
+                    }
+
+
+            },
             scales: {
-                x: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 }}, grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                x: {
+                    ticks: {
+                        color: '#4b3d60',
+                        font: {
+                            weight: '600',
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.05)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#4b3d60',
+                        font: {
+                            weight: '600',
+                            size: 12
+                        },
+                        callback: (value) => formatVND(value)
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.05)'
+                    }
+                },
+
 
             }
         }

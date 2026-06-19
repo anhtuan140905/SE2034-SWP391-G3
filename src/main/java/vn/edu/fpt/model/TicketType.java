@@ -40,7 +40,7 @@ public class TicketType extends BaseAuditEntity {
     @Column(name = "sold_quantity", nullable = false)
     private Integer soldQuantity; // đếm tự động khi Ticket được tạo
 
-    @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Seat> seats;
 
     @Column(name = "display_order", nullable = false)

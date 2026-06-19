@@ -1,11 +1,6 @@
 /**
  * event_detail.js
  * Path: src/main/resources/static/moderator/js/event_detail.js
- *
- * Handles:
- * - Approve event (POST)
- * - Reject event (POST with reason validation)
- * - Entrance animations
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirmed) return;
 
         // Lấy lời nhắn động từ textarea (nếu có)
-        const textarea = document.getElementById('reviewMessage');
+        const textarea = document.getElementById('deactivateReason');
         const message  = textarea ? textarea.value.trim() : '';
 
         try {
@@ -48,48 +43,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* ──────────────────────────────────────────
-       2. REJECT EVENT (Từ chối sự kiện - Bắt buộc nhập lời nhắn)
+       2. Tắt sự kiện
     ────────────────────────────────────────── */
-    window.rejectEvent = async (eventId) => {
-        if (eventId === null || eventId === undefined) return;
+    window.submitDeactivate = function () {
+        const textarea = document.getElementById('deactivateReason');
+        const reason = textarea ? textarea.value.trim() : '';
 
-        const textarea = document.getElementById('reviewMessage');
-        const message   = textarea ? textarea.value.trim() : '';
-
-        // Từ chối thì BẮT BUỘC phải viết lý do
-        if (!message) {
+        if (!reason) {
             textarea?.classList.add('textarea-error');
             textarea?.focus();
-            showToast('Please provide a reason for rejection.', 'error');
+            alert('Vui lòng nhập lý do tắt sự kiện trước khi xác nhận.');
             return;
         }
 
         textarea?.classList.remove('textarea-error');
 
-        const confirmed = confirm('Are you sure you want to REJECT this event?');
+        const confirmed = confirm('Bạn có chắc muốn TẮT sự kiện này không?');
         if (!confirmed) return;
 
-        try {
-            const res = await fetch(`/moderator/events/${eventId}/reject`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN']:
-                        document.querySelector('meta[name="_csrf"]')?.content || ''
-                },
-                body: JSON.stringify({ message: message }) // Gửi lý do lên Server
-            });
+        const reasonInput = document.getElementById('reasonInput');
+        const form = document.getElementById('deactivateForm');
 
-            if (res.ok) {
-                showToast('Event rejected.', 'success');
-                setTimeout(() => window.location.href = '/moderator/events', 1200);
-            } else {
-                showToast('Failed to reject event. Please try again.', 'error');
-            }
-        } catch (err) {
-            console.error('Reject error:', err);
-            showToast('Network error. Please try again.', 'error');
+        if (!reasonInput || !form) {
+            alert('Không tìm thấy form tắt sự kiện.');
+            return;
         }
+
+        reasonInput.value = reason;
+        form.submit();
     };
 
     /* ──────────────────────────────────────────
@@ -105,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 
     // -----------------
-    document.getElementById('reviewMessage')?.addEventListener('input', function () {
+    document.getElementById('deactivateReason')?.addEventListener('input', function () {
         if (this.value.trim()) this.classList.remove('textarea-error');
     });
 
