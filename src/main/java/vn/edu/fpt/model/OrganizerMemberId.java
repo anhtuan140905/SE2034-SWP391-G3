@@ -15,4 +15,3 @@ public class OrganizerMemberId implements Serializable {
     private Long eventId;
     private Long userId;
 }
-

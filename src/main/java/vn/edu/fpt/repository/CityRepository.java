@@ -19,4 +19,3 @@ public interface CityRepository extends JpaRepository<City,Long> {
 //            "  WHERE e.status = 'APPROVED'", nativeQuery = true)
 //    List<City> findAllCityHaveApprovedEvent();
 }
-

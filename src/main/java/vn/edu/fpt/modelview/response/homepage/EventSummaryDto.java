@@ -35,7 +35,7 @@ public class EventSummaryDto {
         this.endTime = projection.getEndTime();
         this.minPrice = projection.getMinPrice();
         this.categoryName = projection.getCategoryName();
-        this.venueName = projection.getVenue();
+        this.venueName = projection.getVenueName();
         this.cityName = projection.getCityName();
         this.soldCount = projection.getSoldCount();
         this.participantCount = projection.getParticipantCount();

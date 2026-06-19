@@ -28,15 +28,15 @@
 
                 <p class="ed-event-id">
                     <i class="fa-solid fa-hashtag" style="margin-right: 4px;"></i> Event ID:
-                    <span th:text="${event != null ? event.id : 'N/A'}"></span>
+                    <span th:text="${event != null ? event.eventId : 'N/A'}"></span>
                 </p>
             </div>
         </div>
 
         <span class="ed-status-badge"
-              th:classappend="${event != null and event.status == 'APPROVED'} ? 'status-approved' :
-                         (${event != null and event.status == 'REJECTED'} ? 'status-rejected' : 'status-pending')">
-        <span th:text="${event != null ? event.status : 'PENDING'}"></span>
+              th:classappend="${event != null and event.status.name() == 'ACTIVE'} ? 'status-active' :
+                         (${event != null and event.status.name() == 'INACTIVE'} ? 'status-inactive' : 'status-ended')">
+        <span th:text="${event != null ? event.status.name() : 'INACTIVE'}"></span>
     </span>
     </div>
 
@@ -49,15 +49,15 @@
             <!-- Card 1: Cover image -->
             <div class="ed-card ed-cover-card">
                 <div class="ed-cover">
-                    <img th:if="${event != null and event.coverImageUrl != null}"
-                         th:src="${event.coverImageUrl}"
+                    <img th:if="${event != null and event.thumbnailUrl != null}"
+                         th:src="${event.thumbnailUrl}"
                          th:alt="${event.title}"
                          class="ed-cover-img"/>
-                    <div th:if="${event == null or event.coverImageUrl == null}"
+                    <div th:if="${event == null or event.thumbnailUrl == null}"
                          class="ed-cover-placeholder"></div>
                     <div class="ed-cover-overlays">
                         <span class="tag-category"
-                              th:text="${event != null ? event.category : 'Live Music'}"></span>
+                              th:text="${event != null ? event.categoryName : 'Live Music'}"></span>
                     </div>
                 </div>
             </div>
@@ -82,25 +82,24 @@
                     <div class="ed-date-item">
                         <span class="ed-date-label">Ngày tổ chức</span>
                         <span class="ed-date-value"
-                              th:text="${event != null ? #temporals.format(event.startTime, 'dd-MM-yyyy') : 'Oct 24, 2026'}">
+                              th:text="${event != null ? #temporals.format(event.date, 'dd-MM-yyyy') : 'Oct 24, 2026'}">
                         </span>
                     </div>
                     <div class="ed-date-item">
-                        <span class="ed-date-label">Thời gian mở cửa</span>
+                        <span class="ed-date-label">Thời gian bắt đầu</span>
                         <span class="ed-date-value"
                               th:text="${event != null ? #temporals.format(event.startTime, 'HH:mm') : '19:00 PM'}">
                         </span>
                     </div>
                     <div class="ed-date-item">
-                        <span class="ed-date-label">Thời lượng</span>
+                        <span class="ed-date-label">Thời gian kết thúc</span>
                         <span class="ed-date-value"
-                              th:text="${event != null ? event.duration : '8 Hours'}">
+                              th:text="${event != null ? #temporals.format(event.endTime, 'HH:mm') : '19:00 PM'}">
                         </span>
                     </div>
                 </div>
 
             </div>
-            <!-- end card 2 -->
         </div>
         <!-- end ed-main -->
         <!-- RIGHT: Sidebar -->
@@ -114,20 +113,13 @@
                 <p class="ed-venue-name"
                    th:text="${event != null ? event.venueName : 'Cyber Docklands'}"></p>
                 <p class="ed-venue-address"
-                   th:text="${event != null ? event.venueAddress : '404 Neon Blvd, District 9, Metropolis'}">
+                   th:text="${event != null ? (event.venueAddress + ', '+ (event.cityName ?: '')) : '404 Neon Blvd, District 9, Metropolis'}">
                 </p>
-                <div class="ed-capacity-row">
-                    <span class="ed-capacity-label">SỨC CHỨA</span>
-                    <span class="ed-capacity-value"
-                          th:text="${event != null ? #numbers.formatInteger(event.capacity, 0, 'COMMA') + ' Người' : '5,000 Persons'}">
-                        5,000 Persons
-                    </span>
-                </div>
             </div>
 
             <!-- Total Tickets -->
             <div class="ed-info-card ed-ticket-card">
-                <div class="ed-info-card-title">
+               <!-- <div class="ed-info-card-title">
                     <i class="fa-solid fa-ticket"></i>
                     <span>TỔNG SỐ VÉ</span>
                 </div>
@@ -135,10 +127,11 @@
                    th:text="${event != null ? #numbers.formatInteger(event.totalTickets, 0, 'COMMA') : '5,000'}">
                     5,000
                 </p>
+                -->
                 <div class="ed-divider"></div>
                 <p class="ed-organized-label">Tổ chức bởi</p>
                 <p class="ed-organized-name"
-                   th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company</p>
+                   th:text="${event != null ? event.organizerName : ''}">Sungha Company</p>
             </div>
 
             <!-- Organizer -->
@@ -159,9 +152,13 @@
                     </div>
                     <div class="ed-organizer-info">
                         <p class="ed-organizer-name"
-                           th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company</p>
+                           th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company
+                        </p>
+                        <p class="ed-organizer-email"
+                           th:text="${event != null ? event.organizerEmail : ''}">
+                        </p>
                     </div>
-                    <a th:href="@{/moderator/information/{id}(id=${event?.organizerId ?: 0}, fromEvent=${event?.id ?: 0})}"
+                    <a th:href="@{/moderator/information/{id}(id=${event?.organizerId ?: 0}, fromEvent=${event?.eventId ?: 0})}"
                        class="ed-organizer-arrow">
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>
@@ -173,30 +170,46 @@
     <!-- end ed-body -->
 
     <!-- Reject Boxx-->
-    <div class="ed-reject-box" th:if="${event == null or event.status == 'PENDING'}">
+    <div class="ed-reject-box"
+         th:if="${event != null and event.status.name() == 'ACTIVE'}">
         <div class="ed-reject-label">
             <i class="fa-solid fa-envelope-open-text"></i>
-            <span>Thông điệp/ghi chú cho người tổ chức. Bắt buộc nếu bị từ chối</span>
+            <span>Lý do tắt sự kiện — sẽ được gửi email đến Organizer</span>
         </div>
-        <textarea id="reviewMessage"
+        <textarea id="deactivateReason"
                   class="ed-reject-textarea"
-                  placeholder="Nhập lời chúc mừng hoặc lý do từ chối để hệ thống tự động gửi Email đến Ban tổ chức..."></textarea>
+                  placeholder="Nhập lý do tắt sự kiện để hệ thống gửi email thông báo đến Ban tổ chức..."></textarea>
     </div>
 
     <div class="ed-action-footer">
         <div class="ed-action-btns">
 
-            <button class="btn-reject"
-                    th:if="${event == null or event?.status?.toString() != 'REJECTED'}"
-                    th:onclick="|rejectEvent(${event?.id ?: 0})|">
-                Từ chối
-            </button>
+            <!-- Nút Tắt — chỉ hiện khi ACTIVE -->
+            <form th:if="${event != null and event.status.name() == 'ACTIVE'}"
+                  th:action="@{/moderator/events/{id}/deactivate(id=${event.eventId})}"
+                  method="post" id="deactivateForm">
+                <input type="hidden" name="reason" id="reasonInput"/>
+                <button type="button" class="btn-inactive"
+                        onclick="submitDeactivate()">
+                    <i class="fa-solid fa-ban"></i> Tắt sự kiện
+                </button>
+            </form>
 
-            <button class="btn-approve"
-                    th:if="${event == null or event?.status?.toString() != 'APPROVED'}"
-                    th:onclick="|approveEvent(${event?.id ?: 0})|">
-                Phê duyệt
-            </button>
+            <!-- Nút Bật lại — chỉ hiện khi INACTIVE -->
+            <form th:if="${event != null and event.status.name() == 'INACTIVE'}"
+                  th:action="@{/moderator/events/{id}/activate(id=${event.eventId})}"
+                  method="post">
+                <button type="submit" class="btn-approve">
+                    <i class="fa-solid fa-circle-play"></i> Bật lại sự kiện
+                </button>
+            </form>
+
+            <!-- ENDED — không có hành động -->
+            <div th:if="${event != null and event.status.name() == 'ENDED'}"
+                 class="ed-ended-note">
+                <i class="fa-solid fa-flag-checkered"></i>
+                Sự kiện đã kết thúc — không thể thay đổi trạng thái
+            </div>
 
         </div>
     </div>

@@ -71,9 +71,9 @@
     margin-top: 4px;
 }
 .ed-status-badge i { font-size: 14px; }
-.status-pending  { border-color: #F5C560; }
-.status-approved { border-color: #5CE8A8; }
-.status-rejected { border-color: #F5A0C0; }
+.status-ended { border-color: #F5C560; }
+.status-active { border-color: #5CE8A8; }
+.status-inactive { border-color: #F5A0C0; }
 
 /* ---------- 2-col Body ---------- */
 .ed-body {
@@ -404,7 +404,7 @@
 .ed-action-btns {
     display: flex; align-items: center; gap: 12px;
 }
-.btn-reject {
+.btn-inactive {
     padding: 11px 28px;
     border: 1.5px solid var(--brand-pink);
     border-radius: var(--radius-sm);

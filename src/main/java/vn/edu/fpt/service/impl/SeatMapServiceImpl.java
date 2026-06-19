@@ -19,44 +19,44 @@ import java.util.stream.Collectors;
 public class SeatMapServiceImpl implements SeatMapService {
     private final SeatRepository seatRepository;
 
- @Transactional
- @Override
+    @Transactional
+    @Override
     public List<TicketTypeSeatsDTO> getSeatMap(Long eventId) {
-     List<Seat> seats = seatRepository.findAllByEventIdWithStatus(eventId, Instant.now());
-     Set<Long> lockedIds = seatRepository.findLockedSeatIds(eventId, Instant.now());
+        List<Seat> seats = seatRepository.findAllByEventIdWithStatus(eventId, Instant.now());
+        Set<Long> lockedIds = seatRepository.findLockedSeatIds(eventId, Instant.now());
 
-     Map<Long, List<Seat>> seatsByTicketType = seats.stream().collect(Collectors.groupingBy(s -> s.getTicketType().getTicketTypeId()));
+        Map<Long, List<Seat>> seatsByTicketType = seats.stream().collect(Collectors.groupingBy(s -> s.getTicketType().getTicketTypeId()));
 
-     List<TicketTypeSeatsDTO> result = new ArrayList<>();
+        List<TicketTypeSeatsDTO> result = new ArrayList<>();
 
-     for (Map.Entry<Long, List<Seat>> entry : seatsByTicketType.entrySet()) {
-         TicketType ticketType = entry.getValue().get(0).getTicketType();
-         List<Seat> zoneSeats = entry.getValue();
+        for (Map.Entry<Long, List<Seat>> entry : seatsByTicketType.entrySet()) {
+            TicketType ticketType = entry.getValue().get(0).getTicketType();
+            List<Seat> zoneSeats = entry.getValue();
 
-         List<SeatStatusDTO> seatDTOs = new ArrayList<>();
-         for (Seat s : zoneSeats) {
-             SeatStatusDTO seatDTO = SeatStatusDTO.builder()
-                     .seatId(s.getSeatId())
-                     .rowLabel(s.getRowLabel())
-                     .seatNumber(s.getSeatNumber())
-                     .status(resolveStatus(s, lockedIds))
-                     .build();
-             seatDTOs.add(seatDTO);
-         }
-         TicketTypeSeatsDTO ticketTypeSeatsDTO = TicketTypeSeatsDTO.builder()
-                 .ticketTypeId(ticketType.getTicketTypeId())
-                 .zoneName(ticketType.getZoneName())
-                 .price(ticketType.getPrice())
-                 .totalQuantity(ticketType.getTotalQuantity())
-                 .soldQuantity(ticketType.getSoldQuantity())
-                 .displayOrder(ticketType.getDisplayOrder())
-                 .seats(seatDTOs)
-                 .build();
-         result.add(ticketTypeSeatsDTO);
-     }
+            List<SeatStatusDTO> seatDTOs = new ArrayList<>();
+            for (Seat s : zoneSeats) {
+                SeatStatusDTO seatDTO = SeatStatusDTO.builder()
+                        .seatId(s.getSeatId())
+                        .rowLabel(s.getRowLabel())
+                        .seatNumber(s.getSeatNumber())
+                        .status(resolveStatus(s, lockedIds))
+                        .build();
+                seatDTOs.add(seatDTO);
+            }
+            TicketTypeSeatsDTO ticketTypeSeatsDTO = TicketTypeSeatsDTO.builder()
+                    .ticketTypeId(ticketType.getTicketTypeId())
+                    .zoneName(ticketType.getZoneName())
+                    .price(ticketType.getPrice())
+                    .totalQuantity(ticketType.getTotalQuantity())
+                    .soldQuantity(ticketType.getSoldQuantity())
+                    .displayOrder(ticketType.getDisplayOrder())
+                    .seats(seatDTOs)
+                    .build();
+            result.add(ticketTypeSeatsDTO);
+        }
         result.sort(Comparator.comparingInt(TicketTypeSeatsDTO :: getDisplayOrder));
 
-     return result;
+        return result;
     }
 
     private String resolveStatus(Seat seat, Set<Long> lockedIds) {

@@ -1111,3 +1111,27 @@ body {
         transform: translateY(0);
     }
 }
+.breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--purple);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    font-family: var(--font-body);
+}
+.breadcrumb-link:hover {
+    background: var(--purple-light);
+    color: #5b21b6;
+}
+.breadcrumb-link .material-symbols-outlined {
+    font-size: 17px;
+    transition: transform 0.2s;
+}
+.breadcrumb-link:hover .material-symbols-outlined {
+    transform: translateX(-3px);
+}

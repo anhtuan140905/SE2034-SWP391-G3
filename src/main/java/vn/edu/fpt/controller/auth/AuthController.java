@@ -36,7 +36,7 @@ public class AuthController {
                           CityService cityService,
                           PasswordResetService passwordResetService,
                           VerifyTokenService verifyTokenService
-                          ) {
+    ) {
         this.userService = userService;
         this.wardService = wardService;
         this.cityService = cityService;
