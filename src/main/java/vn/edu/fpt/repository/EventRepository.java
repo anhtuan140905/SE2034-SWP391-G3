@@ -97,7 +97,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
         "                       e.venue_name as venue,\n" +
         "                       ci.name as city_name,\n" +
         "                       COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
-        "                       SUM(tt.quantity) as total_tickets\n" +
+        "                       SUM(tt.total_quantity) as total_tickets\n" +
         "                       FROM events e \n" +
         "                       JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
         "                       JOIN event_categories ec ON ec.category_id = e.category_id\n" +

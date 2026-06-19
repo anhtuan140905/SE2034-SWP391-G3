@@ -20,8 +20,7 @@ public class TicketType extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_type_id")
     private Long ticketTypeId;
-    @Column(name = "display_order", nullable = true)
-    private Integer displayOrder;
+
     @Column(name = "description", columnDefinition = "NVARCHAR(255)")
     private String description;
 
@@ -44,4 +43,7 @@ public class TicketType extends BaseAuditEntity {
     @OneToMany(mappedBy = "ticketType", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Seat> seats;
 
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder;
 }
+

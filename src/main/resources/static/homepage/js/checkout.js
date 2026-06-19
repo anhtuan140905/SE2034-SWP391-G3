@@ -62,3 +62,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const toastEl = document.getElementById('paymentToast');
+    const toastBody = document.getElementById('paymentToastBody');
+    const toast = new bootstrap.Toast(toastEl, { delay: 10000 }); // 10s
+
+    function showToast(message, type) {
+        toastEl.classList.remove('bg-success', 'bg-danger');
+        toastEl.classList.add(type === 'success' ? 'bg-success' : 'bg-danger');
+        toastBody.textContent = message;
+        toast.show();
+    }
+
+    // Nút "Tôi đã thanh toán xong"
+    const btnConfirm = document.getElementById('btn-confirm-payment');
+    if (btnConfirm) {
+        btnConfirm.addEventListener('click', function () {
+            showToast('Thanh toán thành công, kiểm tra vé trong phần vé của tôi và email', 'success');
+        });
+    }
+
+    // Nút "Hủy đơn hàng"
+    const btnCancel = document.getElementById('btn-cancel-order');
+    if (btnCancel) {
+        btnCancel.addEventListener('click', function (e) {
+            e.preventDefault(); // chặn chuyển trang ngay để toast kịp hiện
+            showToast('Chưa thanh toán thành công, ghế sẽ được hủy block', 'danger');
+
+            const targetUrl = btnCancel.href;
+            setTimeout(function () {
+                window.location.href = targetUrl;
+            }, 10000); // chờ hết 10s toast rồi mới chuyển trang /events
+        });
+    }
+});

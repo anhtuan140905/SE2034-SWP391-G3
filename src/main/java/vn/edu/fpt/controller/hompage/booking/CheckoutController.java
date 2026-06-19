@@ -7,11 +7,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
 import vn.edu.fpt.service.CheckoutService;
 import vn.edu.fpt.service.OrderService;
+import vn.edu.fpt.service.SeatLockService;
 import vn.edu.fpt.service.TicketService;
 import vn.edu.fpt.service.impl.PaymentService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -30,6 +32,7 @@ public class CheckoutController {
     private final OrderService orderService;
     private final PaymentService paymentService;
     private final TicketService ticketService;
+    private final SeatLockService seatLockService;
 
     // Gọi từ trang chọn ghế khi user bấm "Tiến hành thanh toán"
     @PostMapping("/proceed")
@@ -68,34 +71,59 @@ public class CheckoutController {
     }
 
     @PostMapping("/success/{orderId}")
-    @ResponseBody // <── CHÍ MẠNG: Giúp chạy cơ chế API ngay trong @Controller thường
     @Transactional
-    public ResponseEntity<?> autoConfirmPayment(@PathVariable("orderId") Long orderId) {
-        try {
-            // 1. Lấy thông tin Order ra kiểm tra
-            Order order = this.orderService.findById(orderId);
+    public String autoConfirmPayment(
+            @PathVariable("orderId") Long orderId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            RedirectAttributes redirectAttributes) {
 
-            if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
-                return ResponseEntity.badRequest().body("Đơn hàng này đã được xử lý trước đó rồi.");
-            }
-
-            // 2. Tìm Payment đi kèm
-            Payment payment = this.paymentService.findById(orderId);
-            if(payment == null){
-                throw new IllegalArgumentException("Không tìm thấy thông tin thanh toán");
-            }
-
-            // 3. Tự động cập nhật trạng thái thành công dưới DB
-            order.setStatus(OrderStatus.PAID);
-            payment.setStatus(PaymentStatus.SUCCESS);
-            this.orderService.handleSaveOrder(order);
-            this.paymentService.handleSavePayment(payment);
-            this.ticketService.handleSaveTicketByOrder(order);
-            return ResponseEntity.ok(java.util.Map.of("success", true));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Lỗi xử lý hệ thống: " + e.getMessage());
+        if (currentUser == null) {
+            return "redirect:/login";
         }
+        Order order = this.orderService.findById(orderId);
+        if(order == null || !order.getUser().getEmail().equals(currentUser.getUser().getEmail())) {
+            redirectAttributes.addFlashAttribute("toastType", "danger");
+            redirectAttributes.addFlashAttribute("toastMessage", "Không tìm thấy đơn hàng!");
+            return "redirect:/events";
+        }
+
+        if(order.getStatus() != OrderStatus.PENDING_PAYMENT) {
+            redirectAttributes.addFlashAttribute("toastType", "danger");
+            redirectAttributes.addFlashAttribute("toastMessage", "Đơn hàng này đã được xử lý trước đó rồi.");
+            return "redirect:/my-tickets";
+        }
+
+        Payment payment = this.paymentService.findByOrderId(orderId);
+        if(payment == null) {
+            redirectAttributes.addFlashAttribute("toastType", "danger");
+            redirectAttributes.addFlashAttribute("toastMessage", "Không tìm thấy thông tin thanh toán");
+            return "redirect:/events";
+        }
+
+        order.setStatus(OrderStatus.PAID);
+        payment.setStatus(PaymentStatus.SUCCESS);
+        this.orderService.handleSaveOrder(order);
+        this.paymentService.handleSavePayment(payment);
+        this.ticketService.handleSaveTicketByOrder(order);
+        redirectAttributes.addFlashAttribute("toastType", "success");
+        redirectAttributes.addFlashAttribute("toastMessage", "Thanh toán thành công, kiểm tra vé trong phần vé của tôi và email");
+        return "redirect:/my-tickets";
+    }
+
+    @PostMapping("/cancel/{orderId}")
+    public String cancelOrder(@PathVariable("orderId") Long orderId,
+                              @AuthenticationPrincipal CustomUserDetails currentUser,
+                              RedirectAttributes redirectAttributes) {
+        if(currentUser == null) {
+            return "redirect:/login";
+        }
+        this.orderService.handleUpdateStatusOrder(orderId);
+
+        this.seatLockService.handleDeleteSeatLockByOrder(orderId);
+        redirectAttributes.addFlashAttribute("toastType", "danger");
+        redirectAttributes.addFlashAttribute("toastMessage",
+                "Chưa thanh toán thành công, ghế sẽ được hủy block");
+        return "redirect:/events";
     }
 
 
