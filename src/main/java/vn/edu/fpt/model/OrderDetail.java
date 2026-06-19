@@ -1,10 +1,7 @@
 package vn.edu.fpt.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import vn.edu.fpt.common.SecurityUtil;
 
 import java.math.BigDecimal;
@@ -14,6 +11,7 @@ import java.time.Instant;
 @Table(name = "order_details")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
+@Builder
 public class OrderDetail {
     // Chỉ có created_by + created_at — immutable sau khi tạo, không extends BaseAuditEntity
 

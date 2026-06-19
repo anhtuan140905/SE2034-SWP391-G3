@@ -21,26 +21,10 @@
 
 <div th:replace="~{homepage/fragments/header :: header('')}"></div>
 
-<!-- Root container: inject eventId để JS fetch API -->
 <div class="container main-container mt-4"
      id="seat-map-root"
      th:data-event-id="${event.eventId}">
 
-    <!-- Tab Toggles -->
-    <div class="tab-toggle-container text-center text-sm-start">
-        <div class="pills-toggle-wrap">
-            <a th:href="@{/events/{id}/tickets(id=${event.eventId})}"
-               class="pill-btn pill-btn--outline text-decoration-none">
-                Chọn theo loại vé
-            </a>
-            <a href="#diagram"
-               class="pill-btn pill-btn--filled active text-decoration-none">
-                Chọn ghế trên sơ đồ
-            </a>
-        </div>
-    </div>
-
-    <!-- Event Info Strip — inject data thật từ Thymeleaf -->
     <div class="event-info-strip">
         <div>
             <h2 class="strip-event-title" th:text="${event.title}">Tên sự kiện</h2>
@@ -53,177 +37,95 @@
                 </span>
                 <span>
                     <i class="fa-solid fa-clock"></i>
-                    <span th:text="${#temporals.format(event.startTime, 'HH:mm')}
-                                  + ' - '
-                                  + ${#temporals.format(event.endTime, 'HH:mm')}">
+                    <span th:text="${#temporals.format(event.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(event.endTime, 'HH:mm')}">
                         Giờ
                     </span>
                 </span>
                 <span>
                     <i class="fa-solid fa-map-pin"></i>
-                    <span th:text="${event.venueName}
-                                  + ', '
-                                  + ${event.address.ward.city.name}">
+                    <span th:text="${event.venueName} + ', ' + ${event.address.ward.city.name}">
                         Địa điểm
                     </span>
                 </span>
             </div>
         </div>
-        <div>
-            <span class="badge"
-                  style="background-color: rgba(255,42,122,0.08);
-                         border: 1px solid var(--color-primary);
-                         color: var(--color-primary);
-                         font-size: 11px; font-weight: 700;
-                         letter-spacing: 0.5px; padding: 6px 12px; border-radius: 20px;">
-                <i class="fa-solid fa-tags me-1 text-pink"></i> MULTI-ZONE SELECT
-            </span>
-        </div>
     </div>
 
-    <!-- Core Layout -->
     <div class="checkout-layout" id="type-container">
-
-        <!-- LEFT: Seat Map -->
         <div class="seats-section">
-
             <div class="seats-header">
                 <h3 class="seats-heading">Sơ đồ chỗ ngồi</h3>
                 <div class="legend-container">
-                    <div class="legend-item">
-                        <span class="legend-square available"></span>
-                        <span>Trống</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-square selected"></span>
-                        <span>Đã chọn</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-square locked"></span>
-                        <span>Bị khóa</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-square sold"></span>
-                        <span>Đã bán</span>
-                    </div>
+                    <div class="legend-item"><span class="legend-square available"></span><span>Trống</span></div>
+                    <div class="legend-item"><span class="legend-square selected"></span><span>Đã chọn</span></div>
+                    <div class="legend-item"><span class="legend-square locked"></span><span>Bị khóa</span></div>
+                    <div class="legend-item"><span class="legend-square sold"></span><span>Đã bán</span></div>
                 </div>
             </div>
 
             <div class="screen-banner">MÀN HÌNH / SÂN KHẤU</div>
-
-            <div class="alert alert-info border-0 p-3 mb-4 rounded-3 text-start shadow-sm"
-                 style="background-color: rgba(59,130,246,0.08);
-                        border: 1px solid rgba(59,130,246,0.15) !important;
-                        font-size: 13px;">
-                <div class="d-flex gap-3 align-items-center">
-                    <div class="p-2.5 rounded-circle d-flex align-items-center justify-content-center"
-                         style="width:36px;height:36px;">
-                        <i class="fa-solid fa-expand"></i>
-                    </div>
-                    <div>
-                        <p class="m-0 text-white" style="font-size:13.5px;">
-                            <i class="fa-solid fa-circle-check text-success me-1"></i>
-                            Tích hợp tính năng chống vỡ sơ đồ lớn (Hỗ trợ hơn 1.000 chỗ ngồi)
-                        </p>
-                        <p class="m-0 mt-1 text-muted" style="font-size:11.5px;line-height:1.55;">
-                            Sơ đồ tự động kích hoạt tính năng co giãn thông minh, thanh cuộn phụ
-                            và định dạng lưới linh hoạt giúp hiển thị chính xác kể cả khi vượt 1.000 vé.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Zones — render động bởi JS, nhưng giữ 3 container tĩnh cho 3 zone đầu -->
             <div class="zones-container">
-
                 <div class="seat-zone zone-1">
-                    <div class="zone-title">
-                        <i class="fa-solid fa-crown"></i> Khu A
-                    </div>
-                    <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneA-grid"></div>
-                    </div>
+                    <div class="zone-title"><i class="fa-solid fa-crown"></i> Khu A</div>
+                    <div class="zone-grid-wrapper"><div class="seats-grid" id="zoneA-grid"></div></div>
                 </div>
-
                 <div class="seat-zone zone-2">
-                    <div class="zone-title">
-                        <i class="fa-solid fa-star"></i> Khu B
-                    </div>
-                    <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneB-grid"></div>
-                    </div>
+                    <div class="zone-title"><i class="fa-solid fa-star"></i> Khu B</div>
+                    <div class="zone-grid-wrapper"><div class="seats-grid" id="zoneB-grid"></div></div>
                 </div>
-
                 <div class="seat-zone zone-3">
-                    <div class="zone-title">
-                        <i class="fa-solid fa-circle-user"></i> Khu C
-                    </div>
-                    <div class="zone-grid-wrapper">
-                        <div class="seats-grid" id="zoneC-grid"></div>
-                    </div>
+                    <div class="zone-title"><i class="fa-solid fa-circle-user"></i> Khu C</div>
+                    <div class="zone-grid-wrapper"><div class="seats-grid" id="zoneC-grid"></div></div>
                 </div>
-
             </div>
         </div>
 
-        <!-- RIGHT: Summary Sidebar -->
         <div class="summary-sidebar">
-            <div class="summary-card">
-                <h3 class="summary-title">
-                    <i class="fa-solid fa-file-invoice-dollar me-2 text-pink"></i> Tóm tắt đơn hàng
-                </h3>
-
+            <div class="summary-card" style="margin-bottom: 15px;">
+                <h3 class="summary-title"><i class="fa-solid fa-file-invoice-dollar me-2 text-pink"></i> Tóm tắt đơn hàng</h3>
                 <div class="summary-divider"></div>
-
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white" style="font-size:12px;font-weight:600;">Danh sách ghế đặt:</span>
-                        <span class="text-pink" style="font-size:12px;font-weight:700;font-family:monospace;"
-                              id="selected-summary-count">0/6</span>
-                    </div>
-                    <div class="selected-seats-list" id="selected-seats-badges">
-                        <div class="text-muted py-1"
-                             style="font-size:12px;font-style:italic;"
-                             id="empty-seats-hint">
-                            Chưa chọn ghế nào trên sơ đồ.
+                        <div class="selected-seats-list" id="selected-seats-badges">
+                            <div class="text-muted py-1" style="font-size:12px;font-style:italic;" id="empty-seats-hint">Chưa chọn ghế nào trên sơ đồ.</div>
                         </div>
+                        <span class="text-pink" style="font-size:12px;font-weight:700;font-family:monospace;" id="selected-summary-count">0/6</span>
                     </div>
                 </div>
-
                 <div class="summary-divider"></div>
-
-                <div class="summary-info-row">
-                    <span>Số lượng vé</span>
-                    <span class="summary-info-value" id="tickets-count">0</span>
-                </div>
-                <div class="summary-info-row">
-                    <span>Tạm tính</span>
-                    <span class="summary-info-value" id="subtotal-calc">0 ₫</span>
-                </div>
-                <div class="summary-info-row">
-                    <span>Phí dịch vụ <span class="fee-badge">5%</span></span>
-                    <span class="summary-info-value" id="fee-calc">0 ₫</span>
-                </div>
-
+                <div class="summary-info-row"><span>Số lượng vé</span><span class="summary-info-value" id="tickets-count">0</span></div>
+                <div class="summary-info-row"><span>Tạm tính</span><span class="summary-info-value" id="subtotal-calc">0 ₫</span></div>
                 <div class="summary-divider"></div>
+                <div class="total-row"><span class="total-label">Tổng cộng</span><span class="total-price" id="total-calc">0 ₫</span></div>
 
-                <div class="total-row">
-                    <span class="total-label">Tổng cộng</span>
-                    <span class="total-price" id="total-calc">0 ₫</span>
-                </div>
-
-                <button class="btn-payment btn-block" id="btn-submit-booking" disabled>
+                <button type="button" class="btn-payment btn-block" id="btn-submit-booking" disabled>
                     Tiếp tục thanh toán <i class="fa-solid fa-chevron-right ms-1"></i>
                 </button>
             </div>
-        </div>
 
+            <div class="ticket-info-card">
+                <h3 class="summary-title"><i class="fa-solid fa-ticket me-2 text-pink"></i> Thông tin hạng vé</h3>
+                <div class="summary-divider"></div>
+                <div id="ticket-types-container">
+                    <div class="ticket-type-item" th:each="ticketType : ${event.ticketTypes}">
+                        <div>
+                            <div class="ticket-type-name" th:text="${ticketType.zoneName}">VIP</div>
+                            <div class="ticket-type-desc">
+                                <span th:text="${ticketType.description}"></span><br>
+                                <small class="text-success" th:text="'Còn ' + (${ticketType.totalQuantity - ticketType.soldQuantity}) + ' vé'">Còn 50 vé</small>
+                            </div>
+                        </div>
+                        <div class="ticket-type-price" style="white-space: nowrap; flex-shrink: 0; font-weight: 700; color: #ff4d8d;">
+                            <span th:text="${ticketType.price != null ? #numbers.formatDecimal(ticketType.price, 0, 'POINT', 0, 'COMMA') + ' đ' : 'Free'}">Từ 2.000.000 đ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div th:replace="~{homepage/fragments/footer :: footer}"></div>
-
-<!-- Script load order: footer.js → header.js → choose_seat.js -->
 <script th:src="@{/homepage/js/footer.js}"></script>
 <script th:src="@{/homepage/js/header.js}"></script>
 <script th:src="@{/homepage/js/choose_seat.js}"></script>

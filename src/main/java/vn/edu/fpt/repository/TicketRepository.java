@@ -27,8 +27,4 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 //    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.ticketType.ticketTypeId = :ticketTypeId AND t.status <> 0")
 //    Integer getNumTicketSelled(Long ticketTypeId);
 
-
-
-
-
 }

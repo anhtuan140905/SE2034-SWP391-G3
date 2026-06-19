@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.model.UserRole;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.repository.UserRepository;
+import vn.edu.fpt.repository.UserRoleRepository;
 import vn.edu.fpt.service.RoleService;
 
 
@@ -25,13 +27,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final UserRoleRepository userRoleRepository;
 
     public CustomOAuth2UserService(UserRepository userRepository,
                                    RoleService roleService,
-                                   PasswordEncoder passwordEncoder) {
+                                   PasswordEncoder passwordEncoder,
+                                   UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         // Tìm hoặc tạo mới user
-        User user = this.userRepository.findByEmailWithRoles(email) // query FETCH JOIN roles
+        User user = this.userRepository.findByEmailWithUserRoles(email)
                 .orElseGet(() -> createOAuth2User(email, attributes, registrationId));
 
         return new CustomOAuth2User(user, attributes);
@@ -77,11 +82,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String name = (String) attributes.getOrDefault("name", "");
             user.setFirstName(name);
         }
-        Role role = roleService.getRoleByName(RoleName.ROLE_ATTENDEE);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        user.setIsActive(true);
-        return userRepository.save(user);
+        // Save user trước để có id
+        User savedUser = userRepository.save(user);
+
+        // Tạo UserRole thay vì set trực tiếp
+        Role attendeeRole = roleService.getRoleByName(RoleName.ROLE_ATTENDEE);
+        UserRole userRole = UserRole.builder()
+                .user(savedUser)
+                .role(attendeeRole)
+                .build();
+        userRoleRepository.save(userRole);
+        return savedUser;
+
     }
 }

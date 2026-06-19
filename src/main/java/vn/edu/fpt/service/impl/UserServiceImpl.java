@@ -15,11 +15,7 @@ import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
-import vn.edu.fpt.repository.OrganizerProfileRepository;
-import vn.edu.fpt.repository.UserRepository;
-import vn.edu.fpt.repository.EventRepository;
-import vn.edu.fpt.repository.OrderRepository;
-import vn.edu.fpt.repository.TicketRepository;
+import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.UserService;
 
@@ -41,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final EventRepository eventRepository;
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
+    private final UserRoleRepository userRoleRepository;
 
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
@@ -54,7 +51,8 @@ public class UserServiceImpl implements UserService {
                            VerifyTokenService verifyTokenService,
                            EventRepository eventRepository,
                            OrderRepository orderRepository,
-                           TicketRepository ticketRepository) {
+                           TicketRepository ticketRepository,
+                           UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoderConfig = passwordEncoderConfig;
@@ -65,6 +63,7 @@ public class UserServiceImpl implements UserService {
         this.eventRepository = eventRepository;
         this.orderRepository = orderRepository;
         this.ticketRepository = ticketRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
 
@@ -91,18 +90,24 @@ public class UserServiceImpl implements UserService {
         user.setGender(dto.getGender());
         user.setIsActive(true);
         user.setPhone(dto.getPhone());
-        Role role = this.roleService.getRoleByName(RoleName.ROLE_ATTENDEE);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        String hashedPassword = this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
+        String hashedPassword = passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
-        return this.userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Thay set<Role> bằng UserRole
+        Role role = roleService.getRoleByName(RoleName.ROLE_ATTENDEE);
+        UserRole userRole = UserRole.builder()
+                .user(savedUser)
+                .role(role)
+                .build();
+        userRoleRepository.save(userRole);
+
+        return savedUser;
     }
 
     @Override
     public Optional<User> findByEmailWithRoles(String username) {
-        return this.userRepository.findByEmailWithRoles(username);
+        return userRepository.findByEmailWithUserRoles(username);
     }
 
     @Override
@@ -175,20 +180,22 @@ public class UserServiceImpl implements UserService {
         return top3;
     }
 
-    public void updateUser(Long id, @NonNull UpdateUserStatusDTO request) {
-        User user = this.userRepository.findById(id)
+    public void updateUser(Long id, UpdateUserStatusDTO request) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Xóa role cũ, gán role mới
+        userRoleRepository.deleteAllByUser_Id(id);
 
-        Role role = this.roleService.getRoleByName(RoleName.valueOf(request.getRoleName()));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-
+        Role role = roleService.getRoleByName(RoleName.valueOf(request.getRoleName()));
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(role)
+                .build();
+        userRoleRepository.save(userRole);
 
         user.setIsActive(request.getIsActive());
-
-        this.userRepository.save(user);
+        userRepository.save(user);
     }
 
 
@@ -199,9 +206,8 @@ public class UserServiceImpl implements UserService {
 
         User user = findById(userId);
 
-        Set<String> roles = user.getRoles()
-                .stream()
-                .map(r -> r.getRoleName().name())
+        Set<String> roles = user.getUserRoles().stream()
+                .map(ur -> ur.getRole().getRoleName().name())
                 .collect(Collectors.toSet());
 
         if (user.getUpdatedAt() != null) {
@@ -311,7 +317,7 @@ public class UserServiceImpl implements UserService {
         // ================= MODERATOR =================
         else if (roles.contains("ROLE_MODERATOR")) {
 
-            List<User> organizers = userRepository.findTop10ByRoles_RoleNameOrderByUpdatedAtDesc(RoleName.ROLE_ORGANIZER);
+            List<User> organizers = userRepository.findTop10ByRoleNameOrderByUpdatedAtDesc(RoleName.ROLE_ORGANIZER);
 
             for (User u : organizers) {
 
