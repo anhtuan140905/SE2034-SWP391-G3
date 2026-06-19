@@ -1,6 +1,8 @@
 package vn.edu.fpt.service.impl;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.Event;
@@ -10,6 +12,7 @@ import vn.edu.fpt.modelview.response.moderator.ModeratorEventDetailDTO;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.service.ModeratorEventDetailService;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ModeratorEventDetailServiceImpl implements ModeratorEventDetailService {
@@ -40,16 +43,18 @@ public class ModeratorEventDetailServiceImpl implements ModeratorEventDetailServ
         event.setStatus(EventStatus.INACTIVE);
         eventRepository.save(event);
 
-        User organizer = event.getOrganizer();
+        String organizerEmail = event.getOrganizer().getEmail();
+        String organizerName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
+        String eventTitle = event.getTitle();
+
+        event.setStatus(EventStatus.INACTIVE);
+        eventRepository.save(event);
+
         try {
-            emailService.sendDeactivationEmail(
-                    event.getOrganizer().getEmail(),
-                    event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName(),
-                    event.getTitle(),
-                    reason
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
+            emailService.sendDeactivationEmail(organizerEmail, organizerName, eventTitle, reason);
+        } catch (MessagingException e) {
+            log.error("Không thể gửi email tắt sự kiện cho eventId={}, email={}",
+                    eventId, organizerEmail, e);
         }
 
     }

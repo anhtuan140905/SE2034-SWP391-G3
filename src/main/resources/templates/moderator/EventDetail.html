@@ -158,7 +158,8 @@
                            th:text="${event != null ? event.organizerEmail : ''}">
                         </p>
                     </div>
-                    <a th:href="@{/moderator/information/{id}(id=${event?.organizerId ?: 0}, fromEvent=${event?.eventId ?: 0})}"
+                    <a th:if="${event != null and event.organizerName != null}"
+                       th:href="@{/moderator/information/{id}(id=${event.organizerId}, fromEvent=${event.eventId})}"
                        class="ed-organizer-arrow">
                         <i class="fa-solid fa-chevron-right"></i>
                     </a>

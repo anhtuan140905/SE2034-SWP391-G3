@@ -1,6 +1,7 @@
 package vn.edu.fpt.repository;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -54,10 +55,22 @@ public interface UserRepository extends JpaRepository<User,Long> {
     LIMIT 10
     """)
     List<User> findTop10ByRoleNameOrderByUpdatedAtDesc(@Param("roleName") RoleName roleName);
+
     // Dem so account Organizer con hoat dong tren nen tang
     @Query(value = "SELECT COUNT(u.id) FROM users u " +
             "JOIN user_roles ur ON u.id = ur.user_id " +
             "JOIN roles r ON ur.role_id = r.id " +
-            "WHERE r.role_name = 'ORGANIZER' AND u.is_active = 1", nativeQuery = true)
+            "WHERE r.role_name = 'ROLE_ORGANIZER' AND u.is_active = 1", nativeQuery = true)
     Long countActiveOrganizers();
+
+    //Lay thong tin cua organizer
+    @EntityGraph(attributePaths = {
+            "address",
+            "address.ward",
+            "address.ward.city",
+            "organizerProfile"
+    })
+    @Query("SELECT u FROM User u WHERE u.id = :id")
+    Optional<User> findOrganizerInformationById(@Param("id") Long id);
+
 }
