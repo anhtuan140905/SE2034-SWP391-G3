@@ -80,4 +80,8 @@ public class PaymentService {
     public Payment handleSavePayment(Payment payment) {
         return this.paymentRepository.save(payment);
     }
+
+    public Payment findByOrderId(Long orderId) {
+        return this.paymentRepository.findByOrder_OrderId(orderId).orElse(null);
+    }
 }

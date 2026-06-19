@@ -65,6 +65,7 @@ public class TicketServiceImpl implements TicketService {
                         .qrCode("TICKET_QR_" + UUID.randomUUID().toString())
                         .isCheckedIn(false)
                         .build();
+                ticket.setOrderDetail(detail);
                 this.ticketRepository.save(ticket);
             }
         }

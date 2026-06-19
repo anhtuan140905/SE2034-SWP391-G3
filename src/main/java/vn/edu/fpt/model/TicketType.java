@@ -46,3 +46,4 @@ public class TicketType extends BaseAuditEntity {
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder;
 }
+
