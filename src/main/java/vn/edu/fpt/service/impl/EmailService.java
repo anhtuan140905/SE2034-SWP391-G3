@@ -2,13 +2,21 @@ package vn.edu.fpt.service.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import vn.edu.fpt.model.Order;
+import vn.edu.fpt.model.Ticket;
+import vn.edu.fpt.modelview.response.booking.OrderEmailDTO;
+import vn.edu.fpt.modelview.response.booking.TicketEmailDTO;
 
+import java.util.List;
+
+@Slf4j
 @Service
 public class EmailService {
 
@@ -85,5 +93,26 @@ public class EmailService {
         helper.setSubject("EventHub — Thông báo từ chối đơn ứng tuyển sự kiện ⚠️");
         helper.setText(htmlContent, true);
         mailSender.send(message);
+    }
+
+    @Async
+    public void sendTicketConfirmationEmail(OrderEmailDTO order, List<TicketEmailDTO> tickets) {
+        try {
+            Context context = new Context();
+            context.setVariable("order", order);
+            context.setVariable("tickets", tickets);
+            context.setVariable("myTicketsUrl", "http://localhost:8081/my-tickets");
+            String htmlContent = templateEngine.process("mail/event/TicketInformation", context);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(order.getUserEmail());
+            helper.setSubject("[EventHub] xác nhận vé - Đơn hàng: " + order.getOrderId());
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            log.error("Gửi email thất bại cho order {}", order.getOrderId(), e);
+        }
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import java.time.LocalDate;
@@ -94,7 +95,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
         "                       MIN(tt.price) as min_price,\n" +
         "                       ec.category_name as category_name,\n" +
-        "                       e.venue_name as venue,\n" +
+        "                       e.venue_name as venueName,\n" +
         "                       ci.name as city_name,\n" +
         "                       COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
         "                       SUM(tt.total_quantity) as total_tickets\n" +

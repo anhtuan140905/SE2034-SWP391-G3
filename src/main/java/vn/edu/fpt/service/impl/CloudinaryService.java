@@ -53,4 +53,17 @@ public class CloudinaryService {
         //Bỏ đuôi file
         return afterUpload.substring(0, afterUpload.lastIndexOf("."));
     }
+
+    public String uploadBytes(byte[] fileBytes, String folder) {
+        try {
+            Map result = this.cloudinary.uploader().upload(fileBytes,
+                    ObjectUtils.asMap(
+                            "folder", folder,
+                            "resource_type", "image"
+                    ));
+            return result.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Upload ảnh thất bại: " + e.getMessage(), e);
+        }
+    }
 }
