@@ -6,7 +6,7 @@ import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
-import vn.edu.fpt.modelview.request.organizer.EventCardDTO;
+import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.cityDto;
 import vn.edu.fpt.modelview.request.organizer.wardDTO;

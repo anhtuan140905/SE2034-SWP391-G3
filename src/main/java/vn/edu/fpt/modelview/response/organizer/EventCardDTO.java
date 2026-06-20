@@ -1,4 +1,4 @@
-package vn.edu.fpt.modelview.request.organizer;
+package vn.edu.fpt.modelview.response.organizer;
 
 import lombok.Getter;
 import lombok.Setter;

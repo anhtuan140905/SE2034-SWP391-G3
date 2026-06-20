@@ -3,7 +3,6 @@ package vn.edu.fpt.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,13 +10,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.User;
-import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.modelview.request.organizer.*;
+import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 @Controller

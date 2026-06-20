@@ -16,13 +16,4 @@ public class DashBoardController {
         return "organizer/DashboardOrganizer";
     }
 
-    @GetMapping("/profile")
-    public String profile(Model model) {
-        model.addAttribute("activeMenu", "profile");
-        return "organizer/UpdateProfileOrganizer";
-    }
-
-
-
-
 }
