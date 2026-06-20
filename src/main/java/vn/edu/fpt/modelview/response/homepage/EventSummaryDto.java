@@ -26,6 +26,9 @@ public class EventSummaryDto {
     private Long participantCount;
     private BigDecimal revenue;
     private Long totalTickets;
+    private String status;
+    private Double salesRate;
+
 
     public EventSummaryDto(EventSummaryProjection projection) {
         this.id = projection.getId();
@@ -41,6 +44,8 @@ public class EventSummaryDto {
         this.participantCount = projection.getParticipantCount();
         this.revenue = projection.getRevenue();
         this.totalTickets = projection.getTotalTickets();
+        this.status = projection.getStatus();
+        this.salesRate = projection.getSalesRate();
     }
 
 }

@@ -1,6 +1,7 @@
 package vn.edu.fpt.service.impl;
 
 import io.micrometer.common.lang.NonNull;
+import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -162,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Venue not found: " + id));
+                .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
     public List<User> searchUser(String keyword) {
@@ -180,6 +181,7 @@ public class UserServiceImpl implements UserService {
         return top3;
     }
 
+    @Transactional
     public void updateUser(Long id, UpdateUserStatusDTO request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));

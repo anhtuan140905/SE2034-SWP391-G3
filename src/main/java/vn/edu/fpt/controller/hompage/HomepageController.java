@@ -2,6 +2,8 @@ package vn.edu.fpt.controller.hompage;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,31 +14,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import vn.edu.fpt.model.Ticket;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
+import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.repository.FeaturedEventDTO;
+import vn.edu.fpt.repository.TicketProjection;
 import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.service.TicketService;
 import vn.edu.fpt.service.UserService;
-import vn.edu.fpt.service.impl.CloudinaryService;
+import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
-import vn.edu.fpt.service.impl.EventCategoryServiceImpl;
 
 import java.util.List;
 
 @Controller
 @AllArgsConstructor
 public class HomepageController {
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final CityService cityService;
     private final CloudinaryService cloudinaryService;
     private final EventService eventService;
     private final TicketService ticketService;
     private final EventCategoryServiceImpl eventCategoryService;
+    private final TicketServiceImpl ticketServiceImpl;
+    private final EventServiceImpl eventServiceImpl;
+    private final OrderServiceImpl orderServiceImpl;
 
     @GetMapping("/")
     public String homepage(
@@ -47,11 +54,11 @@ public class HomepageController {
         model.addAttribute("issuedTickets", issuedTickets);
         long eventCategories = this.eventCategoryService.countEventCategories();
         model.addAttribute("eventCategories", eventCategories);
-        long activatedOrganizer = this.userService.getActivatedOrganizers().size();
+        long activatedOrganizer = this.userServiceImpl.getActivatedOrganizers().size();
         model.addAttribute("activatedOrganizers", activatedOrganizer);
         List<EventSummaryDto> featuredEvents = this.eventService.findTopFeaturedEvents();
         model.addAttribute("featuredEvents", featuredEvents);
-        List<FeaturedOrganizerDto> featuredOrganizers = this.userService.getFeaturedOrganizers();
+        List<FeaturedOrganizerDto> featuredOrganizers = this.userServiceImpl.getFeaturedOrganizers();
         model.addAttribute("featuredOrganizers", featuredOrganizers);
         FeaturedEventDTO featuredEvent = this.eventService.findFeaturedEvent();
         model.addAttribute("featuredEvent", featuredEvent);
@@ -64,9 +71,10 @@ public class HomepageController {
                              @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
         User user = new User();
         if(userDetails != null) {
-            user = this.userService.findByUsername(userDetails.getUsername());
+
+            user = this.userServiceImpl.findByUsername(userDetails.getUsername());
         } else {
-            user = this.userService.findByUsername(oAuth2Users.getName());
+            user = this.userServiceImpl.findByUsername(oAuth2Users.getName());
         }
         UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
         dto.setFirstName(user.getFirstName());
@@ -110,7 +118,7 @@ public class HomepageController {
             } else {
                 dto.setAvatar(null);
             }
-            this.userService.handleUpdateUser(dto, result);
+            this.userServiceImpl.handleUpdateUser(dto, result);
         } catch (Exception e) {
             model.addAttribute("cities", this.cityService.getCityList());
             model.addAttribute("errorMsg", e.getMessage());
@@ -119,6 +127,54 @@ public class HomepageController {
         }
         return "redirect:/profile";
     }
+    @GetMapping("/my-tickets")
+    public String getViewOwnTicket(Model model,
+                                   Authentication authentication,
+                                   @RequestParam(defaultValue = "all") String tab) {
 
 
+        String email = authentication.getName();
+
+
+        User user = userServiceImpl.findByUsername(email);
+        Long userId = user.getId();
+
+        long countTicket = ticketServiceImpl.countAllTicketOfUser(userId);
+        model.addAttribute("countTicket", countTicket);
+
+        long countUpcomingEvent = eventServiceImpl.countUpcomingEvent(userId);
+        model.addAttribute("countUpcomingEvent", countUpcomingEvent);
+
+        long countAttendedEvent = eventServiceImpl.countAttendedEvent(userId);
+        model.addAttribute("countAttendedEvent", countAttendedEvent);
+
+        long countUpcomingTicket = ticketServiceImpl.countUpcomingTicket(userId);
+        model.addAttribute("countUpcomingTicket", countUpcomingTicket);
+
+        long countUsedTicket = ticketServiceImpl.countUsedTicket(userId);
+        model.addAttribute("countUsedTicket", countUsedTicket);
+
+        long countExpiredTicket = ticketServiceImpl.countExpiredTicket(userId);
+        model.addAttribute("countExpiredTicket", countExpiredTicket);
+
+
+        List<TicketDTO> viewTicket = orderServiceImpl.viewOrder(userId, tab);
+        model.addAttribute("viewTicket", viewTicket);
+
+        model.addAttribute("tab", tab);
+        model.addAttribute("user", user);
+
+
+
+        return "homepage/ViewOwnTicket";
+    }
+    @GetMapping("/my-detailtickets")
+    public String getViewDetailTicket(Long orderId, Model model) {
+        List<TicketDTO> ticketDetail = orderServiceImpl.viewOrderDetail(orderId);
+
+        model.addAttribute("orderInfo", ticketDetail.get(0));
+
+        model.addAttribute("ticketDetail", ticketDetail);
+        return "homepage/ViewDetailTicket";
+    }
 }

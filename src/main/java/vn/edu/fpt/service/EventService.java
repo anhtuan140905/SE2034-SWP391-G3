@@ -1,6 +1,7 @@
 package vn.edu.fpt.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
@@ -47,6 +48,8 @@ public interface EventService {
     List<CountEventByMonthDTO> countEventByMonth();
     List<SumRevenueByMonthProjection> sumRevenueByMonth();
     List<EventSummaryDto> findTop5EventsBySoldCount();
+    long countUpcomingEvent(@Param("userId") Long userId);
+    long countAttendedEvent(@Param("userId") Long userId);
 
 
 
