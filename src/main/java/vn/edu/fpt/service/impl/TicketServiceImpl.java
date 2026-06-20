@@ -1,15 +1,21 @@
 package vn.edu.fpt.service.impl;
 
+import com.cloudinary.utils.ObjectUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.common.QrCodeUtil;
 import vn.edu.fpt.model.*;
+import vn.edu.fpt.modelview.response.booking.OrderEmailDTO;
+import vn.edu.fpt.modelview.response.booking.TicketEmailDTO;
 import vn.edu.fpt.repository.SeatLockRepository;
 import vn.edu.fpt.repository.TicketRepository;
 import vn.edu.fpt.repository.TicketTypeRepository;
 import vn.edu.fpt.service.TicketService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("TicketService")
@@ -18,6 +24,8 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketTypeRepository ticketTypeRepository;
     private final SeatLockRepository  seatLockRepository;
+    private final EmailService emailService;
+    private final CloudinaryService cloudinaryService;
     @Override
     public long issuedTickets() {
         return this.ticketRepository.ticketIssued();
@@ -54,21 +62,43 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public void handleSaveTicketByOrder(Order order) {
         List<Long> seatIds = new ArrayList<>();
+        List<Ticket> tickets = new ArrayList<>();
         for (OrderDetail detail : order.getOrderDetails()) {
             Seat seat = detail.getSeat();
             if (seat != null) {
                 seatIds.add(seat.getSeatId());
+                String ticketCode = "EVH-TKT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+
+                // QR encode đúng ticketCode này — phải khớp với cái lưu DB
+                byte[] qrPng = QrCodeUtil.generateQrPng(ticketCode, 300);
+                String qrUrl = cloudinaryService.uploadBytes(qrPng, "eventhub/tickets/qr");
 
                 Ticket ticket = Ticket.builder()
                         .seat(seat)
-                        .ticketCode("EVH-TKT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
-                        .qrCode("TICKET_QR_" + UUID.randomUUID().toString())
+                        .ticketCode(ticketCode)   // dùng lại đúng biến, không gọi UUID mới
+                        .qrCode(qrUrl)
                         .isCheckedIn(false)
                         .build();
                 ticket.setOrderDetail(detail);
-                this.ticketRepository.save(ticket);
+                tickets.add(this.ticketRepository.save(ticket));
             }
         }
+        List<TicketEmailDTO> ticketDTOs = tickets.stream()
+                .map(t -> new TicketEmailDTO(
+                        t.getOrderDetail().getSeat().getTicketType().getEvent().getTitle(),
+                        t.getOrderDetail().getSeat().getRowLabel() + t.getOrderDetail().getSeat().getSeatNumber(),
+                        t.getTicketCode(),
+                        t.getQrCode()
+                ))
+                .toList();
+        OrderEmailDTO orderDTO = new OrderEmailDTO(
+                order.getOrderId(),
+                order.getUser().getFirstName() + " " +  order.getUser().getMiddleName() + " " + order.getUser().getLastName(),
+                order.getUser().getEmail(),
+                order.getTotalAmount(),
+                ticketDTOs
+        );
+        this.emailService.sendTicketConfirmationEmail(orderDTO, ticketDTOs);
         if (!seatIds.isEmpty()) {
             seatLockRepository.deleteAllBySeatIdIn(seatIds);
         }

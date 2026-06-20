@@ -328,7 +328,7 @@
                         <div>
                             <p style="color: #1a1a2e; font-weight: 700; font-size: 16px; margin: 0 0 2px 0;">Địa điểm tổ chức</p>
                             <p style="color: #666; font-size: 14.5px; margin: 0; line-height: 1.4;"
-                               th:text="${event.venue + ', ' + event.cityName}">
+                               th:text="${event.venueName + ', ' + event.cityName}">
                                 Nhà hát Thành phố Hồ Chí Minh
                             </p>
                         </div>
@@ -363,14 +363,14 @@
             <div class="glass-panel p-4 rounded-4 border border-white/10 text-start">
                 <div class="rounded-3 overflow-hidden mb-3" style="height: 220px;">
                     <iframe
-                            th:src="@{'https://maps.google.com/maps?q=' + ${#strings.replace(event.venue, ' ', '+')} + '&output=embed&z=15'}"
+                            th:src="@{'https://maps.google.com/maps?q=' + ${#strings.replace(event.venueName, ' ', '+')} + '&output=embed&z=15'}"
                             width="100%" height="100%"
                             style="border: 0;"
                             allowfullscreen=""
                             loading="lazy">
                     </iframe>
                 </div>
-                <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${#strings.replace(event.venue, ' ', '+')}}"
+                <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${#strings.replace(event.venueName, ' ', '+')}}"
                    target="_blank"
                    class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5"
                    style="border-radius: 12px; margin-bottom: 20px; background: var(--color-violet) !important;">
