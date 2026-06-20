@@ -1,10 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Chi tiết Sự kiện – EventHub</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"/>
+
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+    <!-- Sidebar & Header CSS (liên kết từ Spring Boot static) -->
+    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}">
+    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}">
+    <link rel="stylesheet" th:href="@{/organizer/css/ViewEvent.css}">
+
 </head>
 <body>
+
+<!-- ===== SIDEBAR OVERLAY ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+<!-- ===== SIDEBAR (inline từ sidebar.html fragment) ===== -->
+<th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
+
+<!-- ===== MAIN WRAPPER ===== -->
+<div class="main-wrapper">
+
+    <!-- ===== HEADER (inline từ Header.html fragment) ===== -->
+    <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
+
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main>
+        <div style="max-width:1280px; margin:0 auto;" th:object="${event}">
+
+            <!-- Breadcrumb -->
+            <div class="d-flex align-items-center mb-4">
+                <a href="/organizer/list/event" class="breadcrumb-back">
+                    <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
+                    Back to Events
+                </a>
+                <span class="breadcrumb-sep">/</span>
+                <!-- Thymeleaf: th:text="${event.name}" -->
+                <span class="breadcrumb-current" th:text="${event.eventName}"></span>
+            </div>
+
+            <!-- ===== MAIN GLASS CARD ===== -->
+            <div class="glass-card mb-4">
+
+                <!-- Banner -->
+                <div class="event-banner">
+
+                    <img
+                            th:src="${event.Banner}"
+                            alt="Event Banner"
+                    />
+                    <div class="banner-overlay"></div>
+                    <div class="banner-info">
+                        <div>
+                            <span class="category-badge" th:text="${event.category}"></span>
+                            <h2 class="event-title" th:text="${event.eventName}"></h2>
+                            <div class="banner-meta d-flex flex-wrap gap-3">
+                                    <span>
+                                      <span class="material-symbols-outlined" style="color:#f472b6">location_on</span>
+                                        <span th:text="${event.VenueName}"></span>
+                                    </span>
+                                    <span>
+                                      <span class="material-symbols-outlined" style="color:#a78bfa">schedule</span>
+                                     <span th:text="${event.date}"></span>
+                                    </span>
+                            </div>
+                        </div>
+                        <!-- th:classappend based on event.status -->
+                        <span class="status-pill status-on-sale" th:text="${event.status}"></span>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="detail-tabs">
+                    <button class="tab-btn active">Chi tiết Sự kiện</button>
+                </div>
+
+                <!-- ===== TAB 1: INFO ===== -->
+                <div id="tab-info" class="tab-pane active p-4">
+                    <div class="row g-4">
+
+                        <!-- Left col -->
+                        <div class="col-lg-8">
+
+                            <!-- Date + Location boxes -->
+                            <div class="row g-3 mb-4">
+                                <!-- Date box -->
+                                <div class="col-md-6">
+                                    <div class="info-box purple h-100">
+                                        <div class="info-box-title">
+                                            <span class="material-symbols-outlined" style="font-size:18px">calendar_today</span>
+                                            Thời gian diễn ra
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Ngày tổ chức:</span>
+                                            <span class="val" th:text="${event.date}"></span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Giờ bắt đầu:</span>
+                                            <span class="val" th:text="${event.startTime}"></span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Giờ kết thúc:</span>
+
+                                            <span class="val" th:text="${event.endTime}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Location box -->
+                                <div class="col-md-6">
+                                    <div class="info-box pink h-100">
+                                        <div class="info-box-title">
+                                            <span class="material-symbols-outlined"
+                                                  style="font-size:18px">location_on</span>
+                                            Địa điểm diễn ra
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Địa điểm:</span>
+                                            <span class="val" th:text="${event.VenueName}"></span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Địa chỉ cụ thể:</span>
+                                            <span class="val" th:text="${event.specificAddress}"></span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Quận / Huyện:</span>
+                                            <span class="val" th:text="${event.ward}"></span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="lbl">Tỉnh / Thành phố:</span>
+                                            <span class="val"  th:text="${event.city}" ></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <div class="section-title">
+                                    <span class="material-symbols-outlined" style="color:#7c3aed;font-size:18px">description</span>
+                                    Mô tả Sự kiện
+                                </div>
+
+                                <div class="desc-box" th:text="${event.description}" >
+
+                                </div>
+                            </div>
+
+                            <!-- Gallery -->
+                            <div class="mb-4" th:if="${event.urlImage != null and !event.urlImage.isEmpty()}">
+                                <div class="section-title">
+                                    <span class="material-symbols-outlined" style="color:#7c3aed;font-size:18px">collections</span>
+                                    <span th:text="'Thư viện Ảnh (' + ${event.urlImage.size()} + ')'"></span>
+                                </div>
+                                <div class="gallery-grid">
+                                    <div class="gallery-item" th:each="img : ${event.urlImage}">
+                                        <img th:src="${img}"
+                                             alt="Gallery"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                    th:if="${event.timelines != null}">
+                                <div class="section-title">
+                                    <span class="material-symbols-outlined" style="color:#7c3aed;font-size:18px">schedule</span>
+                                    Lịch trình Sự kiện (Agenda)
+                                </div>
+                                <div class="agenda-timeline">
+                                    <!-- " – example items below -->
+                                    <div class="agenda-step" th:each="item : ${event.timelines}">
+                                        <div class="agenda-time" th:text="${item.time}"></div>
+                                        <div class="agenda-desc"  th:text="${item.active}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- /col-lg-8 -->
+
+                        <!-- Right col -->
+                        <div class="col-lg-4">
+
+                            <!-- Organizer stats -->
+<!--                            <div class="stat-panel mb-3">-->
+<!--                                <div class="stat-panel-title">Thông số Ban tổ chức</div>-->
+<!--                                <div class="stat-row">-->
+<!--                            <span class="s-lbl">-->
+<!--                            <span class="material-symbols-outlined" style="font-size:14px;color:#7c3aed">support_agent</span>-->
+<!--                         Người phụ trách:-->
+<!--                            </span>-->
+<!--                                    &lt;!&ndash; th:text="${event.organizerName}" &ndash;&gt;-->
+<!--                                    <span class="s-val">Trần Minh Quân</span>-->
+<!--                                </div>-->
+<!--                                <div class="stat-row">-->
+<!--                  <span class="s-lbl">-->
+<!--                    <span class="material-symbols-outlined" style="font-size:14px;color:#db2777">phone</span>-->
+<!--                    Đường dây nóng:-->
+<!--                  </span>-->
+<!--                                    &lt;!&ndash; th:text="${event.organizerPhone}" &ndash;&gt;-->
+<!--                                    <a href="tel:0901234567" style="font-weight:700;color:#7c3aed;font-size:12px;">0901-->
+<!--                                        234 567</a>-->
+<!--                                </div>-->
+<!--                                <hr style="border-color:rgba(0,0,0,.05);margin:.5rem 0;"/>-->
+<!--                                <div class="stat-row">-->
+<!--                  <span class="s-lbl">-->
+<!--                    <span class="material-symbols-outlined" style="font-size:14px;color:#7c3aed">monetization_on</span>-->
+<!--                    Doanh thu Dự kiến:-->
+<!--                  </span>-->
+<!--                                    &lt;!&ndash; th:text="${event.expectedRevenue}" &ndash;&gt;-->
+<!--                                    <span class="s-val" style="color:#7c3aed;font-weight:900;">2.45 Billion ₫</span>-->
+<!--                                </div>-->
+<!--                                <div class="stat-row">-->
+<!--                  <span class="s-lbl">-->
+<!--                    <span class="material-symbols-outlined" style="font-size:14px;color:#059669">group</span>-->
+<!--                    Lượng đặt vé:-->
+<!--                  </span>-->
+<!--                                    &lt;!&ndash; th:text="${event.revenuePercent} + '%'" &ndash;&gt;-->
+<!--                                    <span class="s-val" style="color:#059669;">75%</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <!-- Ticket tiers -->
+                            <div class="mb-3">
+                                <div class="ticket-tier-title">Cấu trúc Hạng vé</div>
+                                <div class="ticket-card"  th:each="ticket : ${event.ticketType}">
+                                    <div>
+
+                                        <div class="ticket-name" th:text="${ticket.zoneName}" ></div>
+                                        <!--  -->
+                                        <div class="ticket-price" th:text="${#numbers.formatDecimal(ticket.price,0,'COMMA',0,'POINT')} + ' ₫'"></div>
+                                    </div>
+                                    <div class="text-end">
+                    <span class="ticket-sold">
+                      <span class="lbl">Đã bán</span>
+
+                      <span th:text="${ticket.soldQuantity} + '/' + ${ticket.Stock}"></span>
+                    </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+<!--                            &lt;!&ndash; Delete button &ndash;&gt;-->
+<!--                            &lt;!&ndash; th:action="@{/organizer/event/delete/{id}(id=${event.id})}" method="post" &ndash;&gt;-->
+<!--                            <form action="#" method="post"-->
+<!--                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa chiến dịch sự kiện này không?')">-->
+<!--                                <button type="submit" class="btn-delete">-->
+<!--                                    <span class="material-symbols-outlined" style="font-size:16px">delete</span>-->
+<!--                                    Xóa Chiến dịch Sự kiện-->
+<!--                                </button>-->
+<!--                            </form>-->
+
+                        </div><!-- /col-lg-4 -->
+
+                    </div><!-- /row -->
+                </div><!-- /tab-info -->
+
+            </div><!-- /glass-card -->
+        </div>
+    </main>
+</div><!-- /main-wrapper -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Sidebar & Header JS (liên kết từ Spring Boot static) -->
+<script th:src="@{/organizer/js/sidebar.js}"></script>
+<script th:src="@{/organizer/js/Header.js}"></script>
 
 </body>
 </html>

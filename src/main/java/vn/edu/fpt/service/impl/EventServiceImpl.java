@@ -18,13 +18,11 @@ import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 
-import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
-
-import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.request.organizer.*;
+import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
