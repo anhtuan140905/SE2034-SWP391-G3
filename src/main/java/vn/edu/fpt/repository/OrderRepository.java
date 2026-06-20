@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
+import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 
 
 import java.time.Instant;
@@ -32,4 +33,95 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findTop10ByEvent_OrganizerIdOrderByCreatedAtDesc(Long userId);
 
     void deleteOrderByOrderIdAndUser(Long orderId, User currentUser);
+
+    @Query( value = """
+
+ SELECT
+o.order_id as orderId,
+e.title as eventName,
+ec.category_name as categoryName,
+e.thumbnail_url as thumbnailUrl,
+e.start_time as startTime,
+a.specific_address as specificAddress,
+w.name as wardName,
+c.name as cityName,
+tp.zone_name as zoneName,
+COUNT(od.order_detail_id) as ticketCount,
+SUM(od.unit_price) as price,  
+t.is_checked_in as status
+FROM orders o
+JOIN order_details od ON od.order_id = o.order_id
+JOIN seats s ON s.seat_id = od.seat_id
+JOIN ticket_types tp ON tp.ticket_type_id = s.ticket_type_id
+JOIN events e ON e.event_id = tp.event_id
+JOIN tickets t ON t.order_detail_id = od.order_detail_id
+LEFT JOIN event_categories ec ON ec.category_id = e.category_id
+LEFT JOIN addresses a ON a.id = e.address_id
+LEFT JOIN wards w ON w.id = a.ward_id
+LEFT JOIN city c ON c.id = w.city_id
+WHERE o.user_id = :userId
+GROUP BY
+o.order_id,
+e.title,
+ec.category_name,
+e.thumbnail_url,
+e.start_time,
+a.specific_address,
+w.name,
+c.name,
+tp.zone_name,
+t.is_checked_in
+""", nativeQuery = true)
+    List<TicketProjection> viewOrder(Long userId);
+
+
+    @Query(value = """
+    SELECT
+        o.order_id as orderId,
+        e.title as eventName,
+        ec.category_name as categoryName,
+        e.thumbnail_url as thumbnailUrl,
+        e.start_time as startTime,
+        a.specific_address as specificAddress,
+        w.name as wardName,
+        c.name as cityName,
+        tp.zone_name as zoneName,
+        t.ticket_id as ticketId,
+        t.ticket_code as ticketCode,
+        t.qr_code as qrCode,
+        p.amount as price,  
+        t.is_checked_in as status,
+FORMAT(CAST(od.created_at AS datetime2), 'dd/MM/yyyy HH:mm') as createdAt,
+        p.payment_code as paymentCode
+FROM orders o
+JOIN order_details od ON od.order_id = o.order_id
+JOIN seats s ON s.seat_id = od.seat_id
+JOIN ticket_types tp ON tp.ticket_type_id = s.ticket_type_id
+JOIN events e ON e.event_id = tp.event_id
+JOIN tickets t ON t.order_detail_id = od.order_detail_id
+LEFT JOIN event_categories ec ON ec.category_id = e.category_id
+LEFT JOIN addresses a ON a.id = e.address_id
+LEFT JOIN wards w ON w.id = a.ward_id
+LEFT JOIN city c ON c.id = w.city_id
+LEFT JOIN payments p ON p.order_id = o.order_id
+WHERE o.order_id = :orderId
+GROUP BY 
+o.order_id,
+e.title,
+ec.category_name,
+e.thumbnail_url,
+e.start_time,
+a.specific_address,
+w.name,
+c.name,
+tp.zone_name,
+t.ticket_id,
+t.ticket_code,
+t.qr_code,
+t.is_checked_in,
+od.created_at,
+p.payment_code,
+p.amount
+    """, nativeQuery = true)
+    List<TicketProjection> viewOrderDetail(@Param("orderId") Long orderId);
 }

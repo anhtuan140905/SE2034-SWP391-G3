@@ -1,0 +1,112 @@
+/* ================================================================
+ * EventHub — variables.css
+ * Phạm vi: CSS custom properties dùng chung toàn site
+ * ================================================================ */
+
+:root {
+    /* Dark surface palette (EventHub dark theme) */
+    --eh-bg-base:         #07010f;
+    --eh-bg-surface:      #0d0120;
+    --eh-bg-card:         #110228;
+    --eh-pink:            #ff2a7a;
+    --eh-pink-dim:        rgba(255, 42, 122, 0.15);
+    --eh-pink-border:     rgba(255, 42, 122, 0.25);
+    --eh-violet:          #8c2bff;
+    --eh-violet-dim:      rgba(140, 43, 255, 0.15);
+    --eh-violet-border:   rgba(140, 43, 255, 0.25);
+    --eh-orange:          #ff7700;
+    --eh-orange-dim:      rgba(255, 119, 0, 0.12);
+    --eh-orange-border:   rgba(255, 119, 0, 0.28);
+    --eh-neon-blue:       #00f0ff;
+    --eh-grad-cta:        linear-gradient(135deg, #ff2a7a 0%, #8c2bff 55%, #ff7700 100%);
+    --eh-grad-badge:      linear-gradient(135deg, #ff2a7a 0%, #8c2bff 100%);
+    --eh-glass-bg:        rgba(255, 255, 255, 0.028);
+    --eh-glass-border:    rgba(255, 255, 255, 0.07);
+    --eh-glass-border-h:  rgba(255, 255, 255, 0.14);
+    --eh-glass-shadow:    0 12px 40px rgba(0, 0, 0, 0.55);
+    --eh-text-bright:     #f6f2ff;
+    --eh-text-mid:        #b8abcf;
+    --eh-text-muted:      #6e6285;
+    --eh-radius-card:     20px;
+    --eh-radius-md:       12px;
+    --eh-radius-sm:       8px;
+    --font-heading:       'Space Grotesk', sans-serif;
+    --font-body:          'Outfit', sans-serif;
+
+    /* Light / ticket-page palette */
+    --pink:               #ff2a7a;
+    --purple:             #8b3ff3;
+    --orange:             #f17329;
+    --bg:                 #fff6f9;
+    --dark:               #1a1a2e;
+    --gray:               #6b7280;
+    --light-border:       rgba(255, 42, 122, 0.15);
+    --glass:              rgba(255, 255, 255, 0.7);
+
+    /* Background */
+    --bg-dark-primary:    #fff0f5;
+    --bg-dark-secondary:  #ffffff;
+    --bg-dark-tertiary:   #ffe3ee;
+
+    /* Accent */
+    --color-pink:         #ff2a7a;
+    --color-pink-glowing: #ff4fa2;
+    --color-violet:       #8b3ff3;
+    --color-orange:       #f17329;
+    --color-neon-blue:    #0284c7;
+    --color-coral:        #ff4d6d;
+
+    /* Gradients */
+    --gradient-primary:        linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 50%, #f17329 100%);
+    --gradient-pink-purple:    linear-gradient(135deg, #ff2a7a 0%, #8b3ff3 100%);
+    --gradient-violet-blue:    linear-gradient(135deg, #8b3ff3 0%, #0284c7 100%);
+    --gradient-neon:           linear-gradient(135deg, #ff2a7a 0%, #0284c7 100%);
+
+    /* Glass */
+    --glass-background:   rgba(255, 255, 255, 0.75);
+    --glass-border:       rgba(45, 27, 78, 0.08);
+    --glass-border-hover: rgba(255, 42, 122, 0.3);
+    --glass-shadow:       0 10px 30px rgba(255, 42, 122, 0.06);
+
+    /* Text */
+    --text-primary:   #1e0e34;
+    --text-secondary: #4b3d60;
+    --text-muted:     #84759b;
+}
+
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html,
+body {
+    font-family: 'DM Sans', 'Inter', 'Segoe UI', sans-serif;
+    background-color: #fff6f9 !important;
+    color: var(--dark);
+    min-height: 100vh;
+}
+
+/* ── AMBIENT BLOBS ── */
+.blobs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.blob { position: absolute; border-radius: 50%; }
+.blob-1 { top: -160px; right: -160px; width: 400px; height: 400px; opacity: .18; background: radial-gradient(circle, #ff2a7a, transparent); filter: blur(80px); }
+.blob-2 { top: 33%; left: -80px; width: 320px; height: 320px; opacity: .12; background: radial-gradient(circle, #8b3ff3, transparent); filter: blur(80px); }
+.blob-3 { bottom: 160px; right: 25%; width: 280px; height: 280px; opacity: .08; background: radial-gradient(circle, #f17329, transparent); filter: blur(80px); }
+
+.background-glows { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.glow-blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12; }
+.glow-blob-1 { width: 500px; height: 500px; background: var(--eh-pink);   top: -120px; left: -100px; }
+.glow-blob-2 { width: 400px; height: 400px; background: var(--eh-violet); top: 40%;    right: -80px; }
+.glow-blob-3 { width: 350px; height: 350px; background: var(--eh-orange); bottom: 0;   left: 35%; }
+
+main.container { position: relative; z-index: 1; }
+
+/* ── UTILITY ── */
+.rounded-4 { border-radius: 20px !important; }
+hr.eh-divider { border: none; border-top: 1px solid rgba(255,255,255,.05); margin: 1rem 0; }

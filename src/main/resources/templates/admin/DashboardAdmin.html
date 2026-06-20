@@ -564,7 +564,7 @@
                     <td th:text="${event.title}"></td>
                     <td th:text="${event.venueName}"></td>
                     <td th:utext="${#temporals.format(event.startTime, 'dd/MM/yyyy') }"></td>
-                    <td th:text="${event.capacity}"></td>
+                    <td th:text="${event.totalTickets}"></td>
                     <td th:text="${event.soldCount}"></td>
                     <td th:text="${#numbers.formatDecimal(event.salesRate, 1, 2) + '%'}"></td>
                     <td th:text="${#numbers.formatDecimal(event.revenue, 1, 'POINT', 0, 'DEFAULT') + ' đ'}"></td>

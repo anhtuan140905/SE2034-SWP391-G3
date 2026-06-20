@@ -548,8 +548,8 @@
                         <label>Phân Quyền Người Dùng</label>
 
                         <select name="roleName">
-                            <option value="ROLE_MODERATOR" th:selected = "${userrole.name() == 'ROLE_MODERATOR'}">Kiểm Duyệt Viên</option>
-                            <option value="ROLE_ORGANIZER" th:selected = "${userrole.name() == 'ROLE_ORGANIZER'}">Nhà Tổ Chức</option>
+                            <option value="ROLE_MODERATOR" th:selected = "${roleName.name() == 'ROLE_MODERATOR'}">Kiểm Duyệt Viên</option>
+                            <option value="ROLE_ORGANIZER" th:selected = "${roleName.name() == 'ROLE_ORGANIZER'}">Nhà Tổ Chức</option>
 
                         </select>
                     </div>

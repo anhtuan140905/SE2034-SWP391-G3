@@ -2,6 +2,7 @@ package vn.edu.fpt.service.impl;
 
 import com.cloudinary.utils.ObjectUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.common.QrCodeUtil;
 import vn.edu.fpt.model.*;
@@ -104,5 +105,26 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 
+
+    public long countAllTicketOfUser(@Param("userId") Long userId){
+        return ticketRepository.countAllTicketOfUser(userId);
+    }
+
+    public  long countUpcomingTicket(@Param("userId") Long userId){
+        return ticketRepository.countUpcomingTicket(userId);
+    }
+
+    public  long countUsedTicket(@Param("userId") Long userId){
+
+        return ticketRepository.countUsedTicket(userId);
+    }
+
+    public  long countExpiredTicket(@Param("userId") Long userId){
+        return ticketRepository.countExpiredTicket(userId);
+    }
+
+    public Ticket findById(Long orderId) {
+        return ticketRepository.findById(orderId).orElse(null);
+    }
 
 }

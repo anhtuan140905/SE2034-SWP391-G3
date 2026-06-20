@@ -325,4 +325,25 @@ EventSummaryProjection findEventDetailById(Long id);
     long countEventInactivated(@Param("organizerId") Long organizerId,
                                @Param("status") EventStatus status);
 
+
+
+    @Query("""
+SELECT COUNT(DISTINCT o.event.eventId)
+FROM Order o
+WHERE o.user.id = :userId
+AND o.event.endTime > CURRENT_TIMESTAMP
+""")
+    long countUpcomingEvent(@Param("userId") Long userId);
+
+    @Query("""
+SELECT COUNT(DISTINCT o.event.eventId)
+FROM Order o
+JOIN o.orderDetails od
+JOIN od.ticket t
+WHERE o.user.id = :userId
+AND t.isCheckedIn = true
+""")
+    long countAttendedEvent(@Param("userId") Long userId);
+
+
 }

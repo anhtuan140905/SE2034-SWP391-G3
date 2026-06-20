@@ -575,8 +575,8 @@
                     </td>
 
                     <td>
-                     <span th:each="role, stat : ${user.roles}">
-                        <span th:text="${#strings.replace(role.roleName, 'ROLE_', '')}"></span>
+                     <span th:each="role, stat : ${user.userRoles}">
+                        <span th:text="${#strings.replace(role.role.roleName, 'ROLE_', '')}"></span>
                         <span th:if="${!stat.last}">, </span>
                      </span>
                     </td>

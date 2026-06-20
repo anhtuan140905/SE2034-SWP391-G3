@@ -10,6 +10,7 @@ import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import vn.edu.fpt.model.UserRole;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
@@ -115,7 +116,7 @@ public class UserController {
 
         RoleName roleName = user.getUserRoles().iterator().next().getRole().getRoleName();
 
-        model.addAttribute("userrole", roleName);
+        model.addAttribute("roleName", roleName);
         return "admin/user/EditUser";
 
     }
