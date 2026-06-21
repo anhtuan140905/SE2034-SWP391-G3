@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.constant.EventStatus;
-import vn.edu.fpt.modelview.request.moderator.DeactivateEventRequestDTO;
+import vn.edu.fpt.modelview.request.moderator.DeactivateEventDTO;
 import vn.edu.fpt.modelview.response.moderator.ModeratorEventListDTO;
 import vn.edu.fpt.repository.EventCategoryRepository;
 import vn.edu.fpt.service.ModeratorEventDetailService;
@@ -65,7 +65,7 @@ public class ModeratorEventController {
     @PostMapping("/events/{id}/deactivate")
     public String deactivateEvent(
             @PathVariable Long id,
-            @ModelAttribute DeactivateEventRequestDTO request,
+            @ModelAttribute DeactivateEventDTO request,
             RedirectAttributes redirectAttributes
     ){
         try {
