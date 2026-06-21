@@ -3,7 +3,7 @@ package vn.edu.fpt.modelview.request.moderator;
 import lombok.Data;
 
 @Data
-public class DeactivateEventRequestDTO {
-    private String eventId;
+public class DeactivateEventDTO {
+    private Long eventId;
     private String reason;
 }

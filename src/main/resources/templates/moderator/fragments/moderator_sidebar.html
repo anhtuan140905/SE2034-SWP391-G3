@@ -30,7 +30,12 @@
                     <span class="nav-label">Sự kiện đang chờ xử lý</span>
                 </a>
             </li>
-
+            <li th:classappend="${activePage == 'organizer-management'} ? 'active' : ''">
+                <a th:href="@{/moderator/organizer/create}">
+                    <span class="nav-icon"><i class="fa-solid fa-user-tie"></i></span>
+                    <span class="nav-label">Quản lý Organizer</span>
+                </a>
+            </li>
         </ul>
     </nav>
 

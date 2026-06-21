@@ -73,4 +73,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findOrganizerInformationById(@Param("id") Long id);
 
+    // Kiem tra trung email khi tao tai khoan cho Organizer
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE LOWER(u.email) = LOWER(:email)")
+    boolean existsByEmail(@Param("email") String email);
+
 }
