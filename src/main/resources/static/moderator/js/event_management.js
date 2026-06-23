@@ -94,6 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.3 });
 
-    document.querySelectorAll('.em-stat-value').forEach(el => observer.observe(el));
-
 });

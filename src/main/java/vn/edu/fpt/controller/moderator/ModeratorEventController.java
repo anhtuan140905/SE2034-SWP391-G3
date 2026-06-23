@@ -25,7 +25,7 @@ public class ModeratorEventController {
     @GetMapping("/events")
     public String evenList(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String status,  
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -47,7 +47,7 @@ public class ModeratorEventController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("statusFilter", status);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("activePage", events);
+        model.addAttribute("activePage", "events");
         model.addAttribute("eventStats", moderatorEventListService.getEventStats());
 
         return "moderator/EventManagement";

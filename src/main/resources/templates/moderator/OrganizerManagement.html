@@ -1,10 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#organizer-management-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Organizer Management — EventHub Moderator</title>
+    <th:block id="page-css">
+        <link rel="stylesheet" th:href="@{/moderator/css/event_management.css}"/>
+        <link rel="stylesheet" th:href="@{/moderator/css/organizer_management.css}"/>
+    </th:block>
 </head>
 <body>
+
+<section id="organizer-management-content" th:fragment="content">
+
+    <div class="em-topbar">
+        <div class="em-heading">
+            <h1 class="page-title">QUẢN LÝ ORGANIZER</h1>
+            <p class="page-subtitle">Theo dõi và quản lý toàn bộ organizer trong hệ thống.</p>
+        </div>
+
+        <div class="em-filters">
+            <div class="filter-group">
+                <label class="filter-label">TÌM KIẾM ORGANIZER</label>
+                <div class="om-search-row">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text"
+                               id="searchInput"
+                               name="keyword"
+                               placeholder="Tìm theo email hoặc số điện thoại."
+                               th:value="${keyword}">
+                    </div>
+                    <button type="button" id="searchBtn" class="btn-search">Search</button>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="statusSelect">Lọc trạng thái</label>
+                <div class="select-wrapper">
+                    <select id="statusSelect">
+                        <option value="" th:selected="${status == null or status == ''}">Tất cả</option>
+                        <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">Đang hoạt động</option>
+                        <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">Ngừng hoạt động</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="em-stats-row om-stats-row">
+        <div class="em-stat-item">
+            <div class="em-stat-info">
+                <span class="em-stat-label">Tổng Organizer</span>
+                <span class="em-stat-value" th:text="${stats != null ? stats.totalOrganizers : 0}">0</span>
+            </div>
+        </div>
+        <div class="em-stat-item">
+            <div class="em-stat-info">
+                <span class="em-stat-label">Đang hoạt động</span>
+                <span class="em-stat-value" th:text="${stats != null ? stats.totalActiveOrganizers : 0}">0</span>
+            </div>
+        </div>
+        <div class="em-stat-item">
+            <div class="em-stat-info">
+                <span class="em-stat-label">Ngừng hoạt động</span>
+                <span class="em-stat-value" th:text="${stats != null ? stats.totalInactiveOrganizers : 0}">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="em-table-wrapper">
+        <table class="em-table">
+            <thead>
+            <tr>
+                <th style="width: 8%;">STT</th>
+                <th>HỌ VÀ TÊN</th>
+                <th>EMAIL</th>
+                <th>NGÀY THAM GIA</th>
+                <th>TRẠNG THÁI</th>
+                <th>THAO TÁC</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <th:block th:if="${organizers != null and organizers.totalElements > 0}">
+                <tr th:each="organizer, loopStatus : ${organizers}">
+                    <td>
+                        <span class="event-id"
+                              th:text="${(organizers.number * organizers.size) + loopStatus.count}">1</span>
+                    </td>
+                    <td>
+                        <span class="event-title" th:text="${organizer.fullName}">Nguyễn Văn A</span>
+                    </td>
+                    <td>
+                        <span class="event-organizer" th:text="${organizer.email}">email@example.com</span>
+                    </td>
+                    <td>
+                        <span class="event-date"
+                              th:text="${organizer?.joinedDate != null ? #temporals.format(organizer.joinedDate, 'dd/MM/yyyy') : ''}">01/01/2026</span>
+                        <span class="event-time"
+                              th:text="${organizer?.joinedDate != null ? #temporals.format(organizer.joinedDate, 'HH:mm') : ''}">00:00</span>
+                    </td>
+                    <td>
+                        <span th:text="${organizer.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}"
+                              th:classappend="${organizer.isActive} ? ' om-status-active' : ' om-status-inactive'"
+                              class="om-status">
+                            Đang hoạt động
+                        </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/moderator/information/{id}(id=${organizer.organizerId})}" class="btn-view">
+                            Chi Tiết
+                        </a>
+                    </td>
+                </tr>
+            </th:block>
+
+            <th:block th:if="${organizers == null or organizers.totalElements == 0}">
+                <tr>
+                    <td colspan="6" class="em-empty-container">
+                        <div class="em-empty-icon">
+                            <i class="fa-regular fa-folder-open"></i>
+                        </div>
+                        <h3 class="em-empty-title">Không tìm thấy organizer nào.</h3>
+                        <p class="em-empty-text">Chúng tôi không tìm thấy organizer nào phù hợp.</p>
+                    </td>
+                </tr>
+            </th:block>
+
+            </tbody>
+        </table>
+
+        <div class="em-pagination">
+            <div class="pagination-info">
+                Đang hiển thị <strong th:text="${organizers != null ? organizers.numberOfElements : 0}">0</strong> trên
+                <strong th:text="${organizers != null ? organizers.size : 10}">10</strong> của
+                <strong th:text="${organizers != null ? organizers.totalElements : 0}">0</strong> kết quả
+            </div>
+
+            <div class="pagination-controls">
+
+                <a class="page-btn page-nav"
+                   th:classappend="${organizers == null or organizers.first} ? 'disabled' : ''"
+                   th:href="@{/moderator/organizer(page=${organizers != null and !organizers.first ? organizers.number - 1 : 0}, keyword=${keyword}, status=${status})}">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+
+                <th:block th:if="${organizers != null and organizers.totalPages > 0}">
+
+                    <th:block th:if="${organizers.totalPages <= 5}">
+                        <a th:each="i : ${#numbers.sequence(0, organizers.totalPages - 1)}"
+                           class="page-btn"
+                           th:classappend="${i == organizers.number} ? 'active' : ''"
+                           th:text="${i + 1}"
+                           th:href="@{/moderator/organizer(page=${i}, keyword=${keyword}, status=${status})}">1</a>
+                    </th:block>
+
+                    <th:block th:if="${organizers.totalPages > 5}">
+                        <a class="page-btn"
+                           th:classappend="${organizers.number == 0} ? 'active' : ''"
+                           th:text="1"
+                           th:href="@{/moderator/organizer(page=0, keyword=${keyword}, status=${status})}">1</a>
+
+                        <span th:if="${organizers.number > 2}" class="page-btn dots">...</span>
+
+                        <th:block th:with="
+                            start=${organizers.number <= 2 ? 1 : (organizers.number >= organizers.totalPages - 3 ? organizers.totalPages - 4 : organizers.number - 1)},
+                            end=${organizers.number <= 2 ? 3 : (organizers.number >= organizers.totalPages - 3 ? organizers.totalPages - 2 : organizers.number + 1)}">
+
+                            <a th:each="i : ${#numbers.sequence(start, end)}"
+                               class="page-btn"
+                               th:classappend="${i == organizers.number} ? 'active' : ''"
+                               th:text="${i + 1}"
+                               th:href="@{/moderator/organizer(page=${i}, keyword=${keyword}, status=${status})}"></a>
+                        </th:block>
+
+                        <span th:if="${organizers.number < organizers.totalPages - 3}" class="page-btn dots">...</span>
+
+                        <a class="page-btn"
+                           th:classappend="${organizers.number == organizers.totalPages - 1} ? 'active' : ''"
+                           th:text="${organizers.totalPages}"
+                           th:href="@{/moderator/organizer(page=${organizers.totalPages - 1}, keyword=${keyword}, status=${status})}"></a>
+                    </th:block>
+                </th:block>
+
+                <th:block th:if="${organizers == null or organizers.totalPages == 0}">
+                    <a class="page-btn active" href="#">1</a>
+                </th:block>
+
+                <a class="page-btn page-nav"
+                   th:classappend="${organizers == null or organizers.last} ? 'disabled' : ''"
+                   th:href="@{/moderator/organizer(page=${organizers != null and !organizers.last ? organizers.number + 1 : 0}, keyword=${keyword}, status=${status})}">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/organizer_management.js}"></script>
 
 </body>
 </html>
