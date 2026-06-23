@@ -35,43 +35,43 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     void deleteOrderByOrderIdAndUser(Long orderId, User currentUser);
 
     @Query( value = """
-
- SELECT
-o.order_id as orderId,
-e.title as eventName,
-ec.category_name as categoryName,
-e.thumbnail_url as thumbnailUrl,
-e.start_time as startTime,
-a.specific_address as specificAddress,
-w.name as wardName,
-c.name as cityName,
-tp.zone_name as zoneName,
-COUNT(od.order_detail_id) as ticketCount,
-SUM(od.unit_price) as price,  
-t.is_checked_in as status
-FROM orders o
-JOIN order_details od ON od.order_id = o.order_id
-JOIN seats s ON s.seat_id = od.seat_id
-JOIN ticket_types tp ON tp.ticket_type_id = s.ticket_type_id
-JOIN events e ON e.event_id = tp.event_id
-JOIN tickets t ON t.order_detail_id = od.order_detail_id
-LEFT JOIN event_categories ec ON ec.category_id = e.category_id
-LEFT JOIN addresses a ON a.id = e.address_id
-LEFT JOIN wards w ON w.id = a.ward_id
-LEFT JOIN city c ON c.id = w.city_id
-WHERE o.user_id = :userId
-GROUP BY
-o.order_id,
-e.title,
-ec.category_name,
-e.thumbnail_url,
-e.start_time,
-a.specific_address,
-w.name,
-c.name,
-tp.zone_name,
-t.is_checked_in
-""", nativeQuery = true)
+    
+     SELECT
+    o.order_id as orderId,
+    e.title as eventName,
+    ec.category_name as categoryName,
+    e.thumbnail_url as thumbnailUrl,
+    e.start_time as startTime,
+    a.specific_address as specificAddress,
+    w.name as wardName,
+    c.name as cityName,
+    tp.zone_name as zoneName,
+    COUNT(od.order_detail_id) as ticketCount,
+    SUM(od.unit_price) as price,  
+    t.is_checked_in as status
+    FROM orders o
+    JOIN order_details od ON od.order_id = o.order_id
+    JOIN seats s ON s.seat_id = od.seat_id
+    JOIN ticket_types tp ON tp.ticket_type_id = s.ticket_type_id
+    JOIN events e ON e.event_id = tp.event_id
+    JOIN tickets t ON t.order_detail_id = od.order_detail_id
+    LEFT JOIN event_categories ec ON ec.category_id = e.category_id
+    LEFT JOIN addresses a ON a.id = e.address_id
+    LEFT JOIN wards w ON w.id = a.ward_id
+    LEFT JOIN city c ON c.id = w.city_id
+    WHERE o.user_id = :userId
+    GROUP BY
+    o.order_id,
+    e.title,
+    ec.category_name,
+    e.thumbnail_url,
+    e.start_time,
+    a.specific_address,
+    w.name,
+    c.name,
+    tp.zone_name,
+    t.is_checked_in
+    """, nativeQuery = true)
     List<TicketProjection> viewOrder(Long userId);
 
 
@@ -124,4 +124,14 @@ p.payment_code,
 p.amount
     """, nativeQuery = true)
     List<TicketProjection> viewOrderDetail(@Param("orderId") Long orderId);
+
+    @Query("SELECT DISTINCT e.category.categoryId " +
+            "FROM Order o " +
+            "JOIN o.event e " +
+            "WHERE o.user.id = :userId " +
+            "AND o.status = :status")
+    List<Long> findPurchasedCategoryIdsByUserId(
+            @Param("userId") Long userId,
+            @Param("status") OrderStatus status
+    );
 }

@@ -9,7 +9,7 @@ import vn.edu.fpt.model.OrganizerProfile;
 
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile, Long> {
 
-    boolean existsByTaxCode(String  taxCode);
+    boolean existsByTaxCode(String taxCode);
 
     OrganizerProfile findByUserId(Long userId);
 

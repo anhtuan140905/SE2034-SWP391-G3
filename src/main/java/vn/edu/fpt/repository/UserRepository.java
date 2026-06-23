@@ -38,7 +38,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "FROM organizer_profiles op\n" +
             "JOIN users u ON u.id = op.user_id\n" +
             "LEFT JOIN events e ON e.organizer_id = op.user_id \n" +
-            "    AND e.status = 'APPROVED'\n" +
+            "    AND e.status = 'ACTIVE'\n" +
             "GROUP BY op.user_id, u.first_name, u.last_name, op.company_name\n" +
             "ORDER BY COUNT(e.event_id) DESC", nativeQuery = true)
     List<FeaturedOrganizerDto> getTopFeaturedOrganizer(Pageable pageable);

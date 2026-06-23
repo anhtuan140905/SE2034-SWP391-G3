@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EventHub - Premium Event Discovery & Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" th:href="@{/homepage/css/home.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}"/>
 </head>
 <body>
 <div class="background-glows">
@@ -77,17 +80,19 @@
                 </span>
                         <span class="event-badge-price"
                               th:text="${featuredEvent.minPrice == 0
-                                ? 'Free'
-                                : 'From ' + #numbers.formatDecimal(featuredEvent.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+                                ? 'Miễn Phí'
+                                : 'Từ ' + #numbers.formatDecimal(featuredEvent.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
                     Price
-                </span>
+                    </span>
+                        <button type="button"
+                                class="heart_top btn-favorite"
+                                th:data-id="${featuredEvent.event_id}"
+                                style="z-index: 3;">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
                         <div class="event-date-badge">
                             <span class="day"
-                                  th:text="${#temporals.format(featuredEvent.startTime, 'dd')}">12</span>
-                            <span>/</span>
-                    <span class="month"
-                          th:text="${#temporals.format(featuredEvent.startTime, 'MM').toUpperCase()}">7</span>
-
+                                  th:text="${#temporals.format(featuredEvent.startTime, 'dd/MM')}">12/07</span>
                         </div>
                         <img th:src="${featuredEvent.thumbnail_url}" class="event-img" th:alt="${featuredEvent.title}">
                     </div>
@@ -133,7 +138,7 @@
         <!-- Category Filtering Toolbar with Soft Typography -->
         <div class="row align-items-end mb-4 gy-4">
             <div class="col-md-6">
-                <h4 class="section-title" style="color: #ff87bf !important;">Sự kiện phổ biến sắp diễn ra</h4>
+                <h4 class="section-title" style="color: #9311a4 !important;">Sự kiện phổ biến sắp diễn ra</h4>
             </div>
             <div class="col-md-6 text-md-end">
                 <div class="category-filter-container justify-content-md-end">
@@ -149,22 +154,25 @@
                 <div class="card-event">
 
                     <div class="event-img-wrap">
-                <span class="event-badge-category">
-                    <i class="fa-solid fa-tag"></i>
-                    <span th:text="${event.categoryName}">Category</span>
-                </span>
+    <span class="event-badge-category">
+        <i class="fa-solid fa-tag"></i>
+        <span th:text="${event.categoryName}">Category</span>
+    </span>
+                        <button type="button"
+                                class="heart_top btn-favorite"
+                                th:data-id="${event.id}"
+                                style="z-index: 3;">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
                         <span class="event-badge-price"
-                              th:text="${event.minPrice == 0
-                                ? 'Free'
-                                : 'From ' + #numbers.formatDecimal(event.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
-                    Price
-                </span>
+                              th:text="${event.minPrice == 0 ? 'Free' : 'Từ ' + #numbers.formatDecimal(event.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
+        Price
+    </span>
+
                         <div class="event-date-badge">
-                    <span class="month"
-                          th:text="${#temporals.format(event.startTime, 'MMM').toUpperCase()}">JUN</span>
-                            <span class="day"
-                                  th:text="${#temporals.format(event.startTime, 'dd')}">12</span>
+                            <span class="day" th:text="${#temporals.format(event.startTime, 'dd/MM')}">12/07</span>
                         </div>
+
                         <img th:src="${event.thumbnailUrl}" class="event-img" th:alt="${event.title}">
                     </div>
 
@@ -211,33 +219,40 @@
             <div class="row align-items-center gy-4">
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-counter-wrap">
-                        <span class="stat-number" th:text="${hostedEvents}">0</span>
+                        <span class="stat-number"
+                              th:text="${hostedEvents}"
+                              th:attr="data-target=${hostedEvents}">0</span>
                         <span class="stat-label">Sự kiện đã được tổ chức</span>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-counter-wrap">
-                        <span class="stat-number" th:text="${issuedTickets}">0</span>
+                        <span class="stat-number"
+                              th:text="${issuedTickets}"
+                              th:attr="data-target=${issuedTickets}">0</span>
                         <span class="stat-label">Số lượng vé đã bán</span>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-counter-wrap">
-                        <span class="stat-number" th:text="${activatedOrganizers}">0</span>
+                        <span class="stat-number"
+                              th:text="${activatedOrganizers}"
+                              th:attr="data-target=${activatedOrganizers}">0</span>
                         <span class="stat-label">Tổ chức đang hoạt động</span>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="stat-counter-wrap">
-                        <span class="stat-number" th:text="${eventCategories}">0</span>
-                        <span class="stat-label">danh mục</span>
+                        <span class="stat-number"
+                              th:text="${eventCategories}"
+                              th:attr="data-target=${eventCategories}">0</span>
+                        <span class="stat-label">Danh mục</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 <!-- FEATURED ORGANIZERS SPOTLIGHT -->
 <section class="py-5 bg-transparent mb-5">
     <div class="container">
@@ -245,7 +260,8 @@
             <div class="col text-center">
                 <span class="section-label">Tiêu điểm</span>
                 <h2 class="section-title">Các tổ chức nổi bật</h2>
-                <p class="text-secondary-light mx-auto max-w-lg mt-2" style="max-width: 600px;">Theo dõi và tham gia sự kiện của các công ty tổ chức ưu tú.</p>
+                <p class="text-secondary-light mx-auto max-w-lg mt-2" style="max-width: 600px;">Theo dõi và tham gia sự
+                    kiện của các công ty tổ chức ưu tú.</p>
             </div>
         </div>
 

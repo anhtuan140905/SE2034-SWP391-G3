@@ -8,8 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
+import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
+import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import java.time.LocalDate;
@@ -24,44 +27,44 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countHostedEvents(@Param("statuses") List<EventStatus> statuses);
 
     @Query(value = "SELECT TOP 6 e.event_id AS id, e.title, e.thumbnail_url, e.start_time,\n" +
-            "                        MIN(tt.price) as min_price,  \n" +
-            "                        ec.category_name as category_name, \n" +
-            "                        e.venue_name as venue,\n" +
-            "                        ci.name as city_name, \n" +
-            "                        COUNT(DISTINCT od.order_detail_id) as sold_count \n" +
-            "                        FROM events e\n" +
-            "                        JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-            "                        JOIN event_categories ec ON ec.category_id = e.category_id \n" +
-            "                        JOIN addresses a ON a.id = e.address_id\n" +
-            "                        JOIN wards w ON w.id = a.ward_id \n" +
-            "                        JOIN city ci ON ci.id = w.city_id \n" +
-            "                        LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-            "                        LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-            "                        WHERE e.status = 'ACTIVE' AND e.start_time > GETDATE()\n" +
-            "                        GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name\n" +
-            "                        ORDER BY sold_count DESC",
+            "MIN(tt.price) as min_price,  \n" +
+            "ec.category_name as category_name, \n" +
+            "e.venue_name as venueName,\n" +
+            "ci.name as city_name, \n" +
+            "COUNT(DISTINCT od.order_detail_id) as sold_count \n" +
+            "FROM events e\n" +
+            "JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+            "JOIN event_categories ec ON ec.category_id = e.category_id \n" +
+            "JOIN addresses a ON a.id = e.address_id\n" +
+            "JOIN wards w ON w.id = a.ward_id \n" +
+            "JOIN city ci ON ci.id = w.city_id \n" +
+            "LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+            "LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+            "WHERE e.status = 'ACTIVE' AND e.start_time > GETDATE()\n" +
+            "GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name\n" +
+            "ORDER BY sold_count DESC",
             nativeQuery = true)
     List<EventSummaryProjection> findTopFeaturedEvents();
 
     //
-    @Query(value = "SELECT TOP 1 e.event_id, e.title, e.thumbnail_url, e.start_time as startTime, e.venue_name as venueName, a.specific_address, c.name AS [cityName],\n" +
-            "                             MIN(tt.price) as minPrice,\n" +
-            "                             ec.category_name,\n" +
-            "                             CONCAT(u.first_name, ' ', u.last_name) as organizer_name,\n" +
-            "                             COUNT(DISTINCT od.order_detail_id) as soldCount\n" +
-            "                        FROM events e\n" +
-            "                        JOIN event_categories ec ON e.category_id = ec.category_id\n" +
-            "                        JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-            "                        JOIN users u ON e.organizer_id = u.id\n" +
-            "                       JOIN addresses a ON a.id = e.address_id\n" +
-            "                       JOIN wards w ON a.ward_id = w.id\n" +
-            "                       JOIN city c ON w.city_id = c.id\n" +
-            "                        LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-            "                        LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-            "                        WHERE e.status = 'ACTIVE' AND e.start_time > GETDATE()\n" +
-            "                        GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, u.first_name, u.last_name, e.venue_name,\n" +
-            "                       a.specific_address, c.name, ec.category_name\n" +
-            "                        ORDER BY soldCount DESC", nativeQuery = true)
+    @Query(value = "SELECT TOP 1 e.event_id, e.title, e.thumbnail_url, e.start_time as startTime, e.venue_name as venueName, a.specific_address, c.name AS [name],\n" +
+            "MIN(tt.price) as minPrice,\n" +
+            "ec.category_name,\n" +
+            "CONCAT(u.first_name, ' ', u.last_name) as organizer_name,\n" +
+            "COUNT(DISTINCT od.order_detail_id) as soldCount\n" +
+            "FROM events e\n" +
+            "JOIN event_categories ec ON e.category_id = ec.category_id\n" +
+            "JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+            "JOIN users u ON e.organizer_id = u.id\n" +
+            "JOIN addresses a ON a.id = e.address_id\n" +
+            "JOIN wards w ON a.ward_id = w.id\n" +
+            "JOIN city c ON w.city_id = c.id\n" +
+            "LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+            "LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+            "WHERE e.status = 'ACTIVE' AND e.start_time > GETDATE()\n" +
+            "GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, u.first_name, u.last_name, e.venue_name,\n" +
+            "a.specific_address, c.name, ec.category_name\n" +
+            "ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 //
 //
@@ -93,24 +96,24 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 //
 @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
-        "                       MIN(tt.price) as min_price,\n" +
-        "                       ec.category_name as category_name,\n" +
-        "                       e.venue_name as venueName,\n" +
-        "                       ci.name as city_name,\n" +
-        "                       COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
-        "                       SUM(tt.total_quantity) as total_tickets\n" +
-        "                       FROM events e \n" +
-        "                       JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-        "                       JOIN event_categories ec ON ec.category_id = e.category_id\n" +
-        "                       JOIN addresses a ON a.id = e.address_id\n" +
-        "                       JOIN wards w ON w.id = a.ward_id\n" +
-        "                       JOIN city ci ON ci.id = w.city_id\n" +
-        "               JOIN users u  ON e.organizer_id = u.id\n" +
-        "               JOIN organizer_profiles op ON u.id = op.user_id\n" +
-        "                       LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-        "                       LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-        "                       WHERE e.status = 'ACTIVE' AND e.event_id = :id\n" +
-        "                       GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name, op.company_name, e.description",
+        "MIN(tt.price) as min_price,\n" +
+        "ec.category_name as category_name,\n" +
+        "e.venue_name as venueName,\n" +
+        "ci.name as city_name,\n" +
+        "COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
+        "SUM(tt.total_quantity) as total_tickets\n" +
+        "FROM events e \n" +
+        "JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+        "JOIN event_categories ec ON ec.category_id = e.category_id\n" +
+        "JOIN addresses a ON a.id = e.address_id\n" +
+        "JOIN wards w ON w.id = a.ward_id\n" +
+        "JOIN city ci ON ci.id = w.city_id\n" +
+        "JOIN users u  ON e.organizer_id = u.id\n" +
+        "JOIN organizer_profiles op ON u.id = op.user_id\n" +
+        "LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+        "LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+        "WHERE e.status = 'ACTIVE' AND e.event_id = :id\n" +
+        "GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name, op.company_name, e.description",
         nativeQuery = true)
 EventSummaryProjection findEventDetailById(Long id);
 
@@ -346,4 +349,44 @@ AND t.isCheckedIn = true
     long countAttendedEvent(@Param("userId") Long userId);
 
 
+    @Query("SELECT new vn.edu.fpt.modelview.response.homepage.EventHomeDTO (" +
+            "e.eventId, e.title, e.thumbnailUrl, e.description, e.venueName, e.startTime, MIN(t.price) AS minPrice, c.categoryName, op.companyName) " +
+            "FROM Event e " +
+            "LEFT JOIN e.ticketTypes t " +
+            "LEFT JOIN e.category c " +
+            "LEFT JOIN e.organizer o " +
+            "LEFT JOIN o.organizerProfile op " +
+            "WHERE e.eventId = :eventId " +
+            "GROUP BY e.eventId, e.title, e.thumbnailUrl, e.description, e.venueName, e.startTime, c.categoryName, op.companyName")
+    EventHomeDTO findEventsWithMinPrice(Long eventId);
+
+    @Query("SELECT e FROM Event e " +
+            "JOIN FETCH e.category c " +
+            "WHERE e.status = :status " +
+            "AND e.date >= :today " +
+            "ORDER BY e.date ASC")
+    List<Event> findUpcomingEvents(
+            @Param("status") EventStatus status,
+            @Param("today") LocalDate today,
+            Pageable pageable
+    );
+
+    @Query("SELECT DISTINCT e FROM Event e " +
+            "JOIN FETCH e.category c " +
+            "WHERE c.categoryId IN :categoryIds " +
+            "AND e.status = :status " +
+            "AND e.date >= :today " +
+            "AND e.eventId NOT IN (" +
+            "SELECT o.event.eventId FROM Order o " +
+            "WHERE o.user.id = :userId " +
+            "AND o.status = :paidStatus) " +
+            "ORDER BY e.date ASC")
+    List<Event> findCandidatesByCategories(
+            @Param("categoryIds") List<Long> categoryIds,
+            @Param("status") EventStatus status,
+            @Param("paidStatus")OrderStatus paidStatus,
+            @Param("today") LocalDate today,
+            @Param("userId") Long userId,
+            Pageable pageable
+            );
 }
