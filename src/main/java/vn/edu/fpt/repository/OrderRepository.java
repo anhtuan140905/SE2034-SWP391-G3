@@ -92,7 +92,9 @@ t.is_checked_in
         p.amount as price,  
         t.is_checked_in as status,
 FORMAT(CAST(od.created_at AS datetime2), 'dd/MM/yyyy HH:mm') as createdAt,
-        p.payment_code as paymentCode
+        p.payment_code as paymentCode,
+        s.row_label as row,
+        s.seat_number as seat
 FROM orders o
 JOIN order_details od ON od.order_id = o.order_id
 JOIN seats s ON s.seat_id = od.seat_id
@@ -121,7 +123,9 @@ t.qr_code,
 t.is_checked_in,
 od.created_at,
 p.payment_code,
-p.amount
+p.amount,
+s.row_label,
+s.seat_number
     """, nativeQuery = true)
     List<TicketProjection> viewOrderDetail(@Param("orderId") Long orderId);
 }

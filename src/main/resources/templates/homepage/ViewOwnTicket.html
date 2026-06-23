@@ -108,12 +108,30 @@
     <!-- Toolbar -->
     <div class="toolbar">
 
+        <div class="tabs">
+            <button class="tab-btn"
+                    th:classappend="${param.tab == null or param.tab[0] == 'all'} ? 'active'"
+                    onclick="location.href='?tab=all'">
+                Tất Cả<span class="tab-count" th:text="${countTicket}">0</span>
+            </button>
 
-        <div class="tabs" id="tabs">
-            <button class="tab-btn active" onclick="location.href='?tab=all'">Tất Cả<span class="tab-count" th:text="${countTicket}">0</span></button>
-            <button class="tab-btn" onclick="location.href='?tab=upcoming'">Sắp Tới<span class="tab-count" th:text="${countUpcomingTicket}">0</span></button>
-            <button class="tab-btn" onclick="location.href='?tab=used'">Đã Dùng<span class="tab-count" th:text="${countUsedTicket}">0</span></button>
-            <button class="tab-btn" onclick="location.href='?tab=expired'">Hết Hạn<span class="tab-count" th:text="${countExpiredTicket}">0</span></button>
+            <button class="tab-btn"
+                    th:classappend="${param.tab != null and param.tab[0] == 'upcoming'} ? 'active'"
+                    onclick="location.href='?tab=upcoming'">
+                Sắp Tới<span class="tab-count" th:text="${countUpcomingTicket}">0</span>
+            </button>
+
+            <button class="tab-btn"
+                    th:classappend="${param.tab != null and param.tab[0] == 'used'} ? 'active'"
+                    onclick="location.href='?tab=used'">
+                Đã Dùng<span class="tab-count" th:text="${countUsedTicket}">0</span>
+            </button>
+
+            <button class="tab-btn"
+                    th:classappend="${param.tab != null and param.tab[0] == 'expired'} ? 'active'"
+                    onclick="location.href='?tab=expired'">
+                Hết Hạn<span class="tab-count" th:text="${countExpiredTicket}">0</span>
+            </button>
         </div>
     </div>
 
@@ -138,7 +156,9 @@
             <div class="ticket-content">
 
                 <!-- STATUS -->
-                <div class="ticket-status">
+                <div class="ticket-status"
+                     th:classappend="${t.status == 'ACTIVE'} ? 'status-active' :
+                     (${t.status == 'USED'} ? 'status-used' : 'status-expired')">
 
                     <span class="status-dot"></span>
 

@@ -1,28 +1,3 @@
-/*
- * EventHub — tickets.css
- * Phạm vi: ticket-page header, main layout, stat cards, toolbar/tabs,
- *           ticket card list, empty state, recommended events section
- */
-
-/* ---------------- TICKET-PAGE INLINE HEADER ---------------- */
-header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    padding: 14px 40px;
-    background: rgba(255, 246, 249, 0.88);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--light-border);
-}
-
-.header-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
 
 /* Logo */
 .logo { display: flex; align-items: center; gap: 8px; }
@@ -224,15 +199,61 @@ footer {
 .scroll-top svg { width: 14px; height: 14px; color: #fff; }
 
 /* ---------------- DETAIL SCREEN (light style) ---------------- */
-#detail-screen { display: none; position: fixed; inset: 0; z-index: 100; background: var(--bg); overflow-y: auto; }
-#detail-screen.open { display: block; }
+#detail-screen {
+    display: none;
+    position: fixed;
+    inset: 0; z-index: 100;
+    background: var(--bg);
+    overflow-y: auto;
+}
+#detail-screen.open {
+    display: block;
+}
 
-.detail-header { position: sticky; top: 0; z-index: 10; padding: 14px 40px; background: rgba(255, 246, 249, 0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--light-border); }
-.detail-header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-.btn-back { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 12px; border: 1px solid var(--light-border); background: rgba(255, 255, 255, .7); font-family: inherit; font-size: 14px; font-weight: 500; color: #374151; cursor: pointer; transition: all .2s; text-decoration: none; }
+.detail-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 14px 40px;
+    background: rgba(255, 246, 249, 0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--light-border);
+}
+.detail-header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--light-border);
+    background: rgba(255, 255, 255, .7);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+}
 .btn-back:hover { background: #fff; border-color: var(--pink); color: var(--pink); }
 .btn-back svg { width: 16px; height: 16px; }
-.detail-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; color: #1a1a2e; }
+.detail-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
 .btn-actions { display: flex; gap: 8px; }
 .btn-outline { padding: 8px 16px; border-radius: 12px; border: 1px solid var(--light-border); background: rgba(255, 255, 255, .7); font-family: inherit; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s; }
 .btn-outline:hover { border-color: var(--pink); color: var(--pink); }
@@ -392,18 +413,18 @@ body.detail-page #detail-screen {
     margin-bottom:10px;
 }
 
-.status-dot{
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:#10b981;
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
 
-.status-text{
-    color:#10b981;
-    font-weight:700;
-    font-size:15px;
+.status-text {
+    font-weight: 700;
+    font-size: 15px;
 }
+
+
 
 .ticket-title{
     font-size:20px;
@@ -457,7 +478,7 @@ body.detail-page #detail-screen {
     font-size:14px;
 }
 
-/* RIGHT */
+
 
 .ticket-right{
     min-width:220px;
@@ -514,7 +535,7 @@ body.detail-page #detail-screen {
     transform:translateY(-2px);
 }
 
-/* MOBILE */
+
 
 @media(max-width:992px){
 
