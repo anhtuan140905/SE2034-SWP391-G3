@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.response.moderator.DashboardEventDTO;
 import vn.edu.fpt.modelview.response.moderator.DashboardStatsDTO;
 import vn.edu.fpt.repository.EventRepository;
@@ -23,7 +24,7 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
     @Override
     public DashboardStatsDTO getDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setActiveOrganizers(userRepository.countActiveOrganizers());
+        stats.setActiveOrganizers(userRepository.countOrganizersByStatus(RoleName.ROLE_ORGANIZER, true));
         stats.setActiveEvents(eventRepository.countEventsByStatus(EventStatus.ACTIVE));
         stats.setNewEventsToday(eventRepository.countNewEventsToday());
         stats.setInactiveEvents(eventRepository.countEventsByStatus(EventStatus.INACTIVE));

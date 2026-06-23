@@ -35,7 +35,7 @@
                     <span th:text="${successMessage}">Tạo tài khoản thành công.</span>
                 </div>
 
-                <form th:action="@{/moderator/create}"
+                <form th:action="@{/moderator/organizer/create}"
                       th:object="${createOrganizerRequest}"
                       method="post"
                       class="oc-form">
