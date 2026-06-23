@@ -1082,3 +1082,94 @@ h1, h2, h3, h4, h5, h6 {
     .filter-bar__select-wrap { flex: 1 1 100%; }
 }
 
+
+
+/* ---------------- HOME BANNER SLIDER / CAROUSEL ---------------- */
+.custom-carousel-wrapper {
+    height: 420px;
+    position: relative;
+    background-color: #0f0224;
+}
+
+@media (max-width: 768px) {
+    .custom-carousel-wrapper {
+        height: 320px;
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-carousel-wrapper {
+        height: 260px;
+    }
+}
+
+.custom-carousel-wrapper .slide-image {
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.65) contrast(1.05);
+}
+
+.carousel-caption-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(10, 1, 24, 0.95) 0%, rgba(10, 1, 24, 0.45) 60%, rgba(10, 1, 24, 0.1) 100%);
+    color: #fff;
+    z-index: 10;
+}
+
+.custom-indicators {
+    bottom: 24px;
+    gap: 8px;
+    margin-bottom: 0;
+    z-index: 15;
+}
+
+.custom-indicators button {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    transition: all 0.3s ease !important;
+    opacity: 1 !important;
+}
+
+.custom-indicators button.active {
+    width: 24px !important;
+    border-radius: 4px !important;
+    background-color: var(--color-pink) !important;
+}
+
+.custom-control-nav {
+    width: 8%;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 20;
+}
+
+.custom-carousel-wrapper:hover .custom-control-nav {
+    opacity: 1 !important;
+}
+
+.control-nav-circle {
+    width: 44px;
+    height: 44px;
+    background: rgba(10, 1, 24, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.control-nav-circle:hover {
+    background: var(--gradient-neon);
+    border-color: transparent;
+    transform: scale(1.1);
+}

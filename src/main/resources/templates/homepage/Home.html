@@ -34,16 +34,88 @@
     </nav>
 </div>
 
-<!--<section class="hero-section-video">-->
-<!--    <video class="hero-video" autoplay muted loop playsinline>-->
-<!--        <source-->
-<!--                src="https://res.cloudinary.com/dep1nnstf/video/upload/q_auto/f_auto/v1780903981/anhtraisaygex_hdxiva.mp4"-->
-<!--                type="video/mp4">-->
-<!--    </video>-->
+<!-- 5-IMAGE PREMIUM BANNER CAROUSEL -->
+<div class="container my-4 mt-5 pt-2">
+    <div id="homeBannerCarousel" class="carousel slide custom-carousel-wrapper rounded-4 overflow-hidden border border-white/10" data-bs-ride="carousel" data-bs-interval="6000">
+        <!-- Carousel indicators / dots -->
+        <div class="carousel-indicators custom-indicators">
+            <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            <button type="button" data-bs-target="#homeBannerCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+        </div>
 
-<!--    &lt;!&ndash; Overlay tối để đọc chữ &ndash;&gt;-->
-<!--    <div class="hero-overlay"></div>-->
-<!--</section>-->
+        <!-- Carousel inner slides -->
+        <div class="carousel-inner h-100">
+            <!-- Slide 1 -->
+            <div class="carousel-item active h-100">
+                <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1200&auto=format&fit=crop" class="d-block w-100 slide-image" alt="Neon Sunset Beats">
+                <div class="carousel-caption-overlay d-flex flex-column justify-content-end p-4 p-md-5">
+                        <span class="badge-gradient-sub mb-3 align-self-start">
+                            <i class="fa-solid fa-sparkles text-pink-glow"></i> HOT EVENT
+                        </span>
+                    <h2 class="display-6 font-heading font-extrabold text-white">Lễ Hội Âm Nhạc Neon Sunset Beats</h2>
+                    <p class="text-secondary-light leading-relaxed max-w-2xl text-sm md:text-base">Đắm chìm trong giai điệu điện tử sôi động cùng hệ thống ánh sáng laser huyền ảo dưới bầu trời đêm hoành tráng.</p>
+                    <a href="#discoverSection" class="btn btn-grad-cta rounded-pill px-4 py-2 mt-2 align-self-start">Tìm Hiểu Ngay <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item h-100">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200&auto=format&fit=crop" class="d-block w-100 slide-image" alt="AI & Web3 Forum">
+                <div class="carousel-caption-overlay d-flex flex-column justify-content-end p-4 p-md-5">
+                        <span class="badge-gradient-sub mb-3 align-self-start">
+                            <i class="fa-solid fa-sparkles text-pink-glow"></i> TECH SHOWCASE
+                        </span>
+                    <h2 class="display-6 font-heading font-extrabold text-white">Diễn Đàn Công Nghệ Đột Phá AI & Web3</h2>
+                    <p class="text-secondary-light leading-relaxed max-w-2xl text-sm md:text-base">Gặp gỡ 100+ diễn giả hàng đầu thế giới và trải nghiệm các giải pháp công nghệ dẫn đầu xu hướng tương lai.</p>
+                    <a href="#discoverSection" class="btn btn-grad-cta rounded-pill px-4 py-2 mt-2 align-self-start">Tìm Hiểu Ngay <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-item h-100">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop" class="d-block w-100 slide-image" alt="Light Art Exhibition">
+                <div class="carousel-caption-overlay d-flex flex-column justify-content-end p-4 p-md-5">
+                        <span class="badge-gradient-sub mb-3 align-self-start">
+                            <i class="fa-solid fa-sparkles text-pink-glow"></i> ART & CREATIVE
+                        </span>
+                    <h2 class="display-6 font-heading font-extrabold text-white">Triển Lãm Nghệ Thuật Sóng Ánh Sáng</h2>
+                    <p class="text-secondary-light leading-relaxed max-w-2xl text-sm md:text-base">Triển lãm tương tác đa giác quan, nơi hội tụ các nghệ sĩ thị giác xuất sắc nhất năm 2026.</p>
+                    <a href="#discoverSection" class="btn btn-grad-cta rounded-pill px-4 py-2 mt-2 align-self-start">Tìm Hiểu Ngay <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="carousel-item h-100">
+                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop" class="d-block w-100 slide-image" alt="Healing Soul Yoga">
+                <div class="carousel-caption-overlay d-flex flex-column justify-content-end p-4 p-md-5">
+                        <span class="badge-gradient-sub mb-3 align-self-start">
+                            <i class="fa-solid fa-sparkles text-pink-glow"></i> WELLNESS RETREAT
+                        </span>
+                    <h2 class="display-6 font-heading font-extrabold text-white">Đại Hội Yoga & Sức Khỏe Healing Soul</h2>
+                    <p class="text-secondary-light leading-relaxed max-w-2xl text-sm md:text-base">Tìm lại sự cân bằng, xoa dịu tâm trí và phục hồi năng lượng sống trong không gian thiên nhiên thanh mát.</p>
+                    <a href="#discoverSection" class="btn btn-grad-cta rounded-pill px-4 py-2 mt-2 align-self-start">Tìm Hiểu Ngay <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls (previous & next arrows) -->
+        <button class="carousel-control-prev custom-control-nav" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="prev">
+                <span class="control-nav-circle">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next custom-control-nav" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="next">
+                <span class="control-nav-circle">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
 
 <section class="hero-section">
     <!-- Video Background -->
