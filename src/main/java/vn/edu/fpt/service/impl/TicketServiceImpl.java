@@ -83,6 +83,9 @@ public class TicketServiceImpl implements TicketService {
                 ticket.setOrderDetail(detail);
                 tickets.add(this.ticketRepository.save(ticket));
             }
+            TicketType ticketType = seat.getTicketType();
+            ticketType.setSoldQuantity(ticketType.getSoldQuantity() + 1);
+            this.ticketTypeRepository.save(ticketType);
         }
         List<TicketEmailDTO> ticketDTOs = tickets.stream()
                 .map(t -> new TicketEmailDTO(

@@ -6,14 +6,17 @@
     <title>Vé của tôi</title>
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <link rel="stylesheet" th:href="@{/homepage/css/detail.css}"/>
-    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}"/>
 </head>
 <body>
 
@@ -47,13 +50,14 @@
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <a th:href="@{/events}" href="/templates/events.html"
            class="btn btn-outline-light border-white/10 text-xs px-4 rounded-pill font-bold d-flex align-items-center gap-2"
-           style="background: rgb(16 1 1 / 13%) !important; color: #da6464;backdrop-filter: blur(10px); transition: all 0.3s ease;">
+           style="transition: all 0.3s ease;">
             <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
         </a>
 
         <div class="d-flex align-items-center gap-2 font-mono" style="font-size: 18px; color: purple">
             <span class="text-secondary-light">DANH MỤC:</span>
-            <span class="text-brand-pink border border-pink/30 bg-pink/10 px-2.5 py-0.5 rounded-pill text-xs uppercase font-extrabold" style="color: #1a0a2e"  th:text="${event.categoryName}">
+            <span class="text-brand-pink border border-pink/30 bg-pink/10 px-2.5 py-0.5 rounded-pill text-xs uppercase font-extrabold"
+                  style="color: #1a0a2e" th:text="${event.categoryName}">
                     MUSIC
                 </span>
         </div>
@@ -180,11 +184,13 @@
             <div class="glass-panel p-4 p-md-5 rounded-4 border border-white/10 text-start">
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div>
-                        <h3 class="h3 text-white font-heading font-extrabold mb-0" style="font-weight: bold;">GIỚI THIỆU SỰ KIỆN</h3>
+                        <h3 class="h3 text-white font-heading font-extrabold mb-0" style="font-weight: bold;">GIỚI THIỆU
+                            SỰ KIỆN</h3>
                     </div>
                 </div>
 
-                <p class="text-secondary-light leading-relaxed whitespace-pre-wrap font-medium" style="font-size: 16.5px; color: #2c3d1a" th:text="${event.description}">
+                <p class="text-secondary-light leading-relaxed whitespace-pre-wrap font-medium"
+                   style="font-size: 16.5px; color: #2c3d1a" th:text="${event.description}">
                     description
                 </p>
 
@@ -222,12 +228,14 @@
             <!-- DETAILED EVENT AGENDA TIMELINE -->
             <div class="glass-panel p-4 p-md-5 rounded-4 border border-white/10 text-start">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="p-2.5 rounded-3 border border-violet/20" style="background: rgba(140, 43, 255, 0.05); color: #8c2bff;">
+                    <div class="p-2.5 rounded-3 border border-violet/20"
+                         style="background: rgba(140, 43, 255, 0.05); color: #8c2bff;">
                         <i class="fa-solid fa-calendar-alt text-violet fs-5"></i>
                     </div>
                     <div>
                         <h3 class="h5 text-white font-heading font-extrabold mb-0">LỊCH TRÌNH CHI TIẾT</h3>
-                        <span class="text-secondary-light font-bold font-mono uppercase tracking-wider" style="font-size: 10px;">Event Agenda & sessions</span>
+                        <span class="text-secondary-light font-bold font-mono uppercase tracking-wider"
+                              style="font-size: 10px;">Event Agenda & sessions</span>
                     </div>
                 </div>
 
@@ -236,42 +244,58 @@
 
                     <!-- Agenda Session 1 -->
                     <div class="position-relative mb-4">
-                        <div class="position-absolute rounded-circle bg-violet border border-white" style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
+                        <div class="position-absolute rounded-circle bg-violet border border-white"
+                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
                         <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold" style="font-size: 11px;">18:00</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Tiếp đón khách & Ban tổ chức tiếp nhận check-in QR</h4>
+                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
+                                  style="font-size: 11px;">18:00</span>
+                            <h4 class="text-white text-sm font-extrabold mb-0">Tiếp đón khách & Ban tổ chức tiếp nhận
+                                check-in QR</h4>
                         </div>
-                        <p class="text-secondary-light text-xs mb-0">Nhận vòng đeo tay phát sáng Neon dạ quang độc quyền từ ban tổ chức.</p>
+                        <p class="text-secondary-light text-xs mb-0">Nhận vòng đeo tay phát sáng Neon dạ quang độc quyền
+                            từ ban tổ chức.</p>
                     </div>
 
                     <!-- Agenda Session 2 -->
                     <div class="position-relative mb-4">
-                        <div class="position-absolute rounded-circle bg-violet border border-white" style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
+                        <div class="position-absolute rounded-circle bg-violet border border-white"
+                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
                         <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold" style="font-size: 11px;">20:30</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Trình diễn thị giác Holographic Live Visual Set</h4>
+                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
+                                  style="font-size: 11px;">20:30</span>
+                            <h4 class="text-white text-sm font-extrabold mb-0">Trình diễn thị giác Holographic Live
+                                Visual Set</h4>
                         </div>
-                        <p class="text-secondary-light text-xs mb-0">Trải nghiệm âm thanh vòm đỉnh cao và visual 2D/3D đồng điệu cùng bước sóng bass.</p>
+                        <p class="text-secondary-light text-xs mb-0">Trải nghiệm âm thanh vòm đỉnh cao và visual 2D/3D
+                            đồng điệu cùng bước sóng bass.</p>
                     </div>
 
                     <!-- Agenda Session 3 -->
                     <div class="position-relative mb-4">
-                        <div class="position-absolute rounded-circle bg-violet border border-white" style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
+                        <div class="position-absolute rounded-circle bg-violet border border-white"
+                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
                         <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold" style="font-size: 11px;">22:00</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Sự kiện chính: Guest DJ Midnight Performance</h4>
+                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
+                                  style="font-size: 11px;">22:00</span>
+                            <h4 class="text-white text-sm font-extrabold mb-0">Sự kiện chính: Guest DJ Midnight
+                                Performance</h4>
                         </div>
-                        <p class="text-secondary-light text-xs mb-0">Màn bùng nổ âm nhạc kéo dài từ các nghệ sĩ xuất sắc nhất thuộc bảng xếp hạng.</p>
+                        <p class="text-secondary-light text-xs mb-0">Màn bùng nổ âm nhạc kéo dài từ các nghệ sĩ xuất sắc
+                            nhất thuộc bảng xếp hạng.</p>
                     </div>
 
                     <!-- Agenda Session 4 -->
                     <div class="position-relative">
-                        <div class="position-absolute rounded-circle bg-violet border border-white" style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
+                        <div class="position-absolute rounded-circle bg-violet border border-white"
+                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
                         <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold" style="font-size: 11px;">00:30</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Deep Ambient Ambient & Kết thúc sự kiện</h4>
+                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
+                                  style="font-size: 11px;">00:30</span>
+                            <h4 class="text-white text-sm font-extrabold mb-0">Deep Ambient Ambient & Kết thúc sự
+                                kiện</h4>
                         </div>
-                        <p class="text-secondary-light text-xs mb-0">Bế mạc, giao lưu chụp ảnh cùng nghệ sĩ và nhận quà lưu niệm trước khi ra về.</p>
+                        <p class="text-secondary-light text-xs mb-0">Bế mạc, giao lưu chụp ảnh cùng nghệ sĩ và nhận quà
+                            lưu niệm trước khi ra về.</p>
                     </div>
                 </div>
             </div>
@@ -312,7 +336,8 @@
                             <i class="fa-regular fa-clock" style="color: var(--color-brand-pink); font-size: 14px;"></i>
                         </div>
                         <div>
-                            <p style="color: #1a1a2e; font-size: 16px; font-weight: 700; margin: 0 0 2px 0;">Thời gian diễn ra</p>
+                            <p style="color: #1a1a2e; font-size: 16px; font-weight: 700; margin: 0 0 2px 0;">Thời gian
+                                diễn ra</p>
                             <p style="color: #666; font-size: 14.5px; margin: 0; line-height: 1.4;"
                                th:text="${#temporals.format(event.startTime, 'HH:mm - dd/MM/yyyy')}">
                                 19:30 - 10/06/2026
@@ -323,10 +348,12 @@
                     <!-- Địa điểm -->
                     <div class="d-flex align-items-start gap-3">
                         <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(244,114,182,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
-                            <i class="fa-solid fa-location-dot" style="color: var(--color-brand-pink); font-size: 14px;"></i>
+                            <i class="fa-solid fa-location-dot"
+                               style="color: var(--color-brand-pink); font-size: 14px;"></i>
                         </div>
                         <div>
-                            <p style="color: #1a1a2e; font-weight: 700; font-size: 16px; margin: 0 0 2px 0;">Địa điểm tổ chức</p>
+                            <p style="color: #1a1a2e; font-weight: 700; font-size: 16px; margin: 0 0 2px 0;">Địa điểm tổ
+                                chức</p>
                             <p style="color: #666; font-size: 14.5px; margin: 0; line-height: 1.4;"
                                th:text="${event.venueName + ', ' + event.cityName}">
                                 Nhà hát Thành phố Hồ Chí Minh
@@ -337,7 +364,9 @@
                 </div>
 
                 <!-- CTA Button -->
-                <a th:href="@{/events/{id}/choose_seat(id=${event.id})}" class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5" style="   border-radius: 12px; margin-bottom: 20px;">
+                <a th:href="@{/events/{id}/choose_seat(id=${event.id})}"
+                   class="btn btn-grad-cta text-white w-100 py-3 rounded-3 uppercase tracking-widest text-xs btn-book-now d-flex align-items-center justify-content-center gap-1.5"
+                   style="   border-radius: 12px; margin-bottom: 20px;">
                     Mua vé ngay
                 </a>
                 <!-- Trust badge -->
@@ -346,18 +375,23 @@
                 </p>
             </div>
             <div class="glass-panel p-4 rounded-4 border border-white/10 text-start">
-                <span class="text-secondary-light font-bold font-mono uppercase tracking-wider mb-3 d-block" style="font-size: 14px;">THÔNG TIN BAN TỔ CHỨC</span>
+                <span class="text-secondary-light font-bold font-mono uppercase tracking-wider mb-3 d-block"
+                      style="font-size: 14px;">THÔNG TIN BAN TỔ CHỨC</span>
                 <div class="d-flex align-items-center gap-3">
-                    <img th:src="${event.thumbnailUrl != null ? event.thumbnailUrl : ''}" class="rounded-3 border border-pink/30 shrink-0" style="width: 44px; height: 44px; object-fit: cover;" alt="Host avatar image">
+                    <img th:src="${event.thumbnailUrl != null ? event.thumbnailUrl : ''}"
+                         class="rounded-3 border border-pink/30 shrink-0"
+                         style="width: 44px; height: 44px; object-fit: cover;" alt="Host avatar image">
                     <div class="space-y-0.5 truncate text-start">
                         <div class="d-flex align-items-center gap-1.5 flex-wrap">
-                            <h4 class="text-white text-xs font-bold mb-0 truncate" style="max-w: 160px;" th:text="${event.company_name}">Neon Wave Recs </h4>
+                            <h4 class="text-white text-xs font-bold mb-0 truncate" style="max-w: 160px;"
+                                th:text="${event.company_name}">Neon Wave Recs </h4>
                         </div>
                         <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider font-mono">ORGANIZER PARTNER</span>
                     </div>
                 </div>
                 <p class="text-secondary-light leading-relaxed mt-3" style="font-size: 14px; color: #1a0a2e;">
-                    Đơn vị vận hành, giám sát chuyên nghiệp được định danh & kiểm duyệt chặt chẽ bởi EventHub, hỗ trợ tận tâm quý khách trong suốt sự kiện.
+                    Đơn vị vận hành, giám sát chuyên nghiệp được định danh & kiểm duyệt chặt chẽ bởi EventHub, hỗ trợ
+                    tận tâm quý khách trong suốt sự kiện.
                 </p>
             </div>
             <div class="glass-panel p-4 rounded-4 border border-white/10 text-start">
