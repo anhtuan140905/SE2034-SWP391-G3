@@ -2,10 +2,8 @@ package vn.edu.fpt.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import vn.edu.fpt.model.constant.OrganizerMemberRole;
 import vn.edu.fpt.model.constant.RoleName;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;

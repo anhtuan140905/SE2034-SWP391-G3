@@ -12,6 +12,7 @@ import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
+import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
@@ -61,37 +62,9 @@ public class EventController {
     public List<wardDTO> listWard(@RequestParam Long cityId){
         return eventService.listWardDtos(cityId);
     }
-
-
-    //    @GetMapping("/list/event")
-//    public String ListEvent(
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @RequestParam(value = "status", required = false) EventStatus status,
-//            @RequestParam(defaultValue = "")                  String   keyword,
-//            @RequestParam(defaultValue = "1")                 int      page,
-//            Model model){
-//        Long organizerId = userDetails.getUser().getId();
-//        Page<EventCardDTO> pageResult = eventService.getEventCards(organizerId,status, keyword, page);
-//        model.addAttribute("eventCards",        pageResult.getContent());
-//        model.addAttribute("currentPage",       pageResult.getNumber() + 1);
-//        model.addAttribute("totalPages",        pageResult.getTotalPages());
-//        model.addAttribute("totalItems",        pageResult.getTotalElements());
-//
-//        long from = pageResult.getTotalElements() == 0 ? 0
-//                : (long) pageResult.getNumber() * pageResult.getSize() + 1;
-//        long to   = Math.min(from + pageResult.getSize() - 1,
-//                pageResult.getTotalElements());
-//        model.addAttribute("fromIndex",         from);
-//        model.addAttribute("toIndex",           to);
-//
-//        model.addAttribute("selectedStatus",  status);
-//        model.addAttribute("keyword",           keyword);
-//        return "organizer/event/ListOrganizerEvents";
-//    }
+//    sửa lại lấy theo OrnizerMember
     @GetMapping("list/event")
     public String ListEvent(
-            // Spring MVC tự gom nhiều ?status=APPROVED&status=ENDED
-            // vào mảng String[]
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "status", required = false) String[] statuses,
             @RequestParam(defaultValue = "")                  String   keyword,
@@ -120,4 +93,14 @@ public class EventController {
         model.addAttribute("keyword",           keyword);
         return "organizer/event/MyEvent";
     }
+
+
+    @GetMapping("/event/{id}")
+    public String getEventDetail(@PathVariable Long id,Model model){
+        EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
+        model.addAttribute("event",eventDetailDTO);
+        return "organizer/event/ViewOrganizerEvent"    ;
+    }
+
+
 }

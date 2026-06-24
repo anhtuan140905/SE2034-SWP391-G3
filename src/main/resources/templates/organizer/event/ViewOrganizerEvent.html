@@ -26,13 +26,13 @@
 <!-- ===== SIDEBAR OVERLAY ===== -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
-<!-- ===== SIDEBAR (inline từ sidebar.html fragment) ===== -->
+<!-- ===== SIDEBAR  ===== -->
 <th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
 
 <!-- ===== MAIN WRAPPER ===== -->
 <div class="main-wrapper">
 
-    <!-- ===== HEADER (inline từ Header.html fragment) ===== -->
+    <!-- ===== HEADER  ===== -->
     <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
 
 
@@ -40,16 +40,6 @@
     <main>
         <div style="max-width:1280px; margin:0 auto;" th:object="${event}">
 
-            <!-- Breadcrumb -->
-            <div class="d-flex align-items-center mb-4">
-                <a href="/organizer/list/event" class="breadcrumb-back">
-                    <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
-                    Back to Events
-                </a>
-                <span class="breadcrumb-sep">/</span>
-                <!-- Thymeleaf: th:text="${event.name}" -->
-                <span class="breadcrumb-current" th:text="${event.eventName}"></span>
-            </div>
 
             <!-- ===== MAIN GLASS CARD ===== -->
             <div class="glass-card mb-4">
