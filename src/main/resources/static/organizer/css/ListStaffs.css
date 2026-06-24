@@ -1,122 +1,13 @@
+
 :root {
-    /* Cập nhật màu chủ đạo theo ảnh mới */
-    --primary-gradient: linear-gradient(to right, #9b27b0, #e91e63);
+    --primary-gradient  : linear-gradient(to right, #9b27b0, #e91e63);
     --text-heading-purple: #6a1b9a;
-    --sidebar-active-bg: #fdf5fc;
-    --sidebar-active-border: #9b27b0;
-    --bg-body: #fdfafb;
-    --text-main: #333;
-    --text-muted: #888;
+    --bg-body           : #fdfafb;
+    --text-main         : #333;
+    --text-muted        : #888;
 }
 
-body {
-    background-color: var(--bg-body);
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden;
-    color: var(--text-main);
-}
-
-/* --- Sidebar Styles --- */
-.sidebar {
-    background-color: white;
-    min-height: 100vh;
-    border-right: 1px solid #eaeaea;
-    padding-top: 20px;
-}
-
-.brand-logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    margin-bottom: 30px;
-}
-
-.brand-logo .icon-box {
-    background: var(--primary-gradient);
-    color: white;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    font-size: 1rem;
-}
-
-.nav-link {
-    color: #666;
-    padding: 12px 20px;
-    margin: 4px 15px;
-    border-radius: 8px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s;
-    font-size: 0.95rem;
-}
-
-.nav-link i {
-    width: 24px;
-    margin-right: 10px;
-    color: #888;
-}
-
-.nav-link:hover {
-    background-color: #f8f9fa;
-}
-
-.nav-link.active {
-    background-color: var(--sidebar-active-bg);
-    color: var(--sidebar-active-border);
-    border-left: 4px solid var(--sidebar-active-border);
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    margin-left: 0;
-    padding-left: 31px;
-}
-
-.nav-link.active i {
-    color: var(--sidebar-active-border);
-}
-
-.btn-create-event {
-    background: var(--primary-gradient);
-    color: white;
-    border: none;
-    width: 80%;
-    margin: 20px auto;
-    display: block;
-    border-radius: 8px;
-    padding: 12px;
-    font-weight: 600;
-}
-
-/* --- Main Content Styles --- */
-.topbar {
-    background: var(--bg-body);
-    padding: 15px 30px;
-}
-
-.search-bar-top {
-    background-color: white;
-    border: 1px solid #eaeaea;
-    border-radius: 20px;
-    padding: 8px 15px;
-    width: 350px;
-}
-
-.search-bar-top input {
-    border: none;
-    background: transparent;
-    outline: none;
-    width: 100%;
-    margin-left: 10px;
-    font-size: 0.9rem;
-}
-
+/* ── Main content ── */
 .main-content {
     padding: 20px 40px;
 }
@@ -124,30 +15,29 @@ body {
 .page-header h2 {
     font-weight: 700;
     font-size: 1.5rem;
-    color: var(--text-heading-purple); /* Chữ màu tím */
+    color: var(--text-heading-purple);
 }
 
 .page-header p {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: .9rem;
 }
 
-/* Nút chung bo tròn nhiều & gradient */
+/* ── Gradient pill button ── */
 .btn-gradient-pill {
     background: var(--primary-gradient);
     color: white;
-    border-radius: 25px; /* Bo tròn dạng pill */
+    border-radius: 25px;
     padding: 10px 24px;
     font-weight: 500;
     border: none;
 }
-
 .btn-gradient-pill:hover {
-    opacity: 0.9;
+    opacity: .9;
     color: white;
 }
 
-/* --- Search & Filter Row --- */
+/* ── Search bar ── */
 .search-full-width {
     background: white;
     border: 1px solid #eaeaea;
@@ -159,15 +49,15 @@ body {
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
 .search-full-width input {
     border: none;
     outline: none;
     width: 100%;
     margin-left: 10px;
-    font-size: 0.95rem;
+    font-size: .95rem;
 }
 
+/* ── Filter button ── */
 .filter-btn {
     background: white;
     border: 1px solid #eaeaea;
@@ -180,7 +70,7 @@ body {
     gap: 10px;
 }
 
-/* --- Table Styles --- */
+/* ── Table ── */
 .table-container {
     background: white;
     border-radius: 12px;
@@ -196,7 +86,7 @@ body {
 
 .custom-table th {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: .85rem;
     font-weight: 500;
     padding: 15px 10px;
     border-bottom: 1px solid #eaeaea;
@@ -207,53 +97,35 @@ body {
     padding: 15px 10px;
     vertical-align: middle;
     border-bottom: 1px solid #f8f9fa;
-    font-size: 0.9rem;
+    font-size: .9rem;
 }
 
 .custom-table tr:last-child td {
     border-bottom: none;
 }
 
-.member-name {
-    font-weight: 600;
-    color: #222;
-}
+.member-name  { font-weight: 600; color: #222; }
+.member-email { color: var(--text-muted); font-family: monospace; font-size: .85rem; }
 
-/* Role Badges */
+/* ── Role badges ── */
 .badge-role {
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: .75rem;
     font-weight: 600;
 }
-.badge-chu-su-kien {
-    background-color: #fff4e5;
-    color: #e67e22;
-}
-.badge-kiem-soat {
-    background-color: #f3e8ff;
-    color: #8b5cf6;
-}
-.badge-thu-quy {
-    background-color: #ffe4e6;
-    color: #e11d48;
-}
+.badge-chu-su-kien { background-color: #fff4e5; color: #e67e22; }
+.badge-kiem-soat   { background-color: #f3e8ff; color: #8b5cf6; }
+.badge-thu-quy     { background-color: #ffe4e6; color: #e11d48; }
 
-.member-email {
-    color: var(--text-muted);
-    font-family: monospace;
-    font-size: 0.85rem;
-}
-
+/* ── Action links ── */
 .action-link {
     color: #9b27b0;
     text-decoration: none;
     font-weight: 600;
     cursor: pointer;
 }
-.action-link:hover {
-    text-decoration: underline;
-}
+.action-link:hover { text-decoration: underline; }
 
 .action-delete {
     color: #e11d48;
@@ -262,16 +134,11 @@ body {
     cursor: pointer;
     margin-left: 10px;
 }
-.action-delete:hover {
-    text-decoration: underline;
-}
+.action-delete:hover { text-decoration: underline; }
 
-.action-separator {
-    color: #ddd;
-    margin: 0 5px;
-}
+.action-separator { color: #ddd; margin: 0 5px; }
 
-/* --- Pagination --- */
+/* ── Pagination ── */
 .pagination-container {
     display: flex;
     justify-content: flex-end;
@@ -280,63 +147,31 @@ body {
 }
 
 .page-item-custom {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
     border-radius: 8px;
     background: white;
     color: #666;
     cursor: pointer;
     border: 1px solid #eaeaea;
-    font-size: 0.9rem;
+    font-size: .9rem;
 }
-
 .page-item-custom.active {
     background: var(--primary-gradient);
     color: white;
     border: none;
 }
 
-/* --- Modal Styles (Bo tròn nhiều hơn) --- */
-.modal-content {
-    border-radius: 24px; /* Bo góc mềm mại như hình */
-    border: none;
-}
-.modal-header {
-    border-bottom: none;
-    padding-bottom: 0;
-    padding-top: 24px;
-    padding-right: 24px;
-    padding-left: 24px;
-}
-.modal-body {
-    padding: 24px;
-}
-.modal-title {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-.modal-subtitle {
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 20px;
-}
-.form-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #555;
-    text-transform: uppercase;
-}
+/* ── Modal ── */
+.modal-content  { border-radius: 24px; border: none; }
+.modal-header   { border-bottom: none; padding: 24px 24px 0; }
+.modal-body     { padding: 24px; }
+.modal-title    { font-weight: bold; font-size: 1.1rem; }
+.modal-subtitle { font-size: .85rem; color: #666; margin-bottom: 20px; }
+
+.form-label   { font-size: .75rem; font-weight: 600; color: #555; text-transform: uppercase; }
 .form-control,
-.form-select {
-    background-color: white;
-    border: 1px solid #eaeaea;
-    border-radius: 12px;
-    padding: 10px 15px;
-    font-size: 0.9rem;
-}
+.form-select  { background: white; border: 1px solid #eaeaea; border-radius: 12px; padding: 10px 15px; font-size: .9rem; }
 
 .btn-light-pill {
     background-color: #f0f2f5;
@@ -346,18 +181,71 @@ body {
     border-radius: 25px;
     padding: 10px 0;
 }
-.btn-light-pill:hover {
-    background-color: #e4e6e9;
-}
+.btn-light-pill:hover { background-color: #e4e6e9; }
 
 .btn-close-custom {
     background: #f0f2f5;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
     border: none;
     color: #555;
 }
+
+ :root {
+     --sidebar-w   : 260px;
+     --header-h    : 64px;
+     --clr-sidebar : #ffffff;
+     --clr-bg      : #fdfafb;
+     --clr-border  : rgba(0,0,0,.08);
+     --clr-text    : #0f172a;
+     --clr-muted   : #64748b;
+     --clr-purple  : #7c3aed;
+     --gradient    : linear-gradient(135deg,#7c3aed 0%,#db2777 100%);
+     --font-display: "Space Grotesk", sans-serif;
+     --font-body   : "Plus Jakarta Sans", sans-serif;
+     --font-mono   : "JetBrains Mono", monospace;
+     --purple      : #7c3aed;
+     --purple-light: rgba(124,58,237,.08);
+ }
+body { font-family: var(--font-body); background-color: var(--clr-bg); color: var(--clr-text); overflow-x: hidden; }
+.main-wrapper { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+@media (max-width: 991.98px) { .main-wrapper { margin-left: 0; } }
+main { flex: 1; padding: 2rem 2.5rem; }
+
+/* ── Modal chung ── */
+.modal-content  { border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,.12); }
+.modal-head     { padding: 22px 24px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+.modal-head h5  { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 3px; font-family: var(--font-display); }
+.modal-head p   { font-size: 12px; color: #64748b; margin: 0; }
+.modal-body     { padding: 18px 24px 24px; }
+.btn-close-custom { background: #f1f5f9; border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; flex-shrink: 0; }
+.btn-close-custom:hover { background: #e2e8f0; }
+
+/* ── Form fields ── */
+.f-label { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin-bottom: 5px; }
+.f-control { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 13px; font-size: 13px; color: #0f172a; background: #fff; outline: none; box-sizing: border-box; font-family: var(--font-body); }
+.f-control:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,.1); }
+.f-control[readonly] { background: #f8fafc; color: #64748b; cursor: default; }
+.f-group { margin-bottom: 13px; }
+
+/* ── Readonly profile box ── */
+.profile-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 13px; }
+.profile-box .f-label { margin-bottom: 10px; }
+
+/* ── Permission block ── */
+.perm-block { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 13px 15px; margin-bottom: 14px; }
+.perm-block-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin-bottom: 10px; }
+.perm-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+.perm-item:last-child { border-bottom: none; padding-bottom: 0; }
+.perm-info { display: flex; flex-direction: column; }
+.perm-name { font-size: 13px; font-weight: 600; color: #1e293b; }
+.perm-desc { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+.perm-check { width: 17px; height: 17px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; margin-left: 10px; }
+
+/* ── Footer buttons ── */
+.modal-footer-btns { display: flex; gap: 10px; margin-top: 4px; }
+.btn-cancel-modal { flex: 1; background: #f1f5f9; border: none; border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; }
+.btn-cancel-modal:hover { background: #e2e8f0; }
+.btn-submit-modal { flex: 1; background: linear-gradient(135deg,#7c3aed,#db2777); border: none; border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; }
+.btn-submit-modal:hover { opacity: .9; }

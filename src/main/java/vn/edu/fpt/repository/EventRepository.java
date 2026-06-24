@@ -141,19 +141,22 @@ EventSummaryProjection findEventDetailById(Long id);
 //    EventSummaryProjection findEventDetailById(Long id);
 
 //
-    @Query("""
-                SELECT e FROM Event e
-                WHERE e.organizer.id = :organizerId
-                  AND (
-                        :#{#statusList.size()} = 0
-                        OR e.status IN :statusList
-                      )
-                  AND (
-                        :keyword IS NULL
-                        OR :keyword = ''
-                        OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-                      )
-            """)
+@Query("""
+        SELECT e FROM Event e
+        JOIN OrganizerMember o ON o.event = e
+        JOIN o.userRole ur
+        WHERE ur.user.id = :organizerId
+          AND (
+                :#{#statusList == null} = true
+                OR :#{#statusList.size()} = 0
+                OR e.status IN :statusList
+              )
+          AND (
+                :keyword IS NULL
+                OR :keyword = ''
+                OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+              )
+        """)
     Page<Event> findByMultiStatusAndKeyword(
             @Param("organizerId") Long organizerId,
             @Param("statusList") List<String> statusList,
