@@ -18,6 +18,7 @@ import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 
+import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import vn.edu.fpt.model.*;
@@ -491,5 +492,10 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
 
     public long countAttendedEvent(@Param("userId") Long userId){
         return eventRepository.countAttendedEvent(userId);
+    }
+
+    @Override
+    public EventHomeDTO getFavouriteEvent(Long eventId) {
+        return this.eventRepository.findEventsWithMinPrice(eventId);
     }
 }

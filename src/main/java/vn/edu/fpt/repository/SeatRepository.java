@@ -11,15 +11,15 @@ import java.util.Set;
 
 public interface SeatRepository extends JpaRepository<Seat,Long>
 {
-    @Query("SELECT s FROM Seat s \n" +
-            "LEFT JOIN s.ticket t \n" +
-            "LEFT JOIN SeatLock sl \n" +
-            "ON sl.seat = s \n" +
-            "AND sl.event.eventId = :eventId \n" +
-            "AND sl.expiresAt > :now \n" +
-            "WHERE s.ticketType.event.eventId = :eventId\n" +
-            "ORDER BY s.ticketType.ticketTypeId, s.rowLabel, s.seatNumber"
-    )
+    @Query("SELECT DISTINCT s FROM Seat s " +
+            "JOIN FETCH s.ticketType t " +
+            "LEFT JOIN FETCH s.ticket tk " +
+            "LEFT JOIN FETCH SeatLock sl " +
+            "  ON sl.seat = s " +
+            "  AND sl.event.eventId = :eventId " +
+            "  AND sl.expiresAt > :now " +
+            "WHERE t.event.eventId = :eventId " +
+            "ORDER BY t.ticketTypeId, s.rowLabel, s.seatNumber")
     List<Seat> findAllByEventIdWithStatus(
             @Param("eventId") Long eventId,
             @Param("now") Instant now
@@ -42,14 +42,4 @@ public interface SeatRepository extends JpaRepository<Seat,Long>
             @Param("now") Instant now
     );
 
-    // Thêm vào SeatRepository
-    @Query("""
-    SELECT sl.seat.seatId FROM SeatLock sl
-    WHERE sl.event.eventId = :eventId
-    AND sl.expiresAt > :now
-""")
-    Set<Long> findLockedSeatIds(
-            @Param("eventId") Long eventId,
-            @Param("now") Instant now
-    );
 }

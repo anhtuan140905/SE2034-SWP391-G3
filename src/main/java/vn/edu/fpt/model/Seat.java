@@ -7,6 +7,9 @@ import lombok.Setter;
 import vn.edu.fpt.common.SecurityUtil;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "seats")
 @Getter @Setter
@@ -32,4 +35,6 @@ public class Seat {
 
     @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
     private Ticket ticket;
+    @OneToMany(mappedBy = "seat", fetch = FetchType.LAZY)
+    private List<SeatLock> seatLocks = new ArrayList<>();
 }

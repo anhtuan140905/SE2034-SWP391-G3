@@ -6,6 +6,7 @@ import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
+import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.cityDto;
@@ -51,7 +52,7 @@ public interface EventService {
     List<EventSummaryDto> findTop5EventsBySoldCount();
     long countUpcomingEvent(@Param("userId") Long userId);
     long countAttendedEvent(@Param("userId") Long userId);
-
+    EventHomeDTO getFavouriteEvent(Long eventId);
 
 
 }
