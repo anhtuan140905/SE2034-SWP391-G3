@@ -86,6 +86,12 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE LOWER(u.email) = LOWER(:email)")
     boolean existsByEmail(@Param("email") String email);
 
+    @Query("SELECT w.city.name FROM User u " +
+            "JOIN u.address a " +
+            "JOIN a.ward w " +
+            "WHERE u.id = :userId")
+    Optional<String> findCityNameByUserId(@Param("userId") Long userId);
+
     //Hien thi danh sach Organizer: search + filter + phan trang
     @Query("""
                 SELECT DISTINCT u 

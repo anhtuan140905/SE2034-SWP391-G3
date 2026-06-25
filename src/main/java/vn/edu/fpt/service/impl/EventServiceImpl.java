@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
@@ -31,6 +32,7 @@ import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -498,4 +500,16 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
     public EventHomeDTO getFavouriteEvent(Long eventId) {
         return this.eventRepository.findEventsWithMinPrice(eventId);
     }
+
+    @Override
+    public List<Event> findCandidateEventsByCategories(List<Long> targetCatIds, EventStatus eventStatus, OrderStatus orderStatus, LocalDate today, Long userId, PageRequest page) {
+        return this.eventRepository.findCandidatesEventByCategories(targetCatIds, eventStatus, orderStatus, today, userId, page);
+    }
+
+    @Override
+    public List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page) {
+        return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
+    }
+
+
 }

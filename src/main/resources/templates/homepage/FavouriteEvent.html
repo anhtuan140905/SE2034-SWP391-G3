@@ -41,40 +41,6 @@
 <!-- MAIN FAVORITE EVENTS CONTAINER -->
 <main class="container py-5 my-4">
 
-    <!-- Banner Header Section (Curated premium styling with glowing badge) -->
-    <div class="glass-hero-preview px-5 py-5 rounded-4 mb-5 border border-white/10 text-center text-md-start position-relative">
-        <div class="absolute inset-0 rounded-2xl overflow-hidden shimmer-sweep -z-10 pointer-events-none"></div>
-        <h2 class="display-5 font-heading font-extrabold text-white mt-1">Sự kiện đã ghim yêu thích</h2>
-        <p class="text-secondary-light leading-relaxed max-w-2xl">
-            Lưu giữ toàn bộ các lễ hội âm nhạc, sự kiện sáng tạo hoặc các hội thảo công nghệ đỉnh cao bạn đã đánh dấu quan tâm. Đặt vé tham gia chỉ với một thao tác cực kì đơn giản.
-        </p>
-    </div>
-
-    <div class="row align-items-center mb-5 text-center text-md-start">
-        <div class="col-md-6 col-12">
-            <span class="section-label">CURATED SPOTLIGHTS SAVED</span>
-            <h3 class="h2 text-white font-heading font-extrabold mb-0">Bộ sưu tập cá nhân</h3>
-        </div>
-
-        <!-- Quick search & Category filters for Favourites list -->
-        <div class="col-md-6 col-12 mt-4 mt-md-0 d-flex flex-column flex-sm-row gap-3 justify-content-md-end align-items-stretch align-items-sm-center">
-            <div class="search-wrap position-relative">
-                <input type="text" id="fav-search-input" class="fav-search-control" placeholder="Tìm sự kiện đã ghim...">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            </div>
-
-            <div class="category-select-wrap">
-                <select id="fav-category-select" class="fav-select-control">
-                    <option value="all">Tất cả danh mục</option>
-                    <option value="music">Music</option>
-                    <option value="tech">Tech</option>
-                    <option value="art">Arts</option>
-                    <option value="wellness">Wellness</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
     <!-- Empty State Row (Dynamically shown if empty) -->
     <div id="fav-empty-state"
          class="text-center py-5 border border-white/5 rounded-4 p-5 glass-panel"
@@ -94,57 +60,52 @@
 
         <div class="favorite-ticket fav-event-col"
              th:each="event : ${favoriteEvents}"
-             th:attr="data-id=${event.eventId},
-                  data-category=${event.categoryName}">
+             th:attr="data-id=${event.eventId}, data-category=${event.categoryName}">
 
-            <!-- LEFT -->
+            <button class="favorite-remove-btn"
+                    th:attr="onclick=|toggleFavoriteCard('${event.eventId}', this)|">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
 
             <div class="favorite-info">
 
-                <button class="favorite-remove-btn"
-                        th:attr="onclick=|toggleFavoriteCard('${event.eventId}', this)|">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
                 <h3 class="favorite-title">
                     <a th:href="@{/events/detail/{id}(id=${event.eventId})}"
-                       th:text="${event.title}">
+                       th:text="${#strings.toUpperCase(event.title)}">
+                        'GIỮA MỘT VẠN TOUR' - PHÙNG KHÁNH LINH
                     </a>
                 </h3>
 
-                <div class="favorite-location mt-2">
+                <div class="favorite-time">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <span>19:00 - 22:00, 09 Tháng 08, 2026</span> </div>
+
+                <div class="favorite-location">
                     <i class="fa-solid fa-location-dot"></i>
-                    <span th:text="${event.venueName}"></span>
+                    <div>
+                        <strong th:text="${event.venueName}">TRUNG TÂM HỘI NGHỊ QUỐC GIA</strong>
+                        <p class="favorite-address" th:text="${event.description}">Số 57 Đường Phạm Hùng, Hà Nội</p>
+                    </div>
                 </div>
 
-                <p class="favorite-description"
-                   th:text="${event.description}">
-                </p>
+                <hr class="ticket-divider">
 
                 <div class="favorite-bottom">
-
-                    <div class="favorite-price"
-                         th:text="${event.minPrice == 0
-                     ? 'Miễn phí'
-                     : 'Từ ' + #numbers.formatDecimal(event.minPrice,0,'COMMA',0,'POINT') + '₫'}">
+                    <div class="favorite-price">
+                        Giá từ <span th:text="${event.minPrice == 0 ? 'Miễn phí' : #numbers.formatDecimal(event.minPrice,0,'COMMA',0,'POINT') + ' ₫'}">860.000 ₫</span>
+                        <i class="fa-solid fa-chevron-right Price-arrow"></i>
                     </div>
 
                     <a th:href="@{/events/book/{id}(id=${event.eventId})}"
                        class="btn-buy-ticket">
                         Mua vé ngay
                     </a>
-
                 </div>
 
             </div>
 
-            <!-- RIGHT -->
-
             <div class="favorite-poster">
-
-                <img th:src="${event.thumbnailUrl}"
-                     alt="Poster">
-
+                <img th:src="${event.thumbnailUrl}" alt="Poster">
             </div>
 
         </div>

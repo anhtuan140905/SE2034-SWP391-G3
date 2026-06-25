@@ -30,10 +30,10 @@
                     </li>
                 </ul>
 
-                <form class="d-flex navbar-search me-lg-3 my-2 my-lg-0" th:action="@{/events/search}" method="get">
+                <form class="d-flex navbar-search me-lg-3 my-2 my-lg-0" th:action="@{/events}" method="get">
                     <div class="input-group">
                         <span class="input-group-text search-icon-container"><i class="fa-solid fa-magnifying-glass search-icon"></i></span>
-                        <input name="query" class="form-control nav-search-input" type="search" placeholder="Search events..." aria-label="Search">
+                        <input name="keyword" class="form-control nav-search-input" type="search" placeholder="Search events..." aria-label="Search">
                     </div>
                 </form>
 

@@ -17,5 +17,6 @@ public class RecommendationDTO {
     private LocalDate date;
     private LocalDateTime startTime;
     private String categoryName;
+    private String cityName;
     private String reason;
 }

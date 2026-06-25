@@ -125,6 +125,4 @@ public class CheckoutController {
                 "Chưa thanh toán thành công, ghế sẽ được hủy block");
         return "redirect:/events";
     }
-
-
 }
