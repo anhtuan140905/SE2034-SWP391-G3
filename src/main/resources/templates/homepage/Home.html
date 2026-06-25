@@ -185,7 +185,8 @@
                             </div>
                         </div>
                     </div>
-
+                    <div style="display: block; width: 100%; height: 2px; background: #0000006e;
+    margin-bottom: 20px;"></div>
                     <div class="event-card-footer">
                         <div class="attendee-preview">
                     <span class="att-more"
@@ -238,8 +239,8 @@
                         </button>
                         <span class="event-badge-price"
                               th:text="${event.minPrice == 0 ? 'Free' : 'Từ ' + #numbers.formatDecimal(event.minPrice, 0, 'COMMA', 0, 'POINT') + '₫'}">
-        Price
-    </span>
+                            Price
+                        </span>
 
                         <div class="event-date-badge">
                             <span class="day" th:text="${#temporals.format(event.startTime, 'dd/MM')}">12/07</span>
@@ -264,7 +265,8 @@
                             </div>
                         </div>
                     </div>
-
+                    <div style="display: block; width: 100%; height: 2px; background: #0000006e;
+    margin-bottom: 20px;"></div>
                     <div class="event-card-footer">
                         <div class="attendee-preview">
                     <span class="att-more"

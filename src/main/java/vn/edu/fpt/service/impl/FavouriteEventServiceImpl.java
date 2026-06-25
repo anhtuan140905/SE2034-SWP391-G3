@@ -70,4 +70,9 @@ public class FavouriteEventServiceImpl implements FavouriteEventService {
         }
         return eventHomeDTOs;
     }
+
+    @Override
+    public List<Long> findFavouriteCategoryByUserId(Long userId) {
+        return this.favouriteEventRepository.findFavouriteCategoryIdsByUserId(userId);
+    }
 }

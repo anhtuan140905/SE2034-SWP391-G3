@@ -91,7 +91,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 //    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
 //
 //    long countByOrganizerId(Long organizerId);
-//
+
 
     /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 //
@@ -360,8 +360,33 @@ AND t.isCheckedIn = true
             "GROUP BY e.eventId, e.title, e.thumbnailUrl, e.description, e.venueName, e.startTime, c.categoryName, op.companyName")
     EventHomeDTO findEventsWithMinPrice(Long eventId);
 
-    @Query("SELECT e FROM Event e " +
+    @Query("SELECT DISTINCT e FROM Event e " +
             "JOIN FETCH e.category c " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city city " +
+            "WHERE c.categoryId IN :categoryIds " +
+            "AND e.status = :status " +
+            "AND e.date >= :today " +
+            "AND e.eventId NOT IN (" +
+            "   SELECT o.event.eventId FROM Order o " +
+            "   WHERE o.user.id = :userId " +
+            "   AND o.status = :paidStatus) " +
+            "ORDER BY e.date ASC")
+    List<Event> findCandidatesEventByCategories(
+            @Param("categoryIds") List<Long> categoryIds,
+            @Param("status") EventStatus status,
+            @Param("paidStatus")OrderStatus paidStatus,
+            @Param("today") LocalDate today,
+            @Param("userId") Long userId,
+            Pageable pageable
+            );
+
+    @Query("SELECT e FROM Event e " +
+            "JOIN FETCH e.category " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city " +
             "WHERE e.status = :status " +
             "AND e.date >= :today " +
             "ORDER BY e.date ASC")
@@ -370,23 +395,4 @@ AND t.isCheckedIn = true
             @Param("today") LocalDate today,
             Pageable pageable
     );
-
-    @Query("SELECT DISTINCT e FROM Event e " +
-            "JOIN FETCH e.category c " +
-            "WHERE c.categoryId IN :categoryIds " +
-            "AND e.status = :status " +
-            "AND e.date >= :today " +
-            "AND e.eventId NOT IN (" +
-            "SELECT o.event.eventId FROM Order o " +
-            "WHERE o.user.id = :userId " +
-            "AND o.status = :paidStatus) " +
-            "ORDER BY e.date ASC")
-    List<Event> findCandidatesByCategories(
-            @Param("categoryIds") List<Long> categoryIds,
-            @Param("status") EventStatus status,
-            @Param("paidStatus")OrderStatus paidStatus,
-            @Param("today") LocalDate today,
-            @Param("userId") Long userId,
-            Pageable pageable
-            );
 }
