@@ -25,6 +25,8 @@ import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
+import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
+import vn.edu.fpt.modelview.response.organizer.TicketTypeDTO;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
@@ -66,6 +68,42 @@ public class EventServiceImpl implements EventService {
     public List<EventCategory> getListEventCategory() {
         List<EventCategory> listAllEventCategory = eventCategoryRepository.findAll();
         return listAllEventCategory;
+    }
+    @Override
+    public EventDetailDTO getEventDetailById(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Event Not Found with " + id));
+        EventDetailDTO eventDetailDTO = new EventDetailDTO();
+        eventDetailDTO.setBanner(event.getThumbnailUrl());
+        eventDetailDTO.setEventName(event.getTitle());
+        eventDetailDTO.setVenueName(event.getVenueName());
+        eventDetailDTO.setDate(event.getDate().toString());
+        eventDetailDTO.setStatus(event.getStatus().name());
+        eventDetailDTO.setDescription(event.getDescription());
+        List<String> urlimage = new ArrayList<>();
+        for (EventImage image: event.getImages()){
+            urlimage.add(image.getImageUrl());
+        }
+        eventDetailDTO.setUrlImage(urlimage);
+        eventDetailDTO.setCity(event.getAddress().getWard().getCity().getName());
+        List<timeLineDTO> timelines = new ArrayList<>();
+        for (TimeLineEvent timeline : event.getTimeLine()){
+            timeLineDTO dto = new timeLineDTO(timeline.getTime(),timeline.getDescription());
+            timelines.add(dto);
+        }
+        eventDetailDTO.setTimelines(timelines);
+        List<TicketTypeDTO> ticketTypes = new ArrayList<>();
+        for (TicketType ticketType : event.getTicketTypes()){
+            TicketTypeDTO dto =new TicketTypeDTO(ticketType.getZoneName(),ticketType.getPrice(),
+                    ticketType.getTotalQuantity(),ticketType.getSoldQuantity());
+            ticketTypes.add(dto);
+        }
+        eventDetailDTO.setTicketType(ticketTypes);
+        eventDetailDTO.setStartTime(event.getStartTime().toLocalTime().toString());
+        eventDetailDTO.setEndTime(event.getEndTime().toLocalTime().toString());
+        eventDetailDTO.setWard(event.getAddress().getWard().getName());
+        eventDetailDTO.setSpecificAddress(event.getAddress().getSpecificAddress());
+        return eventDetailDTO;
     }
 
     @Override

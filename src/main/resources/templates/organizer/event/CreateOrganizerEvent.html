@@ -141,21 +141,20 @@
                       <span class="material-symbols-outlined">cloud_upload</span>
                                     <span>Thay đổi ảnh bìa</span>
                                 </div>
+
                             </div>
+                            <div id="bannerError" style="color:red"></div>  
                         </div>
+
                         <div class="text-danger"
                              th:if="${#fields.hasErrors('banner')}"
                              th:errors="*{banner}">
                         </div>
                         <!-- Thư viện ảnh -->
                         <div class="field-card mb-4">
-                            <div
-                                    class="d-flex justify-content-between align-items-center mb-2"
-                            >
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="field-label mb-0">
-                      <span class="material-symbols-outlined text-purple"
-                      >filter</span
-                      >
+                                <span class="material-symbols-outlined text-purple">filter</span>
                                     Thư Viện Hình Ảnh Chi Tiết
                                 </label>
                                 <span class="mono-tag" id="galleryCount">0 ĐÃ THÊM</span>
@@ -171,28 +170,23 @@
                                     <button
                                             type="button"
                                             class="btn btn-upload-browse w-100"
-                                            onclick="
-                          document.getElementById('galleryFileInput').click()
-                        "
-                                    >
-                        <span class="material-symbols-outlined"
-                        >collections</span
-                        >
-                                        Duyệt Tệp
+                                            onclick="document.getElementById('galleryFileInput').click()">
+                                            <span class="material-symbols-outlined">collections</span>
+                                            Duyệt Tệp
                                     </button>
                                     <input
                                             type="file"
                                             id="galleryFileInput"
                                             name="imageFiles"
                                             accept="image/*"
-
+                                            onchange="handleGalleryFiles(event)"
                                             multiple
                                             class="d-none"
-                                            onchange="handleGalleryFiles(event)"
+
                                     />
                                 </div>
+                                <div id="galleryErr"></div>
                             </div>
-
                             <div id="galleryGrid" class="gallery-grid mt-4 d-none"></div>
                         </div>
 

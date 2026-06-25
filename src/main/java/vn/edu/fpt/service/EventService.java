@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 
+import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.repository.SumRevenueByMonthProjection;
@@ -47,7 +48,7 @@ public interface EventService {
     EventSummaryProjection findEventDetailById(Long id);
     Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
     List<EventSummaryDto> findTop10Events();
-    
+    EventDetailDTO getEventDetailById(Long id);
     long countAllEvent();
     long countAllUseActive();
     long countAllSoldTicket();

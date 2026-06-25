@@ -24,14 +24,14 @@
                     <span class="nav-label">Bảng điều khiển</span>
                 </a>
             </li>
-            <li th:classappend="${activePage == 'event-management'} ? 'active' : ''">
+            <li th:classappend="${activePage == 'events'} ? 'active' : ''">
                 <a th:href="@{/moderator/events}">
                     <span class="nav-icon"><i class="fa-regular fa-calendar-days"></i></span>
                     <span class="nav-label">Sự kiện đang chờ xử lý</span>
                 </a>
             </li>
-            <li th:classappend="${activePage == 'organizer-management'} ? 'active' : ''">
-                <a th:href="@{/moderator/organizer/create}">
+            <li th:classappend="${activePage == 'organizers'} ? 'active' : ''">
+                <a th:href="@{/moderator/organizers}">
                     <span class="nav-icon"><i class="fa-solid fa-user-tie"></i></span>
                     <span class="nav-label">Quản lý Organizer</span>
                 </a>

@@ -1,386 +1,330 @@
-<!doctype html>
-<html lang="vi">
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EventHub - Quản lý thành viên (Theme Tím)</title>
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-    />
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}">
-    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}">
-    <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}" />
+    <title>EventHub – Quản lý Thành viên</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}"     href="/organizer/css/SideBar.css" />
+    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}"      href="/organizer/css/Header.css" />
+    <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}"  href="/organizer/css/ListStaffs.css" />
+
 
 </head>
 <body>
-<div class="container-fluid p-0">
-    <div class="row g-0">
-        <div class="col-2 sidebar d-none d-lg-block">
-            <div class="brand-logo">
-                <div class="icon-box">
-                    <i class="fa-regular fa-calendar-days"></i>
-                </div>
-                <div>
-                    <div style="color: #222">EventHub</div>
-                    <div
-                            style="font-size: 0.55rem; color: #a855f7; letter-spacing: 1px"
-                    >
-                        ORGANIZER PORTAL
-                    </div>
-                </div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+<th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
+
+<div class="main-wrapper">
+
+    <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
+
+    <main>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="page-header">
+                <h2>Thành viên</h2>
+                <p class="mb-0">Quản lý kiểm soát viên soát vé di động, đối soát tài chính và phân quyền hệ thống.</p>
             </div>
-
-            <nav class="nav flex-column mt-4">
-                <a class="nav-link" href="#"
-                ><i class="fa-solid fa-border-all"></i> Dashboard</a
-                >
-                <a class="nav-link" href="#"
-                ><i class="fa-regular fa-circle-user"></i> Organizer Account</a
-                >
-                <a class="nav-link" href="#"
-                ><i class="fa-regular fa-calendar"></i> Event Management</a
-                >
-                <a class="nav-link" href="#"
-                ><i class="fa-solid fa-tags"></i> Discount Vouchers</a
-                >
-                <a class="nav-link" href="#"
-                ><i class="fa-solid fa-basket-shopping"></i> Orders & Tickets</a
-                >
-                <a class="nav-link active" href="#"
-                ><i class="fa-solid fa-users"></i> Staff Permissions</a
-                >
-                <a class="nav-link" href="#"
-                ><i class="fa-solid fa-id-badge"></i> Ticket Holders</a
-                >
-            </nav>
-
-            <button class="btn btn-create-event mt-5">
-                <i class="fa-solid fa-plus me-2"></i> Create New Event
+            <button class="btn btn-gradient-pill" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+                <i class="fa-solid fa-plus me-1"></i> Thêm thành viên
             </button>
-
-            <div class="position-absolute bottom-0 mb-4 w-100 px-3">
-                <a href="#" class="nav-link"
-                ><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out</a
-                >
-            </div>
+        </div>
+        <form method="get" id="filterForm">
+        <div class="search-full-width">
+            <i class="fa-solid fa-magnifying-glass text-muted"></i>
+            <input type="text" name="keyword" placeholder="Tìm kiếm thành viên" th:value="${keyword}" />
         </div>
 
-        <div class="col-12 col-lg-10">
-            <div class="topbar d-flex justify-content-between align-items-center">
-                <div class="search-bar-top d-flex align-items-center">
-                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                    <input
-                            type="text"
-                            placeholder="Search events, tickets, orders..."
-                    />
-                </div>
-                <div class="user-profile d-flex align-items-center">
-                    <img
-                            src="https://ui-avatars.com/api/?name=Minh+Event&background=0D8ABC&color=fff"
-                            alt="Avatar"
-                            class="rounded-circle me-2"
-                            width="35"
-                    />
-                    <div style="line-height: 1.2">
-                        <div style="font-weight: 600; font-size: 0.9rem; color: #222">
-                            Minh Event Corp
-                        </div>
-                        <div style="font-size: 0.8rem; color: #666">Administrator</div>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-end mb-2">
+                <select name="roleId" class="f-control" onchange="this.form.submit()">
+                    <option value="">Tất cả</option>
+                    <option th:each="role : ${roles}"
+                            th:value="${role.id}"
+                            th:text="${role.name}"
+                            th:selected="${#strings.toString(roleId) == #strings.toString(role.id)}">
+                    </option>
+                </select>
             </div>
+        </form>
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                <tr>
+                    <th>Mã TV</th>
+                    <th>Tên thành viên</th>
+                    <th>Vai trò</th>
+                    <th>Email</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="staff, iterStat : ${staffList}">
+                    <td class="text-muted" th:text="${iterStat.count}"></td>
 
-            <div class="main-content">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="page-header">
-                        <h2>Thành viên</h2>
-                        <p class="mb-0">
-                            Quản lý kiểm soát viên soát vé di động, đối soát tài chính và
-                            phân quyền hệ thống.
-                        </p>
-                    </div>
-                    <button
-                            class="btn btn-gradient-pill"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addStaffModal"
-                    >
-                        <i class="fa-solid fa-plus me-1"></i> Thêm thành viên
-                    </button>
-                </div>
+                    <td class="member-name" th:text="${staff.Name}"></td>
 
-                <div class="search-full-width">
-                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                    <input type="text" placeholder="Tìm kiếm thành viên" />
-                </div>
+                    <td><span class="badge-role badge-chu-su-kien" th:text="${staff.role}"></span></td>
 
-                <div class="d-flex justify-content-end mb-2">
-                    <button class="filter-btn">
-                        <i class="fa-solid fa-filter text-muted"></i> Tất cả (6)
-                        <i
-                                class="fa-solid fa-chevron-down ms-1"
-                                style="font-size: 0.8rem"
-                        ></i>
-                    </button>
-                </div>
+                    <td class="member-email" th:text="${staff.email}"></td>
 
-                <div class="table-container">
-                    <table class="custom-table">
-                        <thead>
-                        <tr>
-                            <th>Mã TV</th>
-                            <th>Tên thành viên</th>
-                            <th>Vai trò</th>
-                            <th>Thành viên</th>
-                            <th>Hành động</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="text-muted">st-1</td>
-                            <td class="member-name">Hoàng Anh Nguyễn</td>
-                            <td>
-                      <span class="badge-role badge-chu-su-kien"
-                      >Chủ sự kiện</span
-                      >
-                            </td>
-                            <td class="member-email">nha29052005@gmail.com</td>
-                            <td>
-                      <span
-                              class="action-link"
-                              data-bs-toggle="modal"
-                              data-bs-target="#editRoleModal"
-                      >Xem chi tiết</span
-                      >
-                                <span class="action-separator">|</span>
-                                <span class="action-delete">Xóa</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">st-2</td>
-                            <td class="member-name">Alex Tran</td>
-                            <td>
-                      <span class="badge-role badge-chu-su-kien"
-                      >Chủ sự kiện</span
-                      >
-                            </td>
-                            <td class="member-email">alex.tran@minhevent.com</td>
-                            <td>
-                      <span
-                              class="action-link"
-                              data-bs-toggle="modal"
-                              data-bs-target="#editRoleModal"
-                      >Xem chi tiết</span
-                      >
-                                <span class="action-separator">|</span>
-                                <span class="action-delete">Xóa</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">st-3</td>
-                            <td class="member-name">Johnathan Le</td>
-                            <td>
-                      <span class="badge-role badge-kiem-soat"
-                      >Kiểm soát viên</span
-                      >
-                            </td>
-                            <td class="member-email">johnathan.le@gmail.com</td>
-                            <td>
-                      <span
-                              class="action-link"
-                              data-bs-toggle="modal"
-                              data-bs-target="#editRoleModal"
-                      >Xem chi tiết</span
-                      >
-                                <span class="action-separator">|</span>
-                                <span class="action-delete">Xóa</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">st-4</td>
-                            <td class="member-name">Sarah Nguyen</td>
-                            <td>
-                                <span class="badge-role badge-thu-quy">Thủ quỹ</span>
-                            </td>
-                            <td class="member-email">sarah.nguyen@eventpro.com</td>
-                            <td>
-                      <span
-                              class="action-link"
-                              data-bs-toggle="modal"
-                              data-bs-target="#editRoleModal"
-                      >Xem chi tiết</span
-                      >
-                                <span class="action-separator">|</span>
-                                <span class="action-delete">Xóa</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination-container">
-                    <div class="page-item-custom">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div>
-                    <div class="page-item-custom active">1</div>
-                    <div class="page-item-custom">2</div>
-                    <div class="page-item-custom">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                </div>
-            </div>
+                    <td>
+                        <span class="action-link" data-bs-toggle="modal" data-bs-target="#editRoleModal">Xem chi tiết</span>
+                        <span class="action-separator">|</span>
+                        <span class="action-delete">Xóa</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
+
+        <div class="pagination-container"  th:if="${totalPages > 0}">
+
+            <!-- Prev -->
+            <a th:href="@{/organizer/event/{id}/members(id=${eventId},
+                  page=${currentPage - 1},
+                  keyword=${keyword},
+                  roleId=${roleId})}"
+               class="page-item-custom"
+               th:if="${currentPage > 0}"
+               th:classappend="${currentPage == 0} ? 'disabled'">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+
+            <!-- Số trang -->
+            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+               th:href="@{/organizer/event/{id}/members(id=${eventId},
+                  page=${i},
+                  keyword=${keyword},
+                  roleId=${roleId})}"
+               class="page-item-custom"
+               th:classappend="${i == currentPage} ? 'active'"
+
+               th:text="${i + 1}">
+            </a>
+
+            <!-- Next -->
+            <a th:href="@{/organizer/event/{id}/members(id=${eventId},
+                  page=${currentPage + 1},
+                  keyword=${keyword},
+                  roleId=${roleId})}"
+               class="page-item-custom"
+               th:if="${currentPage < totalPages-1}"
+               th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+        </div>
+    </main>
 </div>
 
+
+<!-- ================================================================
+     MODAL 1: THÊM THÀNH VIÊN MỚI
+     action  → th:action="@{/organizer/staff/invite}" method="post"
+     ================================================================ -->
 <div class="modal fade" id="addStaffModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div
-                    class="modal-header d-flex justify-content-between align-items-start"
-            >
-                <div>
-                    <h5 class="modal-title">MỜI NHÂN VIÊN MỚI</h5>
-                    <div class="modal-subtitle">
-                        Cấp tài khoản tham gia vận hành nhanh chóng.
-                    </div>
-                </div>
-                <button
-                        type="button"
-                        class="btn-close-custom"
-                        data-bs-dismiss="modal"
-                >
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body pt-0">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label">HỌ VÀ TÊN</label>
-                        <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Ví dụ: Nguyễn Văn A"
-                        />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">EMAIL LIÊN KẾT</label>
-                        <input
-                                type="email"
-                                class="form-control"
-                                placeholder="name@company.com"
-                        />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">VAI TRÒ MẶC ĐỊNH</label>
-                        <select class="form-select">
-                            <option selected>Ticket Checker (Soát vé di động)</option>
-                            <option value="1">Administrator (Chủ sự kiện)</option>
-                            <option value="2">Treasurer (Đối soát tài chính)</option>
-                        </select>
-                    </div>
-                    <div class="d-flex justify-content-between gap-3">
-                        <button
-                                type="button"
-                                class="btn btn-light-pill w-50"
-                                data-bs-dismiss="modal"
-                        >
-                            Bỏ qua
-                        </button>
-                        <button type="button" class="btn btn-gradient-pill w-50">
-                            Gửi lời mời
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+        <div class="modal-content">
 
-<div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div
-                    class="modal-header d-flex justify-content-between align-items-start"
-            >
+            <div class="modal-head">
                 <div>
-                    <h5 class="modal-title">CHỈNH SỬA QUYỀN LỢI</h5>
-                    <div class="modal-subtitle">
-                        Tùy chỉnh phân quyền thủ công cho Hoàng Anh Nguyễn.
-                    </div>
+                    <h5>Mời nhân viên mới</h5>
+                    <p>Cấp tài khoản tham gia vận hành nhanh chóng.</p>
                 </div>
-                <button
-                        type="button"
-                        class="btn-close-custom"
-                        data-bs-dismiss="modal"
-                >
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="modal-body pt-0">
-                <form>
-                    <div
-                            class="mb-3 p-3 rounded-4"
-                            style="background-color: #fdfdfd; border: 1px solid #f0f0f0"
-                    >
-                        <label class="form-label text-muted mb-2">HỒ SƠ BAN ĐẦU</label>
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <label class="form-label" style="font-size: 0.65rem"
-                                >HỌ & TÊN</label
-                                >
-                                <input
-                                        type="text"
-                                        class="form-control"
-                                        value="Hoàng Anh Nguyễn"
-                                        readonly
-                                />
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label" style="font-size: 0.65rem"
-                                >EMAIL</label
-                                >
-                                <input
-                                        type="email"
-                                        class="form-control"
-                                        value="nha29052005@gmail.com"
-                                        readonly
-                                />
+
+            <div class="modal-body">
+                <div  th:if="${errorMessage}" id="errorAlert" class="alert-modal alert-error">
+                    <span style="color: red" th:text="${errorMessage}"></span>
+                </div>
+                <form th:action="@{/organizer/event/{id}/members/invite(id=${eventId})}" method="post" th:object="${inviteMember}">
+
+                    <!-- Thông tin cơ bản -->
+                    <div class="row g-2 mb-1">
+                        <div class="col-6">
+                            <div class="f-group">
+                                <label class="f-label" for="add-email">Email liên kết</label>
+                                <input id="add-email" th:field="*{email}" type="email" class="f-control" placeholder="name@company.com" required />
                             </div>
                         </div>
                     </div>
-                    <div class="mb-4 mt-3">
-                        <label class="form-label">THIẾT LẬP VAI TRÒ TỔNG THỂ</label>
-                        <select class="form-select">
-                            <option selected>Administrator (Đồng quản trị Master)</option>
-                            <option value="1">Treasurer (Đối soát tài chính)</option>
-                            <option value="2">Ticket Checker (Kiểm soát viên)</option>
+
+                    <div class="f-group">
+                        <label class="f-label" for="add-role">Vai trò mặc định</label>
+                        <select id="add-role" th:field="*{roleId}" class="f-control">
+                            <option th:each="role:${roles}"
+                                    th:value="${role.id}"
+                                    th:text="${role.name}"></option>
                         </select>
                     </div>
-                    <div class="d-flex justify-content-between gap-3">
-                        <button
-                                type="button"
-                                class="btn btn-light-pill w-50"
-                                data-bs-dismiss="modal"
-                        >
-                            Bỏ qua
-                        </button>
-                        <button type="button" class="btn btn-gradient-pill w-50">
-                            Lưu thay đổi
-                        </button>
+
+                    <!-- Phân quyền chi tiết -->
+                    <div class="perm-block">
+                        <div class="perm-block-title">Quyền hạn</div>
+                        <div class="perm-item" th:each="permission:${permissions}">
+                            <div class="perm-info">
+                                <span class="perm-desc" th:text="${permission.description}"></span>
+                            </div>
+                            <input type="checkbox"  th:field="*{permissionId}" name="permissions" th:value="${permission.id}" class="perm-check" />
+                        </div>
+
                     </div>
+
+                 <div class="modal-footer-btns">
+                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
+                <button type="submit" class="btn-submit-modal">Gửi lời mời</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+<!-- ================================================================
+     MODAL 2: CHỈNH SỬA QUYỀN LỢI
+     action  → th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post"
+     ================================================================ -->
+<div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-head">
+                <div>
+                    <h5>Chỉnh sửa quyền lợi</h5>
+                    <!-- th:text="'Tuỳ chỉnh phân quyền thủ công cho ' + ${staff.fullName} + '.'" -->
+                    <p>Tuỳ chỉnh phân quyền thủ công cho Hoàng Anh Nguyễn.</p>
+                </div>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post" -->
+                <form action="#" method="post">
+                    <!-- th:field="*{id}" -->
+                    <input type="hidden" name="id" value="st-1" />
+
+                    <!-- Hồ sơ (readonly) -->
+                    <div class="profile-box">
+                        <label class="f-label">Hồ sơ ban đầu</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="f-group mb-0">
+                                    <label class="f-label" for="edit-name">Họ &amp; tên</label>
+                                    <!-- th:field="*{fullName}" -->
+                                    <input id="edit-name" name="fullName" type="text" class="f-control" value="Hoàng Anh Nguyễn" readonly />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="f-group mb-0">
+                                    <label class="f-label" for="edit-email">Email</label>
+                                    <!-- th:field="*{email}" -->
+                                    <input id="edit-email" name="email" type="email" class="f-control" value="nha29052005@gmail.com" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="f-group">
+                        <label class="f-label" for="edit-role">Vai trò tổng thể</label>
+                        <!-- th:field="*{role}" -->
+                        <select id="edit-role" name="role" class="f-control">
+                            <option value="ADMINISTRATOR" selected>Administrator – Đồng quản trị Master</option>
+                            <option value="TREASURER">Treasurer – Đối soát tài chính</option>
+                            <option value="TICKET_CHECKER">Ticket Checker – Kiểm soát viên</option>
+                        </select>
+                    </div>
+
+                    <!-- Phân quyền chi tiết -->
+                    <div class="perm-block">
+                        <div class="perm-block-title">Quyền hạn cụ thể</div>
+
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <span class="perm-name">Xem báo cáo doanh thu</span>
+                                <span class="perm-desc">Truy cập thống kê & tài chính sự kiện</span>
+                            </div>
+                            <!-- th:checked="${staff.permissions.contains('VIEW_REVENUE')}" -->
+                            <input type="checkbox" name="permissions" value="VIEW_REVENUE" class="perm-check" checked />
+                        </div>
+
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <span class="perm-name">Quản lý đơn hàng</span>
+                                <span class="perm-desc">Xem, huỷ và hoàn tiền đơn hàng</span>
+                            </div>
+                            <!-- th:checked="${staff.permissions.contains('MANAGE_ORDERS')}" -->
+                            <input type="checkbox" name="permissions" value="MANAGE_ORDERS" class="perm-check" checked />
+                        </div>
+
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <span class="perm-name">Soát vé tại cổng</span>
+                                <span class="perm-desc">Check-in người tham dự sự kiện</span>
+                            </div>
+                            <!-- th:checked="${staff.permissions.contains('SCAN_TICKETS')}" -->
+                            <input type="checkbox" name="permissions" value="SCAN_TICKETS" class="perm-check" />
+                        </div>
+
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <span class="perm-name">Quản lý voucher</span>
+                                <span class="perm-desc">Tạo, sửa, vô hiệu hoá mã giảm giá</span>
+                            </div>
+                            <!-- th:checked="${staff.permissions.contains('MANAGE_VOUCHERS')}" -->
+                            <input type="checkbox" name="permissions" value="MANAGE_VOUCHERS" class="perm-check" checked />
+                        </div>
+
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <span class="perm-name">Quản lý nhân viên</span>
+                                <span class="perm-desc">Thêm, xoá, đổi quyền thành viên</span>
+                            </div>
+                            <!-- th:checked="${staff.permissions.contains('MANAGE_STAFF')}" -->
+                            <input type="checkbox" name="permissions" value="MANAGE_STAFF" class="perm-check" checked />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer-btns">
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
+                        <button type="submit" class="btn-submit-modal">Lưu thay đổi</button>
+                    </div>
+
                 </form>
             </div>
+
         </div>
     </div>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/organizer/js/sidebar.js}"></script>
-<script th:src="@{/organizer/js/Header.js}"></script>
+<script th:src="@{/organizer/js/sidebar.js}" src="/organizer/js/sidebar.js"></script>
+<script th:src="@{/organizer/js/Header.js}"  src="/organizer/js/Header.js"></script>
+<script>
+    window.onload = function () {
+        const errorDiv = document.getElementById('errorAlert');
+        console.log('errorDiv:', errorDiv); // debug
+        if (errorDiv) {
+            const modal = new bootstrap.Modal(document.getElementById('addStaffModal'));
+            modal.show();
+        }
+    };
+</script>
 </body>
 </html>

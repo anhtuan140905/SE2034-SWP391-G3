@@ -681,3 +681,90 @@ city.addEventListener("change",function (){
             })
         }) .catch(err => console.error("Error loading ward:", err));
 })
+
+document.getElementById("bannerFileInput")
+    .addEventListener("change", function () {
+        const file = this.files[0];
+        const error = document.getElementById("bannerError");
+        error.textContent = "";
+        if (!file) return;
+        const img = new Image();
+        img.onload = function () {
+            const width = img.width;
+            const height = img.height;
+            if (width !== 1280 || height !== 720) {
+                error.textContent = "Ảnh phải có kích thước 1280x720";
+                document.getElementById("bannerFileInput").value = "";
+                document.getElementById("bannerPreview").src = "";
+                document.getElementById("bannerPreview").classList.add("d-none");
+                document.getElementById("bannerPlaceholder").classList.remove("d-none");
+            }
+            URL.revokeObjectURL(img.src);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+
+// document.getElementById("galleryFileInput")
+//     .addEventListener("change", function () {
+//
+//         const files = [...this.files];
+//         const error = document.getElementById("galleryErr");
+//
+//         error.innerHTML = "";
+//
+//         let validFiles = [];
+//         let processed = 0;
+//
+//         files.forEach(file => {
+//
+//             const img = new Image();
+//
+//             img.onload = () => {
+//
+//                 processed++;
+//
+//                 const width = img.width;
+//                 const height = img.height;
+//
+//                 if (width !== 720 || height !== 958) {
+//
+//                     error.innerHTML += `
+//                     <div style="color:red">
+//                         ${file.name}
+//                         phải có kích thước 720×958
+//                     </div>
+//                 `;
+//                 } else {
+//                     validFiles.push(file);
+//                 }
+//
+//                 // xử lý khi tất cả ảnh xong
+//                 if (processed === files.length) {
+//
+//                     if (validFiles.length > 0) {
+//
+//                         const dt = new DataTransfer();
+//
+//                         validFiles.forEach(
+//                             file => dt.items.add(file)
+//                         );
+//
+//                         handleGalleryFiles({
+//                             target: {
+//                                 files: dt.files
+//                             }
+//                         });
+//                     }
+//
+//                     document.getElementById(
+//                         "galleryFileInput"
+//                     ).value = "";
+//                 }
+//
+//                 URL.revokeObjectURL(img.src);
+//             };
+//
+//             img.src = URL.createObjectURL(file);
+//         });
+//
+//     });
