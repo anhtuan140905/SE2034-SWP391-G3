@@ -54,12 +54,15 @@ public class GeminiService {
         5. KHÔNG dùng câu mở đầu chung chung như "Đây là sự kiện tuyệt vời..."
 
         === QUY TẮC OUTPUT — ĐỌC KỸ TRƯỚC KHI TRẢ LỜI ===
+        - Chọn ra ĐÚNG 5 sự kiện phù hợp nhất với user
+        - Sắp xếp theo thứ tự ưu tiên giảm dần (phù hợp nhất ở vị trí đầu)
+        - Số phần tử trong array PHẢI ĐÚNG BẰNG 5
         - Trả về JSON array DUY NHẤT
         - Array bắt đầu bằng ký tự "[" và kết thúc bằng ký tự "]"
         - Số phần tử trong array PHẢI BẰNG số sự kiện trong input (không bỏ sót, không thêm)
         - Mỗi phần tử gồm ĐÚNG 2 field:
             + "eventId": kiểu NUMBER (ví dụ: 5), KHÔNG phải string (không phải "5")
-            + "reason" : chuỗi tiếng Việt, tối đa 25 từ, KHÔNG xuống dòng
+            + "reason" : chuỗi tiếng Việt, tối đa 100 từ, KHÔNG xuống dòng
         - TUYỆT ĐỐI KHÔNG có ký tự markdown (không có ```json, không có ```)
         - TUYỆT ĐỐI KHÔNG có bất kỳ text nào ngoài JSON array
           (không có "Dưới đây là:", "Kết quả:", "Sure!", hay bất kỳ lời giải thích nào)
@@ -91,12 +94,13 @@ public class GeminiService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private static final String GEMINI_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
     public Map<Long, String> generateReasons(
             List<RecommendationDTO> candidateEvents,
             UserRecommendationProfile profile
     ) {
+        log.info("Candidate events size = {}", candidateEvents.size());
         if(candidateEvents.isEmpty()) return Map.of();
         try {
             String filledPrompt = buildPrompt(candidateEvents, profile);
@@ -108,7 +112,11 @@ public class GeminiService {
 
 
             ResponseEntity<Map> response = restTemplate.postForEntity(GEMINI_URL + apiKey, new HttpEntity<>(requestBody, headers), Map.class);
-
+            log.info(
+                    "Gemini Response:\n{}",
+                    objectMapper.writerWithDefaultPrettyPrinter()
+                            .writeValueAsString(response.getBody())
+            );
             return parseGeminiResponse(response.getBody());
         } catch (Exception e) {
             log.error("Gemini API call failed: {}", e.getMessage());
@@ -137,6 +145,7 @@ public class GeminiService {
 
     private String buildCandidatesJson(List<RecommendationDTO> candidates) {
         try {
+
             List<Map<String, Object>> list = candidates.stream()
                     .map(e -> Map.<String, Object>of(
                             "eventId", e.getEventId(),
@@ -162,8 +171,8 @@ public class GeminiService {
                 ),
                 "generationConfig", Map.of(
                         "temperature", 0.3,
-                        "maxOutputTokens", 1024,
-                        "topP", 0.8
+                        "topP", 0.8,
+                        "responseMimeType", "application/json"
                 )
         );
 
@@ -185,7 +194,13 @@ public class GeminiService {
             String cleanedText = rawText
                     .replaceAll("(?s)```json\\s*|```", "")
                     .trim();
+            log.info("========== RAW GEMINI ==========");
+            log.info(rawText);
+            log.info("================================");
 
+            log.info("========== CLEANED ==========");
+            log.info(cleanedText);
+            log.info("=============================");
             List<Map<String, Object>> items = objectMapper.readValue(
                     cleanedText,
                     objectMapper.getTypeFactory()

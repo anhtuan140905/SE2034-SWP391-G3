@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.Event;
+import vn.edu.fpt.model.TicketType;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.UserLevel;
@@ -14,16 +15,19 @@ import vn.edu.fpt.modelview.response.homepage.RecommendationDTO;
 import vn.edu.fpt.modelview.response.homepage.UserRecommendationProfile;
 import vn.edu.fpt.service.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendationService {
+    private static final int CANDIDATE_POOL = 10;
     private static final int MAX_RESULTS = 5;
 
     private final EventService eventService;
@@ -85,7 +89,7 @@ public class RecommendationService {
         }
 
         List<Event> candidateEvents;
-        PageRequest page = PageRequest.of(0, MAX_RESULTS);
+        PageRequest page = PageRequest.of(0, CANDIDATE_POOL);
 
         if (level == UserLevel.COLD) {
             candidateEvents = this.eventService.findUpcomingEvent(EventStatus.ACTIVE, today, page);
@@ -111,6 +115,10 @@ public class RecommendationService {
                         .startTime(event.getStartTime())
                         .categoryName(event.getCategory().getCategoryName())
                         .cityName(event.getAddress().getWard().getCity().getName())
+                        .minPrice(event.getTicketTypes().stream()
+                                .map(TicketType::getPrice)
+                                .min(BigDecimal::compareTo)
+                                .orElse(BigDecimal.ZERO))
                         .reason(null)
                         .build())
                 .collect(Collectors.toList());
@@ -118,6 +126,12 @@ public class RecommendationService {
         if(level == UserLevel.WARM_PURCHASED && profile != null) {
             Map<Long, String> reasons = this.geminiService.generateReasons(dtos, profile);
             if(!reasons.isEmpty()) {
+                List<RecommendationDTO> finalDtos = dtos;
+                dtos = reasons.keySet().stream().map(eventId -> finalDtos.stream()
+                        .filter(d -> d.getEventId().equals(eventId))
+                        .findFirst().orElse(null))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
                 dtos.forEach(dto -> dto.setReason(reasons.get(dto.getEventId())));
             }
         }
