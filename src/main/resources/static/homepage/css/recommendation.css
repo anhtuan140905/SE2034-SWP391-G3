@@ -1,0 +1,257 @@
+/* ---------------- AI RECOMMENDATION PAGE CUSTOM STYLES ---------------- */
+
+.recommendation-hero-banner {
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+    z-index: 1;
+}
+
+.recommendation-hero-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(140, 43, 255, 0.15);
+}
+
+.banner-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(10, 1, 24, 0.95) 0%, rgba(26, 8, 59, 0.85) 55%, rgba(255, 42, 122, 0.15) 100%);
+    z-index: -1;
+}
+
+/* Glassmorphic input cards */
+.glass-input-card {
+    background: rgba(22, 11, 46, 0.6) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
+}
+
+.glass-output-card {
+    background: rgba(30, 41, 59, 0.45) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
+}
+
+.glass-input-card:hover {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Premium Mood Selection Cards */
+.mood-card-item {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    user-select: none;
+}
+
+.mood-card-item:hover {
+    border-color: rgba(255, 42, 122, 0.3) !important;
+    transform: translateX(3px);
+}
+
+.mood-card-item.active {
+    border-color: #ff2a7a !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 4px 20px rgba(255, 42, 122, 0.12);
+}
+
+.mood-indicator-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    background: linear-gradient(to bottom, #ff2a7a, #8c2bff);
+    transition: width 0.3s ease;
+}
+
+.mood-card-item.active .mood-indicator-bar {
+    width: 4px;
+}
+
+.mood-chevron {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.mood-card-item.active .mood-chevron {
+    transform: rotate(90deg);
+    color: #ff2a7a !important;
+}
+
+/* Range Slider customization */
+.custom-vibe-range {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 5px;
+    outline: none;
+}
+
+.custom-vibe-range::-webkit-slider-thumb {
+    background: #ff2a7a !important;
+    box-shadow: 0 0 10px #ff2a7a;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.custom-vibe-range::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+}
+
+/* Button with custom glow styling */
+.btn-glowing-pink {
+    background: linear-gradient(135deg, #ff2a7a 0%, #8c2bff 100%) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow: 0 5px 20px rgba(255, 42, 122, 0.3) !important;
+}
+
+.btn-glowing-pink:hover {
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 42, 122, 0.5) !important;
+}
+
+.btn-glowing-pink:active {
+    transform: scale(0.98);
+}
+
+/* AI Pulsing Sphere Animation */
+.ai-pulse-sphere {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 42, 122, 0.1);
+    border: 1px solid rgba(255, 42, 122, 0.25);
+    box-shadow: 0 0 25px rgba(255, 42, 122, 0.2);
+    animation: pulseSphere 2s infinite ease-in-out;
+}
+
+@keyframes pulseSphere {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 42, 122, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 35px rgba(255, 42, 122, 0.4);
+        transform: scale(1.05);
+        background: rgba(255, 42, 122, 0.15);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 42, 122, 0.2);
+        transform: scale(1);
+    }
+}
+
+/* Border Start Glow */
+.border-start-glow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #ff2a7a, #8c2bff);
+    box-shadow: 0 0 10px rgba(255, 42, 122, 0.5);
+}
+
+.border-start-glow-slate {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #64748b, #475569);
+    box-shadow: 0 0 10px rgba(100, 116, 139, 0.5);
+}
+
+/* Event Recommendations Cards styling */
+.rec-card {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 16px !important;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
+}
+
+.rec-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(140, 43, 255, 0.25) !important;
+    box-shadow: 0 8px 25px rgba(140, 43, 255, 0.12);
+}
+
+.rec-badge-existing {
+    background: rgba(140, 43, 255, 0.15);
+    color: #b580ff;
+    border: 1px solid rgba(140, 43, 255, 0.3);
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.rec-badge-suggested {
+    background: rgba(255, 119, 0, 0.15);
+    color: #ff9d4d;
+    border: 1px solid rgba(255, 119, 0, 0.3);
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.ticket-date-container {
+    background: rgba(255, 42, 122, 0.05);
+    border-right: 1px dashed rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    min-width: 85px;
+}
+
+.ticket-month {
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: #ff2a7a;
+    letter-spacing: 1px;
+}
+
+.ticket-day {
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: #fff;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.rec-card-image-wrapper {
+    width: 100%;
+    min-height: 180px;
+    max-height: 250px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: 24px 24px 0 0;
+}
+@media (min-width: 768px) {
+    .rec-card-image-wrapper {
+        width: 35%;
+        max-height: none;
+        min-height: 100%;
+        border-radius: 24px 0 0 24px;
+    }
+}

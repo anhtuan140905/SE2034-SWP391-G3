@@ -368,6 +368,7 @@ AND t.isCheckedIn = true
             "JOIN FETCH e.address a " +
             "JOIN FETCH a.ward w " +
             "JOIN FETCH w.city city " +
+            "JOIN FETCH e.ticketTypes tt " +
             "WHERE c.categoryId IN :categoryIds " +
             "AND e.status = :status " +
             "AND e.date >= :today " +
