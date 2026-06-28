@@ -30,11 +30,11 @@ public class EventController {
     public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
         List<EventCategory> eventCategoryList = eventService.getListEventCategory();
         List<cityDto> listCity = eventService.getListcity();
-        User user = this.userService.findByUsername(userDetails.getUsername());
+        Long userId = userDetails.getUser().getId();
         model.addAttribute("eventCategoryList",eventCategoryList);
         model.addAttribute("citys",listCity);
         EventDTO eventDTO = new EventDTO();
-        eventDTO.setOrganizerId(user.getId());
+        eventDTO.setOrganizerId(userId);
         model.addAttribute("event", eventDTO);
         return "organizer/event/CreateOrganizerEvent";
     }
@@ -45,8 +45,6 @@ public class EventController {
         if (result.hasErrors()) {
             List<EventCategory> eventCategoryList = eventService.getListEventCategory();
             List<cityDto> listCity = eventService.getListcity();
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            eventDTO.setOrganizerId(user.getId());
             model.addAttribute("eventCategoryList",eventCategoryList);
             model.addAttribute("citys",listCity);
             model.addAttribute(eventDTO);

@@ -51,4 +51,6 @@ public class EventDTO {
     @Size(max = 10,
             message = "Chỉ được tải lên tối đa 10 ảnh")
     private List<MultipartFile> imageFiles;
+    @Valid
+    private OrganizerProfileDto organizerProfile;
 }

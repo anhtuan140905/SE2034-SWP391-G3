@@ -193,6 +193,17 @@ function validateAgendaItem(a) {
             if (a.time < startTime || a.time > endTime) {
                 errors.time = `Thời gian phải nằm trong khung ${startTime} - ${endTime}.`;
             }
+            const duplicateCount =
+                state.agenda.filter(
+                    x=>x.time===a.time
+                ).length;
+
+            if(duplicateCount>1){
+
+                errors.time=
+                    "Thời gian bị trùng";
+
+            }
         }
     }
 
@@ -315,6 +326,7 @@ function updateTierField(id, field, value) {
     // Xóa lỗi của field này ngay khi người dùng sửa, để phản hồi tức thì
     if (state.tierErrors[id] && state.tierErrors[id][field]) {
         delete state.tierErrors[id][field];
+        renderTiers();
     }
 
     // Chỉ render lại khi đổi trạng thái MIỄN PHÍ / TRẢ PHÍ, hàng dọc, số ghế/hàng, số lượng,
@@ -352,7 +364,7 @@ function computeZone(rowLetter, qty) {
 function validateTier(t) {
     const errors = {};
 
-    if (!t.name ||Number(t.price) <= 0) {
+    if (!t.name || !String(t.name).trim()) {
         errors.name = "Vui lòng nhập Loại vé.";
     }
 
@@ -360,9 +372,9 @@ function validateTier(t) {
         errors.zoneName = "Vui lòng nhập Tên Khu Vực.";
     }
 
-        if (!t.price || Number(t.price) <= 0) {
-            errors.price = "Vui lòng nhập mệnh giá lớn hơn hoặc bằng  0";
-        }
+    if (t.price == null || Number(t.price) < 0) {
+        errors.price="Mệnh giá không được âm";
+    }
 
 
     if (!t.qty || Number(t.qty) < 1) {
@@ -489,7 +501,7 @@ function renderTiers() {
                 <!-- Loại vé -->
                 <div class="col-12 col-sm-6 col-md-3">
                     <label class="tier-field-label">
-                        Loại <span style="color:#ef4444;">*</span>
+                        Display Order <span style="color:#ef4444;">*</span>
                     </label>
                     <input
                         type="number"
@@ -501,13 +513,12 @@ function renderTiers() {
                     ${errDiv(errs.name)}
                 </div>
 
-                <!-- Phân khu / Zone name -->
                 <div class="col-12 col-sm-6 col-md-3">
                     <label class="tier-field-label">
-                        Phân Khu / Zone Name
+                        Loại
                     </label>
                     <input
-                        type="number"
+                        type="text"
                         class="tier-input"
                         placeholder="Ví dụ: Standee A, Zone VIP..."
                         name="ticketTypes[${idx}].zoneName"
@@ -666,21 +677,40 @@ function errDiv(msg) {
         : "";
 }
 
+const city=document.getElementById("province");
+const ward=document.getElementById("ward");
 
-const city = document.getElementById("province");
-const ward = document.getElementById("ward")
+if(city && ward){
 
-city.addEventListener("change",function (){
-    const cityValue = this.value;
-    if (!cityValue){return}
-    fetch(`/organizer/api/city?cityId=${cityValue}`)
-        .then(r => r.json())
-        .then(wards =>{
-            wards.forEach(w=>{
-                ward.innerHTML +=  ` <option value="${w.wardId}">${w.name}</option>`
+    city.addEventListener("change",function(){
+
+        const cityValue=this.value;
+
+        if(!cityValue) return;
+
+        fetch(`/organizer/api/city?cityId=${cityValue}`)
+
+            .then(r=>r.json())
+
+            .then(wards=>{
+
+                ward.innerHTML =
+                    '<option value="">--Chọn quận/huyện--</option>';
+
+                wards.forEach(w=>{
+
+                    ward.innerHTML +=
+                        `<option value="${w.wardId}">
+                    ${w.name}
+                </option>`;
+
+                });
+
             })
-        }) .catch(err => console.error("Error loading ward:", err));
-})
+            .catch(err=>console.error(err));
+    });
+
+}
 
 document.getElementById("bannerFileInput")
     .addEventListener("change", function () {
@@ -698,73 +728,10 @@ document.getElementById("bannerFileInput")
                 document.getElementById("bannerPreview").src = "";
                 document.getElementById("bannerPreview").classList.add("d-none");
                 document.getElementById("bannerPlaceholder").classList.remove("d-none");
+                clearBanner();
             }
             URL.revokeObjectURL(img.src);
         };
         img.src = URL.createObjectURL(file);
     });
 
-// document.getElementById("galleryFileInput")
-//     .addEventListener("change", function () {
-//
-//         const files = [...this.files];
-//         const error = document.getElementById("galleryErr");
-//
-//         error.innerHTML = "";
-//
-//         let validFiles = [];
-//         let processed = 0;
-//
-//         files.forEach(file => {
-//
-//             const img = new Image();
-//
-//             img.onload = () => {
-//
-//                 processed++;
-//
-//                 const width = img.width;
-//                 const height = img.height;
-//
-//                 if (width !== 720 || height !== 958) {
-//
-//                     error.innerHTML += `
-//                     <div style="color:red">
-//                         ${file.name}
-//                         phải có kích thước 720×958
-//                     </div>
-//                 `;
-//                 } else {
-//                     validFiles.push(file);
-//                 }
-//
-//                 // xử lý khi tất cả ảnh xong
-//                 if (processed === files.length) {
-//
-//                     if (validFiles.length > 0) {
-//
-//                         const dt = new DataTransfer();
-//
-//                         validFiles.forEach(
-//                             file => dt.items.add(file)
-//                         );
-//
-//                         handleGalleryFiles({
-//                             target: {
-//                                 files: dt.files
-//                             }
-//                         });
-//                     }
-//
-//                     document.getElementById(
-//                         "galleryFileInput"
-//                     ).value = "";
-//                 }
-//
-//                 URL.revokeObjectURL(img.src);
-//             };
-//
-//             img.src = URL.createObjectURL(file);
-//         });
-//
-//     });
