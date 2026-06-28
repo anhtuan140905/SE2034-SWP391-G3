@@ -21,7 +21,7 @@ public class TicketType extends BaseAuditEntity {
     @Column(name = "ticket_type_id")
     private Long ticketTypeId;
 
-    @Column(name = "description", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

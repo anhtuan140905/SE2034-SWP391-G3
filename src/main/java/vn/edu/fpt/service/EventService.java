@@ -1,10 +1,13 @@
 package vn.edu.fpt.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.query.Param;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.Settlement;
+import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementSummaryDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
@@ -16,6 +19,8 @@ import vn.edu.fpt.modelview.request.organizer.wardDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
@@ -61,5 +66,14 @@ public interface EventService {
     long countUnsettledEvents();
     Long sumTotalRevenue();
     List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword);
+    List<Event> findCandidateEventsByCategories(
+            List<Long> targetCatIds,
+            EventStatus eventStatus,
+            OrderStatus orderStatus,
+            LocalDate today,
+            Long userId,
+            PageRequest page
+    );
+    List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page);
 
 }

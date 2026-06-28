@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.SettlementStatus;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
 import vn.edu.fpt.modelview.request.finance.SettlementSummaryDTO;
@@ -31,8 +32,10 @@ import vn.edu.fpt.modelview.response.organizer.TicketTypeDTO;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.service.StaffService;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +49,11 @@ public class EventServiceImpl implements EventService {
     private CityRepository cityRepository;
     private WardRepository wardRepository;
     private final EventRepository eventRepository;
-
+    private PermissionRepository permissionRepository;
     private UserRepository userRepository;
     private CloudinaryService cloudinaryService;
-    private TicketRepository ticketRepository;
-
+    private StaffService staffService;
+    private OrganizerProfileRepository organizerProfileRepository;
     @Override
     public List<cityDto> getListcity() {
         List<City> citys = cityRepository.findAll();
@@ -127,10 +130,24 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void saveEvent(EventDTO eventDTO) {
+        OrganizerProfileDto profileDto  = eventDTO.getOrganizerProfile();
+        OrganizerProfile organizerProfile = new OrganizerProfile();
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
         event.setOrganizer(user);
+//        Lưu Organizer Profile
+        organizerProfile.setUser(user);
+        organizerProfile.setTaxCode(profileDto.getTaxCode());
+        organizerProfile.setCompanyName(profileDto.getCompanyName());
+        organizerProfile.setLegalAddress(profileDto.getLegalAddress());
+        organizerProfile.setBankAccountName(profileDto.getBankAccountName());
+        organizerProfile.setBankName(profileDto.getBankName());
+        organizerProfile.setBankBranch(profileDto.getBankBranch());
+        organizerProfile.setBusinessType(profileDto.getBusinessType());
+        organizerProfile.setLegalName(profileDto.getLegalName());
+        organizerProfileRepository.save(organizerProfile);
+//        Lưu Event
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
                 .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
         event.setCategory(eventCategory);
@@ -139,6 +156,7 @@ public class EventServiceImpl implements EventService {
         event.setDescription(eventDTO.getDescription());
         String urlBanner =  cloudinaryService.uploadFile(eventDTO.getBanner(),"Banner");
         event.setThumbnailUrl(urlBanner);
+//        Địa chỉ và thời gian và ảnh
         Address address = new Address();
         address.setSpecificAddress(eventDTO.getAddress().getSpecieladdress());
         Ward ward = wardRepository.findById(eventDTO.getAddress().getWard().getWardId())
@@ -152,8 +170,12 @@ public class EventServiceImpl implements EventService {
         event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getEndTime()));
         event.setStatus(EventStatus.ACTIVE);
         List<EventImage> urlImages = new ArrayList<>();
-        if(eventDTO.getImageFiles()!=null){
+        if(eventDTO.getImageFiles() != null && !eventDTO.getImageFiles().isEmpty()){
             for (MultipartFile Image: eventDTO.getImageFiles()){
+                if (Image == null || Image.isEmpty()) {
+                    continue;
+                }
+
                 EventImage image = new EventImage();
                 String urlImage =  cloudinaryService.uploadFile(Image,"Image");
                 image.setImageUrl(urlImage);
@@ -173,6 +195,7 @@ public class EventServiceImpl implements EventService {
             }
 
         }event.setTimeLine(timeLines);
+//        Loại vé
         List<TicketType> ticketTypes = new ArrayList<>();
         if(eventDTO.getTicketTypes()!=null){
             for(TicketTypeRequestDTO ticketTypeDto:  eventDTO.getTicketTypes()){
@@ -196,25 +219,12 @@ public class EventServiceImpl implements EventService {
         }
         event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
+//        Cấp quyền cho organizer
+        List<Long> permissions =  permissionRepository.getALLIdPermission();
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(user.getEmail(),5L,permissions);
+        staffService.assignMember(memberRequestDTO,event.getEventId());
     }
 
-    //
-//    @Override
-//    public long countHostedEvents() {
-//        return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
-//    }
-//
-//    @Override
-//    public List<EventSummaryDto> findTopFeaturedEvents() {
-//        List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
-//
-//        return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public FeaturedEventDTO findFeaturedEvent() {
-//        return this.eventRepository.findFeaturedEvent();
-//    }
     @Override
     public long countHostedEvents() {
         return this.eventRepository.countHostedEvents(List.of(EventStatus.ACTIVE, EventStatus.ENDED));
@@ -232,91 +242,6 @@ public class EventServiceImpl implements EventService {
         return this.eventRepository.findFeaturedEvent();
     }
 
-//    @Override
-//    public EventDetailModeratorDTO getEventDetailById(Long eventId) {
-//
-//        Event event = eventRepository.findById(eventId)
-//                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện"));
-//
-//        EventDetailModeratorDTO eventDetailModeratorDTO = new EventDetailModeratorDTO();
-//        eventDetailModeratorDTO.setId(event.getEventId());
-//        eventDetailModeratorDTO.setTitle(event.getTitle());
-//        eventDetailModeratorDTO.setStatus(event.getStatus().name());
-//        eventDetailModeratorDTO.setCoverImageUrl(event.getThumbnailUrl());
-//
-//        // lay ten category
-//        eventDetailModeratorDTO.setCategoryId(event.getCategory().getCategoryId());
-//        eventDetailModeratorDTO.setCategory(event.getCategory().getCategoryName());
-//        eventDetailModeratorDTO.setDescription(event.getDescription());
-//        eventDetailModeratorDTO.setStartTime(event.getStartTime());
-//
-//        // Tinh toan thoi luong Duration
-//        if (event.getStartTime() != null && event.getEndTime() != null) {
-//            long hours = Duration.between(event.getStartTime(), event.getEndTime()).toHours();
-//            eventDetailModeratorDTO.setDuration(hours + " hours");
-//        } else {
-//            eventDetailModeratorDTO.setDuration("N/A");
-//        }
-//
-//        // Mapping venue (Venue & Address)
-//        if (event.getVenue() != null) {
-//            eventDetailModeratorDTO.setVenueName(event.getVenue().getVenueName());
-//            eventDetailModeratorDTO.setCapacity(event.getVenue().getCapacity());
-//            eventDetailModeratorDTO.setTotalTickets(event.getVenue().getCapacity());
-//
-//            if (event.getVenue().getAddress() != null) {
-//                eventDetailModeratorDTO.setVenueAddress(event.getVenue().getAddress().getSpecificAddress());
-//            }
-//        }
-//
-//        // Mapping organizer (Organizer / User)
-//        if (event.getOrganizer() != null) {
-//            eventDetailModeratorDTO.setOrganizerId(event.getOrganizer().getId());
-//            String fullName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
-//            eventDetailModeratorDTO.setOrganizerName(fullName);
-//            eventDetailModeratorDTO.setOrganizerAvatarUrl(event.getOrganizer().getAvatar());
-//        }
-//
-//        //truong gia dinh (se dung khi database update them cot)
-//        eventDetailModeratorDTO.setRejectReason("");
-//
-//        return eventDetailModeratorDTO;
-//    }
-
-
-
-//    @Override
-//    public DashboardStatsDTO getDashboardStats() {
-//
-//        DashboardStatsDTO stats = new DashboardStatsDTO();
-//        stats.setPendingEvents(eventRepository.countByStatus(EventStatus.ACTIVE));
-//        stats.setActiveEvents(eventRepository.countByStatus(EventStatus.ENDED));
-//        stats.setRejectedEvents(eventRepository.countByStatus(EventStatus.INACTIVE));
-//
-//        return stats;
-//    }
-
-//    @Override
-//    public List<Event> getTopThreePendingEvents() {
-//        return eventRepository.findByStatusOrderByCreatedAtDesc(
-//                EventStatus.PENDING,
-//                org.springframework.data.domain.PageRequest.of(0, 3)
-//        );
-//    }
-
-//    @Override
-//    public List<Event> getTodayActiveEvents() {
-//
-//        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-//
-//        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-//
-//        return eventRepository.findByStatusAndStartTimeBetween(
-//                EventStatus.APPROVED,
-//                startOfDay,
-//                endOfDay
-//        );
-//    }
 
    @Override
     public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
@@ -523,4 +448,15 @@ public Long sumTotalRevenue(){
 public  List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword){
         return eventRepository.searchEndedEvents(keyword);
 }
+    @Override
+    public List<Event> findCandidateEventsByCategories(List<Long> targetCatIds, EventStatus eventStatus, OrderStatus orderStatus, LocalDate today, Long userId, PageRequest page) {
+        return this.eventRepository.findCandidatesEventByCategories(targetCatIds, eventStatus, orderStatus, today, userId, page);
+    }
+
+    @Override
+    public List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page) {
+        return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
+    }
+
+
 }

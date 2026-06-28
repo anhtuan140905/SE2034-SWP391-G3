@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,10 @@ import vn.edu.fpt.model.FavouriteEvent;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
+import vn.edu.fpt.modelview.response.homepage.RecommendationDTO;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.service.*;
+import vn.edu.fpt.service.impl.ai.RecommendationService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
 import java.time.LocalDateTime;
@@ -33,6 +37,7 @@ public class AttendeeEventController {
     private final CityService cityService;
     private final FavouriteEventService favouriteEventService;
     private final UserService userService;
+    private final RecommendationService recommendationService;
     @GetMapping("/events")
     public String listEvents(
             @PageableDefault(size = 9, sort = "startTime") Pageable pageable,
@@ -91,6 +96,28 @@ public class AttendeeEventController {
             return ResponseEntity.status(500).body("Lỗi" + e.getMessage());
 
         }
+    }
 
+    @GetMapping("/recommendation")
+    public String recommendationPage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            Model model) {
+        if(userDetails == null) {
+            return "redirect:/auth/login";
+        }
+        return "homepage/Recommendation";
+    }
+
+    @GetMapping("/api/recommendations")
+    @ResponseBody
+    public ResponseEntity<List<RecommendationDTO>> getRecommendations(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        if(userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<RecommendationDTO> recommendations = this.recommendationService.getRecommendations(userDetails.getUser().getId());
+
+        return ResponseEntity.ok(recommendations);
     }
 }

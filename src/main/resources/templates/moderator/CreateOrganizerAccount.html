@@ -13,9 +13,14 @@
 <body>
 
 <section id="organizer-create-content" th:fragment="content">
-    <div class="oc-page">
 
+    <div class="oc-page">
         <div class="oc-header">
+            <a th:href="@{/moderator/organizers}"
+               class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI DANH SÁCH</span>
+            </a>
             <div>
                 <h1 class="oc-page-title">ORGANIZER MANAGEMENT</h1>
                 <p class="oc-page-subtitle">
@@ -35,7 +40,7 @@
                     <span th:text="${successMessage}">Tạo tài khoản thành công.</span>
                 </div>
 
-                <form th:action="@{/moderator/organizer/create}"
+                <form th:action="@{/moderator/organizers/create}"
                       th:object="${createOrganizerRequest}"
                       method="post"
                       class="oc-form">

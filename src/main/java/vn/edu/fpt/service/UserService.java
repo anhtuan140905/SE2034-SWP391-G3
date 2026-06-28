@@ -33,5 +33,5 @@ public interface UserService {
     public User handleSaveUser(User user);
     public void updateUser(Long id, UpdateUserStatusDTO request);
     public List<ActivityDTO> getUserActivities(Long userId);
-
+    public String findCityNameByUserId(Long userId);
 }

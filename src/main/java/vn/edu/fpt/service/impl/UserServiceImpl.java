@@ -21,6 +21,7 @@ import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.UserService;
 
 import vn.edu.fpt.model.constant.TicketStatus;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -139,17 +140,22 @@ public class UserServiceImpl implements UserService {
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
         user.setPhone(dto.getPhone());
-        Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
-        Address address = user.getAddress();
-        if (address != null) {
-            address.setWard(ward);
-            address.setSpecificAddress(dto.getSpecificAddress());
-        } else {
-            address = new Address();
-            address.setWard(ward);
-            address.setSpecificAddress(dto.getSpecificAddress());
+        if (!dto.getWard().isBlank() || !dto.getWard().isEmpty() || !dto.getWard().equals("")) {
+
+
+            Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
+
+            Address address = user.getAddress();
+            if (address != null) {
+                address.setWard(ward);
+                address.setSpecificAddress(dto.getSpecificAddress());
+            } else {
+                address = new Address();
+                address.setWard(ward);
+                address.setSpecificAddress(dto.getSpecificAddress());
+            }
+            user.setAddress(address);
         }
-        user.setAddress(address);
         if (dto.getAvatar() != null) {
             user.setAvatar(dto.getAvatar());
         }
@@ -232,17 +238,13 @@ public class UserServiceImpl implements UserService {
 
                 if (o.getCreatedAt() != null) {
                     dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
-                }
-                else {
+                } else {
                     dto.setTime(null);
                 }
 
                 dto.setReferenceId(String.valueOf(o.getOrderId()));
                 result.add(dto);
             }
-
-
-
 
 
         }
@@ -259,8 +261,7 @@ public class UserServiceImpl implements UserService {
 
                 if (e.getCreatedAt() != null) {
                     dto.setTime(LocalDateTime.ofInstant(e.getCreatedAt(), ZoneId.systemDefault()));
-                }
-                else {
+                } else {
                     dto.setTime(null);
                 }
 
@@ -277,8 +278,7 @@ public class UserServiceImpl implements UserService {
 
                 if (o.getCreatedAt() != null) {
                     dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
-                }
-                else {
+                } else {
                     dto.setTime(null);
                 }
 
@@ -298,16 +298,14 @@ public class UserServiceImpl implements UserService {
                 if (Boolean.TRUE.equals(u.getIsActive())) {
                     dto.setAction("USER_UPDATED");
                     dto.setDescription("Cập nhật user " + u.getEmail());
-                }
-                else {
+                } else {
                     dto.setAction("USER_LOCKED");
                     dto.setDescription("Khóa tài khoản " + u.getEmail());
                 }
 
                 if (u.getCreatedAt() != null) {
                     dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
-                }
-                else {
+                } else {
                     dto.setTime(null);
                 }
 
@@ -328,8 +326,7 @@ public class UserServiceImpl implements UserService {
                 if (Boolean.TRUE.equals(u.getIsActive())) {
                     dto.setAction("ORGANIZER_APPROVED");
                     dto.setDescription("Duyệt organizer: " + u.getEmail());
-                }
-                else {
+                } else {
                     dto.setAction("ORGANIZER_REJECTED");
                     dto.setDescription("Từ chối organizer: " + u.getEmail());
                 }
@@ -337,8 +334,7 @@ public class UserServiceImpl implements UserService {
 
                 if (u.getCreatedAt() != null) {
                     dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
-                }
-                else {
+                } else {
                     dto.setTime(null);
                 }
 
@@ -348,6 +344,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return result;
+    }
+
+    @Override
+    public String findCityNameByUserId(Long userId) {
+        return this.userRepository.findCityNameByUserId(userId).orElse(null);
     }
 
 

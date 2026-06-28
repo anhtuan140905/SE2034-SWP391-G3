@@ -11,4 +11,5 @@ public interface FavouriteEventService {
     boolean checkFavouriteEventByUserId(Long userId, Long eventId);
     FavouriteEvent handleAddEventToFavouriteEvent(Long userId, Long eventId);
     List<EventHomeDTO> findAllByUserId(Long userId);
+    List<Long> findFavouriteCategoryByUserId(Long userId);
 }

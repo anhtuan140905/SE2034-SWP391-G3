@@ -344,9 +344,8 @@
                                     oninput="updateAddressPreview()"
                             />
                             <div class="text-danger"
-                                 style="font-size: small"
-                                 th:if="${#fields.hasErrors('eventDate')}"
-                                 th:errors="*{eventDate}">
+                                 th:if="${#fields.hasErrors('venueName')}"
+                                 th:errors="*{venueName}">
                             </div>
                             <div class="row g-3 mt-1">
                                 <div class="col-12 col-md-4">
@@ -384,7 +383,7 @@
                                             name="ward"
                                             th:field="*{address.ward.wardId}"
                                             class="form-select field-input mt-1">
-                                        <option value="">-- Phường --</option>
+                                        <option value="">Chọn Thành Phố Trước</option>
 
                                     </select>
                                     <div class="text-danger"
@@ -603,18 +602,124 @@
                         </div>
                     </section>
                     <!-- /section-5 -->
+                    <!-- ========================================
+                             SECTION 5: THÔNG TIN DOANH NGHIỆP
+                        ======================================== -->
+                    <section id="section-company" class="form-section">
+                        <div class="section-header">
+                            <span class="section-num">5</span>
+                            <div>
+                                <h3 class="section-title">Thông Tin Doanh Nghiệp / Ban Tổ Chức</h3>
+                                <p class="section-subtitle">
+                                    Thông tin pháp lý và tài khoản ngân hàng để xác minh và thanh toán
+                                </p>
+                            </div>
+                        </div>
 
+                        <!-- Thông tin pháp lý -->
+                        <div class="field-card mb-4">
+                            <label class="field-label">
+                                <span class="material-symbols-outlined text-purple">business</span>
+                                Thông Tin Pháp Lý
+                            </label>
+                            <p class="field-hint">
+                                Nhập chính xác theo giấy phép đăng ký kinh doanh. Thông tin này dùng để xác minh tổ chức và xuất hóa đơn.
+                            </p>
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Mã Số Thuế <span class="text-required">*</span></label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.taxCode}"
+                                           placeholder="Ví dụ: 0312345678" maxlength="20" />
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Tên Pháp Lý Chính Thức <span class="text-required">*</span></label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalName}"
+                                           placeholder="Ví dụ: Công ty TNHH ABC Việt Nam" maxlength="200" />
+                                </div>
+                                <div class="col-12">
+                                    <label class="tier-field-label">Địa Chỉ Pháp Lý / Đăng Ký Kinh Doanh <span class="text-required">*</span></label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalAddress}"
+                                           placeholder="Địa chỉ đầy đủ theo giấy phép đăng ký kinh doanh..." maxlength="300" />
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Tên Thương Hiệu / Hiển Thị</label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.companyName}"
+                                           placeholder="Ví dụ: ABC Events" maxlength="500" />
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Loại Hình Kinh Doanh</label>
+                                    <select class="form-select field-input" th:field="*{organizerProfile.businessType}">
+                                        <option value="">-- Chọn Loại Hình --</option>
+                                        <option value="cong_ty_tnhh">Công ty TNHH</option>
+                                        <option value="cong_ty_co_phan">Công ty Cổ phần</option>
+                                        <option value="ho_kinh_doanh">Hộ kinh doanh</option>
+                                        <option value="ca_nhan">Cá nhân</option>
+                                        <option value="to_chuc_phi_loi_nhuan">Tổ chức phi lợi nhuận</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin ngân hàng -->
+                        <div class="field-card">
+                            <label class="field-label">
+                                <span class="material-symbols-outlined text-purple">account_balance</span>
+                                Thông Tin Tài Khoản Ngân Hàng
+                            </label>
+                            <p class="field-hint">
+                                Tài khoản nhận thanh toán doanh thu từ bán vé. Tên chủ tài khoản phải khớp với tên pháp lý hoặc tên đăng ký ngân hàng.
+                            </p>
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Tên Chủ Tài Khoản <span class="text-required">*</span></label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankAccountName}"
+                                           placeholder="Ví dụ: CONG TY TNHH ABC VIET NAM" maxlength="100" />
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="tier-field-label">Số Tài Khoản Ngân Hàng <span class="text-required">*</span></label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankAccountNumber}"
+                                           placeholder="Ví dụ: 0123456789012" maxlength="30"
+                                           style="font-family: var(--font-mono);" />
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="tier-field-label">Tên Ngân Hàng <span class="text-required">*</span></label>
+                                    <select class="form-select field-input" th:field="*{organizerProfile.bankName}">
+                                        <option value="">-- Chọn Ngân Hàng --</option>
+                                        <option value="Vietcombank">Vietcombank</option>
+                                        <option value="Techcombank">Techcombank</option>
+                                        <option value="BIDV">BIDV</option>
+                                        <option value="MB Bank">MB Bank</option>
+                                        <option value="Agribank">Agribank</option>
+                                        <option value="TPBank"> TPBank</option>
+                                        <option value="VPBank">VPBank</option>
+                                        <option value="HDBank">HDBank</option>
+                                        <option value="Sacombank">Sacombank</option>
+                                        <option value="SHB">SHB</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="tier-field-label">Chi Nhánh Ngân Hàng</label>
+                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankBranch}"
+                                           placeholder="Ví dụ: Chi nhánh Quận 1" />
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start gap-3 mt-4 p-3"
+                                 style="border-radius: var(--radius-xl); background: rgba(124,58,237,.04); border: 1px solid rgba(124,58,237,.15);">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:var(--purple); flex-shrink:0; margin-top:1px;">info</span>
+                                <p style="font-size:11px; color:#4c1d95; line-height:1.6; margin:0;">
+                                    Thông tin ngân hàng sẽ được đội ngũ vận hành xác minh trong vòng <strong>1–2 ngày làm việc</strong>
+                                    trước khi doanh thu được giải ngân. Vui lòng đảm bảo tên chủ tài khoản khớp hoàn toàn với tên pháp lý đã đăng ký.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
                     <!-- ===== NÚT HÀNH ĐỘNG ===== -->
                     <div
                             class="form-actions border-top pt-4 mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-end gap-3"
                     >
-                        <button
-                                type="button"
-                                class="btn btn-save w-100 w-sm-auto"
-                        >
-                            <span class="material-symbols-outlined">save</span>
-                            Lưu Bản Nháp
-                        </button>
                         <button
                                 type="submit"
                                 class="btn btn-publish w-100 w-sm-auto"

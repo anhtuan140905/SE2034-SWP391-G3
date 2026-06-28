@@ -92,7 +92,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 //    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
 //
 //    long countByOrganizerId(Long organizerId);
-//
+
 
     /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
 //
@@ -368,28 +368,21 @@ AND o.status = 'PAID'
             "GROUP BY e.eventId, e.title, e.thumbnailUrl, e.description, e.venueName, e.startTime, c.categoryName, op.companyName")
     EventHomeDTO findEventsWithMinPrice(Long eventId);
 
-    @Query("SELECT e FROM Event e " +
-            "JOIN FETCH e.category c " +
-            "WHERE e.status = :status " +
-            "AND e.date >= :today " +
-            "ORDER BY e.date ASC")
-    List<Event> findUpcomingEvents(
-            @Param("status") EventStatus status,
-            @Param("today") LocalDate today,
-            Pageable pageable
-    );
-
     @Query("SELECT DISTINCT e FROM Event e " +
             "JOIN FETCH e.category c " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city city " +
+            "JOIN FETCH e.ticketTypes tt " +
             "WHERE c.categoryId IN :categoryIds " +
             "AND e.status = :status " +
             "AND e.date >= :today " +
             "AND e.eventId NOT IN (" +
-            "SELECT o.event.eventId FROM Order o " +
-            "WHERE o.user.id = :userId " +
-            "AND o.status = :paidStatus) " +
+            "   SELECT o.event.eventId FROM Order o " +
+            "   WHERE o.user.id = :userId " +
+            "   AND o.status = :paidStatus) " +
             "ORDER BY e.date ASC")
-    List<Event> findCandidatesByCategories(
+    List<Event> findCandidatesEventByCategories(
             @Param("categoryIds") List<Long> categoryIds,
             @Param("status") EventStatus status,
             @Param("paidStatus")OrderStatus paidStatus,
@@ -490,4 +483,18 @@ order by e.endTime DESC
 
     List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword);
 
+}
+    @Query("SELECT e FROM Event e " +
+            "JOIN FETCH e.category " +
+            "JOIN FETCH e.address a " +
+            "JOIN FETCH a.ward w " +
+            "JOIN FETCH w.city " +
+            "WHERE e.status = :status " +
+            "AND e.date >= :today " +
+            "ORDER BY e.date ASC")
+    List<Event> findUpcomingEvents(
+            @Param("status") EventStatus status,
+            @Param("today") LocalDate today,
+            Pageable pageable
+    );
 }

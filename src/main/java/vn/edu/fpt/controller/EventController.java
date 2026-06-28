@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
@@ -30,11 +31,11 @@ public class EventController {
     public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
         List<EventCategory> eventCategoryList = eventService.getListEventCategory();
         List<cityDto> listCity = eventService.getListcity();
-        User user = this.userService.findByUsername(userDetails.getUsername());
+        Long userId = userDetails.getUser().getId();
         model.addAttribute("eventCategoryList",eventCategoryList);
         model.addAttribute("citys",listCity);
         EventDTO eventDTO = new EventDTO();
-        eventDTO.setOrganizerId(user.getId());
+        eventDTO.setOrganizerId(userId);
         model.addAttribute("event", eventDTO);
         return "organizer/event/CreateOrganizerEvent";
     }
@@ -45,8 +46,6 @@ public class EventController {
         if (result.hasErrors()) {
             List<EventCategory> eventCategoryList = eventService.getListEventCategory();
             List<cityDto> listCity = eventService.getListcity();
-            User user = this.userService.findByUsername(userDetails.getUsername());
-            eventDTO.setOrganizerId(user.getId());
             model.addAttribute("eventCategoryList",eventCategoryList);
             model.addAttribute("citys",listCity);
             model.addAttribute(eventDTO);
@@ -69,7 +68,12 @@ public class EventController {
             @RequestParam(value = "status", required = false) String[] statuses,
             @RequestParam(defaultValue = "")                  String   keyword,
             @RequestParam(defaultValue = "1")                 int      page,
+            RedirectAttributes redirectAttributes,
             Model model){
+        if(userDetails == null) {
+            redirectAttributes.addFlashAttribute("message", "Đăng nhập lỗi vui lòng đăng nhập thử bằng tài khoản và mật khẩu");
+            return "redirect:/auth/login";
+        }
         model.addAttribute("activeMenu", "listevent");
         if (statuses == null || statuses.length == 0) {
             statuses = new String[]{};

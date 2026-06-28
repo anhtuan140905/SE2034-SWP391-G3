@@ -78,3 +78,31 @@
         width: 100%;
     }
 }
+
+.om-action-row {
+    margin: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-create-organizer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #01696f;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 180ms ease;
+}
+
+.btn-create-organizer:hover {
+    background-color: #0c4e54;
+}
+
+.btn-create-organizer i {
+    font-size: 13px;
+}

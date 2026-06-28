@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
@@ -91,5 +92,10 @@ public class OrderServiceImpl implements OrderService {
                 .map(TicketDTO::new)
                 .peek(this::applyComputedStatus)
                 .toList();
+    }
+
+    @Override
+    public List<Event> findPurchasedEventsByUserId(Long userId) {
+        return this.orderRepository.findPurchasedEvents(userId, OrderStatus.PAID);
     }
 }

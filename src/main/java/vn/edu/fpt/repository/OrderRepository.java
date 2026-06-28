@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
@@ -140,6 +141,17 @@ s.seat_number
             "WHERE o.user.id = :userId " +
             "AND o.status = :status")
     List<Long> findPurchasedCategoryIdsByUserId(
+    @Query("""
+    SELECT DISTINCT e FROM Order o
+    JOIN o.event e
+    JOIN FETCH e.category
+    JOIN FETCH e.address a
+    JOIN FETCH a.ward w
+    JOIN FETCH w.city
+    WHERE o.user.id = :userId
+    AND o.status = :status
+""")
+    List<Event> findPurchasedEvents(
             @Param("userId") Long userId,
             @Param("status") OrderStatus status
     );

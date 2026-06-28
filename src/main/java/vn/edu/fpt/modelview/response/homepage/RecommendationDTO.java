@@ -2,6 +2,7 @@ package vn.edu.fpt.modelview.response.homepage;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,5 +18,7 @@ public class RecommendationDTO {
     private LocalDate date;
     private LocalDateTime startTime;
     private String categoryName;
+    private String cityName;
+    private BigDecimal minPrice;
     private String reason;
 }
