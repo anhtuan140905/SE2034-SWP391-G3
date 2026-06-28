@@ -26,15 +26,15 @@ public class ModeratorOrganizerController {
         return "/moderator/OrganizerManagement";
     }
 
-    @GetMapping("/organizer/create")
+    @GetMapping("/organizers/create")
     public String showCreateOrganizerForm(Model model) {
         model.addAttribute("createOrganizerRequest", new CreateOrganizerRequest());
-        model.addAttribute("activePage", "OrganizerManagement");
+        model.addAttribute("activePage", "organizers");
 
         return "moderator/CreateOrganizerAccount";
     }
 
-    @PostMapping("/organizer/create")
+    @PostMapping("/organizers/create")
     public String createOrganizer(
             @Valid @ModelAttribute("createOrganizerRequest") CreateOrganizerRequest request,
             BindingResult bindingResult,

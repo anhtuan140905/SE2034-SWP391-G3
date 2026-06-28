@@ -1,7 +1,24 @@
 /* Path: src/main/resources/static/moderator/css/organizer_create.css */
 
-.oc-page {
-    padding: 24px;
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--brand-purple);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: opacity var(--transition);
+    letter-spacing: 2px;
+}
+
+.btn-back:hover {
+    opacity: 0.75;
+}
+
+.btn-back i {
+    font-size: 12px;
 }
 
 .oc-header {
@@ -9,10 +26,11 @@
 }
 
 .oc-page-title {
-    margin: 0;
-    font-size: 28px;
+    font-family: "Calibri", serif;
+    font-size: 26px;
     font-weight: 800;
-    color: #1f2937;
+    color: var(--text-primary);
+    letter-spacing: 1px;
 }
 
 .oc-page-subtitle {
@@ -189,10 +207,6 @@
     .oc-card {
         padding: 18px;
         border-radius: 14px;
-    }
-
-    .oc-page-title {
-        font-size: 22px;
     }
 
     .oc-btn-primary {

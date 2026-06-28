@@ -52,6 +52,13 @@
             </div>
         </div>
     </div>
+    
+    <div class="om-action-row">
+        <a th:href="@{/moderator/organizers/create}" class="btn-create-organizer">
+            <i class="fa-solid fa-plus"></i>
+            Tạo tài khoản Organizer
+        </a>
+    </div>
 
     <div class="em-stats-row om-stats-row">
         <div class="em-stat-item">
@@ -108,7 +115,6 @@
                     </td>
                     <td>
                         <span th:text="${organizer.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}"
-                              th:classappend="${organizer.isActive} ? ' om-status-active' : ' om-status-inactive'"
                               class="om-status">
                             Đang hoạt động
                         </span>
