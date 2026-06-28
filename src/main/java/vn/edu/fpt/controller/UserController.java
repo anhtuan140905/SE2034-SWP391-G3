@@ -28,6 +28,7 @@ import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
 import java.util.List;
 
+
 @Controller
 @RequestMapping("/admin")
 public class UserController {
@@ -49,25 +50,29 @@ public class UserController {
                                   @RequestParam(required = false) String keyword,
                                   @AuthenticationPrincipal CustomUserDetails userDetails,
                                   @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
+try {
+    List<User> users;
+    if (keyword == null || keyword.trim().isEmpty()) {
+        users = userServiceImpl.getAllUser();
+    } else {
+        users = userServiceImpl.searchUser(keyword);
 
-        List<User> users ;
-        if(keyword==null||keyword.trim().isEmpty()){
-            users = userServiceImpl.getAllUser();
-        }
-        else {
-            users = userServiceImpl.searchUser(keyword);
-
-        }
-        model.addAttribute("users", users);
-        model.addAttribute("keyword",keyword);
+    }
+    model.addAttribute("users", users);
+    model.addAttribute("keyword", keyword);
 
 
-        User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
-        model.addAttribute("currentUser", currentUser);
+    User currentUser = (userDetails != null)
+            ? userServiceImpl.findByUsername(userDetails.getUsername())
+            : userServiceImpl.findByUsername(oAuth2Users.getName());
+    model.addAttribute("currentUser", currentUser);
 
-        return "admin/user/ListUser";
+    return "admin/user/ListUser";
+}
+catch (Exception e){
+    model.addAttribute("errorMessage", "Hệ thống đã gặp lỗi không mong muốn. Vui lòng thử lại sau.");
+    return "error";
+}
     }
 
     @GetMapping("/viewdetailuser")

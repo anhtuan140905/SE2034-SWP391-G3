@@ -1,289 +1,723 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finance Portal – Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Cổng Tài Chính – Bảng Điều Khiển</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <style>
-        :root{--background:#0C061E;--foreground:#ffffff;--card:rgba(30,20,50,0.6);--primary:#E91E63;--secondary:rgba(50,30,80,0.8);--muted-foreground:#A5A5B8;--border:rgba(233,30,99,0.15);--input-bg:rgba(30,20,50,0.5);--sidebar:rgba(20,12,40,0.95);--sidebar-border:rgba(233,30,99,0.2);--sidebar-accent:rgba(233,30,99,0.1);--radius:0.75rem}
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        html{font-size:16px}
-        body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--background);color:var(--foreground);height:100vh;overflow:hidden}
-        .app{display:flex;height:100vh;overflow:hidden}
-        .sidebar{width:256px;flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column}
-        .sidebar-header{padding:24px;border-bottom:1px solid var(--sidebar-border)}
-        .sidebar-title{font-size:1.5rem;font-weight:700;background:linear-gradient(90deg,var(--primary),#9C27B0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .sidebar-subtitle{font-size:.75rem;color:var(--muted-foreground);margin-top:4px}
-        .sidebar-nav{flex:1;padding:16px;display:flex;flex-direction:column;gap:8px}
-        .nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius);cursor:pointer;transition:all .2s;color:var(--muted-foreground);text-decoration:none;font-weight:500;font-size:.9rem;border:none;background:none;width:100%;text-align:left}
-        .nav-item:hover{background:var(--sidebar-accent);color:#fff}
-        .nav-item.active{background:var(--sidebar-accent);color:var(--primary);box-shadow:0 4px 20px rgba(233,30,99,.2)}
-        .nav-item svg{width:20px;height:20px;flex-shrink:0}
-        .sidebar-footer{padding:16px;border-top:1px solid var(--sidebar-border)}
-        .user-info{display:flex;align-items:center;gap:12px;padding:12px 16px}
-        .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#9C27B0);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(233,30,99,.3);flex-shrink:0}
-        .avatar svg{width:20px;height:20px}
-        .user-name{font-size:.875rem;font-weight:500}
-        .user-role{font-size:.75rem;color:var(--muted-foreground)}
-        .main{flex:1;overflow-y:auto;padding:32px}
-        .page-title{font-size:1.875rem;font-weight:700}
-        .page-desc{color:var(--muted-foreground);margin-top:4px}
-        .card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);padding:24px;box-shadow:0 4px 30px rgba(233,30,99,.05);transition:box-shadow .2s}
-        .card:hover{box-shadow:0 4px 30px rgba(233,30,99,.1)}
-        .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px}
-        .table-wrapper{overflow-x:auto}
-        table{width:100%;border-collapse:collapse}
-        thead tr{border-bottom:1px solid rgba(233,30,99,.12)}
-        th{padding:16px 24px;text-align:left;font-size:.875rem;font-weight:500;color:var(--muted-foreground)}
-        th.right{text-align:right}
-        th.center{text-align:center}
-        tbody tr{border-bottom:1px solid rgba(233,30,99,.08);transition:background .15s}
-        tbody tr:hover{background:rgba(50,30,80,.2)}
-        tbody tr:nth-child(even){background:rgba(50,30,80,.1)}
-        tbody tr:nth-child(even):hover{background:rgba(50,30,80,.25)}
-        td{padding:16px 24px;font-size:.875rem}
-        td.right{text-align:right}
-        td.center{text-align:center}
-        .mono{font-family:monospace;color:var(--primary);font-size:.875rem}
-        .text-muted{color:var(--muted-foreground)}
-        .badge{display:inline-block;padding:4px 16px;border-radius:9999px;font-size:.75rem;font-weight:600;border:1px solid}
-        .badge.pending{background:rgba(249,115,22,.2);color:#fb923c;border-color:rgba(249,115,22,.4)}
-        .badge.approved{background:rgba(59,130,246,.2);color:#60a5fa;border-color:rgba(59,130,246,.4)}
-        .badge.paid{background:rgba(34,197,94,.2);color:#4ade80;border-color:rgba(34,197,94,.4)}
-        .filter-row{display:flex;gap:16px;margin-top:24px}
-        .search-wrap{flex:1;position:relative}
-        .search-wrap svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted-foreground)}
-        .search-input,.filter-btn{padding:12px 24px;background:var(--input-bg);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);color:#fff;font-size:.9rem;outline:none;transition:all .2s}
-        .search-input{width:100%;padding-left:48px}
-        .search-input::placeholder{color:var(--muted-foreground)}
-        .search-input:focus{box-shadow:0 0 0 2px rgba(233,30,99,.3);border-color:rgba(233,30,99,.5)}
-        .filter-btn{display:flex;align-items:center;gap:8px;background:var(--secondary);cursor:pointer;white-space:nowrap}
-        .filter-btn:hover{background:rgba(50,30,80,.9)}
-        .filter-btn svg{width:20px;height:20px}
-        .pills{display:flex;gap:16px;margin-top:24px;overflow-x:auto;padding-bottom:8px}
-        .pill{padding:10px 24px;border-radius:calc(var(--radius) + 2px);font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap;border:1px solid var(--border);background:var(--secondary);color:var(--muted-foreground);font-size:.9rem}
-        .pill:hover{background:rgba(50,30,80,.9)}
-        .pill.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 20px rgba(233,30,99,.3)}
-        .btn-link{display:flex;align-items:center;gap:4px;color:var(--primary);background:none;border:none;cursor:pointer;font-size:.875rem;font-weight:500;transition:opacity .2s}
-        .btn-link:hover{opacity:.8}
-        .btn-link svg{width:16px;height:16px}
-        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
-        .form-group{margin-bottom:16px}
-        .form-label{display:block;font-size:.875rem;font-weight:500;margin-bottom:8px}
-        .form-control{width:100%;padding:12px 16px;background:var(--input-bg);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);color:#fff;font-size:.9rem;outline:none;transition:all .2s}
-        .form-control:focus{box-shadow:0 0 0 2px rgba(233,30,99,.3);border-color:rgba(233,30,99,.5)}
-        .form-control:read-only{background:rgba(50,30,80,.3);color:var(--muted-foreground)}
-        .form-control option{background:#1A0F33}
-        .calc-card{background:linear-gradient(135deg,rgba(233,30,99,.1),rgba(156,39,176,.1));border:1px solid rgba(233,30,99,.3);border-radius:calc(var(--radius) + 2px);padding:24px;box-shadow:0 4px 30px rgba(233,30,99,.2)}
-        .calc-formula{background:rgba(30,20,50,.5);border-radius:var(--radius);border:1px solid rgba(233,30,99,.08);padding:16px;margin-bottom:16px}
-        .calc-formula p:first-child{font-size:.875rem;color:var(--muted-foreground);margin-bottom:4px}
-        .calc-formula p:last-child{font-size:.875rem;font-family:monospace}
-        .calc-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(50,30,80,.2);border-radius:var(--radius);margin-bottom:8px}
-        .calc-row .label{font-size:.875rem;color:var(--muted-foreground)}
-        .calc-row .val{font-weight:600}
-        .calc-row .val.neg{color:#fb923c}
-        .calc-divider{height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);margin:8px 0 16px}
-        .net-payout-box{background:linear-gradient(135deg,rgba(233,30,99,.2),rgba(156,39,176,.2));border:1px solid rgba(233,30,99,.4);border-radius:calc(var(--radius) + 4px);padding:24px}
-        .net-payout-box .net-label{font-size:.875rem;color:var(--muted-foreground);margin-bottom:8px}
-        .net-payout-box .net-value{font-size:2.5rem;font-weight:700}
-        .btn-generate{width:100%;padding:16px;margin-top:24px;background:linear-gradient(135deg,var(--primary),#9C27B0);color:#fff;font-weight:600;font-size:1rem;border:none;cursor:pointer;border-radius:calc(var(--radius) + 2px);box-shadow:0 4px 20px rgba(233,30,99,.3);transition:all .2s}
-        .btn-generate:hover{box-shadow:0 6px 30px rgba(233,30,99,.5);transform:translateY(-1px)}
-        .btn-generate:disabled{opacity:.5;cursor:not-allowed;transform:none}
-        .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:32px}
-        .metric-card{background:var(--card);border:1px solid var(--border);border-radius:calc(var(--radius) + 2px);padding:24px;transition:box-shadow .2s}
-        .metric-card:hover{box-shadow:0 4px 30px rgba(233,30,99,.1)}
-        .metric-icon{width:48px;height:48px;border-radius:var(--radius);background:rgba(233,30,99,.1);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(233,30,99,.2);margin-bottom:16px}
-        .metric-icon svg{width:24px;height:24px}
-        .metric-label{font-size:.875rem;color:var(--muted-foreground);margin-bottom:8px}
-        .metric-row{display:flex;align-items:flex-end;justify-content:space-between}
-        .metric-value{font-size:1.5rem;font-weight:700}
-        .metric-change{font-size:.75rem;color:var(--primary)}
-        .chart-section{margin-top:32px}
-        .chart-container{width:100%;height:300px;position:relative}
-        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
-        .activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:var(--radius);background:rgba(50,30,80,.3);border:1px solid rgba(233,30,99,.08);margin-bottom:12px}
-        .activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
-        .activity-dot.success{background:#22c55e}
-        .activity-dot.info{background:#3b82f6}
-        .activity-dot.pending{background:#f97316}
-        .activity-dot.warning{background:#eab308}
-        .activity-text{font-size:.875rem}
-        .activity-time{font-size:.75rem;color:var(--muted-foreground);margin-top:4px}
-        .task-item{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:var(--radius);margin-bottom:12px}
-        .task-item.orange{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3)}
-        .task-item.blue{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3)}
-        .task-item.purple{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3)}
-        .task-count{font-size:1.5rem;font-weight:700}
-        .task-count.orange{color:#fb923c}
-        .task-count.blue{color:#60a5fa}
-        .task-count.purple{color:#c084fc}
-        .profile-header{display:flex;align-items:center;gap:24px;padding:32px;border-bottom:1px solid rgba(233,30,99,.12)}
-        .avatar-large{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#9C27B0);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(233,30,99,.3),0 8px 30px rgba(233,30,99,.2);position:relative}
-        .avatar-large svg{width:48px;height:48px}
-        .online-dot{position:absolute;bottom:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#22c55e;border:3px solid var(--card)}
-        .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:32px}
-        .profile-footer{display:flex;justify-content:flex-end;gap:16px;padding:24px 32px;background:rgba(50,30,80,.2);border-top:1px solid rgba(233,30,99,.1)}
-        .btn-cancel{padding:12px 32px;border:2px solid var(--border);background:none;color:#fff;border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;transition:all .2s}
-        .btn-cancel:hover{background:rgba(50,30,80,.3)}
-        .btn-cancel svg{width:20px;height:20px}
-        .btn-save{padding:12px 32px;background:linear-gradient(135deg,var(--primary),#9C27B0);color:#fff;border:none;border-radius:calc(var(--radius) + 2px);cursor:pointer;font-weight:600;font-size:.9rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(233,30,99,.3);transition:all .2s}
-        .btn-save:hover{box-shadow:0 6px 30px rgba(233,30,99,.5)}
-        .btn-save svg{width:20px;height:20px}
-        .account-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-        .account-item{background:rgba(50,30,80,.2);border:1px solid rgba(233,30,99,.08);border-radius:var(--radius);padding:16px}
-        .account-item .a-label{font-size:.75rem;color:var(--muted-foreground);margin-bottom:4px}
-        .account-item .a-value{font-size:.875rem;font-weight:600}
-        .account-item .a-value.green{color:#4ade80}
-        .mt-32{margin-top:32px}
-        .section-header{padding:24px;border-bottom:1px solid rgba(233,30,99,.1)}
-        .section-header h2{font-size:1.25rem;font-weight:700}
-        .empty{padding:48px;text-align:center;color:var(--muted-foreground)}
-        ::-webkit-scrollbar{width:6px;height:6px}
-        ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:rgba(233,30,99,.3);border-radius:3px}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
+        body {
+            background: #fff0f5;
+            color: #1e0e34;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid rgba(255, 42, 122, 0.15);
+            width: 260px;
+            padding: 20px;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portal-text {
+            color: #84759b;
+            font-size: 13px;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .menu a {
+            color: #4b3d60;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
+        }
+
+        .menu a svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* ================= WRAPPER ================= */
+        .wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ================= TOPBAR ================= */
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.12);
+            position: sticky;
+            top: 0; z-index: 90;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar .search-box {
+            background: #fff0f5;
+            border: 1px solid rgba(255, 42, 122, 0.2);
+            color: #1e0e34;
+            flex: 1;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 10px 15px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .topbar .search-box::placeholder { color: #84759b; }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .profile-dropdown { position: relative; }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .profile img {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff1b8d;
+            object-fit: cover;
+        }
+
+        .profile-info .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1e0e34;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu ul { list-style: none; padding: 8px 0; margin: 0; }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover { background: rgba(255, 27, 141, 0.07); color: #ff1b8d; }
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+        .divider { border-top: 1px solid rgba(255, 42, 122, 0.1); margin: 6px 0; }
+
+        /* ================= MAIN ================= */
+        .main { padding: 25px; flex: 1; }
+
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { color: #1e0e34; }
+        .page-header p  { color: #84759b; }
+
+        /* ================= CARDS ================= */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 20px;
+            padding: 22px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 42, 122, 0.1);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .icon {
+            width: 55px; height: 55px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .pink   { background: linear-gradient(to right, #ff1b8d, #ec4899); }
+        .purple { background: linear-gradient(to right, #8b5cf6, #a855f7); }
+        .orange { background: linear-gradient(to right, #f97316, #fb923c); }
+        .green  { background: linear-gradient(to right, #10b981, #34d399); }
+
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 4px;
+            color: #1e0e34;
+        }
+
+        .card-label { color: #84759b; font-size: 13px; }
+
+        /* ================= CHARTS ================= */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-box {
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 22px;
+            padding: 25px;
+            height: 400px;
+        }
+
+        .chart-box h2 {
+            color: #1e0e34;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        canvas { width: 100%; height: 300px; }
+
+        /* ================= TABLE ================= */
+        .table-box {
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 22px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .table-box h2 { color: #1e0e34; margin-bottom: 4px; }
+        .table-box p  { color: #84759b; font-size: 13px; margin-bottom: 16px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+
+        table th {
+            color: #84759b;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.12);
+            font-size: 13px;
+        }
+
+        table td {
+            padding: 14px 16px;
+            color: #1e0e34;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.07);
+            font-size: 14px;
+        }
+
+        table tr:hover { background: rgba(255, 42, 122, 0.03); }
+
+        .badge {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            border-radius: 999px;
+        }
+
+        .badge.pending  { background: rgba(249,115,22,.12); color: #f97316; }
+        .badge.approved { background: rgba(59,130,246,.12); color: #3b82f6; }
+        .badge.paid     { background: rgba(16,185,129,.12); color: #10b981; }
+        .badge.active   { background: rgba(16,185,129,.12); color: #10b981; }
+        .badge.ended    { background: rgba(249,115,22,.12); color: #f97316; }
+        .badge.inactive { background: rgba(239,68,68,.12);  color: #ef4444; }
+
+        /* ================= TWO COL ================= */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #fff0f5;
+            border: 1px solid rgba(255, 42, 122, 0.08);
+            margin-bottom: 10px;
+        }
+
+        .activity-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .activity-dot.success { background: #10b981; }
+        .activity-dot.info    { background: #3b82f6; }
+        .activity-dot.pending { background: #f97316; }
+        .activity-dot.warning { background: #eab308; }
+
+        .activity-text { font-size: 13px; color: #1e0e34; }
+        .activity-time { font-size: 12px; color: #84759b; margin-top: 2px; }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .task-item.orange { background: rgba(249,115,22,.08); border: 1px solid rgba(249,115,22,.2); }
+        .task-item.blue   { background: rgba(59,130,246,.08);  border: 1px solid rgba(59,130,246,.2); }
+        .task-item.purple { background: rgba(139,92,246,.08);  border: 1px solid rgba(139,92,246,.2); }
+
+        .task-label { font-size: 13px; color: #4b3d60; font-weight: 500; }
+        .task-count { font-size: 22px; font-weight: bold; }
+        .task-count.orange { color: #f97316; }
+        .task-count.blue   { color: #3b82f6; }
+        .task-count.purple { color: #8b5cf6; }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 900px) {
+            .sidebar { width: 220px; }
+            .wrapper { margin-left: 220px; }
+            .charts  { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar { display: none; }
+            .wrapper { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
-<div class="app">
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title">Finance Portal</div>
-            <div class="sidebar-subtitle">Settlement Management</div>
-        </div>
-        <nav class="sidebar-nav">
-            <a class="nav-item active" href="DashboardFinance.html">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                Dashboard
-            </a>
-            <a class="nav-item" href="ListEndedEvents.html">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Completed Events
-            </a>
-            <a class="nav-item" href="CreateSettlement.html">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                Create Settlement
-            </a>
-            <a class="nav-item" href="ListSettlement.html">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                List Settlement
-            </a>
-            <a class="nav-item" href="UpdateProfileFinance.html">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                My Profile
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <div class="avatar">
-                    <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <div>
-                    <div class="user-name">Finance Officer</div>
-                    <div class="user-role">Admin</div>
-                </div>
-            </div>
-        </div>
-    </aside>
 
-    <main class="main">
-        <div>
-            <h1 class="page-title">Dashboard</h1>
-            <p class="page-desc">Financial overview and platform metrics</p>
-        </div>
+<!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
+    <div class="logo">EventHub</div>
+    <div class="portal-text">Cổng Tài Chính</div>
 
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                <div class="metric-label">Total Platform Revenue</div>
-                <div class="metric-row"><span class="metric-value">$2,847,392</span><span class="metric-change">+12.5%</span></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-                <div class="metric-label">Platform Fees Collected</div>
-                <div class="metric-row"><span class="metric-value">$284,739</span><span class="metric-change">+8.2%</span></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                <div class="metric-label">Pending Settlements Amount</div>
-                <div class="metric-row"><span class="metric-value">$156,820</span><span class="metric-change">23 pending</span></div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon"><svg fill="none" stroke="#E91E63" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                <div class="metric-label">Successful Payouts</div>
-                <div class="metric-row"><span class="metric-value">$2,405,833</span><span class="metric-change">142 completed</span></div>
-            </div>
-        </div>
-
-        <div class="card chart-section">
-            <div class="card-title">Platform Financial Growth</div>
-            <div class="chart-container">
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </div>
-
-        <div class="two-col">
-            <div class="card">
-                <div class="card-title">Recent Activities</div>
-                <div class="activity-item"><div class="activity-dot success"></div><div><div class="activity-text">Settlement #SET-9821 approved</div><div class="activity-time">2 hours ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot info"></div><div><div class="activity-text">New event completed: Tech Summit 2026</div><div class="activity-time">5 hours ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot success"></div><div><div class="activity-text">Payout processed for Organizer #ORG-445</div><div class="activity-time">1 day ago</div></div></div>
-                <div class="activity-item"><div class="activity-dot pending"></div><div><div class="activity-text">Settlement #SET-9812 created</div><div class="activity-time">1 day ago</div></div></div>
-                <div class="activity-item" style="margin-bottom:0"><div class="activity-dot warning"></div><div><div class="activity-text">Refund issued for Event #EVT-7723</div><div class="activity-time">2 days ago</div></div></div>
-            </div>
-            <div class="card">
-                <div class="card-title">Pending Tasks Summary</div>
-                <div class="task-item orange"><span style="font-size:.875rem">Settlements Awaiting Approval</span><span class="task-count orange">23</span></div>
-                <div class="task-item blue"><span style="font-size:.875rem">Events Ready for Settlement</span><span class="task-count blue">47</span></div>
-                <div class="task-item purple" style="margin-bottom:0"><span style="font-size:.875rem">Approved Awaiting Payout</span><span class="task-count purple">12</span></div>
-            </div>
-        </div>
-    </main>
+    <div class="menu">
+        <a href="#" class="active">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            Bảng Điều Khiển
+        </a>
+        <a th:href="@{/finance/listEndedEvents}">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            Sự Kiện Đã Kết Thúc
+        </a>
+        <a th:href="@{/finance/createSettlement}">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Tạo Quyết Toán
+        </a>
+        <a th:href="@{/finance/listSettlement}">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Danh Sách Quyết Toán
+        </a>
+    </div>
 </div>
 
-<script>
-    function drawChart() {
+<!-- ================= WRAPPER ================= -->
+<div class="wrapper">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <input type="text" class="search-box" placeholder="Tìm kiếm sự kiện, quyết toán..."/>
+
+        <div class="topbar-right">
+            <div class="profile-dropdown">
+                <div class="profile" onclick="toggleDropdown()">
+                    <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         th:src="${currentUser.avatar}" alt="avatar"/>
+                    <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
+                         src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
+                    <div class="profile-info">
+                        <div class="name" th:text="${currentUser != null ? currentUser.email: 'Nhân Viên Tài Chính'}">Nhân Viên Tài Chính</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
+                </div>
+
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li><a th:href="@{/finance/profile}"><i class="fa-regular fa-user"></i> Thông Tin Của Tôi</a></li>
+                        <li><a th:href="@{/finance/dashboard}"><i class="fa-solid fa-shield"></i> Kênh Quản Trị</a></li>
+                        <li><a th:href="@{/settings}"><i class="fa-solid fa-sliders"></i> Cài Đặt</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" th:action="@{/auth/logout}">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <div class="page-header">
+            <h1>Bảng Điều Khiển Tài Chính</h1>
+            <p>Tổng quan tài chính và các chỉ số của nền tảng</p>
+        </div>
+
+        <!-- CARDS -->
+        <div class="cards">
+            <div class="card">
+                <div class="card-top">
+                    <div>
+                        <p class="card-label">Tổng Doanh Thu Nền Tảng</p>
+                        <div class="value">$2,847,392</div>
+                    </div>
+                    <div class="icon pink"><i class="fa-solid fa-dollar-sign"></i></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <div>
+                        <p class="card-label">Phí Nền Tảng Thu Được</p>
+                        <div class="value">$284,739</div>
+                    </div>
+                    <div class="icon purple"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <div>
+                        <p class="card-label">Quyết Toán Đang Chờ</p>
+                        <div class="value">$156,820</div>
+                    </div>
+                    <div class="icon orange"><i class="fa-solid fa-clock"></i></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <div>
+                        <p class="card-label">Thanh Toán Thành Công</p>
+                        <div class="value">$2,405,833</div>
+                    </div>
+                    <div class="icon green"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="charts">
+            <div class="chart-box">
+                <h2>Tăng Trưởng Tài Chính Nền Tảng</h2>
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h2>Tổng Quan Quyết Toán</h2>
+                <canvas id="settlementChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TWO COL -->
+        <div class="two-col">
+            <div class="table-box" style="margin-bottom:0">
+                <h2>Hoạt Động Gần Đây</h2>
+                <p>Các sự kiện tài chính mới nhất</p>
+                <div class="activity-item">
+                    <div class="activity-dot success"></div>
+                    <div>
+                        <div class="activity-text">Quyết toán #SET-9821 đã được duyệt</div>
+                        <div class="activity-time">2 giờ trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot info"></div>
+                    <div>
+                        <div class="activity-text">Sự kiện mới kết thúc: Tech Summit 2026</div>
+                        <div class="activity-time">5 giờ trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot success"></div>
+                    <div>
+                        <div class="activity-text">Đã thanh toán cho Ban Tổ Chức #ORG-445</div>
+                        <div class="activity-time">1 ngày trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot pending"></div>
+                    <div>
+                        <div class="activity-text">Quyết toán #SET-9812 vừa được tạo</div>
+                        <div class="activity-time">1 ngày trước</div>
+                    </div>
+                </div>
+                <div class="activity-item" style="margin-bottom:0">
+                    <div class="activity-dot warning"></div>
+                    <div>
+                        <div class="activity-text">Hoàn tiền cho Sự Kiện #EVT-7723</div>
+                        <div class="activity-time">2 ngày trước</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-box" style="margin-bottom:0">
+                <h2>Tổng Hợp Công Việc Đang Chờ</h2>
+                <p>Các đầu việc cần xử lý</p>
+                <div class="task-item orange">
+                    <span class="task-label">Quyết Toán Chờ Phê Duyệt</span>
+                    <span class="task-count orange">23</span>
+                </div>
+                <div class="task-item blue">
+                    <span class="task-label">Sự Kiện Sẵn Sàng Quyết Toán</span>
+                    <span class="task-count blue">47</span>
+                </div>
+                <div class="task-item purple">
+                    <span class="task-label">Đã Duyệt – Chờ Thanh Toán</span>
+                    <span class="task-count purple">12</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main -->
+</div><!-- /wrapper -->
+
+<script th:inline="none">
+    // Revenue chart
+    (function() {
         const canvas = document.getElementById('revenueChart');
-        if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dataValues = [185000,220000,195000,245000,280000,310000,295000,340000,365000,390000,425000,460000];
-        const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = 300 * dpr;
-        canvas.style.width = rect.width + 'px';
-        canvas.style.height = '300px';
-        ctx.scale(dpr, dpr);
-        const W = rect.width, H = 300;
-        const padL = 60, padR = 20, padT = 20, padB = 40;
-        const chartW = W - padL - padR, chartH = H - padT - padB;
-        ctx.clearRect(0, 0, W, H);
-        const maxVal = 500000;
-        const xStep = chartW / (dataValues.length - 1);
-        const toX = i => padL + i * xStep;
-        const toY = v => padT + chartH - (v / maxVal) * chartH;
-        for (let i = 0; i <= 5; i++) {
-            const y = padT + (chartH / 5) * i;
-            ctx.beginPath(); ctx.strokeStyle = 'rgba(233,30,99,0.1)'; ctx.setLineDash([4,4]); ctx.lineWidth = 1;
-            ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
-            ctx.fillStyle = '#A5A5B8'; ctx.font = '11px system-ui'; ctx.textAlign = 'right';
-            ctx.fillText('$' + ((500000 - i * 100000) / 1000) + 'k', padL - 8, y + 4);
+        const labels = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = 300 * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = '300px';
+            ctx.scale(dpr, dpr);
+            const W = rect.width, H = 300;
+            const padL = 60, padR = 20, padT = 20, padB = 40;
+            const chartW = W - padL - padR, chartH = H - padT - padB;
+            ctx.clearRect(0, 0, W, H);
+            const maxVal = 500000;
+            const xStep = chartW / (dataValues.length - 1);
+            const toX = i => padL + i * xStep;
+            const toY = v => padT + chartH - (v / maxVal) * chartH;
+
+            for (let i = 0; i <= 5; i++) {
+                const y = padT + (chartH / 5) * i;
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(255,42,122,0.1)';
+                ctx.setLineDash([4,4]); ctx.lineWidth = 1;
+                ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
+                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'right';
+                ctx.fillText('$' + ((500000 - i * 100000) / 1000) + 'k', padL - 8, y + 4);
+            }
+
+            ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
+            labels.forEach((l, i) => ctx.fillText(l, toX(i), H - 10));
+
+            const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+            grad.addColorStop(0, 'rgba(255,27,141,0.25)');
+            grad.addColorStop(1, 'rgba(255,27,141,0)');
+
+            ctx.beginPath(); ctx.moveTo(toX(0), toY(dataValues[0]));
+            dataValues.forEach((v, i) => {
+                if (i === 0) return;
+                const cx = (toX(i-1)+toX(i))/2;
+                ctx.bezierCurveTo(cx, toY(dataValues[i-1]), cx, toY(v), toX(i), toY(v));
+            });
+            ctx.lineTo(toX(dataValues.length-1), padT+chartH);
+            ctx.lineTo(toX(0), padT+chartH);
+            ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+
+            ctx.beginPath(); ctx.strokeStyle = '#ff1b8d'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+            ctx.moveTo(toX(0), toY(dataValues[0]));
+            dataValues.forEach((v, i) => {
+                if (i === 0) return;
+                const cx = (toX(i-1)+toX(i))/2;
+                ctx.bezierCurveTo(cx, toY(dataValues[i-1]), cx, toY(v), toX(i), toY(v));
+            });
+            ctx.stroke();
+            dataValues.forEach((v, i) => {
+                ctx.beginPath(); ctx.arc(toX(i), toY(v), 4, 0, Math.PI*2);
+                ctx.fillStyle = '#ff1b8d'; ctx.fill();
+            });
         }
-        ctx.fillStyle = '#A5A5B8'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
-        labels.forEach((l, i) => ctx.fillText(l, toX(i), H - 10));
-        const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-        grad.addColorStop(0, 'rgba(233,30,99,0.3)'); grad.addColorStop(1, 'rgba(233,30,99,0)');
-        ctx.beginPath(); ctx.moveTo(toX(0), toY(dataValues[0]));
-        dataValues.forEach((v, i) => { if (i === 0) return; const cx = (toX(i-1)+toX(i))/2; ctx.bezierCurveTo(cx, toY(dataValues[i-1]), cx, toY(v), toX(i), toY(v)); });
-        ctx.lineTo(toX(dataValues.length-1), padT+chartH); ctx.lineTo(toX(0), padT+chartH); ctx.closePath();
-        ctx.fillStyle = grad; ctx.fill();
-        ctx.beginPath(); ctx.strokeStyle = '#E91E63'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-        ctx.moveTo(toX(0), toY(dataValues[0]));
-        dataValues.forEach((v, i) => { if (i === 0) return; const cx = (toX(i-1)+toX(i))/2; ctx.bezierCurveTo(cx, toY(dataValues[i-1]), cx, toY(v), toX(i), toY(v)); });
-        ctx.stroke();
-        dataValues.forEach((v, i) => { ctx.beginPath(); ctx.arc(toX(i), toY(v), 4, 0, Math.PI*2); ctx.fillStyle = '#E91E63'; ctx.fill(); });
+
+        window.addEventListener('load', () => { setTimeout(draw, 50); window.addEventListener('resize', draw); });
+    })();
+
+    // Settlement bar chart
+    (function() {
+        const canvas = document.getElementById('settlementChart');
+        const ctx = canvas.getContext('2d');
+        const labels = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+        const pending  = [3,5,2,4,6,3,5,4,2,3,4,6];
+        const approved = [2,3,4,3,5,4,3,5,6,4,5,4];
+        const paid     = [1,2,3,2,3,4,3,4,5,3,4,5];
+
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = 300 * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = '300px';
+            ctx.scale(dpr, dpr);
+            const W = rect.width, H = 300;
+            const padL = 40, padR = 20, padT = 20, padB = 40;
+            const chartW = W - padL - padR, chartH = H - padT - padB;
+            ctx.clearRect(0, 0, W, H);
+            const maxVal = 16;
+            const groupW = chartW / labels.length;
+            const barW = groupW * 0.22;
+            const colors = ['#f97316','#3b82f6','#10b981'];
+            const datasets = [pending, approved, paid];
+
+            for (let i = 0; i <= 4; i++) {
+                const y = padT + (chartH / 4) * i;
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(255,42,122,0.1)';
+                ctx.setLineDash([4,4]); ctx.lineWidth = 1;
+                ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
+                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'right';
+                ctx.fillText(Math.round(maxVal - (maxVal/4)*i), padL - 6, y + 4);
+            }
+
+            ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
+            labels.forEach((l, i) => ctx.fillText(l, padL + i * groupW + groupW/2, H - 10));
+
+            datasets.forEach((data, di) => {
+                data.forEach((v, i) => {
+                    const x = padL + i * groupW + (di * (barW + 3)) + 6;
+                    const barH = (v / maxVal) * chartH;
+                    const y = padT + chartH - barH;
+                    ctx.fillStyle = colors[di];
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, barW, barH, [4,4,0,0]);
+                    ctx.fill();
+                });
+            });
+
+            // Legend
+            const legends = [['Chờ duyệt','#f97316'],['Đã duyệt','#3b82f6'],['Đã thanh toán','#10b981']];
+            let lx = padL;
+            legends.forEach(([label, color]) => {
+                ctx.fillStyle = color;
+                ctx.fillRect(lx, 4, 10, 10);
+                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'left';
+                ctx.fillText(label, lx + 14, 13);
+                lx += ctx.measureText(label).width + 30;
+            });
+        }
+
+        window.addEventListener('load', () => { setTimeout(draw, 50); window.addEventListener('resize', draw); });
+    })();
+
+    function toggleDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('show');
     }
-    window.addEventListener('load', () => { setTimeout(drawChart, 50); window.addEventListener('resize', drawChart); });
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.querySelector('.profile-dropdown');
+        if (!dropdown.contains(e.target)) {
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+    });
 </script>
 </body>
 </html>

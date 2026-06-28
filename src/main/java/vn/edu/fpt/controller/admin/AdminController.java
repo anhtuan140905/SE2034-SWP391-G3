@@ -10,6 +10,7 @@ import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.SumRevenueByMonthProjection;
 import vn.edu.fpt.service.impl.EventServiceImpl;
+import vn.edu.fpt.service.impl.TicketServiceImpl;
 import vn.edu.fpt.service.impl.UserServiceImpl;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -22,11 +23,14 @@ public class AdminController {
 
     private final UserServiceImpl userServiceImpl;
     private final EventServiceImpl eventServiceImpl;
+    private final TicketServiceImpl ticketServiceImpl;
 
     public AdminController(UserServiceImpl userServiceImpl,
-                           EventServiceImpl eventServiceImpl) {
+                           EventServiceImpl eventServiceImpl,
+                           TicketServiceImpl ticketServiceImpl) {
         this.userServiceImpl = userServiceImpl;
         this.eventServiceImpl = eventServiceImpl;
+        this.ticketServiceImpl = ticketServiceImpl;
     }
 
     @GetMapping("/dashboard")
@@ -48,7 +52,7 @@ public class AdminController {
         long allUserActive = eventServiceImpl.countAllUseActive();
         model.addAttribute("allUserActive", allUserActive);
 
-        long allSoldTicket = eventServiceImpl.countAllSoldTicket();
+        long allSoldTicket = ticketServiceImpl.countAllSoldTicket();
         model.addAttribute("allSoldTicket", allSoldTicket);
 
         List<CountEventByMonthDTO> allEventByMonth = eventServiceImpl.countEventByMonth();

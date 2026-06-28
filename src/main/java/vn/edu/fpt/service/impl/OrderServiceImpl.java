@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         boolean isCheckedIn = "true".equals(t.getStatus());
         if (isCheckedIn) {
             t.setStatus("USED");
-        } else if (t.getStartTime() != null && t.getStartTime().isBefore(LocalDateTime.now())) {
+        } else if (t.getEndTime() != null && t.getEndTime().isBefore(LocalDateTime.now())) {
             t.setStatus("EXPIRED");
         } else {
             t.setStatus("ACTIVE");
@@ -90,6 +90,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.viewOrderDetail(orderId)
                 .stream()
                 .map(TicketDTO::new)
+                .peek(this::applyComputedStatus)
                 .toList();
     }
 

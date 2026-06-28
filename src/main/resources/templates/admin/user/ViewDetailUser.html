@@ -544,7 +544,7 @@
     <!-- TOPBAR -->
     <div class="topbar">
 
-        <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức sự kiện, người dùng..."/>
+
 
         <div class="topbar-right">
 
@@ -689,7 +689,8 @@
                             <p th:text="${users.lastName + ' ' + users.middleName + ' ' + users.firstName}"></p>
                         </div>
                         <div class="info-item"><span>Ngày Sinh</span>
-                            <p th:text="${users.dob}"></p>
+                            <p th:text="${#temporals.format(users.dob, 'dd/MM/yyyy')}"></p>
+
                         </div>
                         <div class="info-item"><span>Giới Tính</span>
                             <p th:text="${users.gender}"></p>

@@ -8,12 +8,15 @@ import vn.edu.fpt.common.QrCodeUtil;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.response.booking.OrderEmailDTO;
 import vn.edu.fpt.modelview.response.booking.TicketEmailDTO;
+import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.repository.SeatLockRepository;
+import vn.edu.fpt.repository.TicketProjection;
 import vn.edu.fpt.repository.TicketRepository;
 import vn.edu.fpt.repository.TicketTypeRepository;
 import vn.edu.fpt.service.TicketService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +111,9 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 
+    public long countAllSoldTicket(){
+        return ticketRepository.countAllSoldTickets();
+    }
 
     public long countAllTicketOfUser(@Param("userId") Long userId){
         return ticketRepository.countAllTicketOfUser(userId);
@@ -128,6 +134,38 @@ public class TicketServiceImpl implements TicketService {
 
     public Ticket findById(Long orderId) {
         return ticketRepository.findById(orderId).orElse(null);
+    }
+
+
+    public List<TicketDTO> viewTicket (Long userId, String tab){
+        List<TicketDTO> allTickets = ticketRepository.viewTicket(userId).stream().map(TicketDTO::new).peek(this::applyComputeStatus).toList();
+        return switch (tab){
+            case "upcoming" -> allTickets.stream().filter(t -> "ACTIVE".equals(t.getStatus())).toList();
+            case "used" -> allTickets.stream().filter(t -> "USED".equals(t.getStatus())).toList();
+            case "expired" -> allTickets.stream().filter(t -> "EXPIRED".equals(t.getStatus())).toList();
+            default -> allTickets;
+        };
+    }
+
+    private void applyComputeStatus (TicketDTO t){
+        boolean isCheckIn = "true".equals(t.getStatus());
+        if(isCheckIn){
+            t.setStatus("USED");
+        } else if (t.getEndTime() != null && t.getEndTime().isBefore(LocalDateTime.now())) {
+            t.setStatus("EXPIRED");
+
+        }
+        else{
+            t.setStatus("ACTIVE");
+        }
+    }
+
+    public TicketDTO viewDetailTicket(Long ticketId){
+        TicketProjection projection = ticketRepository.viewDetailTicket(ticketId);
+        TicketDTO dto = new TicketDTO(projection);
+        applyComputeStatus(dto);
+        return dto;
+
     }
 
 }
