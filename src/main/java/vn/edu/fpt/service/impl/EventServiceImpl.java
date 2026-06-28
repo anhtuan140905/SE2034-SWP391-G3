@@ -32,9 +32,7 @@ import vn.edu.fpt.service.StaffService;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("EventService")
@@ -202,12 +200,22 @@ public class EventServiceImpl implements EventService {
                 ticketType.setTotalQuantity(ticketTypeDto.getStock().intValue());
                 ticketType.setSoldQuantity(0);
                 ticketType.setDisplayOrder(ticketTypeDto.getDisplayOrder());
+                Map<Integer, String> map = new HashMap<>();
+                for (int i = 1; i <= 26; i++) {
+                    map.put(i, String.valueOf((char)('A' + i - 1)));
+                }
                 List<Seat> seats = new ArrayList<>();
-                Seat seat = new Seat();
-                seat.setRowLabel(ticketTypeDto.getSeat().getRow());
-                seat.setSeatNumber(ticketTypeDto.getSeat().getSeatNumber());
-                seat.setTicketType(ticketType);
-                seats.add(seat);
+                for(Integer i = 1;i<=ticketTypeDto.getSeat().getSeatNumber();i++){
+                    for(Integer j =1;j <= ticketTypeDto.getSeat().getRow(); j++){
+                        Seat seat = new Seat();
+                        seat.setSeatNumber(i);
+                        seat.setRowLabel(map.get(j));
+                        seat.setTicketType(ticketType);
+                        seats.add(seat);
+                    }
+                }
+
+
                 ticketType.setSeats(seats);
                 ticketTypes.add(ticketType);
             }
