@@ -447,12 +447,21 @@ function renderTiers() {
                             <span class="material-symbols-outlined" style="font-size:14px;">unfold_more</span>
                             Hàng Dọc (A-Z)
                         </div>
-                        <select class="tier-input row-select"
-                                name="ticketTypes[${idx}].seat.row"
-                                onchange="updateTierField('${t.id}', 'rowLetter', this.value)">
-                            ${ROW_LETTERS.map((l) => `<option value="${l}" ${t.rowLetter === l ? "selected" : ""}>HÀNG ${l}</option>`).join("")}
-                        </select>
-                        <div class="row-stepper-sub">Tạo ${rows} hàng: ${rows > 1 ? "A-" + t.rowLetter : "A"}</div>
+                       <input
+    class="tier-input row-select"
+    type="number"
+    min="1"
+    max="26"
+    value="${t.rowLetter}"
+    name="ticketTypes[${idx}].seat.row"
+    placeholder="Nhập Số Hàng "
+    oninput="
+        updateTierField(
+            '${t.id}',
+            'rowLetter',
+            Math.min(26, Math.max(1, parseInt(this.value) || 1))
+        )
+    ">
                     </div>
 
                     <!-- Số ghế mỗi hàng -->
