@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
+import vn.edu.fpt.model.Settlement;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
@@ -167,57 +168,66 @@ EventSummaryProjection findEventDetailById(Long id);
     List<Event> findTop10ByOrganizerIdOrderByCreatedAtDesc(Long userId);
 
     @Query(value = """
-            SELECT TOP 10
-                e.event_id        AS id,
-                e.title           AS title,
-                e.thumbnail_url   AS thumbnailUrl,
-                e.start_time      AS startTime,
-                e.end_time        AS endTime,
-                e.venue_name      AS venueName,
-                e.status          AS status,
-                NULL              AS cityName,
-                NULL              AS categoryName,
-                NULL              AS minPrice,
-                COUNT(ord.order_detail_id) AS soldCount,
-                COUNT(ord.order_detail_id) AS participantCount,
-                NULL              AS revenue
-            FROM events e
-            LEFT JOIN orders o ON e.event_id = o.event_id
-            LEFT JOIN order_details ord ON o.order_id = ord.order_id
-            GROUP BY
-                e.event_id, e.title, e.thumbnail_url,e.start_time, e.end_time, e.venue_name, e.status 
-            ORDER BY e.end_time ASC
+SELECT TOP 10
+e.event_id                      AS id,
+e.title                         AS title,
+e.thumbnail_url                 AS thumbnailUrl,
+e.start_time                    AS startTime,
+e.end_time                      AS endTime,
+e.venue_name                    AS venueName,
+e.status                        AS status,
+COALESCE(tt.totalSold, 0)       AS soldCount,
+COALESCE(tt.totalSold, 0)       AS participantCount
+
+FROM events e
+    
+LEFT JOIN (
+SELECT event_id, SUM(sold_quantity) AS totalSold
+FROM ticket_types
+GROUP BY event_id
+) tt ON e.event_id = tt.event_id
+
+WHERE e.status IN ('ACTIVE', 'INACTIVE', 'ENDED')
+ORDER BY e.end_time ASC 
             """, nativeQuery = true)
     List<EventSummaryProjection> findTop10Events();
 
     @Query(value = """
-            SELECT TOP 5
-                e.event_id              AS id,
-                e.title                 AS title,
-                NULL                    AS thumbnailUrl,
-                e.start_time            AS startTime,
-                e.end_time              AS endTime,
-                e.venue_name            AS venueName,
-                NULL                    AS cityName,
-                NULL                    AS categoryName,
-                NULL                    AS minPrice,
-                NULL                    AS company_name,
-                NULL                    AS description,
-                COUNT(ord.order_detail_id)      AS soldCount,
-                COUNT(ord.order_detail_id)      AS participantCount,
-                SUM(ord.unit_price)             AS revenue,
-                e.status                AS status,
-                t.total_quantity                   AS capacity,
-                CAST(COUNT(ord.order_detail_id)  AS FLOAT) / NULLIF(t.total_quantity, 0) * 100 AS salesRate
-            
-            FROM order_details ord
-            LEFT JOIN orders o ON ord.order_id = o.order_id
-            LEFT JOIN events e ON o.event_id = e.event_id 
-            LEFT JOIN ticket_types t on e.event_id = t.event_id
-            WHERE e.status IN ('ACTIVE', 'ENDED')
-            GROUP BY e.event_id, e.title, e.start_time, e.end_time, e.venue_name, e.status, t.sold_quantity, t.total_quantity 
-            ORDER BY COUNT(ord.order_detail_id) DESC
-            """, nativeQuery = true)
+SELECT TOP 5
+e.event_id              AS id,
+e.title                 AS title,
+e.start_time            AS startTime,
+e.end_time              AS endTime,
+e.venue_name            AS venueName,
+e.status                AS status,
+COALESCE(tt.totalSold, 0)           AS soldCount,
+COALESCE(tt.totalTickets, 0)        AS totalTickets,
+COALESCE(ord.participantCount, 0)   AS participantCount,
+COALESCE(ord.revenue, 0)            AS revenue,
+CAST(COALESCE(tt.totalSold, 0) AS FLOAT) / NULLIF(COALESCE(tt.totalTickets, 0), 0) * 100 AS salesRate
+FROM events e
+    
+LEFT JOIN (
+SELECT event_id,
+SUM(sold_quantity)  AS totalSold,
+SUM(total_quantity) AS totalTickets
+FROM ticket_types
+GROUP BY event_id
+) tt ON e.event_id = tt.event_id
+    
+LEFT JOIN (
+SELECT o.event_id,
+COUNT(od.order_detail_id) AS participantCount,
+SUM(od.unit_price)        AS revenue
+FROM orders o
+JOIN order_details od ON o.order_id = od.order_id
+WHERE o.status = 'PAID'
+GROUP BY o.event_id
+) ord ON e.event_id = ord.event_id
+
+WHERE e.status IN ('ACTIVE', 'ENDED')
+ORDER BY soldCount DESC
+""", nativeQuery = true)
     List<EventSummaryProjection> findTop5EventsBySoldCount();
 
     @Query("""
@@ -227,20 +237,13 @@ EventSummaryProjection findEventDetailById(Long id);
     long countAllEvent();
 
     @Query("""
-            select count(u.isActive)
-            from Event e
-             left join Order o on e.eventId = o.event.eventId
-             left join User u on o.user.id = u.id
-            where u.isActive = true
-            
+SELECT COUNT(u.id)
+FROM User u
+WHERE u.isActive = true     
             """)
     long countAllUseActive();
 
-    @Query("""
-            select count(o.orderDetailId)
-            from OrderDetail o
-            """)
-    long countAllSoldTicket();
+
 
     @Query("""
             SELECT MONTH(e.startTime) as month, 
@@ -252,14 +255,15 @@ EventSummaryProjection findEventDetailById(Long id);
     List<CountEventByMonthDTO> countEventByMonth();
 
     @Query(value = """
-                SELECT
-                    MONTH(e.start_time) AS month,
-                    SUM(ord.unit_price) AS total
-                FROM order_details ord
-                LEFT JOIN orders o ON ord.order_id = o.order_id
-                LEFT JOIN events e ON o.event_id = e.event_id 
-                GROUP BY MONTH(e.start_time)
-                ORDER BY MONTH(e.start_time)
+SELECT
+MONTH(e.start_time) AS month,
+SUM(ord.unit_price) AS total
+FROM orders o
+JOIN order_details ord ON o.order_id = ord.order_id
+JOIN events e ON o.event_id = e.event_id
+WHERE o.status = 'PAID' AND YEAR(e.start_time) = YEAR(GETDATE())
+GROUP BY MONTH(e.start_time)
+ORDER BY MONTH(e.start_time)
             """, nativeQuery = true)
     List<SumRevenueByMonthProjection> sumRevenueByMonth();
 
@@ -336,8 +340,8 @@ EventSummaryProjection findEventDetailById(Long id);
     @Query("""
 SELECT COUNT(DISTINCT o.event.eventId)
 FROM Order o
-WHERE o.user.id = :userId
-AND o.event.endTime > CURRENT_TIMESTAMP
+WHERE o.user.id = :userId AND o.status = 'PAID'
+AND o.event.startTime > CURRENT_TIMESTAMP
 """)
     long countUpcomingEvent(@Param("userId") Long userId);
 
@@ -348,6 +352,7 @@ JOIN o.orderDetails od
 JOIN od.ticket t
 WHERE o.user.id = :userId
 AND t.isCheckedIn = true
+AND o.status = 'PAID'
 """)
     long countAttendedEvent(@Param("userId") Long userId);
 
@@ -392,4 +397,97 @@ AND t.isCheckedIn = true
             @Param("userId") Long userId,
             Pageable pageable
             );
+
+@Query("""
+select
+e.eventId as eventId,
+e.title as eventName,
+e.organizer.lastName as lastNameOrganizer,
+e.organizer.middleName as middleNameOrganizer,
+e.organizer.firstName as firstNameOrganizer,
+e.endTime as endTime,
+COALESCE(SUM(tt.soldQuantity), 0) as soldTicket,
+se.grossRevenue as revenue,
+se.status as status
+
+from Event e
+left join Settlement se on e.eventId = se.event.eventId
+left join TicketType tt on e.eventId = tt.event.eventId
+
+where e.endTime <= CURRENT_TIMESTAMP
+group by 
+e.eventId,
+e.title,
+e.organizer.lastName,
+e.organizer.middleName,
+e.organizer.firstName,
+e.endTime,
+se.grossRevenue,
+se.status
+
+order by e.endTime DESC
+""")
+
+List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
+
+@Query("""
+select count(e.eventId)
+from Event e
+where e.endTime <= CURRENT_TIMESTAMP
+""")
+    long countEndedEvent();
+
+@Query("""
+select count(e.eventId)
+from Event e
+left join Settlement se on e.eventId = se.event.eventId
+where e.endTime <= CURRENT_TIMESTAMP and se.settlementId is null
+""")
+    long countUnsettledEvents();
+
+@Query("""
+select sum(se.grossRevenue)
+from Settlement se
+join Event e on se.event.eventId = eventId
+where e.endTime <= CURRENT_TIMESTAMP
+""")
+    Long sumTotalRevenue();
+
+
+    @Query("""
+select
+e.eventId as eventId,
+e.title as eventName,
+e.organizer.lastName as lastNameOrganizer,
+e.organizer.middleName as middleNameOrganizer,
+e.organizer.firstName as firstNameOrganizer,
+e.endTime as endTime,
+COALESCE(SUM(tt.soldQuantity), 0) as soldTicket,
+se.grossRevenue as revenue,
+se.status as status
+
+from Event e
+left join Settlement se on e.eventId = se.event.eventId
+left join TicketType tt on e.eventId = tt.event.eventId
+
+where (e.endTime <= CURRENT_TIMESTAMP) and
+(lower(e.title) like lower(concat('%', :keyword, '%')) 
+or lower(e.organizer.lastName) like lower(concat('%', :keyword, '%'))
+or lower(e.organizer.middleName) like lower(concat('%', :keyword, '%'))
+or lower (e.organizer.firstName) like lower(concat('%', :keyword, '%')))
+group by 
+e.eventId,
+e.title,
+e.organizer.lastName,
+e.organizer.middleName,
+e.organizer.firstName,
+e.endTime,
+se.grossRevenue,
+se.status
+
+order by e.endTime DESC
+""")
+
+    List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword);
+
 }

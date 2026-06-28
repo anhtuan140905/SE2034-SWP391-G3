@@ -17,6 +17,7 @@ public class TicketDTO {
     private String categoryName;
     private String thumbnailUrl;
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String specificAddress;
     private String wardName;
     private String cityName;
@@ -44,6 +45,7 @@ public class TicketDTO {
         this.categoryName = projection.getCategoryName();
         this.thumbnailUrl = projection.getThumbnailUrl();
         this.startTime = projection.getStartTime();
+        this.endTime = projection.getEndTime();
         this.specificAddress = projection.getSpecificAddress();
         this.wardName = projection.getWardName();
         this.cityName = projection.getCityName();
