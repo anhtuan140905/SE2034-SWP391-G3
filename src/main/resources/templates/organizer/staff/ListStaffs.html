@@ -85,7 +85,7 @@
             </table>
         </div>
 
-        <div class="pagination-container"  th:if="${totalPages > 0}">
+        <div class="pagination-container"  th:if="${totalPages > 1}">
 
             <!-- Prev -->
             <a th:href="@{/organizer/event/{id}/members(id=${eventId},

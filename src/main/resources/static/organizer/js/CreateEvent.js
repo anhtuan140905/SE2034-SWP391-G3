@@ -1,20 +1,14 @@
 "use strict";
 
-
-// ─── DANH SÁCH HÀNG A-Z ────────────────────────────────────────────────────────
-const ROW_LETTERS = Array.from({ length: 26 }, (_, i) =>
-    String.fromCharCode(65 + i),
-);
-
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
     bannerUrl: "",
     additionalImages: [],
     galleryFiles: [],
-    agenda: [], // { id, time, desc }
+    agenda: [],         // { id, time, desc }
     tiers: [],
-    tierErrors: {},   // { [tierId]: { name?, price?, qty? } }
-    agendaErrors: {}, // { [agendaId]: { time?, desc? } }
+    tierErrors: {},     // { [tierId]: { name?, price?, qty? } }
+    agendaErrors: {},   // { [agendaId]: { time?, desc? } }
 };
 
 let tierIdCounter = 1;
@@ -29,61 +23,100 @@ function newAgendaId() {
 
 // ─── KHỞI TẠO ─────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+    // Khôi phục danh sách vé sau khi validate lỗi từ server
+    if (typeof serverTickets !== "undefined" && serverTickets && serverTickets.length > 0) {
+        state.tiers = serverTickets.map((ticket) => {
+            const row = ticket.seat?.row || 1;
+            const cols = ticket.seat?.seatNumber || 1;
+            return {
+                id: newTierId(),
+                name: ticket.displayOrder || "",
+                zoneName: ticket.zoneName || "",
+                rowLetter: row,
+                cols: cols,
+                totalQty: row * cols,
+                qty: ticket.stock || 1,
+                price: ticket.price || 0,
+                desc: ticket.description || "",
+            };
+        });
+        renderTiers();
+    }
+
     const form = document.getElementById("eventForm");
     if (form) {
         form.addEventListener("submit", handleFormSubmit);
     }
 
-    // Khi đổi giờ mở cửa / kết thúc, kiểm tra lại các mốc thời gian đã nhập
-    // (vì khung giờ hợp lệ phụ thuộc vào 2 giá trị này)
     const startTimeEl = document.getElementById("startTime");
     const endTimeEl = document.getElementById("endTime");
     if (startTimeEl) startTimeEl.addEventListener("change", revalidateAgendaTimes);
     if (endTimeEl) endTimeEl.addEventListener("change", revalidateAgendaTimes);
+
+    // Xử lý banner: validate kích thước ảnh (1280×720)
+    const bannerInput = document.getElementById("bannerFileInput");
+    if (bannerInput) {
+        bannerInput.addEventListener("change", function () {
+            const file = this.files[0];
+            const error = document.getElementById("bannerError");
+            if (error) error.textContent = "";
+            if (!file) return;
+
+            // Preview ngay lập tức
+            handleBannerFile({ target: this });
+
+            // Kiểm tra kích thước sau khi load
+            const img = new Image();
+            img.onload = function () {
+                if (img.width !== 1280 || img.height !== 720) {
+                    if (error) error.textContent = "Ảnh phải có kích thước 1280×720 px.";
+                    bannerInput.value = "";
+                    clearBanner();
+                }
+                URL.revokeObjectURL(img.src);
+            };
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    // Dropdown ward theo city
+    const cityEl = document.getElementById("province");
+    const wardEl = document.getElementById("ward");
+    if (cityEl && wardEl) {
+        cityEl.addEventListener("change", function () {
+            const cityValue = this.value;
+            if (!cityValue) return;
+            fetch(`/organizer/api/city?cityId=${cityValue}`)
+                .then((r) => r.json())
+                .then((wards) => {
+                    wardEl.innerHTML = '<option value="">--Chọn quận/huyện--</option>';
+                    wards.forEach((w) => {
+                        wardEl.innerHTML += `<option value="${w.wardId}">${w.name}</option>`;
+                    });
+                })
+                .catch((err) => console.error(err));
+        });
+    }
 });
 
-function revalidateAgendaTimes() {
-    if (state.agenda.length === 0) return;
-    validateAllAgenda();
-    renderAgenda();
-}
-
+// ─── ĐỒNG BỘ NGÀY ─────────────────────────────────────────────────────────────
 function handleDateChange(val) {
-    document.getElementById("showtimeDateBadge").textContent =
-        val || "Chưa thiết lập";
-}
-// ─── ĐỊA ĐIỂM TỔ CHỨC ──────────────────────────────────────────────────────────
-function updateAddressPreview() {
-    const place = getVal("placeName").trim();
-    const prov = getVal("province").trim();
-    const dist = getVal("district").trim();
-    const street = getVal("street").trim();
-    const parts = [place, street, dist, prov].filter(Boolean);
-
-    const el = document.getElementById("addressPreview");
-    if (parts.length === 0) {
-        el.textContent =
-            "Vui lòng nhập các trường Địa điểm chi tiết phía trên để hiển thị bản xem trước địa chỉ in phôi vé.";
-        el.classList.add("address-preview-empty");
-    } else {
-        el.textContent = parts.join(", ");
-        el.classList.remove("address-preview-empty");
-    }
+    const badge = document.getElementById("showtimeDateBadge");
+    if (badge) badge.textContent = val || "Chưa thiết lập";
 }
 
 // ─── ẢNH BÌA (BANNER) ─────────────────────────────────────────────────────────
 function handleBannerFile(e) {
     const file = e.target.files[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setBanner(url);
+    setBanner(URL.createObjectURL(file));
 }
 
 function setBanner(url) {
     state.bannerUrl = url;
-    const preview = document.getElementById("bannerPreview");
+    const preview     = document.getElementById("bannerPreview");
     const placeholder = document.getElementById("bannerPlaceholder");
-    const overlay = document.getElementById("bannerHoverOverlay");
+    const overlay     = document.getElementById("bannerHoverOverlay");
     if (url) {
         preview.src = url;
         preview.classList.remove("d-none");
@@ -95,16 +128,18 @@ function setBanner(url) {
 }
 
 function clearBanner() {
-    document.getElementById("bannerPreview").classList.add("d-none");
-    document.getElementById("bannerHoverOverlay").classList.add("d-none");
-    document.getElementById("bannerPlaceholder").classList.remove("d-none");
+    const preview     = document.getElementById("bannerPreview");
+    const placeholder = document.getElementById("bannerPlaceholder");
+    const overlay     = document.getElementById("bannerHoverOverlay");
+    if (preview)     preview.classList.add("d-none");
+    if (overlay)     overlay.classList.add("d-none");
+    if (placeholder) placeholder.classList.remove("d-none");
     state.bannerUrl = "";
 }
 
 // ─── THƯ VIỆN ẢNH ─────────────────────────────────────────────────────────────
 function handleGalleryFiles(e) {
-    const files = Array.from(e.target.files || []);
-    files.forEach((file) => {
+    Array.from(e.target.files || []).forEach((file) => {
         state.galleryFiles.push(file);
         state.additionalImages.push(URL.createObjectURL(file));
     });
@@ -120,17 +155,18 @@ function removeGalleryImage(idx) {
     renderGallery();
 }
 
-// Đồng bộ lại state.galleryFiles vào input[type=file] thật
 function syncGalleryInput() {
     const dt = new DataTransfer();
-    state.galleryFiles.forEach((file) => dt.items.add(file));
-    document.getElementById("galleryFileInput").files = dt.files;
+    state.galleryFiles.forEach((f) => dt.items.add(f));
+    const input = document.getElementById("galleryFileInput");
+    if (input) input.files = dt.files;
 }
 
 function renderGallery() {
-    const grid = document.getElementById("galleryGrid");
+    const grid  = document.getElementById("galleryGrid");
     const count = document.getElementById("galleryCount");
-    count.textContent = state.additionalImages.length + " ĐÃ THÊM";
+    if (count) count.textContent = state.additionalImages.length + " ĐÃ THÊM";
+    if (!grid) return;
 
     if (state.additionalImages.length === 0) {
         grid.classList.add("d-none");
@@ -148,15 +184,20 @@ function renderGallery() {
                     onclick="removeGalleryImage(${i})" title="Xóa">
                 <span class="material-symbols-outlined">close</span>
             </button>
-        </div>
-    `,
+        </div>`,
         )
         .join("");
 }
 
 // ─── MỐC THỜI GIAN SỰ KIỆN (AGENDA) ───────────────────────────────────────────
+function revalidateAgendaTimes() {
+    if (state.agenda.length === 0) return;
+    validateAllAgenda();
+    renderAgenda();
+}
+
 function addAgendaItem() {
-    state.agenda.push({ id: newAgendaId(), time: "HH:mm", desc: "" });
+    state.agenda.push({ id: newAgendaId(), time: "", desc: "" });
     renderAgenda();
 }
 
@@ -168,41 +209,33 @@ function deleteAgendaItem(id) {
 
 function updateAgendaField(id, field, value) {
     const item = state.agenda.find((a) => a.id === id);
-    if (item) item[field] = value;
+    if (!item) return;
+    item[field] = value;
 
-    // Xóa lỗi của field này ngay khi người dùng sửa, để phản hồi tức thì
-    if (state.agendaErrors[id] && state.agendaErrors[id][field]) {
+    // Xóa lỗi field này ngay khi user sửa
+    if (state.agendaErrors[id]?.[field]) {
         delete state.agendaErrors[id][field];
+        if (Object.keys(state.agendaErrors[id]).length === 0) {
+            delete state.agendaErrors[id];
+        }
         renderAgenda();
     }
 }
 
-// Validate một mốc thời gian: bắt buộc nhập, và phải nằm trong khung
-// [Giờ Mở Cửa Đón Khách, Giờ Kết Thúc Dự Kiến]
 function validateAgendaItem(a) {
     const errors = {};
 
-    if (!a.time || a.time === "HH:mm" || !String(a.time).trim()) {
+    if (!a.time || !String(a.time).trim()) {
         errors.time = "Vui lòng chọn thời gian.";
     } else {
-        const startTime = getVal("startTime"); // dạng "HH:mm"
-        const endTime = getVal("endTime");
+        const startTime = getVal("startTime");
+        const endTime   = getVal("endTime");
 
         if (startTime && endTime) {
-            // So sánh chuỗi "HH:mm" trực tiếp vẫn đúng vì luôn 2 số - 2 số
             if (a.time < startTime || a.time > endTime) {
-                errors.time = `Thời gian phải nằm trong khung ${startTime} - ${endTime}.`;
-            }
-            const duplicateCount =
-                state.agenda.filter(
-                    x=>x.time===a.time
-                ).length;
-
-            if(duplicateCount>1){
-
-                errors.time=
-                    "Thời gian bị trùng";
-
+                errors.time = `Thời gian phải nằm trong khung ${startTime} – ${endTime}.`;
+            } else if (state.agenda.filter((x) => x.time === a.time).length > 1) {
+                errors.time = "Thời gian bị trùng với mốc khác.";
             }
         }
     }
@@ -214,7 +247,6 @@ function validateAgendaItem(a) {
     return errors;
 }
 
-// Validate toàn bộ danh sách mốc thời gian, set vào state.agendaErrors
 function validateAllAgenda() {
     state.agendaErrors = {};
     let isValid = true;
@@ -230,11 +262,12 @@ function validateAllAgenda() {
 
 function renderAgenda() {
     const list = document.getElementById("agendaList");
-    const empty = document.getElementById("agendaEmpty");
+    if (!list) return;
 
     if (state.agenda.length === 0) {
-        list.innerHTML = "";
-        list.appendChild(empty || mkAgendaEmpty());
+        list.innerHTML = `<div class="agenda-empty" id="agendaEmpty">
+            Chưa có mốc thời gian nào được cấu hình. Nhấp "Thêm mốc thời gian mới" phía dưới để bắt đầu!
+        </div>`;
         return;
     }
 
@@ -250,52 +283,54 @@ function renderAgenda() {
             <div class="agenda-fields">
                 <div class="agenda-time-wrap">
                     <label class="tier-field-label">Thời Gian</label>
-                    <input type="time" class="tier-input${errs.time ? " is-invalid-field" : ""}" value="${escHtml(a.time)}"
-                        name="timeLine[${idx}].time"
-                        onchange="updateAgendaField('${a.id}','time',this.value)" />
+                    <input type="time"
+                           class="tier-input${errs.time ? " is-invalid-field" : ""}"
+                           value="${escHtml(a.time)}"
+                           name="timeLine[${idx}].time"
+                           onchange="updateAgendaField('${a.id}','time',this.value)" />
                     ${errDiv(errs.time)}
                 </div>
                 <div class="agenda-desc-wrap">
                     <label class="tier-field-label">Nội Dung Hoạt Động / Chương Trình</label>
-                    <input type="text" class="tier-input${errs.desc ? " is-invalid-field" : ""}" value="${escHtml(a.desc)}"
-                        name="timeLine[${idx}].active"
-                        placeholder="Ví dụ: Mở cửa đón khách và nhạc khởi động pre-show"
-                        oninput="updateAgendaField('${a.id}','desc',this.value)" />
+                    <input type="text"
+                           class="tier-input${errs.desc ? " is-invalid-field" : ""}"
+                           value="${escHtml(a.desc)}"
+                           name="timeLine[${idx}].active"
+                           placeholder="Ví dụ: Mở cửa đón khách và nhạc khởi động pre-show"
+                           oninput="updateAgendaField('${a.id}','desc',this.value)" />
                     ${errDiv(errs.desc)}
                 </div>
-                <button type="button" class="agenda-del-btn" onclick="deleteAgendaItem('${a.id}')" title="Xóa">
+                <button type="button" class="agenda-del-btn"
+                        onclick="deleteAgendaItem('${a.id}')" title="Xóa">
                     <span class="material-symbols-outlined">delete</span>
                 </button>
             </div>
-        </div>
-    `;
+        </div>`;
         })
         .join("");
 }
 
-function mkAgendaEmpty() {
-    const div = document.createElement("div");
-    div.className = "agenda-empty";
-    div.id = "agendaEmpty";
-    div.textContent =
-        'Chưa có mốc thời gian nào được cấu hình. Nhấp "Thêm mốc thời gian mới" phía dưới để bắt đầu!';
-    return div;
+// ─── HẠNG VÉ (TICKET TIERS) ───────────────────────────────────────────────────
+
+/** Tính sức chứa: hàng × số ghế mỗi hàng */
+function computeTotalQty(row, cols) {
+    const r = Math.min(26, Math.max(1, parseInt(row) || 1));
+    const c = Math.min(100, Math.max(1, parseInt(cols) || 1));
+    return r * c;
 }
 
-// ─── HẠNG VÉ (TICKET TIERS) ───────────────────────────────────────────────────
 function addTicketTier() {
     state.tiers.push({
         id: newTierId(),
         name: "",
         zoneName: "",
-        rowLetter: "A",
+        rowLetter: 1,
         cols: 1,
-        totalQty: 1,
+        totalQty: 1,   // 1 hàng × 1 ghế
         qty: 1,
         price: 0,
         desc: "",
     });
-
     renderTiers();
 }
 
@@ -309,63 +344,61 @@ function updateTierField(id, field, value) {
     const tier = state.tiers.find((t) => t.id === id);
     if (!tier) return;
 
-    if (field === "isFree" && value === true) {
-        tier.price = 0;
-    }
-
     tier[field] = value;
-    if (field === "cols" || field === "rowLetter") {
-        tier.totalQty = computeRows(tier.rowLetter) * (tier.cols || 1);
 
-        // Nếu số vé vượt quá sức chứa thì giảm xuống bằng sức chứa
+    // Khi thay đổi hàng hoặc số ghế → tính lại sức chứa
+    if (field === "rowLetter" || field === "cols") {
+        tier.totalQty = computeTotalQty(tier.rowLetter, tier.cols);
+
+        // Nếu qty đang vượt sức chứa mới → clamp và thông báo lỗi real-time
         if (tier.qty > tier.totalQty) {
             tier.qty = tier.totalQty;
         }
+        // Xóa lỗi qty nếu đang hợp lệ sau khi sức chứa thay đổi
+        if (state.tierErrors[id]?.qty && tier.qty >= 1 && tier.qty <= tier.totalQty) {
+            delete state.tierErrors[id].qty;
+        }
+        renderTiers();
+        return;
     }
 
-    // Xóa lỗi của field này ngay khi người dùng sửa, để phản hồi tức thì
-    if (state.tierErrors[id] && state.tierErrors[id][field]) {
+    // Khi user nhập số lượng vé → validate real-time ngay lập tức
+    if (field === "qty") {
+        const numQty = parseInt(value) || 0;
+        if (numQty > tier.totalQty) {
+            if (!state.tierErrors[id]) state.tierErrors[id] = {};
+            state.tierErrors[id].qty = `Số lượng vé không được vượt sức chứa (${tier.totalQty}).`;
+        } else if (numQty < 1) {
+            if (!state.tierErrors[id]) state.tierErrors[id] = {};
+            state.tierErrors[id].qty = "Số lượng vé phải lớn hơn hoặc bằng 1.";
+        } else {
+            // Hợp lệ → xóa lỗi qty
+            if (state.tierErrors[id]?.qty) {
+                delete state.tierErrors[id].qty;
+                if (Object.keys(state.tierErrors[id]).length === 0) {
+                    delete state.tierErrors[id];
+                }
+            }
+        }
+        renderTiers();
+        return;
+    }
+
+    // Các field khác: xóa lỗi ngay khi user sửa
+    if (state.tierErrors[id]?.[field]) {
         delete state.tierErrors[id][field];
-        renderTiers();
-    }
-
-    // Chỉ render lại khi đổi trạng thái MIỄN PHÍ / TRẢ PHÍ, hàng dọc, số ghế/hàng, số lượng,
-    // loại vé hoặc giá (vì những thay đổi này ảnh hưởng tới hiển thị / lỗi)
-    if (
-
-        field === "cols" ||
-        field === "rowLetter"
-
-    ) {
+        if (Object.keys(state.tierErrors[id]).length === 0) {
+            delete state.tierErrors[id];
+        }
         renderTiers();
     }
 }
 
-// Số hàng tương ứng với chữ cái (A=1, B=2, ... Z=26)
-function computeRows(letter) {
-    const l = (
-        String(letter || "A")
-            .toUpperCase()
-            .replace(/[^A-Z]/g, "") || "A"
-    ).charCodeAt(0);
-    return l - 65 + 1;
-}
-
-// Chuỗi phân bổ ghế tự động: "TKT-A01 to TKT-A01 (1 hàng A-A x 1 ghế)"
-function computeZone(rowLetter, qty) {
-    const rows = computeRows(rowLetter);
-    const qtyStr = String(qty || 0).padStart(2, "0");
-    const rowsRange = rows > 1 ? `A-${rowLetter}` : "A-A";
-    return `TKT-A01 to TKT-${rowLetter}${qtyStr} (${rows} hàng ${rowsRange} x ${qty || 0} ghế)`;
-}
-
-
-// Validate một hạng vé (card trong ảnh thứ 2): Loại, Mệnh giá, Số lượng vé
 function validateTier(t) {
     const errors = {};
 
     if (!t.name || !String(t.name).trim()) {
-        errors.name = "Vui lòng nhập Loại vé.";
+        errors.name = "Vui lòng nhập Display Order.";
     }
 
     if (!t.zoneName || !String(t.zoneName).trim()) {
@@ -373,20 +406,20 @@ function validateTier(t) {
     }
 
     if (t.price == null || Number(t.price) < 0) {
-        errors.price="Mệnh giá không được âm";
+        errors.price = "Mệnh giá không được âm.";
     }
 
-
-    if (!t.qty || Number(t.qty) < 1) {
+    const qty      = parseInt(t.qty) || 0;
+    const totalQty = parseInt(t.totalQty) || 1;
+    if (qty < 1) {
         errors.qty = "Số lượng vé phải lớn hơn hoặc bằng 1.";
-    } else if (Number(t.qty) > Number(t.totalQty)) {
-        errors.qty = `Số lượng vé không được vượt sức chứa (${t.totalQty}).`;
+    } else if (qty > totalQty) {
+        errors.qty = `Số lượng vé không được vượt sức chứa (${totalQty}).`;
     }
 
     return errors;
 }
 
-// Validate toàn bộ hạng vé, set vào state.tierErrors
 function validateAllTiers() {
     state.tierErrors = {};
     let isValid = true;
@@ -401,24 +434,22 @@ function validateAllTiers() {
 }
 
 function renderTiers() {
-    const container = document.getElementById("ticketTiersContainer");
+    const container  = document.getElementById("ticketTiersContainer");
     const emptyState = document.getElementById("ticketTiersEmpty");
+    if (!container) return;
 
     if (state.tiers.length === 0) {
-        emptyState.style.display = "";
+        if (emptyState) emptyState.style.display = "";
         container.innerHTML = "";
         return;
     }
 
-    emptyState.style.display = "none";
+    if (emptyState) emptyState.style.display = "none";
 
     container.innerHTML = state.tiers
         .map((t, idx) => {
-            const rows = computeRows(t.rowLetter);
-            const zone = computeZone(t.rowLetter, t.totalQty);
             const errs = state.tierErrors[t.id] || {};
             return `
-
         <div class="ticket-tier-card fade-in" id="card-${t.id}">
 
             <div class="ticket-tier-header">
@@ -426,13 +457,13 @@ function renderTiers() {
                     <span class="tier-num-badge">${idx + 1}</span>
                     <span class="tier-config-label">Cấu Hình Chi Tiết Hạng Vé</span>
                 </div>
-                <button type="button" class="btn-delete-tier"
-                        onclick="deleteTier('${t.id}')">
+                <button type="button" class="btn-delete-tier" onclick="deleteTier('${t.id}')">
                     <span class="material-symbols-outlined">delete</span>
                     Gỡ bỏ hạng vé
                 </button>
             </div>
-            <!-- Cấu hình sơ đồ ghế ngồi & sức chứa tự động -->
+
+            <!-- Cấu hình sơ đồ ghế ngồi & sức chứa -->
             <div class="seat-config-box mt-3">
                 <div class="seat-config-title">
                     <span class="material-symbols-outlined">grid_view</span>
@@ -441,27 +472,25 @@ function renderTiers() {
 
                 <div class="row g-3">
 
-                    <!-- Hàng dọc (select A-Z) -->
+                    <!-- Hàng dọc (1–26) -->
                     <div class="col-12 col-sm-4">
-                        <div class="row-stepper-label">
+                        <label class="tier-field-label">
                             <span class="material-symbols-outlined" style="font-size:14px;">unfold_more</span>
-                            Hàng Dọc (A-Z)
-                        </div>
-                       <input
-    class="tier-input row-select"
-    type="number"
-    min="1"
-    max="26"
-    value="${t.rowLetter}"
-    name="ticketTypes[${idx}].seat.row"
-    placeholder="Nhập Số Hàng "
-    oninput="
-        updateTierField(
-            '${t.id}',
-            'rowLetter',
-            Math.min(26, Math.max(1, parseInt(this.value) || 1))
-        )
-    ">
+                            Hàng Dọc (1–26)
+                        </label>
+                        <input
+                            class="tier-input row-select"
+                            type="number"
+                            min="1" max="26"
+                            value="${escHtml(t.rowLetter)}"
+                            name="ticketTypes[${idx}].seat.row"
+                            placeholder="Nhập số hàng"
+                            oninput="updateTierField(
+                                '${t.id}',
+                                'rowLetter',
+                                Math.min(26, Math.max(1, parseInt(this.value) || 1))
+                            )" />
+                        <div class="row-stepper-sub">Giới hạn 1 – 26 hàng</div>
                     </div>
 
                     <!-- Số ghế mỗi hàng -->
@@ -475,39 +504,35 @@ function renderTiers() {
                             class="tier-input"
                             name="ticketTypes[${idx}].seat.seatNumber"
                             min="1" max="100"
-                            value="${t.cols}"
-                            oninput="updateTierField('${t.id}', 'cols', Math.min(100, Math.max(1, parseInt(this.value) || 1)))" />
-                        <div class="row-stepper-sub">Giới hạn 1 - 100 ghế</div>
+                            value="${escHtml(t.cols)}"
+                            oninput="updateTierField(
+                                '${t.id}',
+                                'cols',
+                                Math.min(100, Math.max(1, parseInt(this.value) || 1))
+                            )" />
+                        <div class="row-stepper-sub">Giới hạn 1 – 100 ghế</div>
                     </div>
 
-                    <!-- Sức chứa ghế (auto) -->
+                    <!-- Sức chứa (tự động) -->
                     <div class="col-12 col-sm-4">
                         <label class="tier-field-label">
                             <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;">lock</span>
                             Sức Chứa (QTY)
                         </label>
                         <div class="computed-inp">
-                            <span>${t.totalQty}</span>
+                            <span id="totalQty-${t.id}">${t.totalQty}</span>
                             <span class="computed-auto">Tự động</span>
                         </div>
-                        <div class="row-stepper-sub">Số lượng vé tổng</div>
+                        <div class="row-stepper-sub">= Hàng × Ghế/hàng</div>
                         <input type="hidden" name="ticketTypes[${idx}].capacity" value="${t.totalQty}" />
                     </div>
 
                 </div>
             </div>
 
-            <!-- Thanh phân bổ ghế tự động -->
-            <div class="seat-alloc-bar" style="margin-bottom:15px;">
-                <div class="seat-alloc-left">
-                    <span class="material-symbols-outlined">event_seat</span>
-                    Phân bổ ghế tự động: <span class="seat-alloc-code">${escHtml(zone)}</span>
-                </div>
-                <span class="seat-alloc-right">✓ AUTO ALLOCATION ENABLED</span>
-            </div>
-            <div class="row g-3 align-items-start">
+            <div class="row g-3 align-items-start mt-1">
 
-                <!-- Loại vé -->
+                <!-- Display Order -->
                 <div class="col-12 col-sm-6 col-md-3">
                     <label class="tier-field-label">
                         Display Order <span style="color:#ef4444;">*</span>
@@ -515,38 +540,36 @@ function renderTiers() {
                     <input
                         type="number"
                         class="tier-input${errs.name ? " is-invalid-field" : ""}"
-                        placeholder="Ví dụ:1,2"
-                        name="ticketTypes[${idx}].DisplayOrder"
+                        placeholder="Ví dụ: 1, 2"
+                        name="ticketTypes[${idx}].displayOrder"
                         value="${escHtml(t.name || "")}"
                         oninput="updateTierField('${t.id}', 'name', this.value)" />
                     ${errDiv(errs.name)}
                 </div>
 
+                <!-- Loại / Tên khu vực -->
                 <div class="col-12 col-sm-6 col-md-3">
-                    <label class="tier-field-label">
-                        Loại
-                    </label>
+                    <label class="tier-field-label">Loại / Khu Vực</label>
                     <input
                         type="text"
-                        class="tier-input"
+                        class="tier-input${errs.zoneName ? " is-invalid-field" : ""}"
                         placeholder="Ví dụ: Standee A, Zone VIP..."
                         name="ticketTypes[${idx}].zoneName"
                         value="${escHtml(t.zoneName || "")}"
                         oninput="updateTierField('${t.id}', 'zoneName', this.value)" />
+                    ${errDiv(errs.zoneName)}
                 </div>
 
                 <!-- Mệnh giá -->
                 <div class="col-12 col-sm-6 col-md-3">
-                    <div class="price-header">
-                        <label class="tier-field-label mb-0">Mệnh Giá (đ)</label>
-                    </div>
+                    <label class="tier-field-label mb-0">Mệnh Giá (đ)</label>
                     <div class="price-input-wrap mt-1">
                         <input
-                            type= "number"
-                            class="tier-input tier-input-mono"${errs.price ? " is-invalid-field" : ""}
+                            type="number"
+                            class="tier-input tier-input-mono${errs.price ? " is-invalid-field" : ""}"
                             name="ticketTypes[${idx}].price"
-                            placeholder= "Ví dụ: 250000"
-                            value="${t.price}"
+                            placeholder="Ví dụ: 250000"
+                            value="${escHtml(t.price)}"
                             min="0"
                             oninput="updateTierField('${t.id}', 'price', Math.max(0, Number(this.value) || 0))" />
                         <span class="price-suffix">đ</span>
@@ -560,26 +583,19 @@ function renderTiers() {
                         Số Lượng Vé (QTY) <span style="color:#ef4444;">*</span>
                     </label>
                     <input
-                    type="number"
-                    class="tier-input tier-input-mono${errs.qty ? " is-invalid-field" : ""}"
-                    name="ticketTypes[${idx}].Stock"
-                    min="1"
-                    max="${t.totalQty}"
-                    value="${t.qty}"
-                    oninput="
-                        updateTierField(
-                            '${t.id}',
-                            'qty',
-                            Math.min(
-                                ${t.totalQty},
-                                Math.max(1, parseInt(this.value) || 1)
-                            )
-                        )
-                    " />
+                        type="number"
+                        class="tier-input tier-input-mono${errs.qty ? " is-invalid-field" : ""}"
+                        name="ticketTypes[${idx}].stock"
+                        min="1"
+                        max="${t.totalQty}"
+                        value="${escHtml(t.qty)}"
+                        oninput="updateTierField('${t.id}', 'qty', parseInt(this.value) || 0)" />
                     ${errDiv(errs.qty)}
+                    <div class="row-stepper-sub">Tối đa: ${t.totalQty} (theo sức chứa)</div>
                 </div>
 
             </div>
+
             <!-- Mô tả -->
             <div class="border-top pt-3 mt-3">
                 <label class="tier-field-label">
@@ -589,33 +605,26 @@ function renderTiers() {
                     class="tier-input"
                     name="ticketTypes[${idx}].description"
                     rows="3"
-                    placeholder="Ví dụ: Đồ uống chào mừng miễn phí, Ghế ngồi hàng đầu cận cảnh, Trọn bộ quà tặng kèm khi check-in lối đi riêng..."
+                    placeholder="Ví dụ: Đồ uống chào mừng miễn phí, Ghế ngồi hàng đầu cận cảnh..."
                     oninput="updateTierField('${t.id}', 'desc', this.value)"
                 >${escHtml(t.desc || "")}</textarea>
             </div>
 
-        </div>
-
-        `;
+        </div>`;
         })
         .join("");
 }
 
 // ─── GỬI FORM ─────────────────────────────────────────────────────────────────
-
 function handleFormSubmit(e) {
-    const tiersValid = validateAllTiers();
+    const tiersValid  = validateAllTiers();
     const agendaValid = validateAllAgenda();
 
-    // Vẽ lại để hiển thị / xóa các thông báo lỗi tương ứng
     renderTiers();
     renderAgenda();
 
     if (!tiersValid || !agendaValid) {
         e.preventDefault();
-        showValidationBanner(
-            "Vui lòng kiểm tra lại các trường được đánh dấu lỗi ở phần Mốc Thời Gian Sự Kiện và Phân Khúc Vé Mở Bán.",
-        );
         scrollToFirstError();
         return false;
     }
@@ -630,16 +639,7 @@ function handleCancel() {
     }
 }
 
-// ─── THÔNG BÁO LỖI / THÀNH CÔNG ────────────────────────────────────────────────
-function showValidationBanner(msg) {
-    const banner = document.getElementById("validationError");
-    const msgEl = document.getElementById("validationErrorMsg");
-    if (!banner || !msgEl) return;
-    msgEl.textContent = msg;
-    banner.classList.remove("d-none");
-    banner.classList.add("d-flex");
-}
-
+// ─── THÔNG BÁO LỖI ────────────────────────────────────────────────────────────
 function dismissError() {
     const banner = document.getElementById("validationError");
     if (banner) banner.classList.add("d-none");
@@ -656,11 +656,13 @@ function scrollToFirstError() {
 
 function showToast(isDraft) {
     const t = document.getElementById("successToast");
-    t.querySelector("span:last-child")
-        ? (t.lastChild.textContent = isDraft
+    if (!t) return;
+    const span = t.querySelector("span:last-child");
+    if (span) {
+        span.textContent = isDraft
             ? " Đã lưu bản nháp thành công!"
-            : " Sự kiện đã được đăng thành công!")
-        : null;
+            : " Sự kiện đã được đăng thành công!";
+    }
     t.classList.remove("d-none");
     setTimeout(() => t.classList.add("d-none"), 4000);
 }
@@ -679,68 +681,8 @@ function escHtml(str) {
         .replace(/>/g, "&gt;");
 }
 
-// Tạo khối hiển thị lỗi text-danger, đồng bộ style với phần lỗi tĩnh (Thymeleaf) của form
 function errDiv(msg) {
     return msg
-        ? `<div class="text-danger" style="font-size: small;">${escHtml(msg)}</div>`
+        ? `<div class="text-danger" style="font-size:small;">${escHtml(msg)}</div>`
         : "";
 }
-
-const city=document.getElementById("province");
-const ward=document.getElementById("ward");
-
-if(city && ward){
-
-    city.addEventListener("change",function(){
-
-        const cityValue=this.value;
-
-        if(!cityValue) return;
-
-        fetch(`/organizer/api/city?cityId=${cityValue}`)
-
-            .then(r=>r.json())
-
-            .then(wards=>{
-
-                ward.innerHTML =
-                    '<option value="">--Chọn quận/huyện--</option>';
-
-                wards.forEach(w=>{
-
-                    ward.innerHTML +=
-                        `<option value="${w.wardId}">
-                    ${w.name}
-                </option>`;
-
-                });
-
-            })
-            .catch(err=>console.error(err));
-    });
-
-}
-
-document.getElementById("bannerFileInput")
-    .addEventListener("change", function () {
-        const file = this.files[0];
-        const error = document.getElementById("bannerError");
-        error.textContent = "";
-        if (!file) return;
-        const img = new Image();
-        img.onload = function () {
-            const width = img.width;
-            const height = img.height;
-            if (width !== 1280 || height !== 720) {
-                error.textContent = "Ảnh phải có kích thước 1280x720";
-                document.getElementById("bannerFileInput").value = "";
-                document.getElementById("bannerPreview").src = "";
-                document.getElementById("bannerPreview").classList.add("d-none");
-                document.getElementById("bannerPlaceholder").classList.remove("d-none");
-                clearBanner();
-            }
-            URL.revokeObjectURL(img.src);
-        };
-        img.src = URL.createObjectURL(file);
-    });
-

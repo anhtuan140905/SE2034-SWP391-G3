@@ -53,21 +53,21 @@
     <div class="form-scroll-area flex-grow-1">
         <div class="form-container">
             <!-- Banner lỗi xác thực -->
-            <div
-                    id="validationError"
-                    class="alert alert-danger d-none align-items-center gap-3 mb-4 fade-in"
-                    role="alert"
-            >
-                <span class="material-symbols-outlined flex-shrink-0">error</span>
-                <span id="validationErrorMsg"></span>
-                <button
-                        type="button"
-                        class="btn-dismiss ms-auto"
-                        onclick="dismissError()"
-                >
-                    Đóng
-                </button>
-            </div>
+<!--            <div-->
+<!--                    id="validationError"-->
+<!--                    class="alert alert-danger d-none align-items-center gap-3 mb-4 fade-in"-->
+<!--                    role="alert"-->
+<!--            >-->
+<!--                <span class="material-symbols-outlined flex-shrink-0">error</span>-->
+<!--                <span id="validationErrorMsg"></span>-->
+<!--                <button-->
+<!--                        type="button"-->
+<!--                        class="btn-dismiss ms-auto"-->
+<!--                        onclick="dismissError()"-->
+<!--                >-->
+<!--                    Đóng-->
+<!--                </button>-->
+<!--            </div>-->
 
             <!-- ===== FORM CHÍNH ===== -->
             <form
@@ -143,7 +143,12 @@
                                 </div>
 
                             </div>
-                            <div id="bannerError" style="color:red"></div>  
+                            <div id="bannerError" style="color:red"></div>
+                            <div class="text-danger"
+                                 style="font-size: small"
+                                 th:if="${#fields.hasErrors('banner')}"
+                                 th:errors="*{banner}">
+                            </div>
                         </div>
 
                         <div class="text-danger"
@@ -599,6 +604,11 @@
                                 để thiết lập giá trị đầu tiên!
                             </div>
                             <div id="ticketTiersContainer"></div>
+                            <div class="text-danger"
+                                 style="font-size: small"
+                                 th:if="${#fields.hasErrors('ticketTypes')}"
+                                 th:errors="*{ticketTypes}">
+                            </div>
                         </div>
                     </section>
                     <!-- /section-5 -->
@@ -631,21 +641,41 @@
                                     <label class="tier-field-label">Mã Số Thuế <span class="text-required">*</span></label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.taxCode}"
                                            placeholder="Ví dụ: 0312345678" maxlength="20" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.taxCode')}"
+                                         th:errors="*{organizerProfile.taxCode}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Pháp Lý Chính Thức <span class="text-required">*</span></label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalName}"
                                            placeholder="Ví dụ: Công ty TNHH ABC Việt Nam" maxlength="200" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.legalName')}"
+                                         th:errors="*{organizerProfile.legalName}">
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="tier-field-label">Địa Chỉ Pháp Lý / Đăng Ký Kinh Doanh <span class="text-required">*</span></label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalAddress}"
                                            placeholder="Địa chỉ đầy đủ theo giấy phép đăng ký kinh doanh..." maxlength="300" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.legalAddress')}"
+                                         th:errors="*{organizerProfile.legalAddress}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Thương Hiệu / Hiển Thị</label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.companyName}"
                                            placeholder="Ví dụ: ABC Events" maxlength="500" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.companyName')}"
+                                         th:errors="*{organizerProfile.companyName}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Loại Hình Kinh Doanh</label>
@@ -657,6 +687,11 @@
                                         <option value="ca_nhan">Cá nhân</option>
                                         <option value="to_chuc_phi_loi_nhuan">Tổ chức phi lợi nhuận</option>
                                     </select>
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.businessType')}"
+                                         th:errors="*{organizerProfile.businessType}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -676,12 +711,22 @@
                                     <label class="tier-field-label">Tên Chủ Tài Khoản <span class="text-required">*</span></label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankAccountName}"
                                            placeholder="Ví dụ: CONG TY TNHH ABC VIET NAM" maxlength="100" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.bankAccountName')}"
+                                         th:errors="*{organizerProfile.bankAccountName}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Số Tài Khoản Ngân Hàng <span class="text-required">*</span></label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankAccountNumber}"
+                                    <input type="number" class="form-control field-input" th:field="*{organizerProfile.bankAccountNumber}"
                                            placeholder="Ví dụ: 0123456789012" maxlength="30"
                                            style="font-family: var(--font-mono);" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.bankAccountNumber')}"
+                                         th:errors="*{organizerProfile.bankAccountNumber}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label class="tier-field-label">Tên Ngân Hàng <span class="text-required">*</span></label>
@@ -698,11 +743,21 @@
                                         <option value="Sacombank">Sacombank</option>
                                         <option value="SHB">SHB</option>
                                     </select>
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.bankName')}"
+                                         th:errors="*{organizerProfile.bankName}">
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label class="tier-field-label">Chi Nhánh Ngân Hàng</label>
                                     <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankBranch}"
                                            placeholder="Ví dụ: Chi nhánh Quận 1" />
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('organizerProfile.bankBranch')}"
+                                         th:errors="*{organizerProfile.bankBranch}">
+                                    </div>
                                 </div>
                             </div>
 
@@ -748,6 +803,11 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- JS tùy chỉnh -->
+<script th:inline="javascript">
+
+    const serverTickets = /*[[${event.ticketTypes}]]*/ [];
+
+</script>
 <script th:src="@{/organizer/js/createevent.js}"></script>
 </body>
 </html>

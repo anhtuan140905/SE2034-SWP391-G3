@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TicketTypeRequestDTO {
     @NotNull(message = "Không được để trống mức độ ưu tiên")
-    private Integer DisplayOrder;
+    private Integer displayOrder;
     @NotBlank(message = "Không được để trống tên hạng vé")
     @Size(max = 100, message = "Tên hạng vé không được vượt quá 100 ký tự")
     private String zoneName;
@@ -27,7 +27,7 @@ public class TicketTypeRequestDTO {
     private BigDecimal price;
     @NotNull(message = "Số lượng vé không được để trống")
     @Positive(message = "Số lượng vé phải lớn hơn 0")
-    private Long Stock;
+    private Long stock;
     @Size(max = 500, message = "Mô tả không được vượt quá 500 ký tự")
     private String description;
     @Valid

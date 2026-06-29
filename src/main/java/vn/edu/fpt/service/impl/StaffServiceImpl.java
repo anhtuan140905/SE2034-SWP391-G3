@@ -60,6 +60,12 @@ public class StaffServiceImpl implements StaffService {
         if(user==null){
             throw new RuntimeException("User Not Found With Email:"+ memberRequestDTO.getEmail());
         }
+        boolean alreadyExists = organizerMemberRepository
+                .findbyUserIdAndEventId(user.getId(), EventId)
+                .isPresent();
+        if (alreadyExists) {
+            throw new RuntimeException("User này đã có role trong event!");
+        }
         UserRole userRole = userRoleRepository.findByUserIdAndRoleId(user.getId(), memberRequestDTO.getRoleId());
         if(userRole==null){
             userRole = new UserRole();
@@ -69,14 +75,7 @@ public class StaffServiceImpl implements StaffService {
             userRoleRepository.save(userRole);
         }
         Event event = eventRepository.findById(EventId).orElseThrow(()->new RuntimeException("Event Not Found With :"+EventId));
-//         kiểm tra user này đã có quyền trong event này chữa
-//         nêu có thì ném ra lỗi
-        OrganizerMember orgMember = organizerMemberRepository.findByUserRoleAndEvent(userRole,event);
-        if(orgMember!=null){
-            throw new RuntimeException("User had Role with this Event");
-        }
-
-        orgMember = new OrganizerMember();
+        OrganizerMember orgMember = new OrganizerMember();
         orgMember.setUserRole(userRole);
         orgMember.setEvent(event);
         if (memberRequestDTO.getPermissionId() != null && !memberRequestDTO.getPermissionId().isEmpty()) {
@@ -111,7 +110,21 @@ public class StaffServiceImpl implements StaffService {
 
         return new PageImpl<>(dtos, pageable, organizerMemberList.getTotalElements());
     }
+
+    @Override
+    public boolean checkPermission(Long userId, Long eventId, Long permissionId) {
+        OrganizerMember organizerMember = organizerMemberRepository.CheckPermission(userId, eventId);
+        if (organizerMember == null) {
+            return false;
+        }
+        for (OrganizerMemberPermission omp : organizerMember.getPermissions()) {
+            if (omp.getPermission().getId().equals(permissionId)) {
+                return true;
+            }
+        }
+        return false;
     }
+}
 
 
 

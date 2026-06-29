@@ -1,7 +1,10 @@
 
 package vn.edu.fpt.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +13,7 @@ import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
+import vn.edu.fpt.modelview.response.organizer.OrderDto;
 
 
 import java.time.Instant;
@@ -18,7 +22,24 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-
+    @Query(value = """
+    SELECT o.order_id AS orderId,CONCAT(u.last_name,' ',u.middle_name,' ',u.first_name) AS fullName,
+               u.phone AS phone,FORMAT(o.created_at, 'dd/MM/yyyy HH:mm') AS createAt,
+                   CONCAT(COUNT(od.order_detail_id),N' vé · ',MAX(tt.zone_name)) AS quantityTicket,
+        o.total_amount AS totalAmount,o.status AS status
+    FROM orders o
+    JOIN order_details od ON o.order_id = od.order_id
+    JOIN seats s ON s.seat_id = od.seat_id
+    JOIN ticket_types tt ON s.ticket_type_id = tt.ticket_type_id
+    JOIN users u ON o.user_id = u.id
+    WHERE o.event_id = :eventId AND ( :keyword IS NULL OR :keyword = ''
+    OR CONCAT(u.last_name,' ',u.middle_name,' ',u.first_name) LIKE :keyword
+    OR o.order_id LIKE :keyword ) AND (:status IS NULL OR :status = '' OR o.status = :status)
+    GROUP BY o.order_id,u.last_name,u.middle_name,u.first_name,u.phone,
+        o.created_at,o.total_amount,o.status""", nativeQuery = true)
+    Page<OrderProjection> findOrderByEventId(
+            @Param("eventId") Long eventId, @Param("keyword") String keyword, @Param("status") String status, Pageable pageable
+            );
     // Dùng bởi CheckoutPageController — eager load details + tickets
     @Query("""
     SELECT o FROM Order o
