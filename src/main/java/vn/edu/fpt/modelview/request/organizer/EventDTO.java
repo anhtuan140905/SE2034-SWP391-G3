@@ -33,6 +33,7 @@ public class EventDTO {
     private String description;
     @NotNull(message = "Ngày diễn ra không được để trống")
     @Future(message = "Ngày diễn ra phải ở tương lai")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate eventDate;
     @NotBlank(message = "Tên địa điểm không được để trống")
     @Size(max = 255, message = "Tên địa điểm không được vượt quá 255 ký tự")
@@ -47,7 +48,8 @@ public class EventDTO {
     private List<timeLineDTO> timeLine;
     @NotEmpty(message = "Phải có ít nhất một loại vé")
     @Valid
-    private List<TicketTypeRequestDTO> ticketTypes;
+    @NotEmpty(message = "Phải có ít nhất một loại vé")
+    private List<TicketTypeRequestDTO> ticketTypes ;
     @Size(max = 10,
             message = "Chỉ được tải lên tối đa 10 ảnh")
     private List<MultipartFile> imageFiles;

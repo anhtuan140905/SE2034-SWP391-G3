@@ -13,6 +13,7 @@ import vn.edu.fpt.model.OrganizerMember;
 import vn.edu.fpt.model.UserRole;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMember, Long>{
@@ -29,5 +30,8 @@ public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMembe
     Page<OrganizerMember> getOrganizerMemberByEventID(@Param("eventId") Long eventId,
                                                       @Param("keyword") String keyword,
                                                       @Param("roleId") Long roleId, Pageable pageable);
-
+    @Query("SELECT om FROM OrganizerMember om JOIN om.userRole ur where  ur.user.id = :userId and om.event.eventId = :eventId")
+    OrganizerMember CheckPermission(@Param("userId") Long userId, @Param("eventId")  Long eventId);
+    @Query("SELECT om FROM OrganizerMember om JOIN om.userRole ur where  ur.user.id = :userId and om.event.eventId = :eventId")
+    Optional<OrganizerMember> findbyUserIdAndEventId(@Param("userId") Long userId, @Param("eventId")  Long eventId);
 }

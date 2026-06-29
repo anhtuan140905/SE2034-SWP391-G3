@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
 import vn.edu.fpt.modelview.response.organizer.StaffResponceDTO;
 import vn.edu.fpt.service.StaffService;
+import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
 import java.util.List;
 
@@ -25,7 +27,11 @@ public class StaffController {
                              @RequestParam(defaultValue = "") String keyword,
                              @RequestParam(required = false) Long roleId,
                              @RequestParam(defaultValue = "0") int page,
+                             @AuthenticationPrincipal CustomUserDetails userDetails,
                              Model model) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,5L)){
+            return "organizer/DashboardOrganizer";
+        }
         int size = 10;
         Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, PageRequest.of(page, size));
         if (!model.containsAttribute("inviteMember")) {
@@ -46,9 +52,12 @@ public class StaffController {
     public String InviteMember(@PathVariable Long id,
                                @Valid @ModelAttribute("inviteMember") MemberRequestDTO memberRequestDTO,
                                BindingResult result,
-                               RedirectAttributes redirectAttributes
+                               RedirectAttributes redirectAttributes,
+                               @AuthenticationPrincipal CustomUserDetails userDetails
                                ){
-
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,5L)){
+            return "organizer/DashboardOrganizer";
+        }
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMsg);

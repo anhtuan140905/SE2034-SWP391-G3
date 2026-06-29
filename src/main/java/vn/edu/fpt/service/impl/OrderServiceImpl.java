@@ -1,25 +1,56 @@
 package vn.edu.fpt.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
+import vn.edu.fpt.modelview.response.organizer.OrderDto;
+import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.repository.OrderProjection;
 import vn.edu.fpt.repository.OrderRepository;
 import vn.edu.fpt.repository.TicketProjection;
 import vn.edu.fpt.service.OrderService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final EventRepository eventRepository;
+    @Override
+    public Page<OrderDto> getOrderbyEventID(Long eventId, String keyword, String status, Pageable pageable) {
+        String kw = (keyword == null || keyword.isBlank()) ? null : "%" + keyword + "%";
+        String st = (status == null || status.isBlank()) ? null : status;
+        Event event = eventRepository.findById(eventId).orElseThrow(()-> new RuntimeException("Event Not Found"));
+        Page<OrderProjection> projections = orderRepository.findOrderByEventId(eventId,kw, st,pageable);
+        List<OrderDto> result = new ArrayList<>();
+        for (OrderProjection p : projections) {
+            OrderDto dto = new OrderDto();
+            dto.setEventTitle(event.getTitle());
+            dto.setOrderId(p.getOrderId());
+            dto.setFullName(p.getFullName());
+            dto.setPhone(p.getPhone());
+            dto.setQuantityTicket(p.getQuantityTicket());
+            dto.setStatus(p.getStatus());
+            dto.setCreateAt(p.getCreateAt());
+            dto.setTotalAmount(p.getTotalAmount());
+            result.add(dto);
+        }
+        return new PageImpl<>(result,pageable,projections.getTotalElements());
+    }
 
     @Override
     public Order findById(long id) {

@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.UserRole;
+
+import java.util.Optional;
+
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole,Long> {
     @Modifying
