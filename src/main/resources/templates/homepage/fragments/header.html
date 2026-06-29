@@ -24,25 +24,23 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a sec:authorize="isAuthenticated()" class="nav-link" th:classappend="${activePage == 'favorites' ? 'active' : ''}" th:href="@{/favorites}">
+                        <a sec:authorize="isAuthenticated()" class="nav-link" th:classappend="${activePage == 'favorites' ? 'active' : ''}" th:href="@{/favourites}">
                             Yêu thích
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a sec:authorize="isAuthenticated()" class="nav-link" th:classappend="${activePage == 'recommendation' ? 'active' : ''}" th:href="@{/recommendation}">
+                            Nhận gợi ý
                         </a>
                     </li>
                 </ul>
 
-                <form class="d-flex navbar-search me-lg-3 my-2 my-lg-0" th:action="@{/events/search}" method="get">
+                <form class="d-flex navbar-search me-lg-3 my-2 my-lg-0" th:action="@{/events}" method="get">
                     <div class="input-group">
                         <span class="input-group-text search-icon-container"><i class="fa-solid fa-magnifying-glass search-icon"></i></span>
-                        <input name="query" class="form-control nav-search-input" type="search" placeholder="Search events..." aria-label="Search">
+                        <input name="keyword" class="form-control nav-search-input" type="search" placeholder="Search events..." aria-label="Search">
                     </div>
                 </form>
-
-                <a sec:authorize="isAuthenticated()"
-                   th:href="@{/organizer/create/event}"
-                   class="btn btn-create-event ms-lg-2 my-2 my-lg-0 d-flex align-items-center gap-2">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Tạo sự kiện</span>
-                </a>
 
                 <a sec:authorize="!isAuthenticated()"
                    th:href="@{/auth/login}"

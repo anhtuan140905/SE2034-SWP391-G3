@@ -13,11 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
+import vn.edu.fpt.model.constant.SettlementStatus;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
+import vn.edu.fpt.modelview.request.finance.SettlementSummaryDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 
+import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import vn.edu.fpt.model.*;
@@ -31,6 +35,7 @@ import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.service.StaffService;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -397,9 +402,7 @@ public class EventServiceImpl implements EventService {
         return eventRepository.countAllUseActive();
     }
 
-    public long countAllSoldTicket(){
-        return eventRepository.countAllSoldTicket();
-    }
+
 
     public List<CountEventByMonthDTO> countEventByMonth(){
         return eventRepository.countEventByMonth();
@@ -423,4 +426,45 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
     public long countAttendedEvent(@Param("userId") Long userId){
         return eventRepository.countAttendedEvent(userId);
     }
+
+    @Override
+    public EventHomeDTO getFavouriteEvent(Long eventId) {
+        return this.eventRepository.findEventsWithMinPrice(eventId);
+    }
+
+public List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab){
+        List<SettlementSummaryProjection> list = eventRepository.findEndedEventsWithSettlementStatus();
+        return switch (tab == null ? "all" : tab){
+            case "pending" -> list.stream().filter(settlement -> "PENDING".equals(settlement.getStatus())).toList();
+            case "completed" -> list.stream().filter(settlement -> "COMPLETED".equals(settlement.getStatus())).toList();
+            default -> list;
+        };
+}
+
+public long countEndedEvent(){
+        return eventRepository.countEndedEvent();
+}
+
+public long countUnsettledEvents(){
+        return eventRepository.countUnsettledEvents();
+}
+
+public Long sumTotalRevenue(){
+        return eventRepository.sumTotalRevenue();
+}
+
+public  List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword){
+        return eventRepository.searchEndedEvents(keyword);
+}
+    @Override
+    public List<Event> findCandidateEventsByCategories(List<Long> targetCatIds, EventStatus eventStatus, OrderStatus orderStatus, LocalDate today, Long userId, PageRequest page) {
+        return this.eventRepository.findCandidatesEventByCategories(targetCatIds, eventStatus, orderStatus, today, userId, page);
+    }
+
+    @Override
+    public List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page) {
+        return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
+    }
+
+
 }

@@ -3,7 +3,7 @@
    Path: src/main/resources/static/moderator/css/event_detail.css
    ============================================================ */
 
-/* ---------- Header: Back + Title + Badge ── */
+/* ---------- Header: Back + Title ── */
 .ed-header {
     display: flex;
     align-items: flex-start;
@@ -36,7 +36,7 @@
 /* Title block */
 .ed-title-block { }
 .ed-label {
-    font-family: var(--font-display);
+    font-family: var(--font-display), serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 2px;

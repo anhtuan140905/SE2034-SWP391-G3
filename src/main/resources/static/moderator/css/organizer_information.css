@@ -1,6 +1,6 @@
 /* ============================================================
-   organizer_detail.css  —  Organizer Detail / Host Dossier
-   Path: src/main/resources/static/moderator/css/organizer_detail.css
+   organizer_information.css  —  Organizer Detail / Host Dossier
+   Path: src/main/resources/static/moderator/css/organizer_information.css
    ============================================================ */
 
 /* ---------- Header ---------- */
@@ -22,11 +22,11 @@
 .btn-back i { font-size: 12px; }
 
 .od-page-title {
-    font-family: var(--font-display);
+    font-family: "Calibri", serif;
     font-size: 26px;
     font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 /* ---------- Top 2-cards Row ---------- */

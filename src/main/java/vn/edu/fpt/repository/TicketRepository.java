@@ -28,10 +28,16 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
 //    Integer getNumTicketSelled(Long ticketTypeId);
 
     @Query("""
-SELECT COUNT(odr.orderDetailId)
-FROM OrderDetail odr
-JOIN Order o ON odr.order.orderId = o.orderId
-where o.user.id = :userId
+SELECT SUM(soldQuantity)
+FROM TicketType
+""")
+    long countAllSoldTickets();
+
+    @Query("""
+SELECT COUNT(DISTINCT t.ticketId)
+FROM OrderDetail ord
+JOIN Ticket t on ord.orderDetailId = t.orderDetail.orderDetailId
+where ord.order.user.id = :userId 
 """)
     long countAllTicketOfUser(@Param("userId") Long userId);
 
@@ -43,7 +49,8 @@ JOIN OrderDetail ord on t.orderDetail.orderDetailId = ord.orderDetailId
 JOIN Order o on ord.order.orderId = o.orderId
 WHERE o.user.id = :userId
 AND t.isCheckedIn = false
-AND ord.order.event.endTime >= CURRENT_TIMESTAMP
+AND o.event.startTime > CURRENT_TIMESTAMP
+AND o.status = 'PAID'
 """)
     long countUpcomingTicket(@Param("userId") Long userId);
 
@@ -51,26 +58,86 @@ AND ord.order.event.endTime >= CURRENT_TIMESTAMP
     @Query("""
 SELECT COUNT(DISTINCT t.ticketId) 
 
-From Order o
+FROM Order o
 JOIN OrderDetail ord ON o.orderId = ord.order.orderId
 JOIN Ticket t ON ord.orderDetailId = t.orderDetail.orderDetailId
- where o.user.id = :userId
+WHERE o.user.id = :userId
 AND t.isCheckedIn = true
+AND o.status = 'PAID'
 """)
     long countUsedTicket(@Param("userId") Long userId);
 
     @Query("""
-select count(distinct t.ticketId)
-from Event e
-join Order o on e.eventId = o.event.eventId
-JOIN OrderDetail ord ON o.orderId = ord.order.orderId
-JOIN Ticket t ON ord.orderDetailId = t.orderDetail.orderDetailId
- where o.user.id = :userId
-AND t.isCheckedIn = false
-AND ord.order.event.endTime < CURRENT_TIMESTAMP
-""")
+    SELECT COUNT(DISTINCT t.ticketId)
+    FROM Order o
+    JOIN OrderDetail ord ON o.orderId = ord.order.orderId
+    JOIN Ticket t ON ord.orderDetailId = t.orderDetail.orderDetailId
+    WHERE o.user.id = :userId
+    AND o.status = 'PAID'
+    AND t.isCheckedIn = false
+    AND o.event.endTime < CURRENT_TIMESTAMP
+    """)
     long countExpiredTicket(@Param("userId") Long userId);
 
 
 
+    @Query(value = """
+select 
+t.ticket_id as ticketId,
+ec.category_name as categoryName,
+e.thumbnail_url as thumbnailUrl,
+e.title as eventName,
+e.start_time as startTime,
+tt.zone_name as zoneName,
+a.specific_address as specificAddress,
+w.name wardName,
+c.name cityName,
+tt.price as price,
+t.is_checked_in as status
+
+from tickets t 
+join order_details ord on t.order_detail_id = ord.order_detail_id
+join orders o on ord.order_id = o.order_id
+join seats s on t.seat_id = s.seat_id
+join ticket_types tt on s.ticket_type_id = tt.ticket_type_id
+join events e on tt.event_id = e.event_id
+left join event_categories ec on e.category_id = ec.category_id
+left join addresses a on e.address_id = a.id
+left join wards w on a.ward_id = w.id
+left join city c on w.city_id = c.id
+where o.user_id = :userId
+
+
+""",nativeQuery = true)
+    List<TicketProjection> viewTicket(@Param("userId") Long userId);
+
+
+@Query(value = """
+select 
+t.ticket_id as ticketId,
+t.qr_code as qrCode,
+t.ticket_code as ticketCode,
+t.is_checked_in as status,
+ord.order_id as orderId,
+ec.category_name as categoryName,
+e.title as eventName,
+e.thumbnail_url as thumbnailUrl,
+e.start_time as startTime,
+e.end_time as endTime,
+tt.zone_name as zoneName,
+s.row_label as row,
+s.seat_number as seat
+from
+tickets t 
+join order_details ord on t.order_detail_id = ord.order_detail_id
+join seats s on ord.seat_id = s.seat_id
+join ticket_types tt on s.ticket_type_id = tt.ticket_type_id
+join events e on tt.event_id = e.event_id
+left join event_categories ec on e.category_id = ec.category_id
+left join addresses a on e.address_id = a.id
+left join wards w on a.ward_id = w.id
+left join city c on w.city_id = c.id
+where t.ticket_id = :ticketId
+""",nativeQuery = true)
+TicketProjection viewDetailTicket(@Param("ticketId") Long ticketID);
 }

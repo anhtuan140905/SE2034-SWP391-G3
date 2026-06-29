@@ -9,6 +9,7 @@ public interface TicketProjection {
      String getCategoryName();
      String getThumbnailUrl();
      LocalDateTime getStartTime();
+     LocalDateTime getEndTime();
      String getSpecificAddress();
      String getWardName();
      String getCityName();
