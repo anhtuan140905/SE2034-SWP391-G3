@@ -485,7 +485,7 @@ function renderTiers() {
                             value="${escHtml(t.rowLetter)}"
                             name="ticketTypes[${idx}].seat.row"
                             placeholder="Nhập số hàng"
-                            oninput="updateTierField(
+                            onblur ="updateTierField(
                                 '${t.id}',
                                 'rowLetter',
                                 Math.min(26, Math.max(1, parseInt(this.value) || 1))
@@ -505,7 +505,7 @@ function renderTiers() {
                             name="ticketTypes[${idx}].seat.seatNumber"
                             min="1" max="100"
                             value="${escHtml(t.cols)}"
-                            oninput="updateTierField(
+                            onblur ="updateTierField(
                                 '${t.id}',
                                 'cols',
                                 Math.min(100, Math.max(1, parseInt(this.value) || 1))
@@ -543,7 +543,7 @@ function renderTiers() {
                         placeholder="Ví dụ: 1, 2"
                         name="ticketTypes[${idx}].displayOrder"
                         value="${escHtml(t.name || "")}"
-                        oninput="updateTierField('${t.id}', 'name', this.value)" />
+                        onblur ="updateTierField('${t.id}', 'name', this.value)" />
                     ${errDiv(errs.name)}
                 </div>
 
@@ -556,7 +556,7 @@ function renderTiers() {
                         placeholder="Ví dụ: Standee A, Zone VIP..."
                         name="ticketTypes[${idx}].zoneName"
                         value="${escHtml(t.zoneName || "")}"
-                        oninput="updateTierField('${t.id}', 'zoneName', this.value)" />
+                        onblur ="updateTierField('${t.id}', 'zoneName', this.value)" />
                     ${errDiv(errs.zoneName)}
                 </div>
 
@@ -571,7 +571,7 @@ function renderTiers() {
                             placeholder="Ví dụ: 250000"
                             value="${escHtml(t.price)}"
                             min="0"
-                            oninput="updateTierField('${t.id}', 'price', Math.max(0, Number(this.value) || 0))" />
+                            onblur ="updateTierField('${t.id}', 'price', Math.max(0, Number(this.value) || 0))" />
                         <span class="price-suffix">đ</span>
                     </div>
                     ${errDiv(errs.price)}
@@ -589,7 +589,7 @@ function renderTiers() {
                         min="1"
                         max="${t.totalQty}"
                         value="${escHtml(t.qty)}"
-                        oninput="updateTierField('${t.id}', 'qty', parseInt(this.value) || 0)" />
+                        onblur ="updateTierField('${t.id}', 'qty', parseInt(this.value) || 0)" />
                     ${errDiv(errs.qty)}
                     <div class="row-stepper-sub">Tối đa: ${t.totalQty} (theo sức chứa)</div>
                 </div>
@@ -606,7 +606,7 @@ function renderTiers() {
                     name="ticketTypes[${idx}].description"
                     rows="3"
                     placeholder="Ví dụ: Đồ uống chào mừng miễn phí, Ghế ngồi hàng đầu cận cảnh..."
-                    oninput="updateTierField('${t.id}', 'desc', this.value)"
+                    onblur ="updateTierField('${t.id}', 'desc', this.value)"
                 >${escHtml(t.desc || "")}</textarea>
             </div>
 
