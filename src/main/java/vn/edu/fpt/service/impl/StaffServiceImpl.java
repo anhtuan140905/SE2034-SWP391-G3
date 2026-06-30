@@ -157,7 +157,7 @@ public class StaffServiceImpl implements StaffService {
         if (alreadyExists) {
             throw new RuntimeException("User này đã có role trong event!");
         }
-        UserRole userRole = userRoleRepository.findByUserIdAndRoleId(user.getId(), memberRequestDTO.getRoleId()).get();
+        UserRole userRole = userRoleRepository.findByUserIdAndRoleId(user.getId(), memberRequestDTO.getRoleId()).orElse(null);
         if(userRole==null){
             userRole = new UserRole();
             userRole.setUser(user);
