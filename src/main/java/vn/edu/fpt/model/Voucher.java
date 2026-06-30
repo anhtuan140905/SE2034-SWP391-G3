@@ -32,6 +32,12 @@ public class Voucher extends BaseAuditEntity {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
+    @Column(name = "title", nullable = false, columnDefinition = "NVARCHAR(255)")
+    private String title;
+
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", nullable = false, length = 10)
     private DiscountType discountType;

@@ -140,7 +140,8 @@ s.seat_number
             "JOIN o.event e " +
             "WHERE o.user.id = :userId " +
             "AND o.status = :status")
-    List<Long> findPurchasedCategoryIdsByUserId(
+    List<Long> findPurchasedCategoryIdsByUserId();
+
     @Query("""
     SELECT DISTINCT e FROM Order o
     JOIN o.event e

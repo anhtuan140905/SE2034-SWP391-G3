@@ -19,6 +19,8 @@ public class ModeratorDashboardController {
         model.addAttribute("stats", moderatorDashboardService.getDashboardStats());
         model.addAttribute("recentEvents", moderatorDashboardService.getRecentEvents());
         model.addAttribute("todayEvents", moderatorDashboardService.getTodayEvents());
+        model.addAttribute("topOldestOrganizers", moderatorDashboardService.getTop5OldestOrganizers());
+        model.addAttribute("newOrganizersToday", moderatorDashboardService.getTop5NewOrganizersToday());
         model.addAttribute("activePage", "dashboard");
 
         return "moderator/DashboardModerator";
