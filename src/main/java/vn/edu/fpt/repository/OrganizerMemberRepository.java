@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Repository
 public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMember, Long>{
+    long countByUserRole_Id(Long userRoleId);
     OrganizerMember findByUserRoleAndEvent(UserRole userRole, Event event);
     @Query("""
     SELECT o FROM OrganizerMember o

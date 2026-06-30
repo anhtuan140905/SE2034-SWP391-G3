@@ -50,6 +50,12 @@ public class EventServiceImpl implements EventService {
     private CloudinaryService cloudinaryService;
     private StaffService staffService;
     private OrganizerProfileRepository organizerProfileRepository;
+
+    @Override
+    public OrganizerProfile GetOrganizerProfileByUserId(Long userId) {
+         return organizerProfileRepository.findByUserId(userId).orElse(null);
+    }
+
     @Override
     public List<cityDto> getListcity() {
         List<City> citys = cityRepository.findAll();
@@ -125,14 +131,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public void saveEvent(EventDTO eventDTO) {
-        OrganizerProfileDto profileDto  = eventDTO.getOrganizerProfile();
-        OrganizerProfile organizerProfile = new OrganizerProfile();
+    public void saveEvent(EventDTO eventDTO,OrganizerProfileDto organizerProfileDto) {
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
         event.setOrganizer(user);
 //        Lưu Organizer Profile
+        if (organizerProfileDto!=null){
+        OrganizerProfileDto profileDto  = organizerProfileDto ;
+        OrganizerProfile organizerProfile = new OrganizerProfile();
         organizerProfile.setUser(user);
         organizerProfile.setTaxCode(profileDto.getTaxCode());
         organizerProfile.setCompanyName(profileDto.getCompanyName());
@@ -142,7 +149,7 @@ public class EventServiceImpl implements EventService {
         organizerProfile.setBankBranch(profileDto.getBankBranch());
         organizerProfile.setBusinessType(profileDto.getBusinessType());
         organizerProfile.setLegalName(profileDto.getLegalName());
-        organizerProfileRepository.save(organizerProfile);
+        organizerProfileRepository.save(organizerProfile);}
 //        Lưu Event
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
                 .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));

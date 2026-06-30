@@ -13,10 +13,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole,Long> {
+    @Modifying
+    @Query("DELETE FROM UserRole ur WHERE ur.user.id = :userId")
+    void deleteAllByUser_Id(Long userId);
+    Optional<UserRole> findByUserIdAndRoleId(Long userId, Long roleId);
 
     Optional<UserRole> findByUser_Id(Long userId);
 
-    UserRole findByUserIdAndRoleId (Long userid, Long roleid);
 
     @Query("SELECT r FROM Role r WHERE r.roleName = :roleName")
     Optional<Role> findByRoleName(@Param("roleName") RoleName roleName);

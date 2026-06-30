@@ -615,7 +615,7 @@
                     <!-- ========================================
                              SECTION 5: THÔNG TIN DOANH NGHIỆP
                         ======================================== -->
-                    <section id="section-company" class="form-section">
+                    <section id="section-company"  th:if="${!hasOrganizerProfile}" class="form-section" th:object="${organizerProfile}">
                         <div class="section-header">
                             <span class="section-num">5</span>
                             <div>
@@ -639,47 +639,47 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Mã Số Thuế <span class="text-required">*</span></label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.taxCode}"
+                                    <input type="text" class="form-control field-input" th:field="*{taxCode}"
                                            placeholder="Ví dụ: 0312345678" maxlength="20" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.taxCode')}"
-                                         th:errors="*{organizerProfile.taxCode}">
+                                         th:if="${#fields.hasErrors('taxCode')}"
+                                         th:errors="*{taxCode}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Pháp Lý Chính Thức <span class="text-required">*</span></label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalName}"
+                                    <input type="text" class="form-control field-input" th:field="*{legalName}"
                                            placeholder="Ví dụ: Công ty TNHH ABC Việt Nam" maxlength="200" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.legalName')}"
-                                         th:errors="*{organizerProfile.legalName}">
+                                         th:if="${#fields.hasErrors('legalName')}"
+                                         th:errors="*{legalName}">
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <label class="tier-field-label">Địa Chỉ Pháp Lý / Đăng Ký Kinh Doanh <span class="text-required">*</span></label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.legalAddress}"
+                                    <input type="text" class="form-control field-input" th:field="*{legalAddress}"
                                            placeholder="Địa chỉ đầy đủ theo giấy phép đăng ký kinh doanh..." maxlength="300" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.legalAddress')}"
-                                         th:errors="*{organizerProfile.legalAddress}">
+                                         th:if="${#fields.hasErrors('legalAddress')}"
+                                         th:errors="*{legalAddress}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Thương Hiệu / Hiển Thị</label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.companyName}"
+                                    <input type="text" class="form-control field-input" th:field="*{companyName}"
                                            placeholder="Ví dụ: ABC Events" maxlength="500" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.companyName')}"
-                                         th:errors="*{organizerProfile.companyName}">
+                                         th:if="${#fields.hasErrors('companyName')}"
+                                         th:errors="*{companyName}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Loại Hình Kinh Doanh</label>
-                                    <select class="form-select field-input" th:field="*{organizerProfile.businessType}">
+                                    <select class="form-select field-input" th:field="*{businessType}">
                                         <option value="">-- Chọn Loại Hình --</option>
                                         <option value="cong_ty_tnhh">Công ty TNHH</option>
                                         <option value="cong_ty_co_phan">Công ty Cổ phần</option>
@@ -689,8 +689,8 @@
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.businessType')}"
-                                         th:errors="*{organizerProfile.businessType}">
+                                         th:if="${#fields.hasErrors('businessType')}"
+                                         th:errors="*{businessType}">
                                     </div>
                                 </div>
                             </div>
@@ -709,28 +709,28 @@
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Chủ Tài Khoản <span class="text-required">*</span></label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankAccountName}"
+                                    <input type="text" class="form-control field-input" th:field="*{bankAccountName}"
                                            placeholder="Ví dụ: CONG TY TNHH ABC VIET NAM" maxlength="100" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.bankAccountName')}"
-                                         th:errors="*{organizerProfile.bankAccountName}">
+                                         th:if="${#fields.hasErrors('bankAccountName')}"
+                                         th:errors="*{bankAccountName}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Số Tài Khoản Ngân Hàng <span class="text-required">*</span></label>
-                                    <input type="number" class="form-control field-input" th:field="*{organizerProfile.bankAccountNumber}"
+                                    <input type="number" class="form-control field-input" th:field="*{bankAccountNumber}"
                                            placeholder="Ví dụ: 0123456789012" maxlength="30"
                                            style="font-family: var(--font-mono);" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.bankAccountNumber')}"
-                                         th:errors="*{organizerProfile.bankAccountNumber}">
+                                         th:if="${#fields.hasErrors('bankAccountNumber')}"
+                                         th:errors="*{bankAccountNumber}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label class="tier-field-label">Tên Ngân Hàng <span class="text-required">*</span></label>
-                                    <select class="form-select field-input" th:field="*{organizerProfile.bankName}">
+                                    <select class="form-select field-input" th:field="*{bankName}">
                                         <option value="">-- Chọn Ngân Hàng --</option>
                                         <option value="Vietcombank">Vietcombank</option>
                                         <option value="Techcombank">Techcombank</option>
@@ -745,18 +745,18 @@
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.bankName')}"
-                                         th:errors="*{organizerProfile.bankName}">
+                                         th:if="${#fields.hasErrors('bankName')}"
+                                         th:errors="*{bankName}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label class="tier-field-label">Chi Nhánh Ngân Hàng</label>
-                                    <input type="text" class="form-control field-input" th:field="*{organizerProfile.bankBranch}"
+                                    <input type="text" class="form-control field-input" th:field="*{bankBranch}"
                                            placeholder="Ví dụ: Chi nhánh Quận 1" />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('organizerProfile.bankBranch')}"
-                                         th:errors="*{organizerProfile.bankBranch}">
+                                         th:if="${#fields.hasErrors('bankBranch')}"
+                                         th:errors="*{bankBranch}">
                                     </div>
                                 </div>
                             </div>

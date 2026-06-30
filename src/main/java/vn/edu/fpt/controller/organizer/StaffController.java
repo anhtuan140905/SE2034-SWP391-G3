@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
+import vn.edu.fpt.modelview.response.organizer.StaffDetailDto;
 import vn.edu.fpt.modelview.response.organizer.StaffResponceDTO;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -71,5 +72,32 @@ public class StaffController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/organizer/event/" + id + "/members";
+    }
+
+    @GetMapping("/event/{eventId}/members/edit")
+    public String editMember(
+            @PathVariable Long eventId,
+            @RequestParam Long staffId,   // ← query param không phải path variable
+            Model model) {
+        model.addAttribute("selectedMember",staffService.getInfobyStaffID(staffId));
+        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(eventId, "", null, PageRequest.of(0,10));
+        model.addAttribute("staffList", staffPage.getContent());
+        model.addAttribute("totalPages", staffPage.getTotalPages());
+        model.addAttribute("currentPage", 0);
+        model.addAttribute("eventId", eventId);
+        model.addAttribute("keyword", "");
+        model.addAttribute("roleId", null);
+        model.addAttribute("inviteMember", new MemberRequestDTO());
+        model.addAttribute("permissions", staffService.getListPermission());
+        model.addAttribute("roles", staffService.getRoleOfEvent());
+        return "organizer/staff/ListStaffs";
+    }
+    @PostMapping("/event/{eventId}/members/update")
+    public String updateMenber(@PathVariable Long eventId,@Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto, BindingResult result){
+        if (result.hasErrors()) {
+            return "redirect:/organizer/event/members";
+        }
+        staffService.updateStaff(staffDetailDto);
+        return "redirect:/organizer/event/" + eventId + "/members";
     }
 }
