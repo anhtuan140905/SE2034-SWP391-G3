@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.edu.fpt.model.OrganizerProfile;
 
+import java.util.Optional;
+
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile, Long> {
 
     boolean existsByTaxCode(String  taxCode);
 
-    OrganizerProfile findByUserId(Long userId);
+    Optional<OrganizerProfile> findByUserId(Long userId);
 
 //    @Query("SELECT o FROM OrganizerProfile o JOIN o.user u WHERE " +
 //            "(:status IS NULL OR o.status = :status) AND " +

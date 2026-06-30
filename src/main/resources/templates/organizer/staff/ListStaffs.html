@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>EventHub – Quản lý Thành viên</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"/>
 
-    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}"     href="/organizer/css/SideBar.css" />
-    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}"      href="/organizer/css/Header.css" />
-    <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}"  href="/organizer/css/ListStaffs.css" />
+    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}" href="/organizer/css/SideBar.css"/>
+    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}" href="/organizer/css/Header.css"/>
+    <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}" href="/organizer/css/ListStaffs.css"/>
 
 
 </head>
@@ -38,10 +39,10 @@
             </button>
         </div>
         <form method="get" id="filterForm">
-        <div class="search-full-width">
-            <i class="fa-solid fa-magnifying-glass text-muted"></i>
-            <input type="text" name="keyword" placeholder="Tìm kiếm thành viên" th:value="${keyword}" />
-        </div>
+            <div class="search-full-width">
+                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                <input type="text" name="keyword" placeholder="Tìm kiếm thành viên" th:value="${keyword}"/>
+            </div>
 
             <div class="d-flex justify-content-end mb-2">
                 <select name="roleId" class="f-control" onchange="this.form.submit()">
@@ -76,7 +77,12 @@
                     <td class="member-email" th:text="${staff.email}"></td>
 
                     <td>
-                        <span class="action-link" data-bs-toggle="modal" data-bs-target="#editRoleModal">Xem chi tiết</span>
+                        <a class="action-link"
+                           th:href="@{/organizer/event/{eventId}/members/edit(eventId=${eventId},staffId=${staff.memberId})}">
+                            <!--                           data-bs-toggle="modal"-->
+                            <!--                           data-bs-target="#editRoleModal"-->
+                            Xem chi tiết
+                        </a>
                         <span class="action-separator">|</span>
                         <span class="action-delete">Xóa</span>
                     </td>
@@ -85,7 +91,7 @@
             </table>
         </div>
 
-        <div class="pagination-container"  th:if="${totalPages > 1}">
+        <div class="pagination-container" th:if="${totalPages > 1}">
 
             <!-- Prev -->
             <a th:href="@{/organizer/event/{id}/members(id=${eventId},
@@ -145,17 +151,19 @@
             </div>
 
             <div class="modal-body">
-                <div  th:if="${errorMessage}" id="errorAlert" class="alert-modal alert-error">
+                <div th:if="${errorMessage}" id="errorAlert" class="alert-modal alert-error">
                     <span style="color: red" th:text="${errorMessage}"></span>
                 </div>
-                <form th:action="@{/organizer/event/{id}/members/invite(id=${eventId})}" method="post" th:object="${inviteMember}">
+                <form th:action="@{/organizer/event/{id}/members/invite(id=${eventId})}" method="post"
+                      th:object="${inviteMember}">
 
                     <!-- Thông tin cơ bản -->
                     <div class="row g-2 mb-1">
                         <div class="col-6">
                             <div class="f-group">
                                 <label class="f-label" for="add-email">Email liên kết</label>
-                                <input id="add-email" th:field="*{email}" type="email" class="f-control" placeholder="name@company.com" required />
+                                <input id="add-email" th:field="*{email}" type="email" class="f-control"
+                                       placeholder="name@company.com" required/>
                             </div>
                         </div>
                     </div>
@@ -176,21 +184,22 @@
                             <div class="perm-info">
                                 <span class="perm-desc" th:text="${permission.description}"></span>
                             </div>
-                            <input type="checkbox"  th:field="*{permissionId}" name="permissions" th:value="${permission.id}" class="perm-check" />
+                            <input type="checkbox" th:field="*{permissionId}" name="permissions"
+                                   th:value="${permission.id}" class="perm-check"/>
                         </div>
 
                     </div>
 
-                 <div class="modal-footer-btns">
-                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
-                <button type="submit" class="btn-submit-modal">Gửi lời mời</button>
-                </div>
+                    <div class="modal-footer-btns">
+                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
+                        <button type="submit" class="btn-submit-modal">Gửi lời mời</button>
+                    </div>
 
-            </form>
+                </form>
+            </div>
+
         </div>
-
     </div>
-</div>
 </div>
 
 
@@ -198,26 +207,25 @@
      MODAL 2: CHỈNH SỬA QUYỀN LỢI
      action  → th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post"
      ================================================================ -->
-<div class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
+<div th:if="${selectedMember != null}" th:classappend="${selectedMember != null} ? 'show d-block' : ''"
+     class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-head">
                 <div>
                     <h5>Chỉnh sửa quyền lợi</h5>
-                    <!-- th:text="'Tuỳ chỉnh phân quyền thủ công cho ' + ${staff.fullName} + '.'" -->
-                    <p>Tuỳ chỉnh phân quyền thủ công cho Hoàng Anh Nguyễn.</p>
+                    <p>Tuỳ chỉnh phân quyền thủ công cho Nhân Viên.</p>
                 </div>
-                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
+                <a style="text-decoration: none" th:href="@{/organizer/event/{id}/members(id=${eventId})}"
+                   class="btn-close-custom">
                     <i class="fa-solid fa-xmark"></i>
-                </button>
+                </a>
             </div>
 
             <div class="modal-body">
-                <!-- th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post" -->
-                <form action="#" method="post">
-                    <!-- th:field="*{id}" -->
-                    <input type="hidden" name="id" value="st-1" />
+                <form th:action="@{/organizer/event/{eventId}/members/update(eventId=${eventId})}" method="post" th:object="${selectedMember}">
+                    <input type="hidden" th:field="*{staffId}" />
 
                     <!-- Hồ sơ (readonly) -->
                     <div class="profile-box">
@@ -226,15 +234,16 @@
                             <div class="col-6">
                                 <div class="f-group mb-0">
                                     <label class="f-label" for="edit-name">Họ &amp; tên</label>
-                                    <!-- th:field="*{fullName}" -->
-                                    <input id="edit-name" name="fullName" type="text" class="f-control" value="Hoàng Anh Nguyễn" readonly />
+                                    <!--  -->
+                                    <input id="edit-name" th:field="*{fullName}" type="text" class="f-control"
+                                           readonly/>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="f-group mb-0">
                                     <label class="f-label" for="edit-email">Email</label>
-                                    <!-- th:field="*{email}" -->
-                                    <input id="edit-email" name="email" type="email" class="f-control" value="nha29052005@gmail.com" readonly />
+                                    <!--  -->
+                                    <input id="edit-email" th:field="*{email}" type="email" class="f-control" readonly/>
                                 </div>
                             </div>
                         </div>
@@ -242,66 +251,36 @@
 
                     <div class="f-group">
                         <label class="f-label" for="edit-role">Vai trò tổng thể</label>
-                        <!-- th:field="*{role}" -->
-                        <select id="edit-role" name="role" class="f-control">
-                            <option value="ADMINISTRATOR" selected>Administrator – Đồng quản trị Master</option>
-                            <option value="TREASURER">Treasurer – Đối soát tài chính</option>
-                            <option value="TICKET_CHECKER">Ticket Checker – Kiểm soát viên</option>
+                        <select id="edit-role" th:field="*{roleId}" class="f-control">
+                            <option th:each="role:${roles}"
+                                    th:value="${role.id}"
+                                    th:text="${role.name}"></option>
                         </select>
                     </div>
 
                     <!-- Phân quyền chi tiết -->
                     <div class="perm-block">
                         <div class="perm-block-title">Quyền hạn cụ thể</div>
-
-                        <div class="perm-item">
+                        <div class="perm-item" th:each="perms : ${permissions}">
                             <div class="perm-info">
-                                <span class="perm-name">Xem báo cáo doanh thu</span>
-                                <span class="perm-desc">Truy cập thống kê & tài chính sự kiện</span>
+                                <span class="perm-desc"
+                                      th:text="${perms.description}">
+                                </span>
                             </div>
-                            <!-- th:checked="${staff.permissions.contains('VIEW_REVENUE')}" -->
-                            <input type="checkbox" name="permissions" value="VIEW_REVENUE" class="perm-check" checked />
-                        </div>
-
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <span class="perm-name">Quản lý đơn hàng</span>
-                                <span class="perm-desc">Xem, huỷ và hoàn tiền đơn hàng</span>
-                            </div>
-                            <!-- th:checked="${staff.permissions.contains('MANAGE_ORDERS')}" -->
-                            <input type="checkbox" name="permissions" value="MANAGE_ORDERS" class="perm-check" checked />
-                        </div>
-
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <span class="perm-name">Soát vé tại cổng</span>
-                                <span class="perm-desc">Check-in người tham dự sự kiện</span>
-                            </div>
-                            <!-- th:checked="${staff.permissions.contains('SCAN_TICKETS')}" -->
-                            <input type="checkbox" name="permissions" value="SCAN_TICKETS" class="perm-check" />
-                        </div>
-
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <span class="perm-name">Quản lý voucher</span>
-                                <span class="perm-desc">Tạo, sửa, vô hiệu hoá mã giảm giá</span>
-                            </div>
-                            <!-- th:checked="${staff.permissions.contains('MANAGE_VOUCHERS')}" -->
-                            <input type="checkbox" name="permissions" value="MANAGE_VOUCHERS" class="perm-check" checked />
-                        </div>
-
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <span class="perm-name">Quản lý nhân viên</span>
-                                <span class="perm-desc">Thêm, xoá, đổi quyền thành viên</span>
-                            </div>
-                            <!-- th:checked="${staff.permissions.contains('MANAGE_STAFF')}" -->
-                            <input type="checkbox" name="permissions" value="MANAGE_STAFF" class="perm-check" checked />
+                            <input type="checkbox"
+                                   th:value="${perms.id}"
+                                   class="perm-check"
+                                   th:field="*{permission}"
+                                   th:checked="${#lists.contains(selectedMember.permission, perms.id)}"/>
                         </div>
                     </div>
 
                     <div class="modal-footer-btns">
-                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
+                        <a style="text-decoration:  none;text-align: center"
+                           th:href="@{/organizer/event/{id}/members(id=${eventId})}"
+                           class="btn-cancel-modal">
+                            Bỏ qua
+                        </a>
                         <button type="submit" class="btn-submit-modal">Lưu thay đổi</button>
                     </div>
 
@@ -315,7 +294,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/organizer/js/sidebar.js}" src="/organizer/js/sidebar.js"></script>
-<script th:src="@{/organizer/js/Header.js}"  src="/organizer/js/Header.js"></script>
+<script th:src="@{/organizer/js/Header.js}" src="/organizer/js/Header.js"></script>
 <script>
     window.onload = function () {
         const errorDiv = document.getElementById('errorAlert');

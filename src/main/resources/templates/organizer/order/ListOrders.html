@@ -59,7 +59,8 @@
                     <span class="material-symbols-outlined icon-left">filter_list</span>
                     <select name="status">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="PENDING_PAYMENT" th:selected="${status == 'PENDING_PAYMENT'}">PENDING_PAYMENT</option>
+                        <option value="PENDING_PAYMENT" th:selected="${status == 'PENDING_PAYMENT'}">PENDING_PAYMENT
+                        </option>
                         <option value="PAID" th:selected="${status == 'PAID'}">PAID</option>
                         <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">CANCELLED</option>
                         <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">EXPIRED</option>
@@ -100,20 +101,20 @@
                             </td>
 
                             <td>
-        <span class="cust-name"
-              th:text="${order.fullName}">
-        </span>
+                            <span class="cust-name"
+                                  th:text="${order.fullName}">
+                            </span>
 
                                 <span class="cust-phone"
                                       th:text="${order.phone}">
-        </span>
+                                </span>
                             </td>
 
                             <td>
-        <span class="event-name"
-              title="Summer Music Fest 2024" th:text="${order.eventTitle}">
+                                <span class="event-name"
+                                      title="Summer Music Fest 2024" th:text="${order.eventTitle}">
 
-        </span>
+                                </span>
                             </td>
 
                             <td style="color:#475569"
@@ -125,14 +126,14 @@
                             </td>
                             <td th:text="${order.createAt}"></td>
                             <td>
-        <span class="status-badge"
-              th:text="${order.status}"
-              th:classappend="${
-                  order.status == 'SUCCESS'
-                  ? 'badge-success'
-                  : 'badge-danger'
-              }">
-        </span>
+                            <span class="status-badge"
+                                  th:text="${order.status}"
+                                  th:classappend="${
+                                      order.status == 'SUCCESS'
+                                      ? 'badge-success'
+                                      : 'badge-danger'
+                                  }">
+                            </span>
                             </td>
 
                         </tr>
