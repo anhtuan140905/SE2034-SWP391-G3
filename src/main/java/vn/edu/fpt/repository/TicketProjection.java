@@ -18,6 +18,7 @@ public interface TicketProjection {
      String getTime();
      String getType();
      Long getQuantity();
+     Boolean getCheckedIn();
      String getStatus();
      String getPrice();
      String getPurchase();

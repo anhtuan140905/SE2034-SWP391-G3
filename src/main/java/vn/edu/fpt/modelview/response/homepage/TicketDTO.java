@@ -25,6 +25,7 @@ public class TicketDTO {
     private String organizer;
     private String type;
     private Long quantity;
+    private Boolean checkedIn;
     private String status;
     private String price;
     private String purchase;
@@ -53,6 +54,7 @@ public class TicketDTO {
        this.organizer = projection.getOrganizer();
        this.type = projection.getType();
        this.quantity = projection.getQuantity();
+       this.checkedIn = projection.getCheckedIn();
        this.status = projection.getStatus();
        this.price = projection.getPrice();
        this.purchase = projection.getPurchase();

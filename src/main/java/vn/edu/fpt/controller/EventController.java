@@ -14,6 +14,7 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
+import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
@@ -26,6 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EventController {
     private EventServiceImpl eventService;
+    private StaffService staffService;
     private final UserService userService;
     @GetMapping("/create/event")
     public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
@@ -48,7 +50,7 @@ public class EventController {
             List<cityDto> listCity = eventService.getListcity();
             model.addAttribute("eventCategoryList",eventCategoryList);
             model.addAttribute("citys",listCity);
-            model.addAttribute(eventDTO);
+            model.addAttribute("event",eventDTO);
             return "organizer/event/CreateOrganizerEvent";
         }
 
@@ -100,7 +102,10 @@ public class EventController {
 
 
     @GetMapping("/event/{id}")
-    public String getEventDetail(@PathVariable Long id,Model model){
+    public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,Model model){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,4L)){
+            return "organizer/DashboardOrganizer";
+        }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
         model.addAttribute("event",eventDetailDTO);
         return "organizer/event/ViewOrganizerEvent"    ;

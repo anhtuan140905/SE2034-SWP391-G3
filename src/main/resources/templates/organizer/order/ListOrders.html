@@ -1,63 +1,32 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Quản lý Đơn hàng – EventHub</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"/>
 
     <!-- CSS của bạn -->
-    <link rel="stylesheet" href="../../../static/organizer/css/Header.css">
-    <link rel="stylesheet" href="../../../static/organizer/css/SideBar.css">
-    <link rel="stylesheet" href="../../../static/organizer/css/ListOrder.css">
+    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}">
+    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}">
+    <link rel="stylesheet" th:href="@{/organizer/css/ListOrder.css}">
 
     <!-- JS của bạn -->
-    <script src="../../../static/organizer/js/Header.js" defer></script>
-    <script src="../../../static/organizer/js/sidebar.js" defer></script>
+    <script th:src="@{/organizer/js/Header.js}" defer></script>
+    <script th:src="@{/organizer/js/sidebar.js}" defer></script>
 </head>
 <body>
 
 <div class="app-wrapper">
 
     <!-- ════════ SIDEBAR — dùng đúng HTML bạn gửi ════════ -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header d-flex align-items-center justify-content-between mb-4">
-            <div class="d-flex align-items-center gap-3">
-                <div class="brand-icon">
-                    <span class="material-symbols-outlined text-white">calendar_month</span>
-                </div>
-                <div>
-                    <h1 class="brand-title mb-0">EventHub</h1>
-                    <p class="brand-sub mb-0">Organizer Portal</p>
-                </div>
-            </div>
-            <button class="btn-icon d-lg-none" onclick="toggleSidebar(false)">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
+    <th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
 
-        <nav class="sidebar-nav flex-grow-1">
-            <a href="/organizer/dashboard" class="nav-item">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span>Dashboard</span>
-            </a>
-            <a href="/organizer/vouchers" class="nav-item">
-                <span class="material-symbols-outlined">local_offer</span>
-                <span>Discount Vouchers</span>
-            </a>
-            <a href="/organizer/orders" class="nav-item active">
-                <span class="material-symbols-outlined">shopping_basket</span>
-                <span>Orders &amp; Tickets</span>
-            </a>
-            <a href="/organizer/staff" class="nav-item">
-                <span class="material-symbols-outlined">groups</span>
-                <span>Staff Permissions</span>
-            </a>
-        </nav>
-    </aside>
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
@@ -65,30 +34,7 @@
     <div class="main-content">
 
         <!-- HEADER — dùng đúng HTML bạn gửi -->
-        <header class="top-header d-flex align-items-center justify-content-between px-4">
-            <div class="d-flex align-items-center gap-3 flex-grow-1">
-                <button class="btn-icon d-lg-none" onclick="toggleSidebar(true)">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <div class="search-wrap position-relative">
-                    <a href="/organizer/list/event" class="breadcrumb-link">
-                        <span class="material-symbols-outlined" style="font-size:17px">arrow_back</span>
-                        Back to Events
-                    </a>
-                    <button class="search-clear d-none" id="searchClear" onclick="clearSearch()">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
-                     alt="Avatar" class="user-avatar" />
-                <div class="d-none d-md-block text-start">
-                    <div class="user-name">Minh Event Corp</div>
-                    <div class="user-role">Administrator</div>
-                </div>
-            </div>
-        </header>
+        <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
 
         <!-- ════════ PAGE BODY ════════ -->
         <main class="page-body">
@@ -100,21 +46,23 @@
             </div>
 
             <!-- Filter form -->
-            <form action="/organizer/orders" method="get"
+            <form method="get"
                   class="d-flex flex-column flex-sm-row gap-3 align-items-stretch align-items-sm-center mb-4">
 
                 <div class="search-box">
                     <span class="material-symbols-outlined icon-left">search</span>
-                    <input type="text" name="keyword" value="" placeholder="Tìm mã đơn, tên khách, sự kiện..." />
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           placeholder="Tìm mã đơn, tên khách"/>
                 </div>
 
                 <div class="filter-select-wrap">
                     <span class="material-symbols-outlined icon-left">filter_list</span>
                     <select name="status">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="Success">Thành công (Success)</option>
-                        <option value="Pending">Chờ thanh toán (Pending)</option>
-                        <option value="Cancelled">Đã hủy (Cancelled)</option>
+                        <option value="PENDING_PAYMENT" th:selected="${status == 'PENDING_PAYMENT'}">PENDING_PAYMENT</option>
+                        <option value="PAID" th:selected="${status == 'PAID'}">PAID</option>
+                        <option value="CANCELLED" th:selected="${status == 'CANCELLED'}">CANCELLED</option>
+                        <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">EXPIRED</option>
                     </select>
                     <span class="material-symbols-outlined icon-right">expand_more</span>
                 </div>
@@ -131,6 +79,7 @@
                     <table class="table table-borderless align-middle">
                         <thead>
                         <tr>
+                            <th>STT</th>
                             <th>Mã đơn hàng</th>
                             <th>Khách hàng</th>
                             <th>Sự kiện</th>
@@ -142,58 +91,51 @@
                         </thead>
                         <tbody>
 
-                        <tr>
-                            <td class="order-id">#ORD-9982</td>
-                            <td>
-                                <span class="cust-name">Nguyễn Văn A</span>
-                                <span class="cust-phone">+84 901 234 567</span>
-                            </td>
-                            <td><span class="event-name" title="Summer Music Fest 2024">Summer Music Fest 2024</span></td>
-                            <td style="color:#475569">2 vé <span style="color:#94a3b8">· VIP Zone A</span></td>
-                            <td class="amount-val">2.180.000 ₫</td>
-                            <td style="color:#64748b;font-size:.72rem">15/10/2023 14:20</td>
-                            <td><span class="status-badge badge-success">Thành công</span></td>
-                        </tr>
+                        <tr th:each="order, stat : ${orders}">
 
-                        <tr>
-                            <td class="order-id">#ORD-9983</td>
-                            <td>
-                                <span class="cust-name">Trần Thị B</span>
-                                <span class="cust-phone">0912 367 199</span>
-                            </td>
-                            <td><span class="event-name" title="Design Thinking Workshop">Design Thinking Workshop</span></td>
-                            <td style="color:#475569">1 vé <span style="color:#94a3b8">· Standard</span></td>
-                            <td class="amount-val">500.000 ₫</td>
-                            <td style="color:#64748b;font-size:.72rem">10/10/2023 15:45</td>
-                            <td><span class="status-badge badge-pending">Chờ thanh toán</span></td>
-                        </tr>
+                            <td th:text="${stat.count}"></td>
 
-                        <tr>
-                            <td class="order-id">#ORD-9984</td>
-                            <td>
-                                <span class="cust-name">Lê Hải C</span>
-                                <span class="cust-phone">0944 883 234</span>
+                            <td class="order-id"
+                                th:text="${order.orderId}">
                             </td>
-                            <td><span class="event-name" title="Tech Summit 2024">Tech Summit 2024</span></td>
-                            <td style="color:#475569">4 vé <span style="color:#94a3b8">· Early Bird</span></td>
-                            <td class="amount-val">3.200.000 ₫</td>
-                            <td style="color:#64748b;font-size:.72rem">09/10/2023 09:15</td>
-                            <td><span class="status-badge badge-cancelled">Đã hủy</span></td>
-                        </tr>
 
-                        <tr>
-                            <td class="order-id">#ORD-9985</td>
                             <td>
-                                <span class="cust-name">Phạm D</span>
-                                <span class="cust-phone">0909 333 444</span>
-                            </td>
-                            <td><span class="event-name" title="Startup Pitch Night">Startup Pitch Night</span></td>
-                            <td style="color:#475569">2 vé <span style="color:#94a3b8">· General Admission</span></td>
-                            <td class="amount-val">300.000 ₫</td>
-                            <td style="color:#64748b;font-size:.72rem">09/10/2023 18:20</td>
-                            <td><span class="status-badge badge-success">Thành công</span></td>
-                        </tr>
+        <span class="cust-name"
+              th:text="${order.fullName}">
+        </span>
 
+                                <span class="cust-phone"
+                                      th:text="${order.phone}">
+        </span>
+                            </td>
+
+                            <td>
+        <span class="event-name"
+              title="Summer Music Fest 2024" th:text="${order.eventTitle}">
+
+        </span>
+                            </td>
+
+                            <td style="color:#475569"
+                                th:text="${order.quantityTicket}">
+                            </td>
+
+                            <td class="amount-val"
+                                th:text="${#numbers.formatDecimal(order.totalAmount, 0,'COMMA', 0,'POINT') + ' ₫'}">
+                            </td>
+                            <td th:text="${order.createAt}"></td>
+                            <td>
+        <span class="status-badge"
+              th:text="${order.status}"
+              th:classappend="${
+                  order.status == 'SUCCESS'
+                  ? 'badge-success'
+                  : 'badge-danger'
+              }">
+        </span>
+                            </td>
+
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -201,20 +143,36 @@
 
             <!-- PAGINATION -->
             <nav aria-label="Phân trang">
-                <ul class="pagination justify-content-center flex-wrap">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">
-                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">chevron_left</span>
+                <ul class="pagination justify-content-center" th:if="${totalPages > 1}">
+
+                    <!-- Prev -->
+                    <li class="page-item" th:if="${currentPage > 0}" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/organizer/event/{id}/orders(id=${eventId}, page=${currentPage - 1},keyword=${keyword}, status=${status})}">
+                            «
                         </a>
                     </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">
-                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle">chevron_right</span>
+
+                    <!-- Số trang -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/organizer/event/{id}/orders(id=${eventId}, page=${i},keyword=${keyword}, status=${status})}"
+                           th:text="${i + 1}">
                         </a>
                     </li>
+
+                    <!-- Next -->
+                    <li class="page-item"
+                        th:if="${currentPage < totalPages-1}"
+                        th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/organizer/event/{id}/orders(id=${eventId}, page=${currentPage + 1},keyword=${keyword}, status=${status})}">
+                            »
+                        </a>
+                    </li>
+
                 </ul>
             </nav>
 
