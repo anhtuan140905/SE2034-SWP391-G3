@@ -8,21 +8,47 @@
       )}">
 <head>
     <title>Organizer Detail — EventHub Moderator</title>
-    <!--/*@thymesVar id="organizer" type="com.example.dto.OrganizerDetailDTO"*/-->
-    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/organizer_detail.css}"/>
+    <th:block id="page-css">
+        <link rel="stylesheet" th:href="@{/moderator/css/event_detail.css}"/>
+        <link rel="stylesheet" th:href="@{/moderator/css/organizer_information.css}"/>
+    </th:block>
 </head>
 <body>
 
 <section id="organizer-detail-content" th:fragment="content">
 
-    <!-- Back + Page Title -->
     <div class="od-header">
-        <a th:href="${backEventId != null} ? @{/moderator/event/detail/{id}(id=${backEventId})} : @{/moderator/events}"
-           class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>QUAY LẠI SỰ KIỆN</span>
-        </a>
-        <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
+        <div class="od-header-left">
+            <a th:if="${backEventId != null}"
+               th:href="@{/moderator/event/detail/{id}(id=${backEventId})}"
+               class="btn-back-organizerList">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI SỰ KIỆN</span>
+            </a>
+
+            <a th:if="${backEventId == null}"
+               th:href="@{/moderator/organizers}"
+               class="btn-back-organizerList">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI DANH SÁCH</span>
+            </a>
+
+            <div>
+                <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
+
+                <p>
+                    <i class="fa-solid fa-hashtag"></i> Organizer ID:
+                    <span th:text="${organizer != null ? organizer.organizerId : 'N/A'}"></span>
+                </p>
+            </div>
+        </div>
+
+        <span class="ed-status-badge"
+              th:classappend="${organizer != null and organizer.active} ? 'status-active' : 'status-inactive'">
+            <span th:text="${organizer != null ? (organizer.active ? 'Đang hoạt động' : 'Đã khoá') : 'Đã khoá'}">
+            </span>
+        </span>
+
     </div>
 
     <!-- Top 2 cards row -->
@@ -119,11 +145,20 @@
                 </div>
 
                 <div class="od-promoter-item">
+                    <span class="od-info-label">Số điện thoại</span>
+                    <div class="od-info-value-row">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span class="od-info-value od-mono"
+                              th:text="${organizer != null ? organizer.phone : '0123456789'}">0123456789</span>
+                    </div>
+                </div>
+
+                <div class="od-promoter-item">
                     <span class="od-info-label">Ngày tham gia</span>
                     <div class="od-info-value-row">
                         <i class="fa-regular fa-calendar"></i>
                         <span class="od-info-value"
-                              th:text="${organizer != null ? #temporals.format(organizer.joinedDate, 'MMM dd, yyyy') : 'May 24, 2026'}">May 24, 2026</span>
+                              th:text="${organizer != null ? #temporals.format(organizer.joinedDate, 'dd MMM, yyyy') : 'May 24, 2026'}">May 24, 2026</span>
                     </div>
                 </div>
 
@@ -148,6 +183,41 @@
             </div>
         </div>
 
+    </div>
+
+    <div class="ed-reject-box"
+         th:if="${organizer != null and organizer.active}">
+        <div class="ed-reject-label">
+            <i class="fa-solid fa-envelope-open-text"></i>
+            <span>Lý do khóa tài khoản.</span>
+        </div>
+        <textarea id="deactivateReason"
+                  class="ed-reject-textarea"
+                  placeholder="Nhập lý do khóa tài khoản."></textarea>
+    </div>
+
+    <div class="ed-action-footer">
+        <div class="ed-action-btns">
+
+            <form th:if="${organizer != null and organizer.active}"
+                  th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
+                  method="post" id="deactivateForm">
+                <input type="hidden" name="reason" id="reasonInput"/>
+                <button type="button" class="btn-inactive"
+                        onclick="submitDeactivateOrganizer()">
+                    <i class="fa-solid fa-ban"></i> Khóa tài khoản
+                </button>
+            </form>
+
+            <form th:if="${organizer != null and !organizer.active}"
+                  th:action="@{/moderator/organizer/{id}/activate(id=${organizer.organizerId})}"
+                  method="post">
+                <button type="submit" class="btn-approve">
+                    <i class="fa-solid fa-circle-play"></i> Mở lại tài khoản
+                </button>
+            </form>
+
+        </div>
     </div>
 
 </section>

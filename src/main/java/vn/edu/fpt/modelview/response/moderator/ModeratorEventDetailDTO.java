@@ -22,6 +22,7 @@ public class ModeratorEventDetailDTO {
 
     private String venueName;
     private String venueAddress;
+    private String wardName;
     private String cityName;
 
     private Long organizerId;

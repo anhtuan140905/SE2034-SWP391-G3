@@ -20,11 +20,10 @@
         <div class="ed-header-left">
             <a th:href="@{/moderator/events}" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>QUAY TRỞ LẠI</span>
+                <span>QUAY LẠI DANH SÁCH</span>
             </a>
             <div class="ed-title-block">
-                <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}">
-                </h1>
+                <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}"></h1>
 
                 <p class="ed-event-id">
                     <i class="fa-solid fa-hashtag" style="margin-right: 4px;"></i> Event ID:
@@ -36,8 +35,11 @@
         <span class="ed-status-badge"
               th:classappend="${event != null and event.status.name() == 'ACTIVE'} ? 'status-active' :
                          (${event != null and event.status.name() == 'INACTIVE'} ? 'status-inactive' : 'status-ended')">
-        <span th:text="${event != null ? event.status.name() : 'INACTIVE'}"></span>
-    </span>
+            <span th:text="${event != null ?
+                (event.status.name() == 'ACTIVE' ? 'Đang hoạt động' :
+                (event.status.name() == 'INACTIVE' ? 'Đã tắt' : 'Đã kết thúc')) : 'Đã tắt'}">
+            </span>
+        </span>
     </div>
 
     <!-- ── Main 2-col layout ── -->
@@ -113,25 +115,8 @@
                 <p class="ed-venue-name"
                    th:text="${event != null ? event.venueName : 'Cyber Docklands'}"></p>
                 <p class="ed-venue-address"
-                   th:text="${event != null ? (event.venueAddress + ', '+ (event.cityName ?: '')) : '404 Neon Blvd, District 9, Metropolis'}">
+                   th:text="${event != null ? (event.venueAddress + ', '+ (event.wardName)+ ', '+ (event.cityName ?: '')) : ' '}">
                 </p>
-            </div>
-
-            <!-- Total Tickets -->
-            <div class="ed-info-card ed-ticket-card">
-               <!-- <div class="ed-info-card-title">
-                    <i class="fa-solid fa-ticket"></i>
-                    <span>TỔNG SỐ VÉ</span>
-                </div>
-                <p class="ed-ticket-count"
-                   th:text="${event != null ? #numbers.formatInteger(event.totalTickets, 0, 'COMMA') : '5,000'}">
-                    5,000
-                </p>
-                -->
-                <div class="ed-divider"></div>
-                <p class="ed-organized-label">Tổ chức bởi</p>
-                <p class="ed-organized-name"
-                   th:text="${event != null ? event.organizerName : ''}">Sungha Company</p>
             </div>
 
             <!-- Organizer -->
@@ -140,29 +125,34 @@
                     <i class="fa-solid fa-shield-halved"></i>
                     <span>Người Tổ Chức</span>
                 </div>
-                <div class="ed-organizer-row">
+                <a th:if="${event != null and event.organizerId != null}"
+                   th:href="@{/moderator/information/{id}(id=${event.organizerId}, fromEvent=${event.eventId})}"
+                   class="ed-organizer-row ed-organizer-link">
+
                     <div class="ed-organizer-avatar">
                         <img th:if="${event != null and event.organizerAvatarUrl != null}"
                              th:src="${event.organizerAvatarUrl}"
                              th:alt="${event.organizerName}"/>
-                        <span th:if="${event == null or event.organizerAvatarUrl == null}"
+                        <span th:if="${event.organizerAvatarUrl == null}"
                               class="ed-avatar-fallback">
-                            <i class="fa-solid fa-user"></i>
+                              <i class="fa-solid fa-user"></i>
                         </span>
                     </div>
                     <div class="ed-organizer-info">
                         <p class="ed-organizer-name"
-                           th:text="${event != null ? event.organizerName : 'Sungha Company'}">Sungha Company
-                        </p>
-                        <p class="ed-organizer-email"
-                           th:text="${event != null ? event.organizerEmail : ''}">
+                           th:text="${event != null ? event.organizerName : ''}">
                         </p>
                     </div>
-                    <a th:if="${event != null and event.organizerName != null}"
-                       th:href="@{/moderator/information/{id}(id=${event.organizerId}, fromEvent=${event.eventId})}"
-                       class="ed-organizer-arrow">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+
+                <div th:if="${event == null or event.organizerId == null}" class="ed-organizer-row">
+                    <div class="ed-organizer-avatar">
+                        <span class="ed-avatar-fallback"><i class="fa-solid fa-user"></i></span>
+                    </div>
+                    <div class="ed-organizer-info">
+                        <p class="ed-organizer-name">Tên Organizer</p>
+                    </div>
                 </div>
             </div>
 

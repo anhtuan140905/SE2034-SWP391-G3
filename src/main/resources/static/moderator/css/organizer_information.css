@@ -1,32 +1,47 @@
 /* ============================================================
-   organizer_detail.css  —  Organizer Detail / Host Dossier
-   Path: src/main/resources/static/moderator/css/organizer_detail.css
+   organizer_information.css  —  Organizer Detail / Host Dossier
+   Path: src/main/resources/static/moderator/css/organizer_information.css
    ============================================================ */
 
 /* ---------- Header ---------- */
 .od-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
-.btn-back {
+
+.od-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-back-organizerList {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    font-size: 13px;
-    font-weight: 500;
+    font-family: var(--font-display), serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
     color: var(--brand-purple);
     text-decoration: none;
-    margin-bottom: 10px;
+    text-transform: uppercase;
     transition: opacity var(--transition);
 }
+
 .btn-back:hover { opacity: 0.75; }
 .btn-back i { font-size: 12px; }
 
 .od-page-title {
-    font-family: var(--font-display);
+    font-family: "Calibri", serif;
     font-size: 26px;
     font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 /* ---------- Top 2-cards Row ---------- */

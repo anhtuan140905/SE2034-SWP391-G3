@@ -88,6 +88,7 @@ public class ModeratorEventDetailServiceImpl implements ModeratorEventDetailServ
         if(event.getAddress() != null) {
             dto.setVenueAddress(event.getAddress().getSpecificAddress());
             if(event.getAddress().getWard() != null) {
+                dto.setWardName(event.getAddress().getWard().getName());
                 dto.setCityName(event.getAddress().getWard().getCity().getName());
             }
         }

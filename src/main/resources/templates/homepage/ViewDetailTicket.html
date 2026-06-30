@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Chi Tiết Vé – EventHub</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
+          rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
 
     <!-- Styles -->
-    <link rel="stylesheet" th:href="@{/homepage/css/variables.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/detail.css}" />
-    <link rel="stylesheet" th:href="@{/homepage/css/tickets.css}" />
+    <link rel="stylesheet" th:href="@{/homepage/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/header.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/detail.css}"/>
+    <link rel="stylesheet" th:href="@{/homepage/css/tickets.css}"/>
 </head>
 <body class="detail-page">
 
@@ -53,277 +59,101 @@
     <div class="detail-header">
         <div class="detail-header-inner">
             <a class="btn-back" th:href="@{/my-tickets}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                     stroke-width="2">
                     <path d="M19 12H5m7-7l-7 7 7 7"/>
                 </svg>
                 Vé Của Tôi
             </a>
             <span class="detail-title">Chi Tiết Vé</span>
-            <div class="btn-actions">
-                <button class="btn-outline">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
-                        <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                    </svg>
-                    Chia Sẻ
-                </button>
-                <button class="btn-outline">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px">
-                        <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Tải Xuống
-                </button>
-            </div>
         </div>
     </div>
 
-    <!-- Detail main -->
+
     <div class="detail-main">
-        <!-- Hero image -->
+
         <div class="detail-hero">
-            <img th:src="${orderInfo.thumbnailUrl}"
-                 alt="Event Image">
+            <img th:src="${ticketDetail.thumbnailUrl}" alt="Event Image">
             <div class="detail-hero-overlay"></div>
             <div class="detail-hero-content">
-                <div class="hero-cat" id="d-cat" th:text="${orderInfo.categoryName}"></div>
-
-                <div class="ticket-status">
-                    <span class="status-dot"></span>
-                    <span class="status-text" th:if="${orderInfo.status == 'ACTIVE' }">Còn Hiệu Lực</span>
-                    <span class="status-text" th:if="${orderInfo.status == 'USED' }">Đã Sử Dụng</span>
-                    <span class="status-text" th:if="${orderInfo.status == 'EXPIRED' }">Hết Hạn</span>
-                </div>
-                <div class="hero-title" id="d-title" th:text="${orderInfo.eventName}"></div>
-
+                <div class="hero-cat" th:text="${ticketDetail.categoryName}"></div>
+                <div class="hero-title" th:text="${ticketDetail.eventName}"></div>
             </div>
         </div>
 
-        <div class="detail-grid">
-            <!-- Left: event info + order info -->
-            <div style="display:flex;flex-direction:column;gap:20px">
 
-                <!-- Thông tin sự kiện -->
-                <div class="detail-card">
-                    <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-                        </svg>
-                        Thông Tin Sự Kiện
-                    </h3>
-                    <div class="info-rows">
-                        <div class="info-row">
-                            <div class="info-row-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-                                </svg>
-                            </div>
-                            <div class="info-row-text">
-                                <div class="info-row-label">Ngày & Giờ</div>
-                                <div class="info-row-value" id="d-datetime" th:text="${#temporals.format(orderInfo.startTime,'dd/MM/yyyy HH:mm')}"></div>
+        <div class="qr-tickets-grid">
+            <div class="qr-ticket" >
 
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-row-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
-                            <div class="info-row-text">
-                                <div class="info-row-label">Địa Điểm</div>
-                                <div class="info-row-value" id="d-venue" th:text="${orderInfo.specificAddress} + ', ' + ${orderInfo.wardName} +', ' + ${orderInfo.cityName}" ></div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-row-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
-                                </svg>
-                            </div>
-                            <div class="info-row-text">
-                                <div class="info-row-label">Loại Vé</div>
-                                <div class="info-row-value" id="d-type" th:text="${orderInfo.zoneName}"></div>
-                            </div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-row-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
-                            <div class="info-row-text">
-                                <div class="info-row-label">Số Lượng</div>
-                                <div class="info-row-value" id="d-qty" th:text="${#lists.size(ticketDetail) + ' vé'}"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="qr-ticket-header">
+    <span class="status-pill"
+          th:classappend="${ticketDetail.status == 'USED'} ? 'used' : (${ticketDetail.status == 'EXPIRED'} ? 'expired' : 'active')">
+        <span class="status-dot"></span>
+        <span class = "status-active" th:if="${ticketDetail.status == 'ACTIVE'}">Còn hiệu lực</span>
+        <span class = "status-used" th:if="${ticketDetail.status == 'USED'}">Đã sử dụng</span>
+        <span class = "status-expired" th:if="${ticketDetail.status == 'EXPIRED'}">Hết hạn</span>
+    </span>
                 </div>
 
-                <!-- Thông tin đơn hàng -->
-                <div class="detail-card">
-                    <h3>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        Thông Tin Đơn Hàng
-                    </h3>
-                    <div class="order-rows">
-                        <div class="order-row">
-                            <span>Mã Đơn Hàng</span>
-                            <strong id="d-order" th:text="${orderInfo.orderId}"></strong>
+                <div class="qr-body">
+                    <div class="qr-body-left">
+                        <div class="info-row">
+                            <div class="info-row-icon">
+                                <i class="ti ti-ticket" aria-hidden="true"></i>
+                            </div>
+                            <div class="info-row-text">
+                                <div class="info-row-label">Mã vé</div>
+                                <div class="info-row-value" th:text="${ticketDetail.ticketCode}"></div>
+                            </div>
                         </div>
-                        <div class="order-row">
-                            <span>Ngày Đặt Vé</span>
-                            <strong id="d-purchase" th:text="${orderInfo.createdAt}"></strong>
-                        </div>
-                        <div class="order-row">
-                            <span>Phương Thức Thanh Toán</span>
-                            <strong th:text="${orderInfo.paymentCode}">N/A</strong>
-                        </div>
-                    </div>
-                    <div class="total-row">
-                        <span>Tổng Thanh Toán</span>
-                        <strong id="d-price" th:text="${orderInfo.price}"></strong>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Right: QR Ticket -->
-            <div style="display:flex;flex-direction:column;gap:16px">
-                <div class="qr-ticket">
-                    <div class="qr-ticket-header">
-                        <p>Vé Điện Tử</p>
-                        <strong id="d-ticketid">TKT-0042</strong>
+                        <div class="info-row">
+                            <div class="info-row-icon">
+                                <i class="ti ti-calendar" aria-hidden="true"></i>
+                            </div>
+                            <div class="info-row-text">
+                                <div class="info-row-label">Thời gian</div>
+                                <div class="info-row-value">
+                                    <span th:text="${'Từ ' + #temporals.format(ticketDetail.startTime,'HH:mm EEEE, dd/MM/yyyy', new java.util.Locale('vi'))}"></span>
+                                </div>
+                                <div class="info-row-value">
+                                    <span th:text="${'Đến ' + #temporals.format(ticketDetail.endTime,'HH:mm EEEE, dd/MM/yyyy', new java.util.Locale('vi'))}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-row">
+                            <div class="info-row-icon">
+                                <i class="ti ti-armchair" aria-hidden="true"></i>
+                            </div>
+                            <div class="info-row-text">
+                                <div class="info-row-label">Số ghế</div>
+                                <div class="info-row-value"
+                                     th:text="${ticketDetail.row != null} ? (${ticketDetail.row} + '-' + ${ticketDetail.seat}) : ${ticketDetail.zoneName}"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="qr-body">
+
+                    <div class="qr-separator-vertical"></div>
+
+                    <div class="qr-body-right">
                         <div class="qr-wrap">
-                            <svg class="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="5"  y="5"  width="26" height="26" rx="3" fill="#1a1a2e"/>
-                                <rect x="9"  y="9"  width="18" height="18" rx="2" fill="#fff"/>
-                                <rect x="13" y="13" width="10" height="10" rx="1" fill="#1a1a2e"/>
-                                <rect x="69" y="5"  width="26" height="26" rx="3" fill="#1a1a2e"/>
-                                <rect x="73" y="9"  width="18" height="18" rx="2" fill="#fff"/>
-                                <rect x="77" y="13" width="10" height="10" rx="1" fill="#1a1a2e"/>
-                                <rect x="5"  y="69" width="26" height="26" rx="3" fill="#1a1a2e"/>
-                                <rect x="9"  y="73" width="18" height="18" rx="2" fill="#fff"/>
-                                <rect x="13" y="77" width="10" height="10" rx="1" fill="#1a1a2e"/>
-                                <rect x="37" y="5"  width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="5"  width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="51" y="5"  width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="58" y="5"  width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="12" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="51" y="12" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="12" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="19" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="51" y="19" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="37" y="26" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="26" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="5"  y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="12" y="37" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="19" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="26" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="37" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="44" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="51" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="37" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="65" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="72" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="79" y="37" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="86" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="93" y="37" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="5"  y="44" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="19" y="44" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="37" y="44" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="51" y="44" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="65" y="44" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="79" y="44" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="93" y="44" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="5"  y="51" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="12" y="51" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="26" y="51" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="51" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="51" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="72" y="51" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="86" y="51" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="5"  y="58" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="19" y="58" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="58" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="51" y="58" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="65" y="58" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="79" y="58" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="93" y="58" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="65" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="65" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="51" y="65" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="65" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="65" y="65" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="72" y="65" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="86" y="65" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="93" y="65" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="37" y="72" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="51" y="72" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="65" y="72" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="79" y="72" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="79" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="79" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="58" y="79" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="72" y="79" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="86" y="79" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="93" y="79" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="37" y="86" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="51" y="86" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="65" y="86" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="79" y="86" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="37" y="93" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="44" y="93" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="58" y="93" width="5" height="5" fill="#ff2a7a"/>
-                                <rect x="72" y="93" width="5" height="5" fill="#8b3ff3"/>
-                                <rect x="86" y="93" width="5" height="5" fill="#1a1a2e"/>
-                                <rect x="93" y="93" width="5" height="5" fill="#ff2a7a"/>
-                            </svg>
-                        </div>
-
-                        <div class="qr-id" id="d-qrid">TKT-0042</div>
-                        <div class="qr-divider"><span>✦</span></div>
-
-                        <div class="seat-grid">
-                            <div class="seat-item">
-                                <div class="seat-val" id="d-section">GA1</div>
-                                <div class="seat-lbl">Khu Vực</div>
-                            </div>
-                            <div class="seat-item">
-                                <div class="seat-val" id="d-row">F</div>
-                                <div class="seat-lbl">Hàng</div>
-                            </div>
-                            <div class="seat-item">
-                                <div class="seat-val" id="d-seat">F-14</div>
-                                <div class="seat-lbl">Ghế</div>
-                            </div>
+                            <img th:if="${ticketDetail.qrCode != null}"
+                                 th:src="${ticketDetail.qrCode}"
+                                 alt="QR Code"
+                                 style="width:100%;height:100%;object-fit:contain;"/>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn-download">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Tải Vé Về Máy
-                </button>
-
-                <!-- Verified badge -->
-                <div class="detail-card" style="padding:16px 20px">
-                    <div style="display:flex;align-items:center;gap:10px">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="2" style="width:20px;height:20px;flex-shrink:0">
-                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                        <div>
-                            <div style="font-size:13px;font-weight:600;color:#1a1a2e">Vé Được Xác Thực</div>
-                            <div style="font-size:12px;color:#6b7280">Bảo mật bởi hệ thống EventHub</div>
-                        </div>
-                    </div>
+                <div class="qr-ticket-footer">
+                    <span class="foot-label">Mã đơn hàng</span>
+                    <span class="foot-value" th:text="${ticketDetail.orderId}"></span>
                 </div>
+
             </div>
         </div>
+
     </div>
 </div>
 

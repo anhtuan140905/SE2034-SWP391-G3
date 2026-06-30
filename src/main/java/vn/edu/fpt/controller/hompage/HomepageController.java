@@ -158,7 +158,7 @@ public class HomepageController {
         model.addAttribute("countExpiredTicket", countExpiredTicket);
 
 
-        List<TicketDTO> viewTicket = orderServiceImpl.viewOrder(userId, tab);
+        List<TicketDTO> viewTicket = ticketServiceImpl.viewTicket(userId, tab);
         model.addAttribute("viewTicket", viewTicket);
 
         model.addAttribute("tab", tab);
@@ -169,10 +169,8 @@ public class HomepageController {
         return "homepage/ViewOwnTicket";
     }
     @GetMapping("/my-detailtickets")
-    public String getViewDetailTicket(Long orderId, Model model) {
-        List<TicketDTO> ticketDetail = orderServiceImpl.viewOrderDetail(orderId);
-
-        model.addAttribute("orderInfo", ticketDetail.get(0));
+    public String getViewDetailTicket(Long ticketId, Model model) {
+        TicketDTO ticketDetail = ticketServiceImpl.viewDetailTicket(ticketId);
 
         model.addAttribute("ticketDetail", ticketDetail);
         return "homepage/ViewDetailTicket";

@@ -5,9 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ──────────────────────────────────────────
-       1. APPROVE EVENT (Duyệt sự kiện + Lời nhắn đi kèm)
-    ────────────────────────────────────────── */
+    /* 1. APPROVE EVENT (Duyệt sự kiện + Lời nhắn đi kèm)*/
     window.approveEvent = async (eventId) => {
         if (eventId === null || eventId === undefined) return;
 
@@ -42,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    /* ──────────────────────────────────────────
-       2. Tắt sự kiện
-    ────────────────────────────────────────── */
+    /* 2. Tắt sự kiện */
     window.submitDeactivate = function () {
         const textarea = document.getElementById('deactivateReason');
         const reason = textarea ? textarea.value.trim() : '';
@@ -72,85 +68,5 @@ document.addEventListener('DOMContentLoaded', () => {
         reasonInput.value = reason;
         form.submit();
     };
-
-    /* ──────────────────────────────────────────
-       3. TEXTAREA ERROR STYLE
-    ────────────────────────────────────────── */
-    const style = document.createElement('style');
-    style.textContent = `
-        .textarea-error {
-            border-color: #E8336E !important;
-            box-shadow: 0 0 0 3px rgba(232, 51, 110, 0.12) !important;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // -----------------
-    document.getElementById('deactivateReason')?.addEventListener('input', function () {
-        if (this.value.trim()) this.classList.remove('textarea-error');
-    });
-
-
-    /* ──────────────────────────────────────────
-       4. TOAST NOTIFICATION
-    ────────────────────────────────────────── */
-    window.showToast = (message, type = 'success') => {
-        // Remove existing toast
-        document.querySelector('.ed-toast')?.remove();
-
-        const toast = document.createElement('div');
-        toast.className = 'ed-toast';
-        toast.innerHTML = `
-            <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
-            <span>${message}</span>
-        `;
-
-        const toastStyle = document.createElement('style');
-        toastStyle.textContent = `
-            .ed-toast {
-                position: fixed;
-                bottom: 28px; right: 28px;
-                display: flex; align-items: center; gap: 10px;
-                background: ${type === 'success' ? '#1A9C5B' : '#C0225A'};
-                color: #fff;
-                padding: 12px 20px;
-                border-radius: 10px;
-                font-size: 13.5px;
-                font-weight: 600;
-                box-shadow: 0 6px 24px rgba(0,0,0,0.15);
-                z-index: 9999;
-                animation: toastIn 0.3s ease, toastOut 0.3s ease 1.6s forwards;
-            }
-            @keyframes toastIn  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-            @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(8px); } }
-        `;
-        document.head.appendChild(toastStyle);
-        document.body.appendChild(toast);
-
-        setTimeout(() => toast.remove(), 2000);
-    };
-
-
-    /* ──────────────────────────────────────────
-       5. ENTRANCE ANIMATION
-    ────────────────────────────────────────── */
-    const animateIn = (selector, delay = 0) => {
-        const el = document.querySelector(selector);
-        if (!el) return;
-        el.style.opacity   = '0';
-        el.style.transform = 'translateY(16px)';
-        el.style.transition = `opacity 0.4s ease ${delay}s, transform 0.4s ease ${delay}s`;
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            el.style.opacity   = '1';
-            el.style.transform = 'translateY(0)';
-        }));
-    };
-
-    animateIn('.ed-title-block', 0.0);
-    animateIn('.ed-cover',       0.08);
-    animateIn('.ed-section',     0.14);
-    animateIn('.ed-date-row',    0.18);
-    animateIn('.ed-reject-box',  0.22);
-    animateIn('.ed-sidebar',     0.10);
 
 });

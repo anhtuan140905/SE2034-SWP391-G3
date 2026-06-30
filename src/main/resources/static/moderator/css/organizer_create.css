@@ -1,0 +1,215 @@
+/* Path: src/main/resources/static/moderator/css/organizer_create.css */
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--brand-purple);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: opacity var(--transition);
+    letter-spacing: 2px;
+}
+
+.btn-back:hover {
+    opacity: 0.75;
+}
+
+.btn-back i {
+    font-size: 12px;
+}
+
+.oc-header {
+    margin-bottom: 24px;
+}
+
+.oc-page-title {
+    font-family: "Calibri", serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+.oc-page-subtitle {
+    margin: 8px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.oc-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.oc-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.oc-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.oc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.oc-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.oc-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.oc-input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #111827;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.oc-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.oc-input-error {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.oc-password-wrap {
+    position: relative;
+}
+
+.oc-password-wrap .oc-input {
+    padding-right: 48px;
+}
+
+.oc-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.oc-field-hint {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.oc-field-error {
+    margin: 0;
+    font-size: 13px;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.oc-actions {
+    margin-top: 4px;
+}
+
+.oc-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    min-width: 190px;
+    height: 46px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 12px;
+    background: #0369a1;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.oc-btn-primary:hover {
+    background: #1f2937;
+    transform: translateY(-1px);
+}
+
+.oc-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.oc-alert-success {
+    background: #ecfdf3;
+    border: 1px solid #abefc6;
+    color: #067647;
+}
+
+.oc-note-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.oc-note-list li + li {
+    margin-top: 10px;
+}
+
+@media (max-width: 992px) {
+    .oc-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .oc-page {
+        padding: 16px;
+    }
+
+    .oc-card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .oc-btn-primary {
+        width: 100%;
+    }
+}

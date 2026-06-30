@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{moderator/fragments/moderator_layout :: layout(
+          ~{::title},
+          ~{::section#organizer-create-content},
+          ~{:: #page-css},
+          ~{:: #page-script}
+      )}">
+<head>
+    <title>Tạo tài khoản Organizer — EventHub Moderator</title>
+    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/organizer_create.css}"/>
+</head>
+<body>
+
+<section id="organizer-create-content" th:fragment="content">
+
+    <div class="oc-page">
+        <div class="oc-header">
+            <a th:href="@{/moderator/organizers}"
+               class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI DANH SÁCH</span>
+            </a>
+            <div>
+                <h1 class="oc-page-title">ORGANIZER MANAGEMENT</h1>
+                <p class="oc-page-subtitle">
+                    Tạo mới tài khoản Organizer để cấp quyền truy cập hệ thống.
+                </p>
+            </div>
+        </div>
+
+        <div class="oc-layout">
+            <div class="oc-card">
+                <div class="oc-card-title">
+                    <span>TẠO TÀI KHOẢN ORGANIZER</span>
+                </div>
+
+                <div th:if="${successMessage != null}" class="oc-alert oc-alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span th:text="${successMessage}">Tạo tài khoản thành công.</span>
+                </div>
+
+                <form th:action="@{/moderator/organizers/create}"
+                      th:object="${createOrganizerRequest}"
+                      method="post"
+                      class="oc-form">
+
+                    <div class="oc-form-row">
+                        <div class="oc-form-group">
+                            <label for="firstName" class="oc-label">Họ</label>
+                            <input id="firstName" type="text" th:field="*{firstName}" class="oc-input"
+                                   th:classappend="${#fields.hasErrors('firstName')} ? ' oc-input-error' : ''"
+                                   placeholder="Nhập họ"/>
+                            <p class="oc-field-error"
+                               th:if="${#fields.hasErrors('firstName')}"
+                               th:errors="*{firstName}"></p>
+                        </div>
+
+                        <div class="oc-form-group">
+                            <label for="middleName" class="oc-label">Tên đệm</label>
+                            <input id="middleName" type="text" th:field="*{middleName}" class="oc-input"
+                                   th:classappend="${#fields.hasErrors('middleName')} ? ' oc-input-error' : ''"
+                                   placeholder="Nhập tên đệm (nếu có)"/>
+                            <p class="oc-field-error"
+                               th:if="${#fields.hasErrors('middleName')}"
+                               th:errors="*{middleName}"></p>
+                        </div>
+
+                        <div class="oc-form-group">
+                            <label for="lastName" class="oc-label">Tên</label>
+                            <input id="lastName" type="text" th:field="*{lastName}" class="oc-input"
+                                   th:classappend="${#fields.hasErrors('lastName')} ? ' oc-input-error' : ''"
+                                   placeholder="Nhập tên"/>
+                            <p class="oc-field-error"
+                               th:if="${#fields.hasErrors('lastName')}"
+                               th:errors="*{lastName}"></p>
+                        </div>
+                    </div>
+
+                    <div class="oc-form-group">
+                        <label for="email" class="oc-label">Email đăng nhập</label>
+                        <input id="email" type="email" th:field="*{email}" class="oc-input"
+                               th:classappend="${#fields.hasErrors('email')} ? ' oc-input-error' : ''"
+                               placeholder="Nhập email đăng nhập"/>
+                        <p class="oc-field-error"
+                           th:if="${#fields.hasErrors('email')}"
+                           th:errors="*{email}"></p>
+                    </div>
+
+                    <div class="oc-form-group">
+                        <label for="password" class="oc-label">Mật khẩu</label>
+                        <div class="oc-password-wrap">
+                            <input id="password" type="password" th:field="*{password}" class="oc-input"
+                                   th:classappend="${#fields.hasErrors('password')} ? ' oc-input-error' : ''"
+                                   placeholder="Nhập mật khẩu"/>
+                            <button type="button" class="oc-password-toggle" data-toggle-password aria-label="Hiện hoặc ẩn mật khẩu">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="oc-field-error"
+                           th:if="${#fields.hasErrors('password')}"
+                           th:errors="*{password}"></p>
+                    </div>
+
+                    <div class="oc-actions">
+                        <button type="submit" class="oc-btn-primary">
+                            <span>TẠO TÀI KHOẢN</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="oc-card oc-card-side">
+                <div class="oc-card-title">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>LƯU Ý</span>
+                </div>
+
+                <ul class="oc-note-list">
+                    <li>Email phải chưa tồn tại trong hệ thống.</li>
+                    <li>Moderator sẽ tự gửi thông tin đăng nhập cho Organizer qua kênh liên lạc riêng.</li>
+                    <li>Organizer sẽ tự cập nhật thông tin hồ sơ sau khi đăng nhập.</li>
+                    <li>Tài khoản được kích hoạt ngay sau khi tạo thành công.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script id="page-script" th:src="@{/moderator/js/organizer_create.js}"></script>
+
+</body>
+</html>

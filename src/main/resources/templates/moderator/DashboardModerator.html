@@ -42,6 +42,7 @@
         </div>
     </div>
 
+    <!-- ===== DASHBOARD PANELS No 1 ===== -->
     <div class="dashboard-panels">
 
         <div class="panel-section">
@@ -107,6 +108,71 @@
                     </td>
                 </tr>
 
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ===== DASHBOARD PANELS No 2 ===== -->
+    <div class="dashboard-panels">
+
+        <div class="panel-section">
+            <div class="panel-header">
+                <span class="panel-title">TOP 5 NHÀ TỔ CHỨC LÂU NĂM NHẤT</span>
+                <a th:href="@{/moderator/organizers}" class="view-all-link">Xem tất cả</a>
+            </div>
+            <table class="minimal-table">
+                <thead>
+                <tr>
+                    <th style="width: 50%;">Họ và Tên</th>
+                    <th style="width: 25%;">Ngày khởi tạo</th>
+                    <th style="width: 20%; text-align: right;">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="org : ${topOldestOrganizers}"
+                    th:if="${topOldestOrganizers != null and !topOldestOrganizers.isEmpty()}">
+                    <td th:text="${org.organizerName}">Tên Organizer</td>
+                    <td th:text="${#temporals.format(org.createdAt, 'dd MMM, yyyy')}">01 Jan, 2026</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/moderator/information/{id}(id=${org.organizerId})}"
+                           class="link-action">Xem Chi Tiết</a>
+                    </td>
+                </tr>
+                <tr th:if="${topOldestOrganizers == null or topOldestOrganizers.isEmpty()}">
+                    <td colspan="3" style="text-align: center;">Chưa có dữ liệu</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-section">
+            <div class="panel-header">
+                <span class="panel-title">NHÀ TỔ CHỨC MỚI HÔM NAY</span>
+                <a th:href="@{/moderator/organizers}" class="view-all-link">Xem tất cả</a>
+            </div>
+            <table class="minimal-table">
+                <thead>
+                <tr>
+                    <th style="width: 50%;">Họ và Tên</th>
+                    <th style="width: 25%;">Ngày khởi tạo</th>
+                    <th style="width: 20%; text-align: right;">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="org : ${newOrganizersToday}"
+                    th:if="${newOrganizersToday != null and !newOrganizersToday.isEmpty()}">
+                    <td th:text="${org.organizerName}">Tên Organizer</td>
+                    <td th:text="${#temporals.format(org.createdAt, 'dd MMM, yyyy')}">01 Jan, 2026</td>
+                    <td style="text-align: right;">
+                        <a th:href="@{/moderator/information/{id}(id=${org.organizerId})}"
+                           class="link-action">Xem Chi Tiết</a>
+                    </td>
+                </tr>
+                <tr th:if="${newOrganizersToday == null or newOrganizersToday.isEmpty()}">
+                    <td colspan="3" style="text-align: center;">Chưa có dữ liệu</td>
+                </tr>
                 </tbody>
             </table>
         </div>

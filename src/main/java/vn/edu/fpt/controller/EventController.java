@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.model.User;
@@ -100,7 +101,12 @@ public class EventController {
             @RequestParam(value = "status", required = false) String[] statuses,
             @RequestParam(defaultValue = "")                  String   keyword,
             @RequestParam(defaultValue = "1")                 int      page,
+            RedirectAttributes redirectAttributes,
             Model model){
+        if(userDetails == null) {
+            redirectAttributes.addFlashAttribute("message", "Đăng nhập lỗi vui lòng đăng nhập thử bằng tài khoản và mật khẩu");
+            return "redirect:/auth/login";
+        }
         model.addAttribute("activeMenu", "listevent");
         if (statuses == null || statuses.length == 0) {
             statuses = new String[]{};

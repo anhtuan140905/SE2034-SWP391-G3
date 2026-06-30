@@ -1,0 +1,108 @@
+/* ============================================================
+   organizer_management.css
+============================================================ */
+
+/* Stats của Organizer chỉ có 3 card thay vì 4 */
+.om-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Search của Organizer có thêm button Search */
+.om-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-search {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 16px;
+    border: 2px solid var(--brand-purple);
+    border-radius: var(--radius-sm);
+    background: var(--brand-purple);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition),
+    background var(--transition), box-shadow var(--transition);
+    white-space: nowrap;
+}
+
+.btn-search:hover {
+    background: #6a28a7;
+    border-color: #6a28a7;
+    box-shadow: 0 2px 8px rgba(123, 47, 190, 0.18);
+}
+
+/* Organizer không dùng badge, chỉ dùng text trạng thái */
+.om-status {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.om-status-active {
+    color: #1f8b4c;
+}
+
+.om-status-inactive {
+    color: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .om-stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .om-stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .om-search-row {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .om-search-row .search-box {
+        width: 100%;
+    }
+
+    .btn-search {
+        width: 100%;
+    }
+}
+
+.om-action-row {
+    margin: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-create-organizer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: #01696f;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 180ms ease;
+}
+
+.btn-create-organizer:hover {
+    background-color: #0c4e54;
+}
+
+.btn-create-organizer i {
+    font-size: 13px;
+}
