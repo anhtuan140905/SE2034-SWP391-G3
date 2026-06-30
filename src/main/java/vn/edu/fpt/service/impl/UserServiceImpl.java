@@ -189,23 +189,23 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void updateUser(Long id, UpdateUserStatusDTO request) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Xóa role cũ, gán role mới
-        userRoleRepository.deleteAllByUser_Id(id);
+        Role role = roleService.getRoleByName(
+                RoleName.valueOf(request.getRoleName())
+        );
 
-        Role role = roleService.getRoleByName(RoleName.valueOf(request.getRoleName()));
-        UserRole userRole = UserRole.builder()
-                .user(user)
-                .role(role)
-                .build();
-        userRoleRepository.save(userRole);
+        UserRole userRole = userRoleRepository.findByUser_Id(id)
+                .orElseThrow(() -> new RuntimeException("UserRole not found"));
 
+
+        userRole.setRole(role);
+
+        
         user.setIsActive(request.getIsActive());
-        userRepository.save(user);
     }
-
 
     @Override
     public List<ActivityDTO> getUserActivities(Long userId) {

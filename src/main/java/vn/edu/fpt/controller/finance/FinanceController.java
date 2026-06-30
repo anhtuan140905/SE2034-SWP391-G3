@@ -8,10 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.model.Settlement;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
-import vn.edu.fpt.modelview.request.finance.SettlementSummaryDTO;
+import vn.edu.fpt.modelview.request.finance.SettlementDTO;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
@@ -28,18 +27,21 @@ public class FinanceController {
     private final TicketServiceImpl ticketServiceImpl;
     private final CityServiceImpl cityServiceImpl;
     private final CloudinaryService cloudinaryService;
+    private final SettlementServiceImpl settlementServiceImpl;
 
 
     public FinanceController(UserServiceImpl userServiceImpl,
                            EventServiceImpl eventServiceImpl,
                            TicketServiceImpl ticketServiceImpl,
                              CityServiceImpl cityServiceImpl,
-                             CloudinaryService cloudinaryService) {
+                             CloudinaryService cloudinaryService,
+                             SettlementServiceImpl settlementServiceImpl) {
         this.userServiceImpl = userServiceImpl;
         this.eventServiceImpl = eventServiceImpl;
         this.ticketServiceImpl = ticketServiceImpl;
         this.cityServiceImpl = cityServiceImpl;
         this.cloudinaryService = cloudinaryService;
+        this.settlementServiceImpl = settlementServiceImpl;
     }
    @GetMapping("/dashboard")
     public String dashboard(Model model,
@@ -55,7 +57,10 @@ public class FinanceController {
    }
 
    @PostMapping("/createSettlement")
-   public String createSettlementPage(Model model){
+   public String createSettlementPage(Model model,
+                                      @ModelAttribute SettlementDTO request){
+
+        settlementServiceImpl.createSettlement(request);
 
        return "finance/CreateSettlement";
    }
@@ -65,7 +70,8 @@ public class FinanceController {
     public String getCreateSettlementPage(Model model,
                                           String tab,
                                           @AuthenticationPrincipal CustomUserDetails userDetails,
-                                          @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
+                                          @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
+                                          @RequestParam(required = false) Long eventId){
 
        User currentUser = (userDetails != null)
                ? userServiceImpl.findByUsername(userDetails.getUsername())
@@ -74,6 +80,12 @@ public class FinanceController {
 
        List<SettlementSummaryProjection> listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
        model.addAttribute("listEndedEvents", listEndedEvents);
+       model.addAttribute("selectedEndEvents", eventId);
+
+       SettlementDTO dto = new SettlementDTO();
+       dto.setEventId(eventId);
+
+       model.addAttribute("SettlementDTO", dto);
 
 
        return "finance/CreateSettlement";
@@ -111,15 +123,25 @@ public class FinanceController {
                                        @RequestParam(defaultValue = "all") String tab,
                                        @AuthenticationPrincipal CustomUserDetails userDetails,
                                        @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
-                                       @RequestParam(value = "keyword", defaultValue = " ") String keyword){
+                                       @RequestParam(value = "keyword", defaultValue = "") String keyword){
 
        User currentUser = (userDetails != null)
                ? userServiceImpl.findByUsername(userDetails.getUsername())
                : userServiceImpl.findByUsername(oAuth2Users.getName());
        model.addAttribute("currentUser", currentUser);
 
-       List<SettlementSummaryProjection> listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
+
+       List<SettlementSummaryProjection> listEndedEvents;
+
+       if (keyword != null && !keyword.trim().isEmpty()) {
+           listEndedEvents = eventServiceImpl.searchEndedEvents(keyword);
+       } else {
+           listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
+       }
        model.addAttribute("listEndedEvents", listEndedEvents);
+       model.addAttribute("tab", tab);
+       model.addAttribute("keyword", keyword);
+
 
        long countEndEvent = eventServiceImpl.countEndedEvent();
        model.addAttribute("countEndEvent", countEndEvent);
@@ -127,14 +149,10 @@ public class FinanceController {
        long unsettledEventCount = eventServiceImpl.countUnsettledEvents();
        model.addAttribute("unsettledEventCount",unsettledEventCount);
 
-       Long totalGrossRevenue = eventServiceImpl.sumTotalRevenue();
-       model.addAttribute("totalGrossRevenue",totalGrossRevenue);
+       Long totalRevenue = eventServiceImpl.sumTotalRevenue();
+       model.addAttribute("totalRevenue",totalRevenue);
 
-       List<SettlementSummaryProjection> searchEndedEvent = eventServiceImpl.searchEndedEvents(keyword);
-       model.addAttribute("searchEndedEvent",searchEndedEvent);
-       model.addAttribute("keyword", keyword);
 
-       model.addAttribute("tab", tab);
        return "finance/ListEndedEvents";
    }
 

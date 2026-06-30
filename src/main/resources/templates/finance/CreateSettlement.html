@@ -172,9 +172,23 @@
         /* ================= MAIN ================= */
         .main { padding: 25px; flex: 1; }
 
-        .page-header { margin-bottom: 28px; }
-        .page-header h1 { font-size: 24px; color: #1e0e34; }
-        .page-header p { color: #84759b; margin-top: 4px; font-size: 14px; }
+        .page-header {
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:25px;
+        }
+
+        .page-header h1{
+            font-size:26px;
+            font-weight:bold;
+        }
+
+        .page-header p{
+            color:#9ca3af;
+            margin-top:5px;
+            font-size:14px;
+        }
 
         /* ================= FORM GRID ================= */
         .form-grid {
@@ -342,6 +356,23 @@
 
         .btn-generate svg { width: 18px; height: 18px; }
 
+        .back-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 12px;
+            background: #fff0f5;
+            color: #4b3d60;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 18px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 27, 141, 0.15);
+            color: #ff1b8d;
+        }
+
         /* ================= RESPONSIVE ================= */
         @media (max-width: 1000px) {
             .form-grid { grid-template-columns: 1fr; }
@@ -444,12 +475,18 @@
     <div class="main">
 
         <div class="page-header">
+            <a th:href="@{/finance/listEndedEvents}">
+                <button class="back-btn" aria-label="Back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </a>
+            <div>
             <h1>Tạo Yêu Cầu Quyết Toán Mới</h1>
             <p>Lập hồ sơ quyết toán với tính toán tự động</p>
+            </div>
         </div>
-
+        <form th:action="@{/finance/createSettlement}" method="post" th:object="${SettlementDTO}">
         <div class="form-grid">
-
             <!-- CỘT TRÁI: Form -->
             <div class="card">
                 <div class="card-title">
@@ -463,11 +500,15 @@
 
                 <div class="form-group">
                     <label class="form-label">Chọn Sự Kiện Đã Kết Thúc</label>
-                    <select class="form-control" id="eventSelect" onchange="updateCalc()" >
+                    <select class="form-control"
+                            th:field="*{eventId}"
+                            id="eventSelect"
+                            onchange="updateCalc()">
                         <option value="">-- Chọn một sự kiện --</option>
                         <option th:each="endEvent : ${listEndedEvents}"
                                 th:value="${endEvent.eventId}"
                                 th:text="${endEvent.eventName}"
+                                th:selected="${endEvent.eventId == selectedEndEvents}"
                                 th:attr="data-organizer = ${endEvent.lastNameOrganizer + ' ' + endEvent.middleNameOrganizer + ' ' + endEvent.firstNameOrganizer},
                                          data-revenue=${endEvent.revenue != null ? endEvent.revenue:0}">
                         </option>
@@ -488,17 +529,11 @@
                         <label class="form-label">Phí Hệ Thống Khấu Trừ (10%)</label>
                         <input class="form-control" id="feeField" readonly/>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Khấu Trừ Hoàn Tiền</label>
-                        <input class="form-control" id="refundInput" type="number" value="0"
-                               placeholder="Nhập số tiền hoàn trả" oninput="updateCalc()"/>
-                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Phương Thức Thanh Toán</label>
                         <select class="form-control" id="paymentMethod">
                             <option value="bank_transfer">Chuyển Khoản Ngân Hàng</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="stripe">Stripe</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -509,7 +544,7 @@
                 </div>
             </div>
 
-            <!-- CỘT PHẢI: Tính toán -->
+
             <div class="calc-card">
                 <div class="card-title">
                     <svg fill="none" stroke="#ff1b8d" stroke-width="2" viewBox="0 0 24 24">
@@ -534,10 +569,7 @@
                     <span class="c-label">− Phí Hệ Thống (10%)</span>
                     <span class="c-val neg" id="c-fee">−$0</span>
                 </div>
-                <div class="calc-row">
-                    <span class="c-label">− Hoàn Tiền</span>
-                    <span class="c-val neg" id="c-refund">−$0</span>
-                </div>
+
 
                 <div class="calc-divider"></div>
 
@@ -546,15 +578,15 @@
                     <div class="net-value" id="c-net">$0</div>
                 </div>
 
-                <button class="btn-generate" id="generateBtn" disabled onclick="generateSettlement()">
-                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
+                <button type="submit"
+                        class="btn-generate"
+                        id="generateBtn"
+                        disabled>
                     Tạo Hồ Sơ Quyết Toán
                 </button>
             </div>
-
         </div>
+        </form>
     </div>
 </div>
 
@@ -585,8 +617,7 @@
         const organizer = opt.getAttribute('data-organizer');
         const revenue = parseFloat(opt.getAttribute('data-revenue'));
         const fee    = revenue * 0.1;
-        const refund = parseFloat(document.getElementById('refundInput').value) || 0;
-        const net    = revenue - fee - refund;
+        const net    = revenue - fee;
 
         document.getElementById('organizerField').value = organizer;
         document.getElementById('revenueField').value   = fmt(revenue);
@@ -594,7 +625,6 @@
 
         document.getElementById('c-revenue').textContent = fmt(revenue);
         document.getElementById('c-fee').textContent     = '−' + fmt(fee);
-        document.getElementById('c-refund').textContent  = '−' + fmt(refund);
         document.getElementById('c-net').textContent     = fmt(net);
     }
 
@@ -618,6 +648,14 @@
         if (dropdown && !dropdown.contains(e.target)) {
             document.getElementById('profileDropdown').classList.remove('show');
         }
+
+    });
+    window.addEventListener('DOMContentLoaded',function (){
+        if(document.getElementById('eventSelect').value){
+            updateCalc();
+        }
+
+
     });
 </script>
 </body>

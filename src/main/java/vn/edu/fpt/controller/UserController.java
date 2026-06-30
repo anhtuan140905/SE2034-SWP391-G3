@@ -125,22 +125,21 @@ catch (Exception e){
         return "admin/user/EditUser";
 
     }
+
     @PostMapping("/edituser")
     public String editUserPage(
-            @Valid @ModelAttribute("UpdateUserStatusDTO") UpdateUserStatusDTO dto,
+            @Valid @ModelAttribute("dto") UpdateUserStatusDTO dto,
             BindingResult result,
             Model model,
             @RequestParam Long id) {
 
         if (result.hasErrors()) {
-            User editedUser = userServiceImpl.findById(id);
-            model.addAttribute("user", editedUser);
-
+            model.addAttribute("user", userServiceImpl.findById(id));
+            model.addAttribute("dto", dto);
             return "admin/user/EditUser";
         }
-        else {
-            userServiceImpl.updateUser(id,dto);
-        }
+
+        userServiceImpl.updateUser(id, dto);
 
         return "redirect:/admin/listuser";
     }
