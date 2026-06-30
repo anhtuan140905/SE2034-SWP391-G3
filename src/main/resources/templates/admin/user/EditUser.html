@@ -194,12 +194,14 @@
 
         .page-header h1{
             font-size:26px;
-            font-weight:bold; }
+            font-weight:bold;
+        }
 
         .page-header p{
             color:#9ca3af;
             margin-top:5px;
-            font-size:14px; }
+            font-size:14px;
+        }
         /* Card */
 
 
@@ -546,6 +548,7 @@
                         <select name="roleName">
                             <option value="ROLE_MODERATOR" th:selected = "${roleName.name() == 'ROLE_MODERATOR'}">Kiểm duyệt viên</option>
                             <option value="ROLE_FINANCE" th:selected = "${roleName.name() == 'ROLE_FINANCE'}">Nhân viên tài chính</option>
+                            <option value="ROLE_ATTENDEE" th:selected = "${roleName.name() == 'ROLE_ATTENDEE'}">Người Dùng</option>
 
                         </select>
                     </div>

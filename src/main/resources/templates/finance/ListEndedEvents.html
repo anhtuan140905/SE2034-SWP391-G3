@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -172,9 +173,23 @@
         /* ================= MAIN ================= */
         .main { padding: 25px; flex: 1; }
 
-        .page-header { margin-bottom: 24px; }
-        .page-header h1 { color: #1e0e34; }
-        .page-header p  { color: #84759b; margin-top: 4px; }
+        .page-header {
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:25px;
+        }
+
+        .page-header h1{
+            font-size:26px;
+            font-weight:bold;
+        }
+
+        .page-header p{
+            color:#9ca3af;
+            margin-top:5px;
+            font-size:14px;
+        }
 
         /* ================= STATS BAR ================= */
         .stats-bar {
@@ -515,8 +530,11 @@
     <div class="main">
 
         <div class="page-header">
-            <h1>Sự Kiện Đã Kết Thúc</h1>
-            <p>Quản lý và theo dõi các sự kiện đã kết thúc — tạo hoặc xem quyết toán</p>
+            <div>
+                <h1>Sự Kiện Đã Kết Thúc</h1>
+                <p>Quản lý và theo dõi các sự kiện đã kết thúc — tạo hoặc xem quyết toán</p>
+            </div>
+
         </div>
 
         <div class="stats-bar">
@@ -552,7 +570,7 @@
                 <div>
                     <div class="stat-mini-label">Tổng Doanh Thu</div>
 
-                    <div class="stat-mini-value" th:text="${#numbers.formatInteger(totalGrossRevenue != null ? totalGrossRevenue:0, 1, 'POINT') + 'đ'}">0</div>
+                    <div class="stat-mini-value" th:text="${#numbers.formatInteger(totalRevenue != null ? totalRevenue:0, 1, 'POINT') + 'đ'}">0</div>
                 </div>
             </div>
         </div>
@@ -571,7 +589,7 @@
                            type="text"
                            name="keyword"
                            th:value="${keyword}"
-                           placeholder="Tìm theo tên sự kiện, mã ID hoặc ban tổ chức..."/>
+                           placeholder="Tìm theo tên sự kiện, hoặc tên ban tổ chức..."/>
                 </div>
 
 
@@ -626,15 +644,15 @@
                     <td style="font-weight:600"    th:text="${event.lastNameOrganizer + ' ' + event.middleNameOrganizer + ' ' + event.firstNameOrganizer}">N/A</td>
                     <td style="font-weight:600"    th:text="${#temporals.format(event.endTime, 'dd/MM/yyyy HH:mm')}">N/A</td>
                     <td class="right" style="font-weight:600"
-                        th:text="${#numbers.formatInteger(event.soldTicket, 1, 'COMMA')}">0</td>
+                        th:text="${event.soldTicket}">0</td>
                     <td class="right" style="font-weight:600"
                         th:text="${#numbers.formatInteger(event.revenue != null ? event.revenue:0, 1, 'POINT') + 'đ'}">0</td>
 
 
                     <td class="center">
-                        <span th:if="${event.status}"
+                        <span th:if="${event.status == 'COMPLETED'}"
                               class="badge settled">Đã Quyết Toán</span>
-                        <span th:unless="${event.status}"
+                        <span th:unless="${event.status == 'PENDING'}"
                               class="badge unsettled">Chưa Quyết Toán</span>
                     </td>
 
@@ -648,7 +666,7 @@
 
 
                             <a th:if="${event.status}"
-                               th:href="@{/finance/viewSettlement(eventId=${event.eventId})}"
+                               th:href="@{/finance/viewSettlementDetails(eventId=${event.eventId})}"
                                class="btn-action ghost">Xem Quyết Toán</a>
                         </div>
                     </td>

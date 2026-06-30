@@ -13,11 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
-import vn.edu.fpt.model.constant.SettlementStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
-import vn.edu.fpt.modelview.request.finance.SettlementSummaryDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 
@@ -434,9 +432,15 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
 
 public List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab){
         List<SettlementSummaryProjection> list = eventRepository.findEndedEventsWithSettlementStatus();
-        return switch (tab == null ? "all" : tab){
-            case "pending" -> list.stream().filter(settlement -> "PENDING".equals(settlement.getStatus())).toList();
-            case "completed" -> list.stream().filter(settlement -> "COMPLETED".equals(settlement.getStatus())).toList();
+        return switch (tab == null ? "all" : tab) {
+            case "pending" -> list.stream()
+                    .filter(e -> e.getSettlementId() == null)
+                    .toList();
+
+            case "completed" -> list.stream()
+                    .filter(e -> e.getSettlementId() != null)
+                    .toList();
+
             default -> list;
         };
 }

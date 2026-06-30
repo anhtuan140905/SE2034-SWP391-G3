@@ -1,4 +1,4 @@
-package vn.edu.fpt.modelview.request.finance;
+package vn.edu.fpt.modelview.response.finance;
 
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 

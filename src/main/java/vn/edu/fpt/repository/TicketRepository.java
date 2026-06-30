@@ -88,12 +88,13 @@ ec.category_name as categoryName,
 e.thumbnail_url as thumbnailUrl,
 e.title as eventName,
 e.start_time as startTime,
+e.end_time as endTime,
 tt.zone_name as zoneName,
 a.specific_address as specificAddress,
 w.name wardName,
 c.name cityName,
 tt.price as price,
-t.is_checked_in as status
+t.is_checked_in as checkedIn
 
 from tickets t 
 join order_details ord on t.order_detail_id = ord.order_detail_id
