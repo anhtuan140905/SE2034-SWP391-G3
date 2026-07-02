@@ -118,7 +118,7 @@ select
 t.ticket_id as ticketId,
 t.qr_code as qrCode,
 t.ticket_code as ticketCode,
-t.is_checked_in as status,
+t.is_checked_in as checkedIn,
 ord.order_id as orderId,
 ec.category_name as categoryName,
 e.title as eventName,

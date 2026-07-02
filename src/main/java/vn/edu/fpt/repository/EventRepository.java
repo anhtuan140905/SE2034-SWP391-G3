@@ -347,6 +347,7 @@ e.organizer.lastName as lastNameOrganizer,
 e.organizer.middleName as middleNameOrganizer,
 e.organizer.firstName as firstNameOrganizer,
 e.endTime as endTime,
+se.settlementId as settlementId,
 
 (select SUM(tt.soldQuantity)
 from TicketType tt
@@ -372,7 +373,8 @@ e.organizer.lastName,
 e.organizer.middleName,
 e.organizer.firstName,
 e.endTime,
-se.status
+se.status,
+se.settlementId 
 
 order by e.endTime ASC
 """)
@@ -397,9 +399,8 @@ where e.endTime <= CURRENT_TIMESTAMP and se.settlementId is null
 @Query("""
 select sum(o.totalAmount)
 from Event e
-left join Settlement se on e.eventId = se.event.eventId
 left join Order o on e.eventId = o.event.eventId
-where e.endTime <= CURRENT_TIMESTAMP
+where e.endTime <= CURRENT_TIMESTAMP and o.status = 'PAID'
 """)
     Long sumTotalRevenue();
 
@@ -412,6 +413,7 @@ e.organizer.lastName as lastNameOrganizer,
 e.organizer.middleName as middleNameOrganizer,
 e.organizer.firstName as firstNameOrganizer,
 e.endTime as endTime,
+se.settlementId as settlementId,
 
 (select SUM(tt.soldQuantity)
 from TicketType tt
@@ -440,7 +442,8 @@ e.organizer.lastName,
 e.organizer.middleName,
 e.organizer.firstName,
 e.endTime,
-se.status
+se.status,
+se.settlementId
 
 order by e.endTime DESC
 """)

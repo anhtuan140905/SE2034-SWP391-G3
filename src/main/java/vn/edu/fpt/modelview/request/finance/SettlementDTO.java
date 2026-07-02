@@ -16,14 +16,10 @@ import java.time.Instant;
 public class SettlementDTO {
 
     private Long eventId;
-
+    private String organizerName;
     private BigDecimal grossRevenue;
-
     private BigDecimal platformFee;
-
     private BigDecimal payoutAmount;
-
     private SettlementStatus status;
-
     private Instant paidAt;
 }
