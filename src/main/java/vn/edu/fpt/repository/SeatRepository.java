@@ -14,10 +14,7 @@ public interface SeatRepository extends JpaRepository<Seat,Long>
     @Query("SELECT DISTINCT s FROM Seat s " +
             "JOIN FETCH s.ticketType t " +
             "LEFT JOIN FETCH s.ticket tk " +
-            "LEFT JOIN FETCH SeatLock sl " +
-            "  ON sl.seat = s " +
-            "  AND sl.event.eventId = :eventId " +
-            "  AND sl.expiresAt > :now " +
+            "LEFT JOIN FETCH s.seatLocks sl " +
             "WHERE t.event.eventId = :eventId " +
             "ORDER BY t.ticketTypeId, s.rowLabel, s.seatNumber")
     List<Seat> findAllByEventIdWithStatus(

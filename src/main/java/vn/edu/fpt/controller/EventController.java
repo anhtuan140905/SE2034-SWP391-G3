@@ -15,6 +15,7 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -97,7 +98,7 @@ public class EventController {
 //    sửa lại lấy theo OrnizerMember
     @GetMapping("list/event")
     public String ListEvent(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal AuthenticatedUser userDetails,
             @RequestParam(value = "status", required = false) String[] statuses,
             @RequestParam(defaultValue = "")                  String   keyword,
             @RequestParam(defaultValue = "1")                 int      page,

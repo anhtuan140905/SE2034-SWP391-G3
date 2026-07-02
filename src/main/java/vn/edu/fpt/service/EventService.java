@@ -15,6 +15,7 @@ import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSearchResultDTO;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.cityDto;
@@ -46,7 +47,7 @@ public interface EventService {
     long countHostedEvents();
     List<EventSummaryDto> findTopFeaturedEvents();
     FeaturedEventDTO findFeaturedEvent();
-    Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable);
+    Page<EventSearchResultDTO> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     Event getEventById(Long id);
     EventSummaryProjection findEventDetailById(Long id);
     Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);

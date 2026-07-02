@@ -17,7 +17,6 @@ import vn.edu.fpt.service.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +62,6 @@ public class RecommendationService {
             level = UserLevel.COLD;
             targetCatIds = List.of();
         }
-        log.debug("User {} -> level {}", userId, level);
 
         UserRecommendationProfile profile = null;
 
@@ -89,7 +87,7 @@ public class RecommendationService {
         }
 
         List<Event> candidateEvents;
-        PageRequest page = PageRequest.of(0, CANDIDATE_POOL);
+        PageRequest page = PageRequest.of(0, MAX_RESULTS);
 
         if (level == UserLevel.COLD) {
             candidateEvents = this.eventService.findUpcomingEvent(EventStatus.ACTIVE, today, page);

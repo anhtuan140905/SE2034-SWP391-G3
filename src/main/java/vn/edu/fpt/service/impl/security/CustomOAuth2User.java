@@ -5,13 +5,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.RoleName;
+import vn.edu.fpt.service.AuthenticatedUser;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuth2User implements OAuth2User, AuthenticatedUser, Serializable {
+
     private final User user;
     private final Map<String, Object> attributes;
 
@@ -49,8 +52,7 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return user.getEmail();
     }
-
-    public User getUser() {
-        return user;
-    }
+    @Override public Long getUserId() { return user.getId(); }
+    @Override public String getEmail() { return user.getEmail(); }
+    @Override public User getUser() { return user; }
 }

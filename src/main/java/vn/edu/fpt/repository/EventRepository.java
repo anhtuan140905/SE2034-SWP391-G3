@@ -68,43 +68,69 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             "a.specific_address, c.name, ec.category_name\n" +
             "ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
-@Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
-        "                       MIN(tt.price) as min_price,\n" +
-        "                       ec.category_name as category_name,\n" +
-        "                       e.venue_name as venueName,\n" +
-        "                       ci.name as city_name,\n" +
-        "                       COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
-        "                       SUM(tt.total_quantity) as total_tickets\n" +
-        "                       FROM events e \n" +
-        "                       JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-        "                       JOIN event_categories ec ON ec.category_id = e.category_id\n" +
-        "                       JOIN addresses a ON a.id = e.address_id\n" +
-        "                       JOIN wards w ON w.id = a.ward_id\n" +
-        "                       JOIN city ci ON ci.id = w.city_id\n" +
-        "               JOIN users u  ON e.organizer_id = u.id\n" +
-        "               JOIN organizer_profiles op ON u.id = op.user_id\n" +
-        "                       LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-        "                       LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-        "                       WHERE e.status = 'ACTIVE' AND e.event_id = :id\n" +
-        "                       GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name, op.company_name, e.description",
-        nativeQuery = true)
-EventSummaryProjection findEventDetailById(Long id);
-@Query("""
-        SELECT e FROM Event e
-        JOIN OrganizerMember o ON o.event = e
-        JOIN o.userRole ur
-        WHERE ur.user.id = :organizerId
-          AND (
-                :#{#statusList == null} = true
-                OR :#{#statusList.size()} = 0
-                OR e.status IN :statusList
-              )
-          AND (
-                :keyword IS NULL
-                OR :keyword = ''
-                OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-              )
-        """)
+
+    @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
+            "MIN(tt.price) as min_price,\n" +
+            "ec.category_name as category_name,\n" +
+            "e.venue_name as venueName,\n" +
+            "ci.name as city_name,\n" +
+            "COUNT(DISTINCT od.order_detail_id) as sold_count,\n" +
+            "SUM(tt.total_quantity) as total_tickets\n" +
+            "FROM events e \n" +
+            "JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+            "JOIN event_categories ec ON ec.category_id = e.category_id\n" +
+            "JOIN addresses a ON a.id = e.address_id\n" +
+            "JOIN wards w ON w.id = a.ward_id\n" +
+            "JOIN city ci ON ci.id = w.city_id\n" +
+            "JOIN users u  ON e.organizer_id = u.id\n" +
+            "JOIN organizer_profiles op ON u.id = op.user_id\n" +
+            "LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+            "LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+            "WHERE e.status = 'ACTIVE' AND e.event_id = :id\n" +
+            "GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name, op.company_name, e.description",
+            nativeQuery = true)
+    EventSummaryProjection findEventDetailById(Long id);
+
+
+    //    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
+//            "           MIN(tt.price) as min_price,\n" +
+//            "           ec.category_name as category_name,\n" +
+//            "           v.venue_name as venue_name,\n" +
+//            "           ci.name as city_name,\n" +
+//            "           COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
+//            "           FROM events e \n" +
+//            "           JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+//            "           JOIN event_categories ec ON ec.category_id = e.category_id\n" +
+//            "           JOIN venues v ON v.venue_id = e.venue_id\n" +
+//            "           JOIN addresses a ON a.id = v.address_id\n" +
+//            "           JOIN wards w ON w.id = a.ward_id\n" +
+//            "           JOIN city ci ON ci.id = w.city_id\n" +
+//            "\t\t   JOIN users u  ON e.organizer_id = u.id\n" +
+//            "\t\t   JOIN organizer_profiles op ON u.id = op.user_id\n" +
+//            "           LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+//            "           LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+//            "           WHERE e.status = 'APPROVED' AND e.event_id = :id\n" +
+//            "           GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name, op.company_name, e.description",
+//            nativeQuery = true)
+//    EventSummaryProjection findEventDetailById(Long id);
+
+    //
+    @Query("""
+            SELECT e FROM Event e
+            JOIN OrganizerMember o ON o.event = e
+            JOIN o.userRole ur
+            WHERE ur.user.id = :organizerId
+              AND (
+                    :#{#statusList == null} = true
+                    OR :#{#statusList.size()} = 0
+                    OR e.status IN :statusList
+                  )
+              AND (
+                    :keyword IS NULL
+                    OR :keyword = ''
+                    OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  )
+            """)
     Page<Event> findByMultiStatusAndKeyword(
             @Param("organizerId") Long organizerId,
             @Param("statusList") List<String> statusList,
@@ -455,4 +481,3 @@ EventSummaryProjection findEventDetailById(Long id);
             @Param("today") LocalDate today,
             Pageable pageable
     );
-}

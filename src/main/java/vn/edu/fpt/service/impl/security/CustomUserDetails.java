@@ -5,12 +5,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.RoleName;
+import vn.edu.fpt.service.AuthenticatedUser;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, AuthenticatedUser {
     private final User user;
 
     public CustomUserDetails(User user) {
@@ -66,7 +67,7 @@ public class CustomUserDetails implements UserDetails {
         return user.getIsActive();
     }
 
-    public User getUser() {
-        return user;
-    }
+    @Override public Long getUserId() { return user.getId(); }
+    @Override public String getEmail() { return user.getEmail(); }
+    @Override public User getUser() { return user; }
 }

@@ -23,7 +23,8 @@
 
 <div class="container main-container mt-4"
      id="seat-map-root"
-     th:data-event-id="${event.eventId}">
+     th:data-event-id="${event.eventId}"
+     th:data-limit-reached="${limitReached}">
 
     <div class="event-info-strip">
         <div>
@@ -62,7 +63,10 @@
                     <div class="legend-item"><span class="legend-square sold"></span><span>Đã bán</span></div>
                 </div>
             </div>
-
+            <div th:if="${limitReached}" class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:text="${message}"></span>
+            </div>
             <div class="screen-banner">MÀN HÌNH / SÂN KHẤU</div>
             <div class="zones-container">
                 <div class="seat-zone zone-1">
@@ -89,7 +93,7 @@
                         <div class="selected-seats-list" id="selected-seats-badges">
                             <div class="text-muted py-1" style="font-size:12px;font-style:italic;" id="empty-seats-hint">Chưa chọn ghế nào trên sơ đồ.</div>
                         </div>
-                        <span class="text-pink" style="font-size:12px;font-weight:700;font-family:monospace;" id="selected-summary-count">0/6</span>
+                        <span class="text-pink" style="font-size:12px;font-weight:700;font-family:monospace;" id="selected-summary-count">0/3</span>
                     </div>
                 </div>
                 <div class="summary-divider"></div>
