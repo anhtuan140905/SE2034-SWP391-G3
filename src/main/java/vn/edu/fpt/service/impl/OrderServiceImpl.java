@@ -82,48 +82,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
-    @Override
-    public List<TicketDTO> viewOrder(Long userId, String tab) {
-        List<TicketDTO> allTickets = orderRepository.viewOrder(userId)
-                .stream()
-                .map(TicketDTO::new)
-                .peek(this::applyComputedStatus)
-                .toList();
-
-        return switch (tab) {
-            case "upcoming" -> allTickets.stream()
-                    .filter(t -> "ACTIVE".equals(t.getStatus()))
-                    .toList();
-            case "used" -> allTickets.stream()
-                    .filter(t -> "USED".equals(t.getStatus()))
-                    .toList();
-            case "expired" -> allTickets.stream()
-                    .filter(t -> "EXPIRED".equals(t.getStatus()))
-                    .toList();
-            default -> allTickets;
-        };
-    }
-
-    private void applyComputedStatus(TicketDTO t) {
-        boolean isCheckedIn = "true".equals(t.getStatus());
-        if (isCheckedIn) {
-            t.setStatus("USED");
-        } else if (t.getEndTime() != null && t.getEndTime().isBefore(LocalDateTime.now())) {
-            t.setStatus("EXPIRED");
-        } else {
-            t.setStatus("ACTIVE");
-        }
-    }
-
-    public List<TicketDTO> viewOrderDetail(Long orderId) {
-        return orderRepository.viewOrderDetail(orderId)
-                .stream()
-                .map(TicketDTO::new)
-                .peek(this::applyComputedStatus)
-                .toList();
-    }
-
     @Override
     public List<Event> findPurchasedEventsByUserId(Long userId) {
         return this.orderRepository.findPurchasedEvents(userId, OrderStatus.PAID);
