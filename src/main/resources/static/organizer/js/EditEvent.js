@@ -3,12 +3,27 @@
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
     bannerUrl: "",
+
+    // Ảnh thư viện MỚI (file chưa lưu DB) — vẫn dùng blob URL để preview
     additionalImages: [],
     galleryFiles: [],
-    agenda: [],         // { id, time, desc }
-    tiers: [],
-    tierErrors: {},     // { [tierId]: { name?, price?, qty? } }
-    agendaErrors: {},   // { [agendaId]: { time?, desc? } }
+
+    // Ảnh thư viện ĐÃ CÓ trong DB khi ở chế độ Edit: [{ id, url }]
+    existingImages: [],
+    // id các ảnh cũ user bấm xoá -> gửi lên server để controller xoá thật
+    deletedImageIds: [],
+
+    // id = key nội bộ để React-less render/lookup trong DOM (luôn có, sinh phía client)
+    // dbId = id thật trong DB (null nếu là dòng mới thêm, có giá trị nếu load từ server khi Edit)
+    agenda: [],          // { id, dbId, time, desc }
+    tiers: [],           // { id, dbId, name, zoneName, ... }
+
+    // dbId thật của các tier/agenda đã bị user xoá khỏi form khi Edit -> gửi cho server để DELETE
+    deletedTierIds: [],
+    deletedAgendaIds: [],
+
+    tierErrors: {},      // { [id]: { name?, price?, qty? } }
+    agendaErrors: {},    // { [id]: { time?, desc? } }
 };
 
 let tierIdCounter = 1;
@@ -23,13 +38,15 @@ function newAgendaId() {
 
 // ─── KHỞI TẠO ─────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-    // Khôi phục danh sách vé sau khi validate lỗi từ server
+    // Khôi phục danh sách vé: xảy ra khi (a) Edit sự kiện có sẵn, hoặc
+    // (b) Create nhưng server trả lại form sau lỗi validate (redisplay).
     if (typeof serverTickets !== "undefined" && serverTickets && serverTickets.length > 0) {
         state.tiers = serverTickets.map((ticket) => {
             const row = ticket.seat?.row || 1;
             const cols = ticket.seat?.seatNumber || 1;
             return {
                 id: newTierId(),
+                dbId: ticket.id ?? null,   // có giá trị nếu đây là ticket đã tồn tại trong DB
                 name: ticket.displayOrder || "",
                 zoneName: ticket.zoneName || "",
                 rowLetter: row,
@@ -41,6 +58,23 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
         renderTiers();
+    }
+
+    // Khôi phục mốc thời gian (agenda/timeline) tương tự ticket ở trên
+    if (typeof serverAgenda !== "undefined" && serverAgenda && serverAgenda.length > 0) {
+        state.agenda = serverAgenda.map((item) => ({
+            id: newAgendaId(),
+            dbId: item.id ?? null,
+            time: item.time || "",
+            desc: item.active || item.desc || "",
+        }));
+        renderAgenda();
+    }
+
+    // Khôi phục ảnh thư viện đã có trong DB (chỉ có ở chế độ Edit)
+    if (typeof serverGallery !== "undefined" && serverGallery && serverGallery.length > 0) {
+        state.existingImages = serverGallery.map((img) => ({ id: img.id, url: img.url }));
+        renderGallery();
     }
 
     const form = document.getElementById("eventForm");
@@ -138,6 +172,9 @@ function clearBanner() {
 }
 
 // ─── THƯ VIỆN ẢNH ─────────────────────────────────────────────────────────────
+// Có 2 nhóm ảnh hiển thị chung 1 lưới:
+//   1) state.existingImages: ảnh đã lưu trong DB (chỉ có khi Edit) -> xoá = đưa id vào deletedImageIds
+//   2) state.additionalImages/galleryFiles: ảnh mới chọn ở máy user -> xoá = bỏ khỏi mảng, không gọi server
 function handleGalleryFiles(e) {
     Array.from(e.target.files || []).forEach((file) => {
         state.galleryFiles.push(file);
@@ -155,6 +192,13 @@ function removeGalleryImage(idx) {
     renderGallery();
 }
 
+// Xoá 1 ảnh đã có sẵn trong DB (chế độ Edit)
+function removeExistingImage(imageId) {
+    state.deletedImageIds.push(imageId);
+    state.existingImages = state.existingImages.filter((img) => img.id !== imageId);
+    renderGallery();
+}
+
 function syncGalleryInput() {
     const dt = new DataTransfer();
     state.galleryFiles.forEach((f) => dt.items.add(f));
@@ -165,21 +209,37 @@ function syncGalleryInput() {
 function renderGallery() {
     const grid  = document.getElementById("galleryGrid");
     const count = document.getElementById("galleryCount");
-    if (count) count.textContent = state.additionalImages.length + " ĐÃ THÊM";
+    const total = state.existingImages.length + state.additionalImages.length;
+    if (count) count.textContent = total + " ĐÃ THÊM";
     if (!grid) return;
 
-    if (state.additionalImages.length === 0) {
+    if (total === 0) {
         grid.classList.add("d-none");
         grid.innerHTML = "";
         return;
     }
 
     grid.classList.remove("d-none");
-    grid.innerHTML = state.additionalImages
+
+    const existingHtml = state.existingImages
+        .map(
+            (img) => `
+        <div class="gallery-item">
+            <img src="${escHtml(img.url)}" alt="Ảnh đã lưu" loading="lazy"/>
+            <button class="gallery-item-del" type="button"
+                    onclick="removeExistingImage(${img.id})" title="Xóa">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>`,
+        )
+        .join("");
+
+    const newHtml = state.additionalImages
         .map(
             (url, i) => `
         <div class="gallery-item">
-            <img src="${escHtml(url)}" alt="Ảnh ${i + 1}" loading="lazy"/>
+            <img src="${escHtml(url)}" alt="Ảnh mới ${i + 1}" loading="lazy"/>
+            <span class="mono-tag" style="position:absolute;top:6px;left:6px;">MỚI</span>
             <button class="gallery-item-del" type="button"
                     onclick="removeGalleryImage(${i})" title="Xóa">
                 <span class="material-symbols-outlined">close</span>
@@ -187,6 +247,8 @@ function renderGallery() {
         </div>`,
         )
         .join("");
+
+    grid.innerHTML = existingHtml + newHtml;
 }
 
 // ─── MỐC THỜI GIAN SỰ KIỆN (AGENDA) ───────────────────────────────────────────
@@ -197,11 +259,16 @@ function revalidateAgendaTimes() {
 }
 
 function addAgendaItem() {
-    state.agenda.push({ id: newAgendaId(), time: "", desc: "" });
+    state.agenda.push({ id: newAgendaId(), dbId: null, time: "", desc: "" });
     renderAgenda();
 }
 
 function deleteAgendaItem(id) {
+    const item = state.agenda.find((a) => a.id === id);
+    // Nếu mốc này đã tồn tại trong DB (đang Edit) -> ghi nhận để server xoá thật khi lưu
+    if (item && item.dbId) {
+        state.deletedAgendaIds.push(item.dbId);
+    }
     state.agenda = state.agenda.filter((a) => a.id !== id);
     delete state.agendaErrors[id];
     renderAgenda();
@@ -276,6 +343,7 @@ function renderAgenda() {
             const errs = state.agendaErrors[a.id] || {};
             return `
         <div class="agenda-row" id="ag-${a.id}">
+            <input type="hidden" name="timeLine[${idx}].id" value="${a.dbId ?? ''}" />
             <div class="agenda-dot-wrap">
                 <div class="agenda-dot"></div>
                 ${idx < state.agenda.length - 1 ? '<div class="agenda-line"></div>' : ""}
@@ -322,6 +390,7 @@ function computeTotalQty(row, cols) {
 function addTicketTier() {
     state.tiers.push({
         id: newTierId(),
+        dbId: null,
         name: "",
         zoneName: "",
         rowLetter: 1,
@@ -335,6 +404,11 @@ function addTicketTier() {
 }
 
 function deleteTier(id) {
+    const tier = state.tiers.find((t) => t.id === id);
+    // Nếu hạng vé này đã tồn tại trong DB (đang Edit) -> ghi nhận để server xoá thật khi lưu
+    if (tier && tier.dbId) {
+        state.deletedTierIds.push(tier.dbId);
+    }
     state.tiers = state.tiers.filter((t) => t.id !== id);
     delete state.tierErrors[id];
     renderTiers();
@@ -451,6 +525,7 @@ function renderTiers() {
             const errs = state.tierErrors[t.id] || {};
             return `
         <div class="ticket-tier-card fade-in" id="card-${t.id}">
+            <input type="hidden" name="ticketTypes[${idx}].id" value="${t.dbId ?? ''}" />
 
             <div class="ticket-tier-header">
                 <div class="d-flex align-items-center gap-2">
@@ -616,26 +691,38 @@ function renderTiers() {
 }
 
 // ─── GỬI FORM ─────────────────────────────────────────────────────────────────
+// Chèn hidden input (name lặp lại) để Spring bind vào List<Long> ở phía controller.
+// Ví dụ: <input type="hidden" name="deletedTicketTypeIds" value="5"> x N dòng.
+function injectDeletedIdInputs(form, name, ids) {
+    form.querySelectorAll(`input[data-deleted-group="${name}"]`).forEach((el) => el.remove());
+    ids.forEach((id) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = id;
+        input.setAttribute("data-deleted-group", name);
+        form.appendChild(input);
+    });
+}
+
 function handleFormSubmit(e) {
     const tiersValid  = validateAllTiers();
     const agendaValid = validateAllAgenda();
-    const bannerInput = document.getElementById("bannerFileInput");
-    const bannerError = document.getElementById("bannerError");
-    let bannerValid = true;
 
-    if (!bannerInput?.files?.length) {
-        bannerValid = false;
-        bannerError.textContent = "Vui lòng chọn ảnh banner.";
-    }
     renderTiers();
     renderAgenda();
 
-    if (!tiersValid || !agendaValid || !bannerValid) {
+    if (!tiersValid || !agendaValid) {
         e.preventDefault();
         scrollToFirstError();
         return false;
     }
 
+    // Chỉ cần thiết ở chế độ Edit, nhưng gọi luôn cũng vô hại (mảng rỗng ở Create)
+    const form = e.target || document.getElementById("eventForm");
+    injectDeletedIdInputs(form, "deletedTicketTypeIds", state.deletedTierIds);
+    injectDeletedIdInputs(form, "deletedTimeLineIds", state.deletedAgendaIds);
+    injectDeletedIdInputs(form, "deletedImageIds", state.deletedImageIds);
 
     dismissError();
     return true;

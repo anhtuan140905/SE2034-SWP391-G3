@@ -18,21 +18,37 @@
 <section id="organizer-detail-content" th:fragment="content">
 
     <div class="od-header">
-        <a th:if="${backEventId != null}"
-           th:href="@{/moderator/event/detail/{id}(id=${backEventId})}"
-           class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>QUAY LẠI SỰ KIỆN</span>
-        </a>
+        <div class="od-header-left">
+            <a th:if="${backEventId != null}"
+               th:href="@{/moderator/event/detail/{id}(id=${backEventId})}"
+               class="btn-back-organizerList">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI SỰ KIỆN</span>
+            </a>
 
-        <a th:if="${backEventId == null}"
-           th:href="@{/moderator/organizers}"
-           class="btn-back">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>QUAY LẠI DANH SÁCH</span>
-        </a>
+            <a th:if="${backEventId == null}"
+               th:href="@{/moderator/organizers}"
+               class="btn-back-organizerList">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>QUAY LẠI DANH SÁCH</span>
+            </a>
 
-        <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
+            <div>
+                <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
+
+                <p>
+                    <i class="fa-solid fa-hashtag"></i> Organizer ID:
+                    <span th:text="${organizer != null ? organizer.organizerId : 'N/A'}"></span>
+                </p>
+            </div>
+        </div>
+
+        <span class="ed-status-badge"
+              th:classappend="${organizer != null and organizer.active} ? 'status-active' : 'status-inactive'">
+            <span th:text="${organizer != null ? (organizer.active ? 'Đang hoạt động' : 'Đã khoá') : 'Đã khoá'}">
+            </span>
+        </span>
+
     </div>
 
     <!-- Top 2 cards row -->

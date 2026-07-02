@@ -21,11 +21,6 @@ public class ModeratorOrganizerController {
     private final ModeratorOrganizerService moderatorOrganizerService;
     private final ModeratorOrganizerInformationService moderatorOrganizerInformationService;
 
-    @GetMapping("/organizer")
-    public String organizerList(Model model) {
-        return "/moderator/OrganizerManagement";
-    }
-
     @GetMapping("/organizers/create")
     public String showCreateOrganizerForm(Model model) {
         model.addAttribute("createOrganizerRequest", new CreateOrganizerRequest());

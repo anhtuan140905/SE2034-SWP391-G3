@@ -168,4 +168,14 @@ public class TicketServiceImpl implements TicketService {
 
     }
 
+    @Override
+    public long countCompletedTicketsByUserAndEvent(Long userId, Long eventId) {
+        return this.ticketRepository.countCompletedTicketsByUserAndEvent(userId, eventId);
+    }
+
+    @Override
+    public List<Object[]> countSoldTicketsByEventIds(List<Long> eventIds) {
+        return this.ticketRepository.countSoldTicketsByEventIds(eventIds);
+    }
+
 }

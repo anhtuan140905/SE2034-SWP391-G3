@@ -11,10 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
-import vn.edu.fpt.service.CheckoutService;
-import vn.edu.fpt.service.OrderService;
-import vn.edu.fpt.service.SeatLockService;
-import vn.edu.fpt.service.TicketService;
+import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.PaymentService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
@@ -37,7 +34,7 @@ public class CheckoutController {
     // Gọi từ trang chọn ghế khi user bấm "Tiến hành thanh toán"
     @PostMapping("/proceed")
     public String proceedToPayment(@RequestParam("seatIds") List<Long> seatIds,
-                                   @AuthenticationPrincipal CustomUserDetails currentUser) {
+                                   @AuthenticationPrincipal AuthenticatedUser currentUser) {
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -53,7 +50,7 @@ public class CheckoutController {
     @PostMapping("/toggle-lock")
     public ResponseEntity<?> toggleSeatLock(@RequestParam("seatId") Long seatId,
                                             @RequestParam("action") String action, // "LOCK" hoặc "UNLOCK"
-                                            @AuthenticationPrincipal CustomUserDetails currentUser) {
+                                            @AuthenticationPrincipal AuthenticatedUser currentUser) {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vui lòng đăng nhập");
         }
@@ -74,7 +71,7 @@ public class CheckoutController {
     @Transactional
     public String autoConfirmPayment(
             @PathVariable("orderId") Long orderId,
-            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @AuthenticationPrincipal AuthenticatedUser currentUser,
             RedirectAttributes redirectAttributes) {
 
         if (currentUser == null) {
@@ -112,7 +109,7 @@ public class CheckoutController {
 
     @PostMapping("/cancel/{orderId}")
     public String cancelOrder(@PathVariable("orderId") Long orderId,
-                              @AuthenticationPrincipal CustomUserDetails currentUser,
+                              @AuthenticationPrincipal AuthenticatedUser currentUser,
                               RedirectAttributes redirectAttributes) {
         if(currentUser == null) {
             return "redirect:/login";

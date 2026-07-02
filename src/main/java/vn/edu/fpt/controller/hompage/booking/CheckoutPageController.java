@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.OrderService;
 import vn.edu.fpt.service.impl.PaymentService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -24,7 +25,7 @@ public class CheckoutPageController {
 
     @GetMapping("/{orderId}")
     public String showCheckoutPage(@PathVariable Long orderId,
-                                   @AuthenticationPrincipal CustomUserDetails userDetails,
+                                   @AuthenticationPrincipal AuthenticatedUser userDetails,
                                    Model model) {
         User user = new User();
         if(userDetails != null) {
@@ -39,7 +40,7 @@ public class CheckoutPageController {
 
     @PostMapping("/{orderId}/confirm")
     public String confirmPayment(@PathVariable Long orderId,
-                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                 @AuthenticationPrincipal AuthenticatedUser userDetails) {
         User user = new User();
         if(userDetails != null) {
             user = userDetails.getUser();

@@ -20,11 +20,10 @@
         <div class="ed-header-left">
             <a th:href="@{/moderator/events}" class="btn-back">
                 <i class="fa-solid fa-arrow-left"></i>
-                <span>QUAY TRỞ LẠI</span>
+                <span>QUAY LẠI DANH SÁCH</span>
             </a>
             <div class="ed-title-block">
-                <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}">
-                </h1>
+                <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}"></h1>
 
                 <p class="ed-event-id">
                     <i class="fa-solid fa-hashtag" style="margin-right: 4px;"></i> Event ID:
@@ -36,8 +35,11 @@
         <span class="ed-status-badge"
               th:classappend="${event != null and event.status.name() == 'ACTIVE'} ? 'status-active' :
                          (${event != null and event.status.name() == 'INACTIVE'} ? 'status-inactive' : 'status-ended')">
-        <span th:text="${event != null ? event.status.name() : 'INACTIVE'}"></span>
-    </span>
+            <span th:text="${event != null ?
+                (event.status.name() == 'ACTIVE' ? 'Đang hoạt động' :
+                (event.status.name() == 'INACTIVE' ? 'Đã tắt' : 'Đã kết thúc')) : 'Đã tắt'}">
+            </span>
+        </span>
     </div>
 
     <!-- ── Main 2-col layout ── -->
@@ -113,7 +115,7 @@
                 <p class="ed-venue-name"
                    th:text="${event != null ? event.venueName : 'Cyber Docklands'}"></p>
                 <p class="ed-venue-address"
-                   th:text="${event != null ? (event.venueAddress + ', '+ (event.cityName ?: '')) : '404 Neon Blvd, District 9, Metropolis'}">
+                   th:text="${event != null ? (event.venueAddress + ', '+ (event.wardName)+ ', '+ (event.cityName ?: '')) : ' '}">
                 </p>
             </div>
 

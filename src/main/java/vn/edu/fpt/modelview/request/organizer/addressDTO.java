@@ -10,8 +10,6 @@ import jakarta.validation.constraints.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class addressDTO {
     @NotBlank(message = "Địa chỉ chi  tiết không được để trống")
     private String specieladdress;

@@ -66,11 +66,11 @@ public class SecurityConfiguration {
                     .toList();
 
             String redirect = "/";
-            if      (roles.contains("ROLE_ADMIN"))     redirect = "/admin/dashboard";
+            if (roles.contains("ROLE_ADMIN")) redirect = "/admin/dashboard";
             else if (roles.contains("ROLE_MODERATOR")) redirect = "/moderator/dashboard";
-            else if (roles.contains("ROLE_FINANCE"))   redirect = "/finance/dashboard";
-            else if (roles.contains("ROLE_ORGANIZER")) redirect = "/organizer/list/event";
-            else                                        redirect = "/";
+            else if (roles.contains("ROLE_FINANCE")) redirect = "/finance/dashboard";
+            else if (roles.contains("ROLE_ORGANIZER")) redirect = "/";
+            else redirect = "/";
             response.sendRedirect(request.getContextPath() + redirect);
         };
     }
@@ -91,13 +91,13 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/", "/events", "/auth/**", "/css/**",
                                 "/js/**", "/homepage/**",
-                                "/auth/css/**", "/auth/js/**",
-                                "/api/payment/webhook/sepay"
+                                "/auth/css/**", "/auth/js/**"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/moderator/**").hasAuthority("ROLE_MODERATOR")
                         .requestMatchers("/finance/**").hasAuthority("ROLE_FINANCE")
+                        .requestMatchers("/organizer/**").hasAuthority("ROLE_ORGANIZER")
                         .requestMatchers("/ticket/**", "/orders/**").hasAuthority("ROLE_ATTENDEE")
                         .anyRequest().authenticated()
                 )
