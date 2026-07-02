@@ -51,6 +51,31 @@ public class EventServiceImpl implements EventService {
     private StaffService staffService;
     private OrganizerProfileRepository organizerProfileRepository;
 
+
+    @Override
+    public EventDTO UpdateEventById(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy sự kiện này"));
+        return null;
+    }
+    @Override
+    public void SetStatusEvent() {
+        List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
+        if (eventSetStatus.isEmpty()) {
+            return;
+        }
+        for (Event event : eventSetStatus) {
+            // Đổi trạng thái sự kiện Là Kết thúc
+            if (event.getStartTime().isBefore(LocalDateTime.now()) && event.getEndTime().isAfter(LocalDateTime.now()) ){
+                event.setStatus(EventStatus.INACTIVE);
+                // Thêm các logic khác (nếu có) vào đây.
+            }else {
+                event.setStatus(EventStatus.ENDED);
+                // Thêm các logic khác (nếu có) vào đây...
+            }
+            eventRepository.saveAll(eventSetStatus);
+        }
+    }
+
     @Override
     public OrganizerProfile GetOrganizerProfileByUserId(Long userId) {
          return organizerProfileRepository.findByUserId(userId).orElse(null);
@@ -132,6 +157,9 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void saveEvent(EventDTO eventDTO,OrganizerProfileDto organizerProfileDto) {
+        if (eventDTO.getBanner() == null || eventDTO.getBanner().isEmpty()) {
+            throw new RuntimeException("Banner không được để trống");
+        }
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
@@ -178,7 +206,6 @@ public class EventServiceImpl implements EventService {
                 if (Image == null || Image.isEmpty()) {
                     continue;
                 }
-
                 EventImage image = new EventImage();
                 String urlImage =  cloudinaryService.uploadFile(Image,"Image");
                 image.setImageUrl(urlImage);
@@ -246,7 +273,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventSummaryDto> findTopFeaturedEvents() {
         List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
-
         return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
     }
 
@@ -349,19 +375,21 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
 
-        List<String> statusList = statuses == null
-                ? List.of()
-                : Arrays.stream(statuses)
-                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(Collectors.toList());
-        Pageable pageable = PageRequest.of(
-                Math.max(page - 1, 0),
-                9
-        );
-        Page<Event> entityPage = this.eventRepository
-                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
+        List<String> statusList = new ArrayList<>();
+        if (statuses != null) {
+            for (String s : statuses) {
+                if (s != null
+                        && !s.isBlank()
+                        && !s.equalsIgnoreCase("ALL")) {
+                    String upperStatus = s.toUpperCase();
+                    if (!statusList.contains(upperStatus)) {
+                        statusList.add(upperStatus);
+                    }
+                }
+            }
+        }
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 9);
+        Page<Event> entityPage = this.eventRepository.findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
 

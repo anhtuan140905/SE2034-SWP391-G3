@@ -10,8 +10,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class cityDto {
 
     @NotNull(message = "Tỉnh/Thành phố không được để trống")

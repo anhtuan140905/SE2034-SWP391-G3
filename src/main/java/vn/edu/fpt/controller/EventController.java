@@ -134,7 +134,7 @@ public class EventController {
 
     @GetMapping("/event/{id}")
     public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,Model model){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,4L)){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_VIEW_EDIT_EVENT")){
             return "organizer/DashboardOrganizer";
         }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);

@@ -19,5 +19,5 @@ public interface StaffService {
     List<RoleDTO> getRoleOfEvent();
     void assignMember(MemberRequestDTO memberRequestDTO, Long EventId);
     Page<StaffResponceDTO> getStaffbyEventID(Long eventId, String keyword, Long roleId, Pageable pageable);
-    boolean checkPermission(Long userId,Long eventId,Long permissionId);
+    boolean checkPermission(Long userId,Long eventId, String  permissionKey);
 }
