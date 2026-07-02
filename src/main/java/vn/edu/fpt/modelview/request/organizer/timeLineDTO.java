@@ -8,6 +8,8 @@ import lombok.Setter;
 import java.time.LocalTime;
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class timeLineDTO {
     private LocalTime time;
     private  String active;
