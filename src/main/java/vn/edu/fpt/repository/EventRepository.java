@@ -68,8 +68,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             "ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 
-    /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
-//
     @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
             "MIN(tt.price) as min_price,\n" +
             "ec.category_name as category_name,\n" +
@@ -92,30 +90,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             nativeQuery = true)
     EventSummaryProjection findEventDetailById(Long id);
 
-
-    //    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
-//            "           MIN(tt.price) as min_price,\n" +
-//            "           ec.category_name as category_name,\n" +
-//            "           v.venue_name as venue_name,\n" +
-//            "           ci.name as city_name,\n" +
-//            "           COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
-//            "           FROM events e \n" +
-//            "           JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-//            "           JOIN event_categories ec ON ec.category_id = e.category_id\n" +
-//            "           JOIN venues v ON v.venue_id = e.venue_id\n" +
-//            "           JOIN addresses a ON a.id = v.address_id\n" +
-//            "           JOIN wards w ON w.id = a.ward_id\n" +
-//            "           JOIN city ci ON ci.id = w.city_id\n" +
-//            "\t\t   JOIN users u  ON e.organizer_id = u.id\n" +
-//            "\t\t   JOIN organizer_profiles op ON u.id = op.user_id\n" +
-//            "           LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-//            "           LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-//            "           WHERE e.status = 'APPROVED' AND e.event_id = :id\n" +
-//            "           GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name, op.company_name, e.description",
-//            nativeQuery = true)
-//    EventSummaryProjection findEventDetailById(Long id);
-
-    //
     @Query("""
             SELECT e FROM Event e
             JOIN OrganizerMember o ON o.event = e
@@ -308,7 +282,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countEventInactivated(@Param("organizerId") Long organizerId,
                                @Param("status") EventStatus status);
 
-
     @Query("""
             SELECT COUNT(DISTINCT o.event.eventId)
             FROM Order o
@@ -371,13 +344,22 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             e.organizer.middleName as middleNameOrganizer,
             e.organizer.firstName as firstNameOrganizer,
             e.endTime as endTime,
-            COALESCE(SUM(tt.soldQuantity), 0) as soldTicket,
-            se.grossRevenue as revenue,
+            
+            (select SUM(tt.soldQuantity)
+            from TicketType tt
+            where tt.event.eventId = e.eventId
+            )as soldTicket,
+            
+            (select SUM(o.totalAmount) 
+            from Order o
+            where o.event.eventId = e.eventId
+            )as revenue,
+            
             se.status as status
             
             from Event e
             left join Settlement se on e.eventId = se.event.eventId
-            left join TicketType tt on e.eventId = tt.event.eventId
+            
             
             where e.endTime <= CURRENT_TIMESTAMP
             group by 
@@ -387,10 +369,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             e.organizer.middleName,
             e.organizer.firstName,
             e.endTime,
-            se.grossRevenue,
             se.status
             
-            order by e.endTime DESC
+            order by e.endTime ASC
             """)
     List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
 
@@ -410,12 +391,14 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countUnsettledEvents();
 
     @Query("""
-            select sum(se.grossRevenue)
-            from Settlement se
-            join Event e on se.event.eventId = eventId
+            select sum(o.totalAmount)
+            from Event e
+            left join Settlement se on e.eventId = se.event.eventId
+            left join Order o on e.eventId = o.event.eventId
             where e.endTime <= CURRENT_TIMESTAMP
             """)
     Long sumTotalRevenue();
+
 
     @Query("""
             select
