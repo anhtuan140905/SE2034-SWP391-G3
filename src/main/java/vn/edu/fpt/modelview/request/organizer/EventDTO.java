@@ -16,8 +16,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class EventDTO {
     @NotNull(message = "Danh mục không được để trống")
     private Long categoryId;
@@ -46,7 +44,6 @@ public class EventDTO {
     @NotNull(message = "Giờ kết thúc không được để trống")
     private LocalTime endTime;
     private List<timeLineDTO> timeLine;
-    @NotEmpty(message = "Phải có ít nhất một loại vé")
     @Valid
     @NotEmpty(message = "Phải có ít nhất một loại vé")
     private List<TicketTypeRequestDTO> ticketTypes ;

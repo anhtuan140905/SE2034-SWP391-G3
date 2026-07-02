@@ -8,8 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class seatDTO {
     @NotNull(message = "Hàng ghế không được để trống")
     @Min(value = 1, message = "Hàng phải từ 1 đến 26")

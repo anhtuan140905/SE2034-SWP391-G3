@@ -19,7 +19,8 @@ import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
-
+    @Query("SELECT e FROM Event e WHERE (e.status = :activeStatus AND e.endTime < :now) Or (e.startTime <= :now AND e.endTime >= :now)")
+    List<Event> findEndedEvents(@Param("activeStatus") EventStatus activeStatus, @Param("now") LocalDateTime now);
     @Query("SELECT COUNT(e) FROM Event e WHERE e.status IN :statuses")
     long countHostedEvents(@Param("statuses") List<EventStatus> statuses);
 
@@ -63,35 +64,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             "                       a.specific_address, c.name, ec.category_name\n" +
             "                        ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
-//
-//
-//    //---------------------------------------------------------------------------------------
-//    @Query("SELECT e FROM Event e WHERE " +
-//            "(:status IS NULL OR e.status = :status) " +
-//            "AND " +
-//            "(:categoryId IS NULL OR e.category.categoryId = :categoryId) " +
-//            "AND " +
-//            "(:keyword IS NULL OR :keyword = '' OR e.title LIKE CONCAT('%', :keyword, '%'))")
-//    Page<Event> searchAndFilterEvents(
-//            @Param("keyword") String keyword,
-//            @Param("status") EventStatus status,
-//            @Param("categoryId") Long categoryId,
-//            Pageable pageable);
-//
-//    // Đếm số lượng sự kiện theo trạng thái
-//    long countByStatus(EventStatus status);
-//
-//    // Lấy 3 sự kiện Pending mới nhất
-//    List<Event> findByStatusOrderByCreatedAtDesc(EventStatus status, Pageable pageable);
-//
-//    // Lấy sự kiện diễn ra trong ngày (status = APPROVED)
-//    List<Event> findByStatusAndStartTimeBetween(EventStatus status, LocalDateTime start, LocalDateTime end);
-//
-//    long countByOrganizerId(Long organizerId);
-//
-
-    /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
-//
 @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
         "                       MIN(tt.price) as min_price,\n" +
         "                       ec.category_name as category_name,\n" +
@@ -113,31 +85,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
         "                       GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, e.venue_name, ci.name, op.company_name, e.description",
         nativeQuery = true)
 EventSummaryProjection findEventDetailById(Long id);
-
-
-    //    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
-//            "           MIN(tt.price) as min_price,\n" +
-//            "           ec.category_name as category_name,\n" +
-//            "           v.venue_name as venue_name,\n" +
-//            "           ci.name as city_name,\n" +
-//            "           COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
-//            "           FROM events e \n" +
-//            "           JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
-//            "           JOIN event_categories ec ON ec.category_id = e.category_id\n" +
-//            "           JOIN venues v ON v.venue_id = e.venue_id\n" +
-//            "           JOIN addresses a ON a.id = v.address_id\n" +
-//            "           JOIN wards w ON w.id = a.ward_id\n" +
-//            "           JOIN city ci ON ci.id = w.city_id\n" +
-//            "\t\t   JOIN users u  ON e.organizer_id = u.id\n" +
-//            "\t\t   JOIN organizer_profiles op ON u.id = op.user_id\n" +
-//            "           LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
-//            "           LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
-//            "           WHERE e.status = 'APPROVED' AND e.event_id = :id\n" +
-//            "           GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name, op.company_name, e.description",
-//            nativeQuery = true)
-//    EventSummaryProjection findEventDetailById(Long id);
-
-//
 @Query("""
         SELECT e FROM Event e
         JOIN OrganizerMember o ON o.event = e

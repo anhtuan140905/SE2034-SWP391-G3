@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -76,11 +76,9 @@
 
                     <td class="member-email" th:text="${staff.email}"></td>
 
-                    <td>
+                    <td th:if="${staff.role != 'ROLE_ORGANIZER'}" >
                         <a class="action-link"
-                           th:href="@{/organizer/event/{eventId}/members/edit(eventId=${eventId},staffId=${staff.memberId})}">
-                            <!--                           data-bs-toggle="modal"-->
-                            <!--                           data-bs-target="#editRoleModal"-->
+                           th:href="@{/organizer/event/{eventId}/members/edit(eventId=${eventId},staffId=${staff.memberId},currentPage=${currentPage})}">
                             Xem chi tiết
                         </a>
                         <span class="action-separator">|</span>
@@ -217,7 +215,7 @@
                     <h5>Chỉnh sửa quyền lợi</h5>
                     <p>Tuỳ chỉnh phân quyền thủ công cho Nhân Viên.</p>
                 </div>
-                <a style="text-decoration: none" th:href="@{/organizer/event/{id}/members(id=${eventId})}"
+                <a style="text-decoration: none" th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
                    class="btn-close-custom">
                     <i class="fa-solid fa-xmark"></i>
                 </a>
@@ -226,7 +224,7 @@
             <div class="modal-body">
                 <form th:action="@{/organizer/event/{eventId}/members/update(eventId=${eventId})}" method="post" th:object="${selectedMember}">
                     <input type="hidden" th:field="*{staffId}" />
-
+                    <input type="hidden" name="currentPage" th:value="${currentPage}">
                     <!-- Hồ sơ (readonly) -->
                     <div class="profile-box">
                         <label class="f-label">Hồ sơ ban đầu</label>
@@ -257,7 +255,9 @@
                                     th:text="${role.name}"></option>
                         </select>
                     </div>
-
+                    <div th:if="${errorMessageEdit}" id="errorAlertEdit" class="alert-modal alert-error">
+                        <span style="color: red" th:text="${errorMessageEdit}"></span>
+                    </div>
                     <!-- Phân quyền chi tiết -->
                     <div class="perm-block">
                         <div class="perm-block-title">Quyền hạn cụ thể</div>
@@ -277,7 +277,7 @@
 
                     <div class="modal-footer-btns">
                         <a style="text-decoration:  none;text-align: center"
-                           th:href="@{/organizer/event/{id}/members(id=${eventId})}"
+                           th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
                            class="btn-cancel-modal">
                             Bỏ qua
                         </a>
@@ -298,9 +298,14 @@
 <script>
     window.onload = function () {
         const errorDiv = document.getElementById('errorAlert');
-        console.log('errorDiv:', errorDiv); // debug
         if (errorDiv) {
             const modal = new bootstrap.Modal(document.getElementById('addStaffModal'));
+            modal.show();
+        }
+        const errorDivEdit = document.getElementById('errorAlertEdit');
+        console.log(errorDivEdit);
+        if (errorDivEdit) {
+            const modal = new bootstrap.Modal(document.getElementById('editRoleModal'));
             modal.show();
         }
     };
