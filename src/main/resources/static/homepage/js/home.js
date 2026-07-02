@@ -159,3 +159,54 @@ function changePage(pageNumber) {
         searchForm.submit();
     }
 }
+
+// ----------------------------------------------------------------
+// 7. Toggle Event Favorite Status
+// ----------------------------------------------------------------
+document.querySelectorAll('.btn-favorite').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation(); // Ngăn hành động click lan ra làm kích hoạt click vào Card
+
+        const eventId = btn.getAttribute('data-id');
+        const heartIcon = btn.querySelector('i');
+        const card = btn.closest('.card-event');
+        const eventName = card ? card.querySelector('.event-card-title a')?.textContent : 'sự kiện';
+
+        fetch(`/api/favourites/toggle?eventId=${eventId}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            // TRƯỜNG HỢP 1: THÀNH CÔNG (Mã 200)
+            if (response.ok) {
+                if (heartIcon.classList.contains('fa-regular')) {
+                    heartIcon.classList.remove('fa-regular');
+                    heartIcon.classList.add('fa-solid', 'text-pink');
+                    showEventToast('Thành công', 'Đã thêm vào danh sách yêu thích.', 'success');
+                } else {
+                    heartIcon.classList.remove('fa-solid', 'text-pink');
+                    heartIcon.classList.add('fa-regular');
+                    showEventToast('Đã xóa', 'Đã xóa khỏi danh sách yêu thích.', 'info');
+                }
+            }
+            // TRƯỜNG HỢP 2: CÓ LỖI (Mã 401, 500, v.v...)
+            else {
+                // Đọc chuỗi văn bản text message trả về từ Backend body
+                response.text().then(errorMessage => {
+                    if (response.status === 401) {
+                        showEventToast('Thông báo', errorMessage || 'Bạn cần đăng nhập để thực hiện tính năng này!', 'warning');
+                    } else if (response.status === 500) {
+                        // Hiển thị đích danh câu: "Sự kiện đã tồn tại trong list yêu thích!"
+                        showEventToast('Thất bại', errorMessage || 'Đã có lỗi xảy ra từ máy chủ.', 'danger');
+                    } else {
+                        showEventToast('Thất bại', 'Có lỗi xảy ra: ' + response.status, 'danger');
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showEventToast('Lỗi kết nối', 'Không thể kết nối tới server.', 'danger');
+        });
+    });
+});

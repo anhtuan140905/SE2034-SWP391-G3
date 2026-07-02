@@ -1,5 +1,6 @@
 package vn.edu.fpt.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String username);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE u.id = :id")
@@ -38,30 +39,37 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "FROM organizer_profiles op\n" +
             "JOIN users u ON u.id = op.user_id\n" +
             "LEFT JOIN events e ON e.organizer_id = op.user_id \n" +
-            "    AND e.status = 'APPROVED'\n" +
+            "    AND e.status = 'ACTIVE'\n" +
             "GROUP BY op.user_id, u.first_name, u.last_name, op.company_name\n" +
             "ORDER BY COUNT(e.event_id) DESC", nativeQuery = true)
     List<FeaturedOrganizerDto> getTopFeaturedOrganizer(Pageable pageable);
 
 
-    List<User>findTop10ByOrderByUpdatedAtDesc();
+    List<User> findTop10ByOrderByUpdatedAtDesc();
 
     @Query("""
-    SELECT DISTINCT u FROM User u
-    JOIN u.userRoles ur
-    JOIN ur.role r
-    WHERE r.roleName = :roleName
-    ORDER BY u.updatedAt DESC
-    LIMIT 10
-    """)
+            SELECT DISTINCT u FROM User u
+            JOIN u.userRoles ur
+            JOIN ur.role r
+            WHERE r.roleName = :roleName
+            ORDER BY u.updatedAt DESC
+            LIMIT 10
+            """)
     List<User> findTop10ByRoleNameOrderByUpdatedAtDesc(@Param("roleName") RoleName roleName);
 
     // Dem so account Organizer con hoat dong tren nen tang
-    @Query(value = "SELECT COUNT(u.id) FROM users u " +
-            "JOIN user_roles ur ON u.id = ur.user_id " +
-            "JOIN roles r ON ur.role_id = r.id " +
-            "WHERE r.role_name = 'ROLE_ORGANIZER' AND u.is_active = 1", nativeQuery = true)
-    Long countActiveOrganizers();
+    @Query("""
+                SELECT COUNT(DISTINCT u)
+                FROM User u
+                JOIN u.userRoles ur
+                JOIN ur.role r
+                WHERE r.roleName = :roleName
+                  AND u.isActive = :isActive
+            """)
+    long countOrganizersByStatus(
+            @Param("roleName") RoleName roleName,
+            @Param("isActive") Boolean isActive
+    );
 
     //Lay thong tin cua organizer
     @EntityGraph(attributePaths = {
@@ -73,4 +81,66 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findOrganizerInformationById(@Param("id") Long id);
 
+    // Kiem tra trung email khi tao tai khoan cho Organizer
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE LOWER(u.email) = LOWER(:email)")
+    boolean existsByEmail(@Param("email") String email);
+
+    @Query("SELECT w.city.name FROM User u " +
+            "JOIN u.address a " +
+            "JOIN a.ward w " +
+            "WHERE u.id = :userId")
+    Optional<String> findCityNameByUserId(@Param("userId") Long userId);
+
+    //Hien thi danh sach Organizer: search + filter + phan trang
+    @Query("""
+                SELECT DISTINCT u 
+                FROM User u
+                JOIN u.userRoles ur
+                JOIN ur.role r
+                WHERE r.roleName = :roleName
+                    AND (:keyword IS NULL OR u.email LIKE %:keyword% OR u.phone LIKE %:keyword%)
+                    AND (:isActive IS NULL OR u.isActive = :isActive)
+                ORDER BY u.createdAt DESC 
+            """)
+    Page<User> findOrganizersByFilterAndSearch(
+            @Param("roleName") RoleName roleName,
+            @Param("keyword") String keyword,
+            @Param("isActive") Boolean isActive,
+            Pageable pageable
+    );
+
+    // Dem tong so Organizer
+    @Query("""
+                SELECT COUNT(DISTINCT u)
+                FROM User u
+                JOIN u.userRoles ur
+                JOIN ur.role r
+                WHERE r.roleName = :roleName
+            """)
+    long countAllOrganizers(@Param("roleName") RoleName roleName);
+
+    // Top 5 organizer lau nam
+    @Query("""
+                SELECT u FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE r.roleName = :roleName
+                ORDER BY u.createdAt ASC
+            """)
+    List<User> findTop5OldestOrganizers(@Param("roleName")  RoleName roleName, Pageable pageable);
+
+    // Top 5 organizer duoc tao trong ngay hom nay
+    @Query("""
+                SELECT u FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE r.roleName = :roleName
+                AND CAST(u.createdAt AS DATE) = CURRENT_DATE ORDER BY u.createdAt DESC
+            """)
+    List<User> findTop5NewOrganizersToday(@Param("roleName") RoleName roleName, Pageable pageable);
+
 }
+
+
+
+
+
+
+
+
+
+

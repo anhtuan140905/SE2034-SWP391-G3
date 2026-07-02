@@ -3,8 +3,10 @@ package vn.edu.fpt.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.modelview.response.organizer.OrderDto;
 
@@ -18,4 +20,5 @@ public interface OrderService {
     public void handleUpdateStatusOrder(Long orderId);
     List<TicketDTO> viewOrder(Long userId,String tab);
     List<TicketDTO> viewOrderDetail(Long orderId);
+    List<Event> findPurchasedEventsByUserId(Long userId);
 }

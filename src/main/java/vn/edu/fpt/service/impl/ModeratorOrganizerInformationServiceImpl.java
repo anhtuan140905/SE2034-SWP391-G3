@@ -27,6 +27,7 @@ public class ModeratorOrganizerInformationServiceImpl implements ModeratorOrgani
     private ModeratorOrganizerInformationDTO mapToDTO(User user) {
         ModeratorOrganizerInformationDTO dto = new ModeratorOrganizerInformationDTO();
         dto.setOrganizerId(user.getId());
+        dto.setActive(user.getIsActive());
         dto.setFullName(buildFullNameOrganizer(user));
         dto.setEmail(user.getEmail());
         dto.setPhone(user.getPhone());

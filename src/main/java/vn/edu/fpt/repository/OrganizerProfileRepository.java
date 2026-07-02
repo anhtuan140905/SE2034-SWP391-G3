@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface OrganizerProfileRepository extends JpaRepository<OrganizerProfile, Long> {
 
-    boolean existsByTaxCode(String  taxCode);
+    boolean existsByTaxCode(String taxCode);
 
     Optional<OrganizerProfile> findByUserId(Long userId);
 

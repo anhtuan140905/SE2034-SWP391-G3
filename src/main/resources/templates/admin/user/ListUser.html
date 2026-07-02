@@ -444,7 +444,7 @@
     <!-- TOPBAR -->
     <div class="topbar" >
 
-        <input type="text" class="search-box-top" placeholder="Tìm kiếm địa điểm tổ chức sự kiện, người dùng..."/>
+
 
         <div class="topbar-right">
 
@@ -515,6 +515,11 @@
             <div class="card-header">
                 <h2>Danh Sách Người Dùng</h2>
                 <div class="search-inline">
+
+                    <div class="alert-danger" th:if="${errorMessage}">
+                        <span th:text="${errorMessage}"></span>
+
+                    </div>
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <form id="searchForm"
                           th:action="@{/admin/listuser}"
