@@ -24,5 +24,6 @@ public interface TicketService {
     Ticket findById(Long orderId);
     List<TicketDTO> viewTicket (Long userId, String tab);
     TicketDTO viewDetailTicket(Long ticketId);
-
+    long countCompletedTicketsByUserAndEvent(Long userId, Long eventId);
+    List<Object[]> countSoldTicketsByEventIds(List<Long> eventIds);
 }

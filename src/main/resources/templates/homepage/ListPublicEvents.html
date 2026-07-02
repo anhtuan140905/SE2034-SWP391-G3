@@ -154,11 +154,11 @@
             <div class="card-event">
                 <div class="event-img-wrap">
                     <span class="event-badge-category">
-                        <span th:text="${event.category.categoryName.toUpperCase()}">MUSIC</span>
+                        <span th:text="${event.categoryName != null ? event.categoryName.toUpperCase() : ''}">MUSIC</span>
                     </span>
 
                     <span class="event-badge-price"
-                          th:text="${!#lists.isEmpty(event.ticketTypes) ? 'Từ ' + #numbers.formatInteger(event.ticketTypes[0].price, 3, 'POINT') + ' đ' : 'Free'}">
+                          th:text="${event.minPrice != null ? 'Từ ' + #numbers.formatDecimal(event.minPrice, 0, 'POINT', 0, 'POINT') + ' đ' : 'Free'}">
                         Từ 2.000.000 VNĐ
                     </span>
 
@@ -172,11 +172,11 @@
                 <div class="event-card-body">
                     <div class="event-hosts">
                         <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200" class="host-mini-avatar" alt="Host avatar">
-                        <span class="host-name" th:text="${event.organizer.organizerProfile.companyName != null ? event.organizer.organizerProfile.companyName : 'ORGANIZER'}">BY ORGANIZER</span>
+                        <span class="host-name" th:text="${event.organizerName != null ? event.organizerName : 'ORGANIZER'}">BY ORGANIZER</span>
                     </div>
 
                     <h5 class="event-card-title">
-                        <a th:href="@{/events/detail/{id}(id=${event.eventId})}" th:text="${event.title}">Title</a>
+                        <a th:href="@{/events/detail/{id}(id=${event.id})}" th:text="${event.title}">Title</a>
                     </h5>
 
                     <p class="text-secondary-light small pb-2" th:text="${event.description}">Description</p>
@@ -184,7 +184,7 @@
                     <div class="event-details-meta">
                         <div class="meta-element">
                             <i class="fa-solid fa-location-dot text-pink"></i>
-                            <span th:text="${event.venueName + ', ' + event.address.ward.city.name}">Venue</span>
+                            <span th:text="${event.venueName + ', ' + event.city}">Venue</span>
                         </div>
                         <div class="meta-element">
                             <i class="fa-regular fa-clock text-pink"></i>
@@ -197,9 +197,9 @@
                     <div class="attendee-preview">
                         <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100" class="att-avatar" alt="Attendee">
                         <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100" class="att-avatar" alt="Attendee">
-                        <span class="att-more">+140 going</span>
+                        <span class="att-more" th:text="|Đã bán ${event.soldTickets} vé|">+140 going</span>
                     </div>
-                    <a th:href="@{/events/book/{id}(id=${event.eventId})}" class="btn btn-book-now text-decoration-none text-white">
+                    <a th:href="@{/events/book/{id}(id=${event.id})}" class="btn btn-book-now text-decoration-none text-white">
                         Get Pass <i class="fa-solid fa-chevron-right"></i>
                     </a>
                 </div>

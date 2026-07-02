@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<div class="p-3 rounded-3 border-start border-3 mt-3"
                     style="border-color: #7c3aed !important; background: rgba(124, 58, 237, 0.1);">
                    <p class="mb-0 text-white" style="font-size: 0.8rem; line-height: 1.6;">
-                       <span class="text-brand-pink fw-bold d-block mb-1">💡 Tại sao dành cho bạn:</span>
+                       <span class="text-brand-pink fw-bold d-block mb-1">Tại sao phù hợp với bạn:</span>
                        <span class="fst-italic" style="color: rgba(255,255,255,0.85);">${item.reason}</span>
                    </p>
                </div>`
@@ -119,14 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <div class="card-body p-4 d-flex flex-column justify-content-between flex-grow-1" style="z-index: 2;">
                         <div>
-                            <span style="color: rgba(255,255,255,0.4); font-family: monospace;
-                                         font-size: 10px; text-transform: uppercase; display: block; margin-bottom: 4px;">
-                                ID: #${item.eventId}
-                            </span>
                             <h5 class="card-title text-white fw-bold mb-3" style="font-size: 1.35rem; line-height: 1.4;">
                                 ${item.title}
                             </h5>
-
                             <div class="row g-2" style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">
                                 <div class="col-sm-6">
                                     <i class="fa-solid fa-calendar text-brand-pink me-2"></i>${displayDate}
@@ -202,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loadingState) loadingState.classList.remove('d-none');
 
             triggerRecBtn.disabled = true;
-            triggerRecBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Đang dệt hành trình...';
+            triggerRecBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Đang phân tích';
 
             try {
                 const response = await fetch('/api/recommendations');

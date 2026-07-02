@@ -48,7 +48,7 @@ public class GeminiService {
            VD: "Tương tự Rock Night bạn từng đến, sự kiện này..."
         2. Nếu sự kiện cùng thành phố với user → ưu tiên đề cập
            VD: "Diễn ra ngay tại Hà Nội, thuận tiện cho bạn"
-        3. Nếu khác thành phố → đề cập tự nhiên, không gượng ép
+        3. Ưu tiên các sự kiện diễn ra gần thành phố hiện tại, và recommend bình thường không gượng ép
            VD: "Sự kiện đặc biệt tại TP.HCM dành cho tín đồ Jazz"
         4. KHÔNG bịa thêm thông tin không có trong input
         5. KHÔNG dùng câu mở đầu chung chung như "Đây là sự kiện tuyệt vời..."

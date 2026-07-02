@@ -68,8 +68,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             "ORDER BY soldCount DESC", nativeQuery = true)
     FeaturedEventDTO findFeaturedEvent();
 
-    /// /    long countByOrganizerIdAndStatus(Long organizerId, EventStatus status);
-//
     @Query(value = "SELECT e.event_id AS id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
             "MIN(tt.price) as min_price,\n" +
             "ec.category_name as category_name,\n" +
@@ -473,4 +471,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("today") LocalDate today,
             Pageable pageable
     );
+
+
 }
