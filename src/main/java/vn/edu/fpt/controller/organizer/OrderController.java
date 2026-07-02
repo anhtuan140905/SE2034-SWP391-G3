@@ -30,7 +30,7 @@ public class OrderController {
                                          @RequestParam(defaultValue = "0") int page,
                                          @AuthenticationPrincipal CustomUserDetails userDetails
                                         , Model model){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,2L)){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_VIEW_ORDERS")){
             return "organizer/DashboardOrganizer";
         }
         Page<OrderDto> orders =  orderService.getOrderbyEventID(id,keyword,status, PageRequest.of(page,10));

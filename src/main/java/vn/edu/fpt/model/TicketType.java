@@ -28,7 +28,7 @@ public class TicketType extends BaseAuditEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @Column(name = "zone_name", nullable = false, length = 100)
+    @Column(name = "zone_name", nullable = false, length = 100,columnDefinition = "NVARCHAR(500)")
     private String zoneName; // Organizer tự đặt: VIP, Standard...
 
     @Column(name = "price", nullable = false)

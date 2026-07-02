@@ -2,10 +2,7 @@ package vn.edu.fpt.modelview.request.organizer;
 
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +12,6 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class TicketTypeRequestDTO {
     @NotNull(message = "Không được để trống mức độ ưu tiên")
     private Integer displayOrder;
@@ -24,6 +19,7 @@ public class TicketTypeRequestDTO {
     @Size(max = 100, message = "Tên hạng vé không được vượt quá 100 ký tự")
     private String zoneName;
     @NotNull(message = "Giá vé không được để trống")
+    @DecimalMin(value = "0.0", message = "Giá vé không được âm")
     private BigDecimal price;
     @NotNull(message = "Số lượng vé không được để trống")
     @Positive(message = "Số lượng vé phải lớn hơn 0")
