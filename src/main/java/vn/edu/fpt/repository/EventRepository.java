@@ -402,15 +402,14 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             
             order by e.endTime ASC
             """)
+    List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
 
-List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
-
-@Query("""
-
-select count(e.eventId)
-from Event e
-where e.endTime <= CURRENT_TIMESTAMP
-""")
+    @Query("""
+            
+            select count(e.eventId)
+            from Event e
+            where e.endTime <= CURRENT_TIMESTAMP
+            """)
     long countEndedEvent();
 
     @Query("""
@@ -421,60 +420,59 @@ where e.endTime <= CURRENT_TIMESTAMP
             """)
     long countUnsettledEvents();
 
-@Query("""
-
-select sum(o.totalAmount)
-from Event e
-left join Order o on e.eventId = o.event.eventId
-where e.endTime <= CURRENT_TIMESTAMP and o.status = 'PAID'
-""")
+    @Query("""
+            
+            select sum(o.totalAmount)
+            from Event e
+            left join Order o on e.eventId = o.event.eventId
+            where e.endTime <= CURRENT_TIMESTAMP and o.status = 'PAID'
+            """)
     Long sumTotalRevenue();
 
 
-@Query("""
-
-select
-e.eventId as eventId,
-e.title as eventName,
-e.organizer.lastName as lastNameOrganizer,
-e.organizer.middleName as middleNameOrganizer,
-e.organizer.firstName as firstNameOrganizer,
-e.endTime as endTime,
-se.settlementId as settlementId,
-
-(select SUM(tt.soldQuantity)
-from TicketType tt
-where tt.event.eventId = e.eventId
-)as soldTicket,
-
-(select SUM(o.totalAmount)
-from Order o
-where o.event.eventId = e.eventId
-)as revenue,
-
-se.status as status
-
-from Event e
-left join Settlement se on e.eventId = se.event.eventId
-
-where (e.endTime <= CURRENT_TIMESTAMP) and
-(lower(e.title) like lower(concat('%', :keyword, '%'))
-or lower(e.organizer.lastName) like lower(concat('%', :keyword, '%'))
-or lower(e.organizer.middleName) like lower(concat('%', :keyword, '%'))
-or lower (e.organizer.firstName) like lower(concat('%', :keyword, '%')))
-group by
-e.eventId,
-e.title,
-e.organizer.lastName,
-e.organizer.middleName,
-e.organizer.firstName,
-e.endTime,
-se.status,
-se.settlementId
-
-order by e.endTime DESC
-""")
-
+    @Query("""
+            
+            select
+            e.eventId as eventId,
+            e.title as eventName,
+            e.organizer.lastName as lastNameOrganizer,
+            e.organizer.middleName as middleNameOrganizer,
+            e.organizer.firstName as firstNameOrganizer,
+            e.endTime as endTime,
+            se.settlementId as settlementId,
+            
+            (select SUM(tt.soldQuantity)
+            from TicketType tt
+            where tt.event.eventId = e.eventId
+            )as soldTicket,
+            
+            (select SUM(o.totalAmount)
+            from Order o
+            where o.event.eventId = e.eventId
+            )as revenue,
+            
+            se.status as status
+            
+            from Event e
+            left join Settlement se on e.eventId = se.event.eventId
+            
+            where (e.endTime <= CURRENT_TIMESTAMP) and
+            (lower(e.title) like lower(concat('%', :keyword, '%'))
+            or lower(e.organizer.lastName) like lower(concat('%', :keyword, '%'))
+            or lower(e.organizer.middleName) like lower(concat('%', :keyword, '%'))
+            or lower (e.organizer.firstName) like lower(concat('%', :keyword, '%')))
+            group by
+            e.eventId,
+            e.title,
+            e.organizer.lastName,
+            e.organizer.middleName,
+            e.organizer.firstName,
+            e.endTime,
+            se.status,
+            se.settlementId
+            
+            order by e.endTime DESC
+            """)
     List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") String keyword);
 
 
