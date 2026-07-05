@@ -1,6 +1,7 @@
 package vn.edu.fpt.repository;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public interface SettlementSummaryProjection {
@@ -10,6 +11,10 @@ public interface SettlementSummaryProjection {
     String getLastNameOrganizer();
     String getMiddleNameOrganizer();
     String getFirstNameOrganizer();
+    BigDecimal getPayoutAmount();
+    BigDecimal getPlatformFee();
+    LocalDateTime getCreateAt();
+    String getStatus();
     LocalDateTime getStartTime();
     LocalDateTime getEndTime();
     String getCategoryName();
@@ -19,5 +24,10 @@ public interface SettlementSummaryProjection {
     Long getParticipantCount();
     BigDecimal getRevenue();
     Long getTotalTickets();
-    String getStatus();
+    String getLastNameFinance();
+    String getMiddleNameFinance();
+    String getFirstNameFinance();
+    LocalDateTime getUpdateAt();
+    LocalDateTime getPaidAt();
+
 }

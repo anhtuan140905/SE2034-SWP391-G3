@@ -356,7 +356,7 @@ where tt.event.eventId = e.eventId
 
 (select SUM(o.totalAmount) 
 from Order o
-where o.event.eventId = e.eventId
+where o.event.eventId = e.eventId and o.status = 'PAID'
 )as revenue,
 
 se.status as status
@@ -365,7 +365,7 @@ from Event e
 left join Settlement se on e.eventId = se.event.eventId
 
 
-where e.endTime <= CURRENT_TIMESTAMP
+where e.endTime <= CURRENT_TIMESTAMP 
 group by 
 e.eventId,
 e.title,
@@ -464,4 +464,22 @@ order by e.endTime DESC
             @Param("today") LocalDate today,
             Pageable pageable
     );
+
+@Query(value = """
+select
+e.event_id as id,
+e.title as title,
+u.first_name as firstNameOrganizer,
+u.middle_name as middleNameOrganizer,
+u.last_name as lastNameOrganizer,
+e.end_time as endTime,
+(select sum(tt.sold_quantity)
+from ticket_types tt ) as totalTickets
+
+from settlements se\s
+left join events e on se.event_id = e.event_id
+left join users u on e.organizer_id = u.id
+where se.settlement_id = :settlementId
+""",nativeQuery = true)
+    EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId);
 }

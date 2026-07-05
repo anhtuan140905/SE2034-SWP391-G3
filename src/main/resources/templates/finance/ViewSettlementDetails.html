@@ -66,6 +66,59 @@
 
         .menu a svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+        .menu-group { margin-bottom: 10px; }
+
+        .menu-parent {
+            justify-content: space-between !important;
+            margin-bottom: 0 !important;
+        }
+
+        .menu-parent .menu-parent-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-parent .chevron {
+            width: 14px; height: 14px;
+            transition: transform 0.25s ease;
+        }
+
+        .menu-group.open .menu-parent .chevron {
+            transform: rotate(180deg);
+        }
+
+
+        .menu-parent.parent-active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
+        }
+
+        .submenu {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-left: 14px;
+            border-left: 2px solid rgba(255, 42, 122, 0.15);
+            margin-left: 22px;
+        }
+
+        .menu-group.open .submenu {
+            max-height: 200px;
+        }
+
+        .submenu li { margin: 0; }
+
+        .submenu a {
+            padding: 11px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            margin-top: 6px;
+        }
+
         /* ================= WRAPPER ================= */
         .wrapper {
             margin-left: 260px;
@@ -396,6 +449,7 @@
     <div class="portal-text">Cổng Tài Chính</div>
 
     <div class="menu">
+        <!-- 1. Dashboard -->
         <a th:href="@{/finance/dashboard}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -403,30 +457,45 @@
             </svg>
             Bảng Điều Khiển
         </a>
-        <a th:href="@{/finance/listEndedEvents}">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-            </svg>
-            Sự Kiện Đã Kết Thúc
-        </a>
-        <a th:href="@{/finance/createSettlement}">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            Tạo Quyết Toán
-        </a>
-        <a th:href="@{/finance/listSettlement}" class="active">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-                <line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
-                <line x1="3" y1="18" x2="3.01" y2="18"/>
-            </svg>
-            Danh Sách Quyết Toán
-        </a>
+
+        <div class="menu-group" id="settlementGroup" >
+            <a class="menu-parent" onclick="toggleSettlementMenu()">
+                <span class="menu-parent-left">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" >
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+                    </svg>
+                    Quản Lý Quyết Toán
+                </span>
+                <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a th:href="@{/finance/listEndedEvents}">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Sự Kiện Đã Kết Thúc
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/finance/listSettlement}">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        Danh Sách Quyết Toán
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -480,27 +549,24 @@
         <!-- Page Header -->
         <div class="page-header-row">
             <div>
-                <h1 id="detail-title">Quyết Toán #SET-9821</h1>
-                <p id="detail-subtitle">Tech Summit 2026 · TechCorp Inc.</p>
+                <h1 id="detail-title">Quyết Toán</h1>
             </div>
-            <span class="badge approved" id="detail-badge">Đã Phê Duyệt</span>
         </div>
 
         <!-- Payout Hero -->
         <div class="payout-hero">
             <div>
                 <div class="ph-label">Số Tiền Chi Trả Ròng</div>
-                <div class="ph-amount" id="detail-net">$112,500</div>
+                <div class="ph-amount" id="detail-net" th:text="${#numbers.formatInteger(settlementDetail.payoutAmount != null ? settlementDetail.payoutAmount:0, 1,'POINT') + 'đ'}">0đ</div>
             </div>
-            <div class="ph-actions" id="action-buttons">
-                <button class="btn-approve" onclick="approveSettlement()">
-                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                    Đánh Dấu Đã Thanh Toán
-                </button>
-                <button class="btn-reject" onclick="rejectSettlement()">
-                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Từ Chối
-                </button>
+            <div class="ph-actions" id="action-buttons" th:if="${settlementDetail.status == 'PENDING'}">
+                <form th:action="@{/finance/settlements/{settlementId}/complete(settlementId=${settlementDetail.settlementId})}" method="post">
+                    <button type="submit" class="btn-approve"
+                            onclick="return confirm('Xác nhận đã chuyển khoản và đánh dấu quyết toán này là Đã Thanh Toán?')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Đánh Dấu Đã Thanh Toán
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -519,23 +585,23 @@
                 <div class="detail-rows">
                     <div class="detail-row">
                         <span class="dr-label">Mã Sự Kiện</span>
-                        <span class="dr-value mono">EVT-8821</span>
+                        <span class="dr-value mono" th:text="${eventDetail.id}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Tên Sự Kiện</span>
-                        <span class="dr-value">Tech Summit 2026</span>
+                        <span class="dr-value" th:text="${eventDetail.title}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ban Tổ Chức</span>
-                        <span class="dr-value">TechCorp Inc.</span>
+                        <span class="dr-value" th:text="${eventDetail.lastNameOrganizer + ' ' + eventDetail.middleNameOrganizer + ' ' + eventDetail.firstNameOrganizer}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ngày Kết Thúc</span>
-                        <span class="dr-value">15/05/2026</span>
+                        <span class="dr-value" th:text="${#temporals.format(eventDetail.endTime, 'dd/MM/yyyy HH:mm')}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Vé Đã Bán</span>
-                        <span class="dr-value">1.250</span>
+                        <span class="dr-value" th:text="${eventDetail.totalTickets}">0</span>
                     </div>
                 </div>
             </div>
@@ -552,19 +618,15 @@
                 <div class="detail-rows">
                     <div class="detail-row">
                         <span class="dr-label">Tổng Doanh Thu</span>
-                        <span class="dr-value">$125.000</span>
+                        <span class="dr-value" th:text="${#numbers.formatInteger(settlementDetail.revenue != null ? settlementDetail.revenue:0, 1, 'POINT') + 'đ'}">0đ</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Phí Hệ Thống (10%)</span>
-                        <span class="dr-value neg">- $12.500</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="dr-label">Khấu Trừ Hoàn Tiền</span>
-                        <span class="dr-value neg">- $0</span>
+                        <span class="dr-value neg" th:text="${#numbers.formatInteger(settlementDetail.platformFee != null ? settlementDetail.platformFee:0, 1, 'POINT') + 'đ'}">0đ</span>
                     </div>
                     <div class="detail-row net-row">
                         <span class="dr-label" style="font-weight:700; color:#1e0e34;">Số Tiền Chi Trả Ròng</span>
-                        <span class="dr-value highlight">$112.500</span>
+                        <span class="dr-value highlight" th:text="${#numbers.formatInteger(settlementDetail.payoutAmount != null ? settlementDetail.payoutAmount:0, 1,'POINT') + 'đ'}">0đ</span>
                     </div>
                 </div>
             </div>
@@ -581,11 +643,11 @@
                 <div class="detail-rows">
                     <div class="detail-row">
                         <span class="dr-label">Mã Quyết Toán</span>
-                        <span class="dr-value mono">#SET-9821</span>
+                        <span class="dr-value mono" th:text="${settlementDetail.settlementId}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ngày Tạo</span>
-                        <span class="dr-value">20/05/2026</span>
+                        <span class="dr-value" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Phương Thức Thanh Toán</span>
@@ -593,16 +655,16 @@
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Người Xử Lý</span>
-                        <span class="dr-value">Sarah Anderson</span>
+                        <span class="dr-value" th:text="${settlementDetail.lastNameFinance + ' ' + settlementDetail.middleNameFinance + ' ' + settlementDetail.firstNameFinance}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Trạng Thái Hiện Tại</span>
-                        <span class="dr-value"><span class="badge approved" id="status-badge-inline">Đã Phê Duyệt</span></span>
+                        <span th:if="${settlementDetail.status == 'PENDING'}" class="badge pending">Chờ Xử Lý</span>
+                        <span th:if="${settlementDetail.status == 'COMPLETED'}" class="badge paid">Đã Thanh Toán</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Dòng Thời Gian -->
             <div class="detail-section">
                 <div class="detail-section-header">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -610,44 +672,68 @@
                     </svg>
                     <h3>Dòng Thời Gian Quyết Toán</h3>
                 </div>
-                <div class="timeline">
-                    <div class="tl-item">
-                        <div class="tl-dot done">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <div>
-                            <div class="tl-title">Quyết Toán Được Tạo</div>
-                            <div class="tl-time">20/05/2026 · 10:14 SA</div>
-                        </div>
+            <div class="timeline">
+                <div class="tl-item">
+                    <div class="tl-dot done">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
-                    <div class="tl-item">
-                        <div class="tl-dot done">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <div>
-                            <div class="tl-title">Đang Xem Xét</div>
-                            <div class="tl-time">20/05/2026 · 11:30 SA</div>
-                        </div>
+                    <div>
+                        <div class="tl-title">Quyết Toán Được Tạo</div>
+                        <div class="tl-time" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}">N/A</div>
                     </div>
-                    <div class="tl-item">
-                        <div class="tl-dot active">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>
-                        </div>
-                        <div>
-                            <div class="tl-title active">Đã Phê Duyệt</div>
-                            <div class="tl-time">21/05/2026 · 09:00 SA</div>
-                        </div>
+                </div>
+
+
+                <div class="tl-item">
+                    <div th:class="${settlementDetail.status == 'PENDING'} ? 'tl-dot active' : 'tl-dot done'">
+                        <svg th:if="${settlementDetail.status == 'PENDING'}"
+                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <svg th:unless="${settlementDetail.status == 'PENDING'}"
+                             fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
                     </div>
-                    <div class="tl-item">
-                        <div class="tl-dot waiting">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div>
+                        <div th:class="${settlementDetail.status == 'PENDING'} ? 'tl-title active' : 'tl-title'">
+                            Chờ Xử Lý
                         </div>
-                        <div>
-                            <div class="tl-title waiting">Thanh Toán Được Xử Lý</div>
-                            <div class="tl-time">Đang chờ</div>
+                        <div class="tl-time" th:if="${settlementDetail.status == 'PENDING'}">
+                            Bắt đầu từ <span th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                        <div class="tl-time" th:unless="${settlementDetail.status == 'PENDING'}">
+                            Đã xử lý xong
                         </div>
                     </div>
                 </div>
+
+
+                <div class="tl-item">
+                    <div th:class="${settlementDetail.status == 'COMPLETED'} ? 'tl-dot done' : 'tl-dot waiting'">
+                        <svg th:if="${settlementDetail.status == 'COMPLETED'}"
+                             fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <svg th:unless="${settlementDetail.status == 'COMPLETED'}"
+                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div th:class="${settlementDetail.status == 'COMPLETED'} ? 'tl-title' : 'tl-title waiting'">
+                            Thanh Toán Được Xử Lý
+                        </div>
+                        <div class="tl-time"
+                             th:if="${settlementDetail.paidAt != null}"
+                             th:text="${#temporals.format(settlementDetail.paidAt, 'dd/MM/yyyy HH:mm')}">
+                        </div>
+                        <div class="tl-time" th:unless="${settlementDetail.paidAt != null}">
+                            Đang chờ
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
 
         </div><!-- /detail-grid -->
@@ -655,56 +741,6 @@
 </div><!-- /wrapper -->
 
 <script>
-    const allSettlements = {
-        '#SET-9821': {
-            title: 'Quyết Toán #SET-9821',
-            subtitle: 'Tech Summit 2026 · TechCorp Inc.',
-            badge: 'approved', badgeText: 'Đã Phê Duyệt',
-            net: '$112.500', showActions: true
-        },
-        '#SET-9812': {
-            title: 'Quyết Toán #SET-9812',
-            subtitle: 'Music Festival Spring · EventPro Ltd.',
-            badge: 'paid', badgeText: 'Đã Thanh Toán',
-            net: '$220.500', showActions: false
-        },
-        '#SET-9805': {
-            title: 'Quyết Toán #SET-9805',
-            subtitle: 'Business Conference 2026 · BizEvents Co.',
-            badge: 'pending', badgeText: 'Chờ Xử Lý',
-            net: '$91.800', showActions: true
-        },
-    };
-
-    const params = new URLSearchParams(window.location.search);
-    const sid = params.get('id') || '#SET-9821';
-    const d = allSettlements[sid];
-
-    if (d) {
-        document.getElementById('detail-title').textContent = d.title;
-        document.getElementById('detail-subtitle').textContent = d.subtitle;
-        document.getElementById('detail-net').textContent = d.net;
-
-        const badge = document.getElementById('detail-badge');
-        badge.className = 'badge ' + d.badge;
-        badge.textContent = d.badgeText;
-
-        const inlineBadge = document.getElementById('status-badge-inline');
-        inlineBadge.className = 'badge ' + d.badge;
-        inlineBadge.textContent = d.badgeText;
-
-        if (!d.showActions) document.getElementById('action-buttons').style.display = 'none';
-    }
-
-    function approveSettlement() {
-        alert('Quyết toán đã được đánh dấu là Đã Thanh Toán!');
-    }
-
-    function rejectSettlement() {
-        if (confirm('Bạn có chắc chắn muốn từ chối quyết toán này không?')) {
-            alert('Quyết toán đã bị từ chối.');
-        }
-    }
 
     function toggleDropdown() {
         document.getElementById('profileDropdown').classList.toggle('show');
@@ -716,6 +752,16 @@
             document.getElementById('profileDropdown').classList.remove('show');
         }
     });
+
+    function toggleSettlementMenu() {
+        document.getElementById('settlementGroup').classList.toggle('open');
+    }
+
+
+    (function() {
+            document.querySelector('.menu-parent').classList.add('parent-active');
+
+    })();
 </script>
 </body>
 </html>

@@ -470,5 +470,7 @@ public  List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") St
         return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
     }
 
-
+public EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId){
+        return eventRepository.getEventDetail(settlementId);
+}
 }

@@ -1,6 +1,8 @@
 package vn.edu.fpt.controller.finance;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,11 +13,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -58,12 +63,21 @@ public class FinanceController {
 
    @PostMapping("/createSettlement")
    public String createSettlementPage(Model model,
-                                      @ModelAttribute SettlementDTO dto){
+                                      @ModelAttribute SettlementDTO dto,
+                                      BindingResult result){
+       if(result.hasErrors()){
+           model.addAttribute("errorMessage", "Vui lòng kiểm tra lại thông tin");
+           return "finance/CreateSettlement";
+       }
 
-
-        settlementServiceImpl.createSettlement(dto);
-
-       return "finance/CreateSettlement";
+       try {
+           settlementServiceImpl.createSettlement(dto);
+       } catch (IllegalArgumentException | IllegalStateException ex) {
+           model.addAttribute("errorMessage", ex.getMessage());
+           return "finance/CreateSettlement";
+       }
+       settlementServiceImpl.createSettlement(dto);
+       return "redirect:/finance/ListEndedEvents";
    }
 
 
@@ -94,8 +108,10 @@ public class FinanceController {
 
     @GetMapping("/listSettlement")
     public String listSettlementPage (Model model,
+                                      @RequestParam(defaultValue = "all") String tab,
                                       @AuthenticationPrincipal CustomUserDetails userDetails,
-                                      @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
+                                      @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
+                                      @RequestParam(value = "keyword", defaultValue = "") String keyword){
 
         User currentUser = (userDetails != null)
                 ? userServiceImpl.findByUsername(userDetails.getUsername())
@@ -111,22 +127,56 @@ public class FinanceController {
         long countCompletedSettlement = settlementServiceImpl.countCompletedSettlement();
         model.addAttribute("countCompletedSettlement", countCompletedSettlement);
 
+        Long totalPaidAmount = settlementServiceImpl.sumPayoutAmount();
+        model.addAttribute("totalPaidAmount", totalPaidAmount);
+
+        List<SettlementSummaryProjection> listSettlements;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            listSettlements = settlementServiceImpl.searchSettlement(keyword);
+        } else {
+            listSettlements = settlementServiceImpl.listSettlement(tab);
+        }
+        model.addAttribute("listSettlements", listSettlements);
+        model.addAttribute("tab", tab);
+        model.addAttribute("keyword", keyword);
+
         return "finance/ListSettlement";
     }
 
     @GetMapping("/viewSettlementDetails")
     public String viewSettlementDetailsPage (Model model,
                                              @AuthenticationPrincipal CustomUserDetails userDetails,
-                                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
+                                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
+                                             @RequestParam Long settlementId){
 
         User currentUser = (userDetails != null)
                 ? userServiceImpl.findByUsername(userDetails.getUsername())
                 : userServiceImpl.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
+        EventSummaryProjection eventDetail = eventServiceImpl.getEventDetail(settlementId);
+        model.addAttribute("eventDetail", eventDetail);
+
+        SettlementSummaryProjection settlementDetail = settlementServiceImpl.getSettlementDetail(settlementId);
+        model.addAttribute("settlementDetail", settlementDetail);
+
         return "finance/ViewSettlementDetails";
     }
 
+    @PostMapping("/settlements/{settlementId}/complete")
+    public String completedSettlement(@PathVariable Long settlementId,
+                                       RedirectAttributes redirectAttributes){
+try{
+       settlementServiceImpl.markAsCompleted(settlementId);
+       redirectAttributes.addFlashAttribute("successMessage", "Đã Đánh Dấu Quyết Toán Thành Công");
+}
+catch (EntityNotFoundException | IllegalStateException e){
+redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+
+}
+return "redirect:/finance/viewSettlementDetails?settlementId=" + settlementId;
+    }
 
    @GetMapping("/listEndedEvents")
     public String listEndedEventsPage (Model model,

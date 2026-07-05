@@ -1,25 +1,24 @@
 package vn.edu.fpt.service.impl;
 
 
-import jakarta.annotation.Nonnull;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Settlement;
 import vn.edu.fpt.model.constant.SettlementStatus;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
-import vn.edu.fpt.repository.EventRepository;
-import vn.edu.fpt.repository.OrderRepository;
-import vn.edu.fpt.repository.SettlementRepository;
-import vn.edu.fpt.repository.TicketRepository;
-import vn.edu.fpt.service.OrderService;
+import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.SettlementService;
 
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service("SettlementService")
 @AllArgsConstructor
@@ -31,18 +30,29 @@ public class SettlementServiceImpl implements SettlementService {
 
     @Transactional
     public void createSettlement(SettlementDTO dto) {
+
         if(dto.getEventId() == null){
             throw new IllegalArgumentException("Vui lòng chọn sự kiện.");
         }
 
-        if(settlementRepository.existsByEvent_EventId(dto.getEventId())){
-            throw new IllegalArgumentException("Sự kiện này đã có hồ sơ quyết toán.");
-        }
-
         Event event = eventRepository.findById(dto.getEventId()).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện"));
 
+        if(event.getEndTime().isAfter(LocalDateTime.now())){
+            throw new IllegalStateException("Chỉ có thể tạo quyết toán cho sự kiện đã kết thúc.");
+        }
+
+
+
         BigDecimal grossRevenue = orderRepository.calculateGrossRevenueByEventId(dto.getEventId());
-        if(grossRevenue == null) grossRevenue = BigDecimal.ZERO;
+
+        if(grossRevenue == null || grossRevenue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("Không thể tạo quyết toán cho sự kiện chưa có doanh thu.");
+
+        }
+
+        if(settlementRepository.existsByEvent_EventId(dto.getEventId())){
+            throw new IllegalStateException("Sự kiện này đã có quyết toán, không thể tạo thêm.");
+        }
 
         BigDecimal fee = grossRevenue.multiply(BigDecimal.valueOf(0.10)).setScale(2, RoundingMode.HALF_UP);
 
@@ -70,5 +80,41 @@ public class SettlementServiceImpl implements SettlementService {
 
     public long countCompletedSettlement(){
         return settlementRepository.countCompletedSettlement();
+    }
+
+    public Long sumPayoutAmount(){
+        return settlementRepository.sumPayoutAmount();
+    }
+
+    public List<SettlementSummaryProjection> listSettlement(String tab){
+        List<SettlementSummaryProjection> list = settlementRepository.listSettlement();
+        return switch (tab == null ? "all" : tab){
+            case "pending" -> list.stream().filter(se -> "PENDING".equals(se.getStatus())).toList();
+            case "completed" -> list.stream().filter(se -> "COMPLETED".equals(se.getStatus())).toList();
+            default -> list;
+        };
+    }
+
+    public List<SettlementSummaryProjection> searchSettlement(@Param("keyword") String keyword){
+        return settlementRepository.searchSettlement(keyword);
+    }
+
+    public SettlementSummaryProjection getSettlementDetail(@Param("settlementId") Long settlementId){
+        return settlementRepository.getSettlementDetail(settlementId);
+    }
+
+    @Transactional
+    public void markAsCompleted(Long settlementId) {
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy quyết toán"));
+
+        if (settlement.getStatus() != SettlementStatus.PENDING) {
+            throw new IllegalStateException("Chỉ có thể xác nhận thanh toán khi đang ở trạng thái PENDING");
+        }
+
+        settlement.setStatus(SettlementStatus.COMPLETED);
+        settlement.setPaidAt(Instant.now());
+
+        settlementRepository.save(settlement);
     }
 }

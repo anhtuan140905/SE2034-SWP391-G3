@@ -67,6 +67,59 @@
 
         .menu a svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+        .menu-group { margin-bottom: 10px; }
+
+        .menu-parent {
+            justify-content: space-between !important;
+            margin-bottom: 0 !important;
+        }
+
+        .menu-parent .menu-parent-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-parent .chevron {
+            width: 14px; height: 14px;
+            transition: transform 0.25s ease;
+        }
+
+        .menu-group.open .menu-parent .chevron {
+            transform: rotate(180deg);
+        }
+
+
+        .menu-parent.parent-active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
+        }
+
+        .submenu {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-left: 14px;
+            border-left: 2px solid rgba(255, 42, 122, 0.15);
+            margin-left: 22px;
+        }
+
+        .menu-group.open .submenu {
+            max-height: 200px;
+        }
+
+        .submenu li { margin: 0; }
+
+        .submenu a {
+            padding: 11px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            margin-top: 6px;
+        }
+
         /* ================= WRAPPER ================= */
         .wrapper {
             margin-left: 260px;
@@ -327,6 +380,7 @@
             border-bottom: 1px solid rgba(255, 42, 122, 0.1);
             font-size: 13px;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         table th.right { text-align: right; }
@@ -346,26 +400,24 @@
         table tr:hover { background: rgba(255, 42, 122, 0.02); }
         table tbody tr:nth-child(even) { background: rgba(255, 42, 122, 0.01); }
 
-        .mono {
-            font-family: monospace;
-            color: #ff1b8d;
-            font-size: 13px;
-            font-weight: 600;
-        }
 
-        .text-muted { color: #84759b; }
 
         /* ================= BADGE ================= */
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 999px;
             font-size: 12px;
             font-weight: bold;
         }
 
-        .badge.settled   { background: rgba(16,185,129,.12); color: #10b981; }
-        .badge.unsettled { background: rgba(249,115,22,.12); color: #f97316; }
+        .badge.settled   {
+            color: #f97316;
+        }
+        .badge.unsettled {
+            color: #64748b;
+        }
+        .badge.completed{
+            color: #10b981;
+        }
 
         /* ================= BUTTONS ================= */
         .btn-action {
@@ -453,37 +505,54 @@
     <div class="portal-text">Cổng Tài Chính</div>
 
     <div class="menu">
-        <a th:href="@{/finance/dashboard}">
+        <!-- 1. Dashboard -->
+        <a th:href="@{/finance/dashboard}" >
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
                 <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
             </svg>
             Bảng Điều Khiển
         </a>
-        <a th:href="@{/finance/listEndedEvents}" class="active">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-            </svg>
-            Sự Kiện Đã Kết Thúc
-        </a>
-        <a th:href="@{/finance/createSettlement}">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-            Tạo Quyết Toán
-        </a>
-        <a th:href="@{/finance/listSettlement}">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-                <line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
-                <line x1="3" y1="18" x2="3.01" y2="18"/>
-            </svg>
-            Danh Sách Quyết Toán
-        </a>
+
+
+        <div class="menu-group" id="settlementGroup">
+            <a class="menu-parent" onclick="toggleSettlementMenu()">
+                <span class="menu-parent-left">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+                    </svg>
+                    Quản Lý Quyết Toán
+                </span>
+                <svg class="chevron" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </a>
+
+            <ul class="submenu">
+                <li>
+                    <a th:href="@{/finance/listEndedEvents}" class="active">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                        Sự Kiện Đã Kết Thúc
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/finance/listSettlement}">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                        Danh Sách Quyết Toán
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -556,7 +625,7 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="stat-mini-label">Chờ Quyết Toán</div>
+                    <div class="stat-mini-label">Chưa Tạo Quyết Toán</div>
                     <div class="stat-mini-value" th:text="${unsettledEventCount}">0</div>
                 </div>
             </div>
@@ -607,12 +676,12 @@
                 <a class="tab-btn"
                    th:classappend="${tab == 'pending' ? 'active' : ''}"
                    th:href="@{/finance/listEndedEvents(tab='pending')}">
-                    Chờ Quyết Toán
+                    Chưa Tạo Quyết Toán
                 </a>
                 <a class="tab-btn"
                    th:classappend="${tab == 'completed' ? 'active' : ''}"
                    th:href="@{/finance/listEndedEvents(tab='completed')}">
-                    Đã Quyết Toán
+                    Đã Tạo Quyết Toán
                 </a>
             </div>
         </form>
@@ -650,24 +719,34 @@
 
 
                     <td class="center">
+                        <span th:if="${event.status == null}"
+                              class="badge unsettled">Chưa Tạo Quyết Toán</span>
+                        <span th:if="${event.status == 'PENDING'}"
+                              class="badge settled">Đã Tạo Quyết Toán</span>
                         <span th:if="${event.status == 'COMPLETED'}"
-                              class="badge settled">Đã Quyết Toán</span>
-                        <span th:unless="${event.status == 'PENDING'}"
-                              class="badge unsettled">Chưa Quyết Toán</span>
+                              class="badge completed">Đã Thanh Toán</span>
                     </td>
 
 
                     <td class="center">
                         <div class="action-cell">
 
-                            <a th:unless="${event.status}"
+
+                            <a th:if="${event.status == null and event.revenue != null and event.revenue > 0}"
                                th:href="@{/finance/createSettlement(eventId=${event.eventId})}"
                                class="btn-action primary">Tạo Quyết Toán</a>
 
 
-                            <a th:if="${event.status}"
-                               th:href="@{/finance/viewSettlementDetails(eventId=${event.eventId})}"
-                               class="btn-action ghost">Xem Quyết Toán</a>
+                            <span th:if="${event.status == null and (event.revenue == null or event.revenue == 0)}"
+                                  class="btn-action ghost"
+                                  style="opacity:0.5; cursor:not-allowed;"
+                                  title="Sự kiện chưa có doanh thu, không thể tạo quyết toán">
+            Tạo Quyết Toán
+        </span>
+
+
+                            <a th:if="${event.status != null}"
+                               class="btn-action ghost">Tạo Quyết Toán</a>
                         </div>
                     </td>
                 </tr>
@@ -692,6 +771,18 @@
             document.getElementById('profileDropdown').classList.remove('show');
         }
     });
+
+    function toggleSettlementMenu() {
+        document.getElementById('settlementGroup').classList.toggle('open');
+    }
+
+
+    (function() {
+        const path = window.location.pathname;
+        if (path.includes('/finance/listEndedEvents') || path.includes('/finance/listSettlement')) {
+            document.getElementById('settlementGroup').classList.add('open');
+        }
+    })();
 </script>
 </body>
 </html>
