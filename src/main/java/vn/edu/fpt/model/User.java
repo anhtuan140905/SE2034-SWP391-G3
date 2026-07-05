@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.edu.fpt.model.constant.Gender;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -35,8 +36,9 @@ public class User extends BaseAuditEntity implements Serializable {
     private String passwordHash;
     @Column(name = "phone", length = 10)
     private String phone;
-    @Column(name = "gender", length = 10)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 10, nullable = false)
+    private Gender gender;
     @Column(name = "dob")
     private LocalDate dob;
     private String avatar;

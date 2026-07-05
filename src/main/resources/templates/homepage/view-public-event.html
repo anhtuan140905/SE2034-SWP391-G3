@@ -239,64 +239,24 @@
                     </div>
                 </div>
 
-                <!-- Dynamic / Custom detailed timeline depending on category -->
                 <div class="position-relative pl-4 border-l border-dashed border-violet/30 ms-2 text-start pt-2">
 
-                    <!-- Agenda Session 1 -->
-                    <div class="position-relative mb-4">
+                    <div th:each="slot, iterStat : ${timeline}"
+                         class="position-relative"
+                         th:classappend="${iterStat.last} ? '' : 'mb-4'">
                         <div class="position-absolute rounded-circle bg-violet border border-white"
                              style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
                         <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
-                                  style="font-size: 11px;">18:00</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Tiếp đón khách & Ban tổ chức tiếp nhận
-                                check-in QR</h4>
+            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
+                  style="font-size: 11px;"
+                  th:text="${#temporals.format(slot.time, 'HH:mm')}">18:00</span>
+                            <h4 class="text-white text-sm font-extrabold mb-0" th:text="${slot.description}">Session title</h4>
                         </div>
-                        <p class="text-secondary-light text-xs mb-0">Nhận vòng đeo tay phát sáng Neon dạ quang độc quyền
-                            từ ban tổ chức.</p>
                     </div>
 
-                    <!-- Agenda Session 2 -->
-                    <div class="position-relative mb-4">
-                        <div class="position-absolute rounded-circle bg-violet border border-white"
-                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
-                        <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
-                                  style="font-size: 11px;">20:30</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Trình diễn thị giác Holographic Live
-                                Visual Set</h4>
-                        </div>
-                        <p class="text-secondary-light text-xs mb-0">Trải nghiệm âm thanh vòm đỉnh cao và visual 2D/3D
-                            đồng điệu cùng bước sóng bass.</p>
-                    </div>
-
-                    <!-- Agenda Session 3 -->
-                    <div class="position-relative mb-4">
-                        <div class="position-absolute rounded-circle bg-violet border border-white"
-                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
-                        <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
-                                  style="font-size: 11px;">22:00</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Sự kiện chính: Guest DJ Midnight
-                                Performance</h4>
-                        </div>
-                        <p class="text-secondary-light text-xs mb-0">Màn bùng nổ âm nhạc kéo dài từ các nghệ sĩ xuất sắc
-                            nhất thuộc bảng xếp hạng.</p>
-                    </div>
-
-                    <!-- Agenda Session 4 -->
-                    <div class="position-relative">
-                        <div class="position-absolute rounded-circle bg-violet border border-white"
-                             style="width: 11px; height: 11px; left: -22px; top: 6px; box-shadow: 0 0 8px #8c2bff;"></div>
-                        <div class="d-flex align-items-baseline gap-2 flex-wrap mb-1">
-                            <span class="badge py-1 text-pink-glow bg-pink/10 border border-pink/20 font-mono font-bold"
-                                  style="font-size: 11px;">00:30</span>
-                            <h4 class="text-white text-sm font-extrabold mb-0">Deep Ambient Ambient & Kết thúc sự
-                                kiện</h4>
-                        </div>
-                        <p class="text-secondary-light text-xs mb-0">Bế mạc, giao lưu chụp ảnh cùng nghệ sĩ và nhận quà
-                            lưu niệm trước khi ra về.</p>
-                    </div>
+                    <p th:if="${#lists.isEmpty(timeline)}" class="text-secondary-light text-sm mb-0">
+                        Ban tổ chức chưa cập nhật lịch trình chi tiết.
+                    </p>
                 </div>
             </div>
         </div>
@@ -428,11 +388,35 @@
         </div>
     </footer>
 </div>
+
+<div th:if="${paymentStatus != null}"
+    id="payment-result-data"
+    th:data-status="${paymentStatus}"
+    th:data-message="${paymentMessage}"
+    th:data-order-id="${paymentOrderId}"
+    style="display:none;">
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="modal fade" id="paymentResultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center p-4">
+            <div id="modal-icon" class="mb-3" style="font-size: 3rem;"></div>
+            <h4 id="modal-title" class="mb-2"></h4>
+            <p id="modal-message" class="text-muted"></p>
+            <div class="d-grid gap-2 mt-3">
+                <a id="modal-btn-tickets" th:href="@{/my-tickets}" class="btn btn-primary">Xem vé của tôi</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Khám phá sự kiện khác</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Interactive scripts to trigger toast simulations -->
 <script th:src="@{/homepage/js/header.js}"></script>
 <script th:src="@{/homepage/js/footer.js}"></script>
-
+<script th:src="@{/homepage/js/event-details.js}"></script>
 </body>
 </html>

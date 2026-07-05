@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.fpt.modelview.response.booking.TicketTypeSeatsDTO;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.CheckoutService;
 import vn.edu.fpt.service.SeatMapService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -24,8 +25,10 @@ public class SeatMapApiController {
 
     @GetMapping("/{eventId}/seat-map")
     public ResponseEntity<List<TicketTypeSeatsDTO>> getSeatMap(
-            @PathVariable Long eventId) {
-            return ResponseEntity.ok(seatMapService.getSeatMap(eventId));
+            @PathVariable Long eventId,
+            @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        Long currentUserId = (userDetails != null) ? userDetails.getUser().getId() : null;
+        return ResponseEntity.ok(seatMapService.getSeatMap(eventId, currentUserId));
     }
 
 

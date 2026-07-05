@@ -404,6 +404,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             """)
     List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
 
+
     @Query("""
             
             select count(e.eventId)
@@ -489,4 +490,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("today") LocalDate today,
             Pageable pageable
     );
+
+
 }

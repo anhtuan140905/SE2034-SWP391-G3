@@ -105,24 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ----------------------------------------------------------------
-    // 4. Booking Button Interactions
-    // ----------------------------------------------------------------
-    document.querySelectorAll('.btn-book-now').forEach((button) => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const card = button.closest('.card-event');
-            if (card) {
-                const eventName = card.querySelector('.event-card-title a')?.textContent ?? 'this event';
-                showEventToast(
-                    'Ticket Request Received',
-                    `We are preparing your passes for <strong>${eventName}</strong>. Check your inbox!`,
-                    'info'
-                );
-            }
-        });
-    });
-
-    // ----------------------------------------------------------------
     // 5. Follow / Unfollow Organizer Toggle
     // ----------------------------------------------------------------
     document.querySelectorAll('.btn-spot-follow').forEach((btn) => {

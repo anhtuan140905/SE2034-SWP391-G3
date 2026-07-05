@@ -76,9 +76,10 @@
                         </div>
 
                         <div class="field-grid">
-                            <div class="field field-select" id="genderField">
+                            <div class="field field-select" id="genderField"
+                                 th:classappend="${registerUserDTO.gender != null} ? 'has-val' : ''">
                                 <select id="u_gender" onchange="handleSelect(this,'genderField')" th:field="*{gender}">
-                                    <option value="" selected></option>
+                                    <option value="" th:selected="${registerUserDTO.gender == null}"></option>
                                     <option value="MALE">Nam</option>
                                     <option value="FEMALE">Nữ</option>
                                     <option value="OTHER">Khác</option>
@@ -86,7 +87,7 @@
                                 <label for="u_gender">Giới tính</label>
                             </div>
                             <div class="field">
-                                <span th:if="${#fields.hasErrors('*{dob}')}" th:errors="*{dob}"></span>
+                                <span th:if="${#fields.hasErrors('*{dob}')}" th:errors="*{dob}" class="error-msg"></span>
                                 <input type="date" id="u_dob" placeholder=" " onchange="this.setAttribute('placeholder',' ')" th:field="*{dob}"/>
                                 <label for="u_dob">Ngày sinh</label>
                             </div>

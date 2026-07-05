@@ -30,6 +30,14 @@ public class BookingController {
             @PathVariable Long eventId,
             Model model,
             @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        model.addAttribute("event", eventService.getEventById(eventId));
+
+        if (userDetails == null) {
+            model.addAttribute("limitReached", false);
+            model.addAttribute("remainingSlots", 3);
+            model.addAttribute("isAuthenticated", false);
+            return "homepage/ChooseSeat";
+        }
         Long userId = userDetails.getUserId();
         long ticketBought = this.ticketService.countCompletedTicketsByUserAndEvent(userId, eventId);
         long remaining = 3 - ticketBought;

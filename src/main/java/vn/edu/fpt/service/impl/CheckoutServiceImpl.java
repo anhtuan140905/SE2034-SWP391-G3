@@ -27,7 +27,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
 
-    private static final long CHECKOUT_TTL_MINUTES = 12;
+    private static final long CHECKOUT_TTL_MINUTES = 10;
 
     @Transactional
     public Long proceedToPayment(List<Long> seatIds, User currentUser) {
