@@ -10,4 +10,6 @@ public interface VerifyTokenRepository extends JpaRepository<VerificationToken, 
     void deleteByEmail(String email);
 
     VerificationToken findByEmailAndTypeAndUsedFalse(String email, TokenType tokenType);
+
+    void deleteByEmailAndType(String email, TokenType type);
 }

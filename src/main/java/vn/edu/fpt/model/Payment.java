@@ -3,6 +3,7 @@ package vn.edu.fpt.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import vn.edu.fpt.model.constant.PaymentMethod;
 import vn.edu.fpt.model.constant.PaymentStatus;
 
 import java.math.BigDecimal;
@@ -36,6 +37,10 @@ public class Payment {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", length = 20)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private PaymentStatus status = PaymentStatus.PENDING;
@@ -43,6 +48,14 @@ public class Payment {
     // Set khi user bấm nút "Thanh toán" ở trang checkout
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
+
+    // Mã giao dịch hệ thống sinh ra, gửi cho VNPay (vnp_TxnRef) — null nếu là VietQR
+    @Column(name = "vnp_txn_ref", length = 50)
+    private String vnpTxnRef;
+
+    // Mã giao dịch VNPay trả về sau khi thanh toán (vnp_TransactionNo) — null nếu là VietQR
+    @Column(name = "vnp_transaction_no", length = 50)
+    private String vnpTransactionNo;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

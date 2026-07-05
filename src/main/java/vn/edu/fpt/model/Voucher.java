@@ -58,6 +58,6 @@ public class Voucher extends BaseAuditEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.PERSIST)
     private Set<VoucherUsage> usages; // Set vì không cần thứ tự, tra cứu theo voucher
 }

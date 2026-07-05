@@ -30,8 +30,29 @@ async function loadSeatMap(eventId) {
         const zones = await res.json();
         zoneConfig = zones;
 
+        // THÊM MỚI: đồng bộ lại selectedSeats dựa trên dữ liệu thật từ server
+        // Quan trọng khi: F5 trang, quay lại choose-seat sau khi đã lock 1 số ghế từ trước
+        selectedSeats = [];
+        zones.forEach(zone => {
+            zone.seats.forEach(seat => {
+                if (seat.status === 'SELECTED_BY_ME') {
+                    selectedSeats.push({
+                        seatId: seat.seatId,
+                        zoneName: zone.zoneName,
+                        rowLabel: seat.rowLabel,
+                        seatNumber: seat.seatNumber,
+                        price: Number(zone.price)
+                    });
+                }
+            });
+        });
+
         clearLoadingState();
         renderAllZones(zones);
+
+        // Nếu đã đạt MAX_SEATS từ trước (ví dụ lock 3 ghế rồi F5), phải khóa các ghế available còn lại
+        if (selectedSeats.length >= MAX_SEATS) applyMaxedState();
+
         refreshSummary();
     } catch (err) {
         console.error('[choose_seat] Lỗi load seat map:', err);
@@ -120,12 +141,21 @@ function buildSeatElement(seat, zone, zonePrefix) {
             el.classList.add('seat--locked');
             el.title = 'Ghế đang được giữ bởi người khác';
             break;
+        case 'SELECTED_BY_ME': // THÊM MỚI: ghế mình đang giữ từ trước (reload trang, quay lại choose-seat...)
+            el.classList.add('seat--selected');
+            el.title = `Ghế bạn đang giữ — Giá: ${formatVND(Number(zone.price))}`;
+
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSeatClick(el); // tái sử dụng luôn logic unlock đã có, vì nó check class 'seat--selected'
+            });
+            break;
         case 'AVAILABLE':
         default:
             el.classList.add('seat--available');
             el.title = `Ghế trống — Giá: ${formatVND(Number(zone.price))}`;
 
-            // FIX CHÍ MẠNG: Thêm e.preventDefault() và e.stopPropagation() chặn submit trang
             el.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -137,6 +167,19 @@ function buildSeatElement(seat, zone, zonePrefix) {
 }
 
 async function handleSeatClick(seatEl) {
+
+    if (seatEl.classList.contains('seat--sold') || seatEl.classList.contains('seat--locked')) return;
+
+        if (!isAuthenticated) {
+            showToast('Bạn cần đăng nhập trước khi chọn vé.', 'warning');
+            return;
+        }
+
+        if (seatEl.classList.contains('seat--maxed')) {
+            showToast(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`);
+            return;
+        }
+
     if (seatEl.classList.contains('seat--sold') || seatEl.classList.contains('seat--locked')) return;
     if (seatEl.classList.contains('seat--maxed')) {
             showToast(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`);
@@ -389,3 +432,4 @@ function showToast(message, type = 'warning') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
+

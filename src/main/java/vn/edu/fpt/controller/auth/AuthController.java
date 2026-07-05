@@ -4,10 +4,12 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.fpt.common.error.ServiceValidationException;
 import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.Ward;
 import vn.edu.fpt.model.constant.TokenType;
@@ -95,11 +97,18 @@ public class AuthController {
             Model model) {
         if(result.hasErrors()) {
             model.addAttribute("registerUserDTO", dto);
-            model.addAttribute("activeRole", "user");
             return "auth/RegisterAccount";
         }
-        this.userService.handleCreateUser(dto);
-        return "auth/Login";
+        try {
+            userService.handleCreateUser(dto);
+        } catch (ServiceValidationException ex) {
+            for (ServiceValidationException.FieldError error : ex.getErrors()) {
+                result.rejectValue(error.getField(), "serviceError", error.getMessage());
+            }
+            return "auth/RegisterAccount";
+        }
+
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/activate")
@@ -132,12 +141,12 @@ public class AuthController {
             HttpSession session) {
         try {
             passwordResetService.sendOtp(email);
-            // Luôn trả success (không lộ email có tồn tại không)
-            return ResponseEntity.ok(Map.of("status", "ok"));
+        } catch (UsernameNotFoundException e) {
         } catch (MessagingException e) {
             return ResponseEntity.status(500)
                     .body(Map.of("message", "Gửi email thất bại, vui lòng thử lại."));
         }
+        return ResponseEntity.ok(Map.of("status", "ok"));
     }
 
     @PostMapping("/verify-otp")
@@ -174,10 +183,17 @@ public class AuthController {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "Phiên làm việc hết hạn, vui lòng thử lại."));
         }
-        boolean success = passwordResetService.resetPassword(newPassword, (String) session.getAttribute("reset_email"));
-        if (!success) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("message", "Phiên làm việc hết hạn, vui lòng thử lại."));
+        try {
+            boolean success = passwordResetService.resetPassword(
+                    newPassword, confirmPassword, (String) session.getAttribute("reset_email"));
+            if (!success) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Phiên làm việc hết hạn, vui lòng thử lại."));
+            }
+        } catch (ServiceValidationException e) {
+            // Lấy lỗi đầu tiên để trả về message (hoặc gộp tất cả nếu FE cần hiển thị nhiều lỗi)
+            String message = e.getErrors().get(0).getMessage();
+            return ResponseEntity.badRequest().body(Map.of("message", message));
         }
         session.removeAttribute("otp_verified");
         return ResponseEntity.ok(Map.of("status", "ok"));

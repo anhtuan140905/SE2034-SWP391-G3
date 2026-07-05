@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import vn.edu.fpt.common.error.ServiceValidationException;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.RoleName;
@@ -22,7 +23,9 @@ import vn.edu.fpt.service.UserService;
 
 import vn.edu.fpt.model.constant.TicketStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -78,20 +81,39 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.save(user);
     }
 
-
+    @Override
     public User handleCreateUser(RegisterUserDTO dto) {
-        if (findByUsername(dto.getUsername()) != null) {
-            return null;
+        ServiceValidationException ex = new ServiceValidationException();
+
+        if(this.findByUsername(dto.getUsername()) != null) {
+            ex.add("username", "Email đã tồn tại!");
         }
+
+        if(dto.getPassword() != null && !dto.getPassword().equals(dto.getConfirmPassword())) {
+            ex.add("confirmPassword", "Mật khẩu xác nhận không khớp");
+        }
+
+        if (dto.getDob() != null) {
+            if (dto.getDob().isAfter(LocalDate.now())) {
+                ex.add("dob", "Ngày sinh không được ở trong tương lai");
+            } else if (Period.between(dto.getDob(), LocalDate.now()).getYears() < 13) {
+                ex.add("dob", "Bạn phải đủ 13 tuổi để đăng ký");
+            }
+        }
+
+        if (ex.hasErrors()) {
+            throw ex;
+        }
+
         User user = new User();
-        user.setFirstName(dto.getFirstName());
-        user.setMiddleName(dto.getMiddleName());
-        user.setLastName(dto.getLastName());
+        user.setFirstName(dto.getFirstName().trim());
+        user.setMiddleName(dto.getMiddleName().trim());
+        user.setLastName(dto.getLastName().trim());
         user.setEmail(dto.getUsername());
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
         user.setIsActive(true);
-        user.setPhone(dto.getPhone());
+        user.setPhone(normalizePhone(dto.getPhone()));
         String hashedPassword = passwordEncoderConfig.passwordEncoder().encode(dto.getPassword());
         user.setPasswordHash(hashedPassword);
         User savedUser = userRepository.save(user);
@@ -105,6 +127,9 @@ public class UserServiceImpl implements UserService {
         userRoleRepository.save(userRole);
 
         return savedUser;
+    }
+    private String normalizePhone(String phone) {
+        return phone.startsWith("+84") ? "0" + phone.substring(3) : phone;
     }
 
     @Override
