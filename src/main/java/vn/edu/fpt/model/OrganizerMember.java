@@ -42,7 +42,7 @@ public class OrganizerMember extends BaseAuditEntity {
     // Permissions của member này trong event này
     @OneToMany(mappedBy = "organizerMember",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,orphanRemoval = true )
     private Set<OrganizerMemberPermission> permissions = new HashSet<>();
 
     // Helper: lấy nhanh role mà không cần đi qua userRole

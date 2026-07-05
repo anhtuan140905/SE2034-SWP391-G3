@@ -21,7 +21,7 @@ public class SeatMapServiceImpl implements SeatMapService {
 
     @Transactional(readOnly = true) // Thêm readOnly để Hibernate không tốn tài nguyên quản lý thực thể
     @Override
-    public List<TicketTypeSeatsDTO> getSeatMap(Long eventId) {
+    public List<TicketTypeSeatsDTO> getSeatMap(Long eventId, Long currentUserId) {
         Instant now = Instant.now();
         // 1 câu Query duy nhất lấy sạch mọi thứ đã kết nối
         List<Seat> seats = seatRepository.findAllByEventIdWithStatus(eventId, now);
@@ -46,10 +46,18 @@ public class SeatMapServiceImpl implements SeatMapService {
                 if (s.getTicket() != null) {
                     status = "SOLD";
                 } else if (s.getSeatLocks() != null && !s.getSeatLocks().isEmpty()) {
-                    // Kiểm tra xem có lock nào chưa hết hạn trực tiếp trong Object
-                    boolean isLocked = s.getSeatLocks().stream()
-                            .anyMatch(lock -> lock.getEvent().getEventId().equals(eventId) && lock.getExpiresAt().isAfter(now));
-                    if (isLocked) status = "LOCKED";
+                    // SỬA: tìm lock đang active thay vì chỉ lấy boolean,
+                    // để còn biết lock đó là của ai (so sánh currentUserId)
+                    Optional<vn.edu.fpt.model.SeatLock> activeLock = s.getSeatLocks().stream()
+                            .filter(lock -> lock.getEvent().getEventId().equals(eventId)
+                                    && lock.getExpiresAt().isAfter(now))
+                            .findFirst();
+
+                    if (activeLock.isPresent()) {
+                        boolean isMine = currentUserId != null
+                                && activeLock.get().getUser().getId().equals(currentUserId);
+                        status = isMine ? "SELECTED_BY_ME" : "LOCKED";
+                    }
                 }
 
                 SeatStatusDTO seatDTO = SeatStatusDTO.builder()
@@ -75,11 +83,5 @@ public class SeatMapServiceImpl implements SeatMapService {
 
         result.sort(Comparator.comparingInt(TicketTypeSeatsDTO::getDisplayOrder));
         return result;
-    }
-
-    private String resolveStatus(Seat seat, Set<Long> lockedIds) {
-        if (seat.getTicket() != null) return "SOLD";
-        if (lockedIds.contains(seat.getSeatId())) return "LOCKED";
-        return "AVAILABLE";
     }
 }

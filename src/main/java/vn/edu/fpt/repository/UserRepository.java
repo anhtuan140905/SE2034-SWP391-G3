@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.RoleName;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String username);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE u.id = :id")
@@ -46,16 +45,16 @@ public interface UserRepository extends JpaRepository<User,Long> {
     List<FeaturedOrganizerDto> getTopFeaturedOrganizer(Pageable pageable);
 
 
-    List<User>findTop10ByOrderByUpdatedAtDesc();
+    List<User> findTop10ByOrderByUpdatedAtDesc();
 
     @Query("""
-    SELECT DISTINCT u FROM User u
-    JOIN u.userRoles ur
-    JOIN ur.role r
-    WHERE r.roleName = :roleName
-    ORDER BY u.updatedAt DESC
-    LIMIT 10
-    """)
+            SELECT DISTINCT u FROM User u
+            JOIN u.userRoles ur
+            JOIN ur.role r
+            WHERE r.roleName = :roleName
+            ORDER BY u.updatedAt DESC
+            LIMIT 10
+            """)
     List<User> findTop10ByRoleNameOrderByUpdatedAtDesc(@Param("roleName") RoleName roleName);
 
     // Dem so account Organizer con hoat dong tren nen tang
@@ -120,4 +119,28 @@ public interface UserRepository extends JpaRepository<User,Long> {
             """)
     long countAllOrganizers(@Param("roleName") RoleName roleName);
 
+    // Top 5 organizer lau nam
+    @Query("""
+                SELECT u FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE r.roleName = :roleName
+                ORDER BY u.createdAt ASC
+            """)
+    List<User> findTop5OldestOrganizers(@Param("roleName")  RoleName roleName, Pageable pageable);
+
+    // Top 5 organizer duoc tao trong ngay hom nay
+    @Query("""
+                SELECT u FROM User u JOIN u.userRoles ur JOIN ur.role r WHERE r.roleName = :roleName
+                AND CAST(u.createdAt AS DATE) = CURRENT_DATE ORDER BY u.createdAt DESC
+            """)
+    List<User> findTop5NewOrganizersToday(@Param("roleName") RoleName roleName, Pageable pageable);
+
 }
+
+
+
+
+
+
+
+
+
+

@@ -441,16 +441,26 @@ html, body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-.status-pending   { background: var(--amber-light);   color: var(--amber); }
-.status-active    { background: var(--emerald-light);  color: var(--emerald); }
-.status-on-sale   { background: var(--purple-light);   color: var(--purple); }
-.status-cancelled { background: #fee2e2;               color: #dc2626; }
-.status-draft     { background: #f1f5f9;               color: #64748b; }
-.status-completed { background: #e0f2fe;               color: #0284c7; }
-.status-finished  { background: #e2e8f0;               color: #475569; }
-.status-ongoing   { background: var(--emerald-light);  color: var(--emerald); }
-.status-rejected  { background: #fee2e2;               color: #dc2626; }
 
+.status-badge.status-active {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
+    border: 1px solid #1e8e3e; /* Tùy chọn: Thêm viền nếu thích */
+}
+
+/* Màu cho sự kiện đã kết thúc (Đỏ/Xám) */
+.status-badge.status-ended {
+    background-color: #fce8e6;
+    color: #d93025;
+    border: 1px solid #d93025;
+}
+
+/* Màu cho sự kiện đang tạm dừng/chưa diễn ra (Vàng/Cam) */
+.status-badge.status-inactive {
+    background-color: #fef7e0;
+    color: #e37400;
+    border: 1px solid #e37400;
+}
 /* Event info */
 .event-body {
     flex: 1;

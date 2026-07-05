@@ -1,9 +1,7 @@
-/**
- * choose_seat.js — EventHub
- * Fetch seat map từ API, render sơ đồ ghế động theo dữ liệu thật từ DB.
- */
+const seatMapRoot = document.getElementById('seat-map-root');
+const limitReached = seatMapRoot.dataset.limitReached === 'true';
 
-const MAX_SEATS = 6;
+const MAX_SEATS = 3;
 let selectedSeats = [];
 let zoneConfig = [];
 
@@ -18,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-submit-booking')
         .addEventListener('click', () => handleSubmit(eventId));
+
 });
 
 async function loadSeatMap(eventId) {
@@ -31,8 +30,29 @@ async function loadSeatMap(eventId) {
         const zones = await res.json();
         zoneConfig = zones;
 
+        // THÊM MỚI: đồng bộ lại selectedSeats dựa trên dữ liệu thật từ server
+        // Quan trọng khi: F5 trang, quay lại choose-seat sau khi đã lock 1 số ghế từ trước
+        selectedSeats = [];
+        zones.forEach(zone => {
+            zone.seats.forEach(seat => {
+                if (seat.status === 'SELECTED_BY_ME') {
+                    selectedSeats.push({
+                        seatId: seat.seatId,
+                        zoneName: zone.zoneName,
+                        rowLabel: seat.rowLabel,
+                        seatNumber: seat.seatNumber,
+                        price: Number(zone.price)
+                    });
+                }
+            });
+        });
+
         clearLoadingState();
         renderAllZones(zones);
+
+        // Nếu đã đạt MAX_SEATS từ trước (ví dụ lock 3 ghế rồi F5), phải khóa các ghế available còn lại
+        if (selectedSeats.length >= MAX_SEATS) applyMaxedState();
+
         refreshSummary();
     } catch (err) {
         console.error('[choose_seat] Lỗi load seat map:', err);
@@ -121,12 +141,21 @@ function buildSeatElement(seat, zone, zonePrefix) {
             el.classList.add('seat--locked');
             el.title = 'Ghế đang được giữ bởi người khác';
             break;
+        case 'SELECTED_BY_ME': // THÊM MỚI: ghế mình đang giữ từ trước (reload trang, quay lại choose-seat...)
+            el.classList.add('seat--selected');
+            el.title = `Ghế bạn đang giữ — Giá: ${formatVND(Number(zone.price))}`;
+
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSeatClick(el); // tái sử dụng luôn logic unlock đã có, vì nó check class 'seat--selected'
+            });
+            break;
         case 'AVAILABLE':
         default:
             el.classList.add('seat--available');
             el.title = `Ghế trống — Giá: ${formatVND(Number(zone.price))}`;
 
-            // FIX CHÍ MẠNG: Thêm e.preventDefault() và e.stopPropagation() chặn submit trang
             el.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -138,8 +167,24 @@ function buildSeatElement(seat, zone, zonePrefix) {
 }
 
 async function handleSeatClick(seatEl) {
+
     if (seatEl.classList.contains('seat--sold') || seatEl.classList.contains('seat--locked')) return;
 
+        if (!isAuthenticated) {
+            showToast('Bạn cần đăng nhập trước khi chọn vé.', 'warning');
+            return;
+        }
+
+        if (seatEl.classList.contains('seat--maxed')) {
+            showToast(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`);
+            return;
+        }
+
+    if (seatEl.classList.contains('seat--sold') || seatEl.classList.contains('seat--locked')) return;
+    if (seatEl.classList.contains('seat--maxed')) {
+            showToast(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`);
+            return;
+        }
     const seatId = Number(seatEl.dataset.seatId);
     const eventId = document.getElementById('seat-map-root').dataset.eventId;
 
@@ -166,10 +211,16 @@ async function handleSeatClick(seatEl) {
             console.error("Không thể hủy giữ ghế:", err);
         }
     } else if (seatEl.classList.contains('seat--available')) {
-        if (selectedSeats.length >= MAX_SEATS) {
-            alert(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`);
-            return;
-        }
+          // Guard limit reached (đã mua đủ 3 vé từ trước)
+          if (limitReached) {
+              showToast('Bạn đã mua tối đa 3 vé cho sự kiện này.', 'warning');
+              return;
+          }
+          // Guard max seats trong phiên chọn hiện tại
+          if (selectedSeats.length >= MAX_SEATS) {
+              showToast(`Bạn chỉ có thể chọn tối đa ${MAX_SEATS} ghế.`, 'warning');
+              return;
+          }
 
         try {
             const params = new URLSearchParams();
@@ -332,3 +383,53 @@ function abbrZone(name) {
 function formatVND(number) {
     return Number(number).toLocaleString('vi-VN') + ' ₫';
 }
+
+function showToast(message, type = 'warning') {
+    // Tạo container nếu chưa có
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = `
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        `;
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 280px;
+        max-width: 360px;
+        animation: slideIn 0.3s ease;
+    `;
+
+    toast.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    // Tự xóa sau 3 giây
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+

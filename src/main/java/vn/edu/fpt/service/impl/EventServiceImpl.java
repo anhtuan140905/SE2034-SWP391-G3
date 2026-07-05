@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,6 +21,7 @@ import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 
 
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSearchResultDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import vn.edu.fpt.model.*;
@@ -31,6 +33,8 @@ import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.service.StaffService;
+import vn.edu.fpt.service.TicketService;
+import vn.edu.fpt.service.TicketTypeService;
 
 
 import java.time.LocalDate;
@@ -41,15 +45,48 @@ import java.util.stream.Collectors;
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
-    private EventCategoryRepository eventCategoryRepository;
-    private CityRepository cityRepository;
-    private WardRepository wardRepository;
+    private final EventCategoryRepository eventCategoryRepository;
+    private final CityRepository cityRepository;
+    private final WardRepository wardRepository;
     private final EventRepository eventRepository;
-    private PermissionRepository permissionRepository;
-    private UserRepository userRepository;
-    private CloudinaryService cloudinaryService;
-    private StaffService staffService;
-    private OrganizerProfileRepository organizerProfileRepository;
+    private final PermissionRepository permissionRepository;
+    private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
+    private final StaffService staffService;
+    private final OrganizerProfileRepository organizerProfileRepository;
+    private final TicketService ticketService;
+    private final TicketTypeService ticketTypeService;
+
+
+    @Override
+    public EventDTO UpdateEventById(Long id) {
+        Event event = eventRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy sự kiện này"));
+        return null;
+    }
+    @Override
+    public void SetStatusEvent() {
+        List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
+        if (eventSetStatus.isEmpty()) {
+            return;
+        }
+        for (Event event : eventSetStatus) {
+            // Đổi trạng thái sự kiện Là Kết thúc
+            if (event.getStartTime().isBefore(LocalDateTime.now()) && event.getEndTime().isAfter(LocalDateTime.now()) ){
+                event.setStatus(EventStatus.INACTIVE);
+                // Thêm các logic khác (nếu có) vào đây.
+            }else {
+                event.setStatus(EventStatus.ENDED);
+                // Thêm các logic khác (nếu có) vào đây...
+            }
+            eventRepository.saveAll(eventSetStatus);
+        }
+    }
+
+    @Override
+    public OrganizerProfile GetOrganizerProfileByUserId(Long userId) {
+         return organizerProfileRepository.findByUserId(userId).orElse(null);
+    }
+
     @Override
     public List<cityDto> getListcity() {
         List<City> citys = cityRepository.findAll();
@@ -125,14 +162,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public void saveEvent(EventDTO eventDTO) {
-        OrganizerProfileDto profileDto  = eventDTO.getOrganizerProfile();
-        OrganizerProfile organizerProfile = new OrganizerProfile();
+    public void saveEvent(EventDTO eventDTO,OrganizerProfileDto organizerProfileDto) {
+        if (eventDTO.getBanner() == null || eventDTO.getBanner().isEmpty()) {
+            throw new RuntimeException("Banner không được để trống");
+        }
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
         event.setOrganizer(user);
 //        Lưu Organizer Profile
+        if (organizerProfileDto!=null){
+        OrganizerProfileDto profileDto  = organizerProfileDto ;
+        OrganizerProfile organizerProfile = new OrganizerProfile();
         organizerProfile.setUser(user);
         organizerProfile.setTaxCode(profileDto.getTaxCode());
         organizerProfile.setCompanyName(profileDto.getCompanyName());
@@ -142,7 +183,7 @@ public class EventServiceImpl implements EventService {
         organizerProfile.setBankBranch(profileDto.getBankBranch());
         organizerProfile.setBusinessType(profileDto.getBusinessType());
         organizerProfile.setLegalName(profileDto.getLegalName());
-        organizerProfileRepository.save(organizerProfile);
+        organizerProfileRepository.save(organizerProfile);}
 //        Lưu Event
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
                 .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
@@ -171,7 +212,6 @@ public class EventServiceImpl implements EventService {
                 if (Image == null || Image.isEmpty()) {
                     continue;
                 }
-
                 EventImage image = new EventImage();
                 String urlImage =  cloudinaryService.uploadFile(Image,"Image");
                 image.setImageUrl(urlImage);
@@ -239,7 +279,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventSummaryDto> findTopFeaturedEvents() {
         List<EventSummaryProjection> projections = this.eventRepository.findTopFeaturedEvents();
-
         return projections.stream().map(EventSummaryDto::new).collect(Collectors.toList());
     }
 
@@ -250,7 +289,7 @@ public class EventServiceImpl implements EventService {
 
 
    @Override
-    public Page<Event> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
+    public Page<EventSearchResultDTO> searchEvents(EventSearchCriteria criteria, Pageable pageable) {
         Specification<Event> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -291,19 +330,12 @@ public class EventServiceImpl implements EventService {
                 }
             }
 
-
             if (criteria.getPrice() != null && !criteria.getPrice().trim().isEmpty() && !criteria.getPrice().equals("all")) {
-
                 Subquery<Double> subquery = query.subquery(Double.class);
-
                 Root<TicketType> ticketRoot = subquery.from(TicketType.class);
-
                 subquery.select(cb.min(ticketRoot.get("price")));
-
                 subquery.where(cb.equal(ticketRoot.get("event"), root));
-
                 Expression<Double> minPriceExpr = subquery;
-
                 switch (criteria.getPrice()) {
                     case "free":
                         predicates.add(cb.equal(minPriceExpr, 0D));
@@ -319,11 +351,42 @@ public class EventServiceImpl implements EventService {
                         break;
                 }
             }
-
             return cb.and(predicates.toArray(new Predicate[0]));
         };
+        Page<Event> eventPage = this.eventRepository.findAll(spec, pageable);
+        List<Long> eventIds = eventPage.getContent().stream().map(Event::getEventId).toList();
+        Map<Long, Long> soldCountMap = eventIds.isEmpty()
+                ? Collections.emptyMap()
+                : this.ticketService.countSoldTicketsByEventIds(eventIds).stream()
+                .collect(Collectors.toMap(
+                           row -> ((Number) row[0]).longValue(),
+                           row -> ((Number) row[1]).longValue()
+                ));
+       Map<Long, Double> minPriceMap = this.ticketTypeService.getMinPriceByEventIds(eventIds);
 
-        return eventRepository.findAll(spec, pageable);
+       List<EventSearchResultDTO> content = eventPage.getContent().stream()
+               .map(event -> EventSearchResultDTO.builder()
+                       .id(event.getEventId())
+                       .title(event.getTitle())
+                       .description(event.getDescription())
+                       .thumbnailUrl(event.getThumbnailUrl())
+                       .categoryName(event.getCategory() != null ? event.getCategory().getCategoryName() : null)
+                       .venueName(event.getVenueName())
+                       .city(event.getAddress() != null
+                               ? event.getAddress().getWard().getCity().getName()
+                               : null)
+                       .date(event.getDate())
+                       .startTime(event.getStartTime())
+                       .endTime(event.getEndTime())
+                       .organizerName(event.getOrganizer() != null && event.getOrganizer().getOrganizerProfile() != null
+                               ? event.getOrganizer().getOrganizerProfile().getCompanyName()
+                               : null)
+                       .minPrice(minPriceMap.getOrDefault(event.getEventId(), null))
+                       .soldTickets(soldCountMap.getOrDefault(event.getEventId(), 0L))
+                       .build())
+               .toList();
+            Page<EventSearchResultDTO> resultPage = new PageImpl<>(content, pageable, eventPage.getTotalElements());
+        return resultPage;
     }
 
     @Override
@@ -342,19 +405,21 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
 
-        List<String> statusList = statuses == null
-                ? List.of()
-                : Arrays.stream(statuses)
-                .filter(s -> s != null && !s.isBlank() && !s.equalsIgnoreCase("ALL"))
-                .map(String::toUpperCase)
-                .distinct()
-                .collect(Collectors.toList());
-        Pageable pageable = PageRequest.of(
-                Math.max(page - 1, 0),
-                9
-        );
-        Page<Event> entityPage = this.eventRepository
-                .findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
+        List<String> statusList = new ArrayList<>();
+        if (statuses != null) {
+            for (String s : statuses) {
+                if (s != null
+                        && !s.isBlank()
+                        && !s.equalsIgnoreCase("ALL")) {
+                    String upperStatus = s.toUpperCase();
+                    if (!statusList.contains(upperStatus)) {
+                        statusList.add(upperStatus);
+                    }
+                }
+            }
+        }
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 9);
+        Page<Event> entityPage = this.eventRepository.findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
 

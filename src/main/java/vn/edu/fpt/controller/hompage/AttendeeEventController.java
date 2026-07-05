@@ -15,14 +15,16 @@ import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.FavouriteEvent;
+import vn.edu.fpt.model.TimeLineEvent;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSearchResultDTO;
 import vn.edu.fpt.modelview.response.homepage.RecommendationDTO;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.ai.RecommendationService;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +40,7 @@ public class AttendeeEventController {
     private final FavouriteEventService favouriteEventService;
     private final UserService userService;
     private final RecommendationService recommendationService;
+    private final TimeLineEventService timeLineEventService;
     @GetMapping("/events")
     public String listEvents(
             @PageableDefault(size = 9, sort = "startTime") Pageable pageable,
@@ -51,7 +54,7 @@ public class AttendeeEventController {
             dynamicMonths.add(LocalDateTime.now().plusMonths(i).format(formatter));
         }
 
-        Page<Event> eventPage = eventService.searchEvents(criteria, pageable);
+        Page<EventSearchResultDTO> eventPage = eventService.searchEvents(criteria, pageable);
 
         model.addAttribute("eventPage", eventPage);
         model.addAttribute("criteria", criteria);
@@ -64,12 +67,15 @@ public class AttendeeEventController {
     @GetMapping("/events/detail/{id}")
     public String viewDetailEvent(@PathVariable long id, Model model) {
         EventSummaryProjection event = this.eventService.findEventDetailById(id);
+        List<TimeLineEvent> timeline = this.timeLineEventService.findByEvent_EventIdOrderByTimeAsc(id);
         model.addAttribute("event", event);
-        return "homepage/ViewPubliclEvent";
+        model.addAttribute("timeline", timeline);
+        return "homepage/view-public-event";
     }
 
     @GetMapping("/favourites")
-    public String getFavouriteEvents(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String getFavouriteEvents(Model model, @AuthenticationPrincipal AuthenticatedUser userDetails) {
+
         List<EventHomeDTO> favouriteEvents = this.favouriteEventService.findAllByUserId(userDetails.getUser().getId());
         model.addAttribute("favoriteEvents", favouriteEvents);
         return "homepage/favouriteEvent";
@@ -100,7 +106,7 @@ public class AttendeeEventController {
 
     @GetMapping("/recommendation")
     public String recommendationPage(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal AuthenticatedUser userDetails,
             Model model) {
         if(userDetails == null) {
             return "redirect:/auth/login";
@@ -111,7 +117,7 @@ public class AttendeeEventController {
     @GetMapping("/api/recommendations")
     @ResponseBody
     public ResponseEntity<List<RecommendationDTO>> getRecommendations(
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal AuthenticatedUser userDetails) {
 
         if(userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

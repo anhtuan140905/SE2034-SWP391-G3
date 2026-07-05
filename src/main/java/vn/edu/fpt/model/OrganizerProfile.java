@@ -16,12 +16,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrganizerProfile {
     @Id
-    @Column(name = "user_id")       // Shared PK với Users: ae hiểu cái thằng profile này nó có mqh 1-1 về thg user
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId                          // userId lấy từ Users.userId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "company_name", columnDefinition = "NVARCHAR(500)")

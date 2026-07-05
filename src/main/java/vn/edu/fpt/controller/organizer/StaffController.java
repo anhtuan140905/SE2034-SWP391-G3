@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
+import vn.edu.fpt.modelview.response.organizer.StaffDetailDto;
 import vn.edu.fpt.modelview.response.organizer.StaffResponceDTO;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -29,11 +31,12 @@ public class StaffController {
                              @RequestParam(defaultValue = "0") int page,
                              @AuthenticationPrincipal CustomUserDetails userDetails,
                              Model model) {
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,5L)){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
             return "organizer/DashboardOrganizer";
         }
         int size = 10;
-        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, PageRequest.of(page, size));
+        Sort sort = Sort.by(Sort.Direction.ASC, "userRole.role.id");
+        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, PageRequest.of(page, size,sort));
         if (!model.containsAttribute("inviteMember")) {
             model.addAttribute("inviteMember", new MemberRequestDTO());
         }
@@ -55,7 +58,7 @@ public class StaffController {
                                RedirectAttributes redirectAttributes,
                                @AuthenticationPrincipal CustomUserDetails userDetails
                                ){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,5L)){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
             return "organizer/DashboardOrganizer";
         }
         if (result.hasErrors()) {
@@ -71,5 +74,44 @@ public class StaffController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/organizer/event/" + id + "/members";
+    }
+
+    @GetMapping("/event/{eventId}/members/edit")
+    public String editMember(
+            @PathVariable Long eventId,
+            @RequestParam Long staffId,
+            @RequestParam int currentPage,
+            Model model,@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
+            return "organizer/DashboardOrganizer";
+        }
+        model.addAttribute("selectedMember",staffService.getInfobyStaffID(staffId));
+        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(eventId, "", null, PageRequest.of(currentPage,10));
+        model.addAttribute("staffList", staffPage.getContent());
+        model.addAttribute("totalPages", staffPage.getTotalPages());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("eventId", eventId);
+        model.addAttribute("keyword", "");
+        model.addAttribute("roleId", null);
+        model.addAttribute("inviteMember", new MemberRequestDTO());
+        model.addAttribute("permissions", staffService.getListPermission());
+        model.addAttribute("roles", staffService.getRoleOfEvent());
+        return "organizer/staff/ListStaffs";
+    }
+    @PostMapping("/event/{eventId}/members/update")
+    public String updateMenber(@PathVariable Long eventId,@Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto,
+                               BindingResult result,RedirectAttributes redirectAttributes,
+                               @AuthenticationPrincipal CustomUserDetails userDetails ){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
+            return "organizer/DashboardOrganizer";
+        }
+        if (result.hasErrors()) {
+            String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMessageEdit", errorMsg);
+            redirectAttributes.addFlashAttribute("selectedMember", staffDetailDto);
+            return "redirect:/organizer/event/" + eventId + "/members";
+        }
+            staffService.updateStaff(staffDetailDto);
+        return "redirect:/organizer/event/" + eventId + "/members";
     }
 }

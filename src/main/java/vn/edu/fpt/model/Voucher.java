@@ -32,6 +32,12 @@ public class Voucher extends BaseAuditEntity {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
+    @Column(name = "title", nullable = false, columnDefinition = "NVARCHAR(255)")
+    private String title;
+
+    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", nullable = false, length = 10)
     private DiscountType discountType;
@@ -52,6 +58,6 @@ public class Voucher extends BaseAuditEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "voucher", cascade = CascadeType.PERSIST)
     private Set<VoucherUsage> usages; // Set vì không cần thứ tự, tra cứu theo voucher
 }

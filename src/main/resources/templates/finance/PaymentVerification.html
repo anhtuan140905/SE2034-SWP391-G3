@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Xác Nhận Chuyển Khoản – EventHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
+        body {
+            background: #fff0f5;
+            color: #1e0e34;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid rgba(255, 42, 122, 0.15);
+            width: 260px;
+            padding: 20px;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portal-text {
+            color: #84759b;
+            font-size: 13px;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .menu a {
+            color: #4b3d60;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: white;
+        }
+
+        .menu a svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .wrapper {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.12);
+            position: sticky;
+            top: 0; z-index: 90;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar .search-box {
+            background: #fff0f5;
+            border: 1px solid rgba(255, 42, 122, 0.2);
+            color: #1e0e34;
+            flex: 1;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 10px 15px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .topbar .search-box::placeholder { color: #84759b; }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .profile-dropdown { position: relative; }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .profile-avatar {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ff1b8d;
+            object-fit: cover;
+        }
+
+        .profile-info .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1e0e34;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 14px;
+            min-width: 210px;
+            box-shadow: 0 8px 24px rgba(255, 27, 141, 0.12);
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show { display: block; }
+        .dropdown-menu ul { list-style: none; padding: 8px 0; margin: 0; }
+
+        .dropdown-menu ul li a,
+        .dropdown-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+            color: #4b3d60;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown-menu ul li a:hover { background: rgba(255, 27, 141, 0.07); color: #ff1b8d; }
+        .dropdown-logout { color: #e11d48; }
+        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); }
+        .divider { border-top: 1px solid rgba(255, 42, 122, 0.1); margin: 6px 0; }
+
+        .main { padding: 25px; flex: 1; }
+
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { font-size: 22px; font-weight: 800; color: #1e0e34; margin-bottom: 4px; }
+        .page-header p  { color: #84759b; font-size: 14px; }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrap {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px; height: 16px;
+            color: #84759b;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.2);
+            border-radius: 10px;
+            color: #1e0e34;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .search-input::placeholder { color: #84759b; }
+        .search-input:focus { border-color: #ff1b8d; box-shadow: 0 0 0 3px rgba(255,27,141,0.1); }
+
+        .btn-filter {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-filter:hover {
+            box-shadow: 0 4px 16px rgba(255,27,141,0.35);
+            transform: translateY(-1px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255, 42, 122, 0.2);
+            background: #ffffff;
+            color: #84759b;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: linear-gradient(to right, #ff1b8d, #ec4899);
+            color: #ffffff;
+            border-color: transparent;
+        }
+
+        .tab-badge {
+            border-radius: 999px;
+            padding: 1px 8px;
+            font-size: 12px;
+            font-weight: 800;
+            background: rgba(255, 27, 141, 0.12);
+            color: #ff1b8d;
+        }
+
+        .tab-btn.active .tab-badge {
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .table-box {
+            background: #ffffff;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-box-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-box-header h2 { color: #1e0e34; font-size: 16px; }
+        .table-box-header p  { color: #84759b; font-size: 13px; margin-top: 2px; }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        table th {
+            color: #84759b;
+            text-align: left;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.1);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        table th.center { text-align: center; }
+        table th.right  { text-align: right; }
+
+        table td {
+            padding: 14px 20px;
+            color: #1e0e34;
+            border-bottom: 1px solid rgba(255, 42, 122, 0.06);
+            font-size: 14px;
+        }
+
+        table td.center { text-align: center; }
+        table td.right  { text-align: right; }
+
+        table tr:last-child td { border-bottom: none; }
+        table tr:hover { background: rgba(255, 42, 122, 0.02); }
+        table tbody tr:nth-child(even) { background: rgba(255, 42, 122, 0.01); }
+
+        .id-cell    { font-weight: 700; color: #ff1b8d !important; }
+        .event-cell { font-weight: 600; }
+        .amount-cell{ font-weight: 700; }
+        .time-cell  { font-size: 12px !important; color: #84759b !important; white-space: nowrap; }
+
+        .badge {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-seat    { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; padding: 3px 10px; }
+        .badge-wait-green  { background: #ecfdf5; color: #10b981; border: 1px solid #a7f3d0; }
+        .badge-wait-orange { background: #fff7ed; color: #f97316; border: 1px solid #fed7aa; }
+        .badge-wait-red    { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+        .badge-confirmed   { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .badge-rejected    { background: rgba(239, 68, 68, 0.1);  color: #ef4444; }
+        .badge-rejector    { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+
+        .btn-confirm, .btn-reject {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+            transition: all 0.15s;
+            border: 1px solid;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-confirm {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-confirm:hover { background: #10b981; color: #fff; }
+
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reject:hover { background: #ef4444; color: #fff; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 14, 52, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 20px 60px rgba(255, 27, 141, 0.18);
+            border: 1px solid rgba(255, 42, 122, 0.12);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 { font-size: 18px; font-weight: 800; color: #1e0e34; margin-bottom: 4px; }
+        .modal-header p  { font-size: 13px; color: #84759b; }
+        .modal-header p strong { color: #ff1b8d; }
+
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 42, 122, 0.2);
+            background: #fff0f5;
+            color: #84759b;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .modal-divider { border-top: 1px solid rgba(255, 42, 122, 0.1); margin-bottom: 20px; }
+
+        .modal label.section-label { font-size: 13px; font-weight: 700; color: #4b3d60; margin-bottom: 12px; display: block; }
+
+        .reason-options { display: flex; flex-direction: column; gap: 10px; }
+
+        .reason-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 42, 122, 0.15);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .reason-option:has(input:checked) {
+            border: 2px solid #ff1b8d;
+            background: rgba(255, 27, 141, 0.05);
+        }
+
+        .reason-option input[type="radio"] {
+            accent-color: #ff1b8d;
+            width: 16px; height: 16px;
+            flex-shrink: 0;
+        }
+
+        .reason-option span { font-size: 14px; font-weight: 500; color: #4b3d60; }
+        .reason-option:has(input:checked) span { font-weight: 700; color: #ff1b8d; }
+
+        .modal-textarea {
+            display: none;
+            margin-top: 12px;
+            width: 100%;
+            background: #fff0f5;
+            border: 1px solid rgba(255, 42, 122, 0.25);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #1e0e34;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .modal-textarea.show { display: block; }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel, .btn-submit-reject {
+            flex: 1;
+            padding: 11px 0;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+
+        .btn-cancel { border: 1px solid rgba(255, 42, 122, 0.2); background: #fff; color: #4b3d60; }
+        .btn-cancel:hover { background: #fff0f5; }
+
+        .btn-submit-reject {
+            border: none;
+            background: linear-gradient(to right, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-submit-reject:disabled {
+            background: rgba(239, 68, 68, 0.3);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 220px; }
+            .wrapper { margin-left: 220px; }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar { display: none; }
+            .wrapper { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">EventHub</div>
+    <div class="portal-text">Cổng Tài Chính</div>
+
+    <div class="menu">
+        <a href="/finance/dashboard">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            Bảng Điều Khiển
+        </a>
+        <a href="/finance/listEndedEvents">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            Sự Kiện Đã Kết Thúc
+        </a>
+        <a href="/finance/createSettlement">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            Tạo Quyết Toán
+        </a>
+        <a href="/finance/listSettlement">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+            Danh Sách Quyết Toán
+        </a>
+        <a href="/finance/confirmTransfer" class="active">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+                <path d="M6 15h2M10 15h4"/>
+            </svg>
+            Xác Nhận Chuyển Khoản
+        </a>
+    </div>
+</div>
+
+<div class="wrapper">
+
+    <div class="topbar">
+        <input type="text" class="search-box" placeholder="Tìm kiếm sự kiện, quyết toán..."/>
+
+        <div class="topbar-right">
+            <div class="profile-dropdown">
+                <div class="profile" onclick="toggleDropdown()">
+                    <img class="profile-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="avatar"/>
+                    <div class="profile-info">
+                        <div class="name">Nhân Viên Tài Chính</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
+                </div>
+
+                <div class="dropdown-menu" id="profileDropdown">
+                    <ul>
+                        <li><a href="/finance/profile"><i class="fa-regular fa-user"></i> Thông Tin Của Tôi</a></li>
+                        <li><a href="/finance/dashboard"><i class="fa-solid fa-shield"></i> Kênh Quản Trị</a></li>
+                        <li><a href="/settings"><i class="fa-solid fa-sliders"></i> Cài Đặt</a></li>
+                        <li class="divider"></li>
+                        <li>
+                            <form method="post" action="/auth/logout">
+                                <button type="submit" class="dropdown-logout">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <div class="page-header">
+            <h1>Xác Nhận Chuyển Khoản</h1>
+            <p>Quản lý các yêu cầu xác nhận thanh toán chuyển khoản của khách hàng.</p>
+        </div>
+
+        <div class="filter-row">
+            <div class="search-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input class="search-input" type="text" placeholder="Tìm mã đơn, sự kiện, người đặt..."/>
+            </div>
+            <button type="button" class="btn-filter">
+                <i class="fa-solid fa-magnifying-glass" style="margin-right:6px;"></i>Tìm Kiếm
+            </button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('pending', this)">
+                Chờ xác nhận
+                <span class="tab-badge">6</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('confirmed', this)">
+                Đã xác nhận
+            </button>
+            <button class="tab-btn" onclick="switchTab('rejected', this)">
+                Đã từ chối
+            </button>
+        </div>
+
+        <!-- TAB: CHỜ XÁC NHẬN -->
+        <div id="panel-pending" class="tab-panel active">
+            <div class="table-box">
+                <div class="table-box-header">
+                    <div>
+                        <h2>Danh sách chờ xác nhận</h2>
+                        <p>Các yêu cầu thanh toán cần được xác nhận</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã đơn</th>
+                        <th>Sự kiện</th>
+                        <th>Người đặt</th>
+                        <th class="center">Số ghế</th>
+                        <th class="right">Số tiền</th>
+                        <th>Thời gian bấm TT</th>
+                        <th class="center">Chờ bao lâu</th>
+                        <th class="center">Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="font-weight:600">1</td>
+                        <td class="id-cell">TK-001</td>
+                        <td class="event-cell">Tech Summit 2026</td>
+                        <td>Nguyễn Văn An</td>
+                        <td class="center"><span class="badge badge-seat">2</span></td>
+                        <td class="right amount-cell">1.200.000đ</td>
+                        <td class="time-cell">08:15 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-green">35 phút</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-001" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-001')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">2</td>
+                        <td class="id-cell">TK-002</td>
+                        <td class="event-cell">Music Fest Hà Nội</td>
+                        <td>Trần Thị Bích</td>
+                        <td class="center"><span class="badge badge-seat">4</span></td>
+                        <td class="right amount-cell">2.800.000đ</td>
+                        <td class="time-cell">09:42 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-orange">1g 13ph</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-002" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-002')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">3</td>
+                        <td class="id-cell">TK-003</td>
+                        <td class="event-cell">Startup Conference</td>
+                        <td>Lê Minh Khoa</td>
+                        <td class="center"><span class="badge badge-seat">1</span></td>
+                        <td class="right amount-cell">650.000đ</td>
+                        <td class="time-cell">06:10 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-red">3 giờ+</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-003" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-003')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">4</td>
+                        <td class="id-cell">TK-004</td>
+                        <td class="event-cell">Food &amp; Wine Expo</td>
+                        <td>Phạm Thị Lan</td>
+                        <td class="center"><span class="badge badge-seat">3</span></td>
+                        <td class="right amount-cell">1.950.000đ</td>
+                        <td class="time-cell">11:05 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-orange">48 phút</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-004" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-004')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">5</td>
+                        <td class="id-cell">TK-005</td>
+                        <td class="event-cell">Digital Art Fair</td>
+                        <td>Hoàng Đức Thịnh</td>
+                        <td class="center"><span class="badge badge-seat">2</span></td>
+                        <td class="right amount-cell">900.000đ</td>
+                        <td class="time-cell">04:50 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-red">4 giờ+</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-005" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-005')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">6</td>
+                        <td class="id-cell">TK-006</td>
+                        <td class="event-cell">Jazz Night Saigon</td>
+                        <td>Vũ Thùy Linh</td>
+                        <td class="center"><span class="badge badge-seat">5</span></td>
+                        <td class="right amount-cell">3.500.000đ</td>
+                        <td class="time-cell">10:30 – 29/06/2026</td>
+                        <td class="center"><span class="badge badge-wait-green">15 phút</span></td>
+                        <td class="center">
+                            <div style="display:flex;gap:8px;justify-content:center">
+                                <a href="/finance/confirmTransfer/confirm?orderId=TK-006" class="btn-confirm">✓ Xác nhận</a>
+                                <button type="button" class="btn-reject" onclick="openModal('TK-006')">✕ Từ chối</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: ĐÃ XÁC NHẬN -->
+        <div id="panel-confirmed" class="tab-panel">
+            <div class="table-box">
+                <div class="table-box-header">
+                    <div>
+                        <h2>Đã xác nhận</h2>
+                        <p>Các giao dịch đã được xác nhận thành công</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã đơn</th>
+                        <th>Sự kiện</th>
+                        <th>Người đặt</th>
+                        <th class="right">Số tiền</th>
+                        <th>Thời gian xác nhận</th>
+                        <th class="center">Người xác nhận</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="font-weight:600">1</td>
+                        <td class="id-cell">TK-101</td>
+                        <td class="event-cell">Tech Summit 2025</td>
+                        <td>Đặng Hải Nam</td>
+                        <td class="right amount-cell">1.400.000đ</td>
+                        <td class="time-cell">14:22 – 28/06/2026</td>
+                        <td class="center"><span class="badge badge-confirmed">Nguyễn Tài Chính</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">2</td>
+                        <td class="id-cell">TK-102</td>
+                        <td class="event-cell">Yoga Festival</td>
+                        <td>Bùi Thị Hoa</td>
+                        <td class="right amount-cell">750.000đ</td>
+                        <td class="time-cell">09:11 – 28/06/2026</td>
+                        <td class="center"><span class="badge badge-confirmed">Trần Kế Toán</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">3</td>
+                        <td class="id-cell">TK-103</td>
+                        <td class="event-cell">Developer Days</td>
+                        <td>Lý Quang Vinh</td>
+                        <td class="right amount-cell">2.100.000đ</td>
+                        <td class="time-cell">16:45 – 27/06/2026</td>
+                        <td class="center"><span class="badge badge-confirmed">Nguyễn Tài Chính</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">4</td>
+                        <td class="id-cell">TK-104</td>
+                        <td class="event-cell">Photography Expo</td>
+                        <td>Cao Thị Mai</td>
+                        <td class="right amount-cell">600.000đ</td>
+                        <td class="time-cell">10:00 – 27/06/2026</td>
+                        <td class="center"><span class="badge badge-confirmed">Phạm Thủ Quỹ</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: ĐÃ TỪ CHỐI -->
+        <div id="panel-rejected" class="tab-panel">
+            <div class="table-box">
+                <div class="table-box-header">
+                    <div>
+                        <h2>Đã từ chối</h2>
+                        <p>Các giao dịch đã bị từ chối và lý do</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã đơn</th>
+                        <th>Sự kiện</th>
+                        <th>Người đặt</th>
+                        <th class="right">Số tiền</th>
+                        <th>Thời gian từ chối</th>
+                        <th>Lý do từ chối</th>
+                        <th class="center">Người từ chối</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td style="font-weight:600">1</td>
+                        <td class="id-cell">TK-201</td>
+                        <td class="event-cell">Marathon 2026</td>
+                        <td>Ngô Quốc Bảo</td>
+                        <td class="right amount-cell">500.000đ</td>
+                        <td class="time-cell">11:30 – 28/06/2026</td>
+                        <td><span class="badge badge-rejected">Sai số tiền</span></td>
+                        <td class="center"><span class="badge badge-rejector">Trần Kế Toán</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">2</td>
+                        <td class="id-cell">TK-202</td>
+                        <td class="event-cell">Cooking Class</td>
+                        <td>Đinh Thị Oanh</td>
+                        <td class="right amount-cell">1.200.000đ</td>
+                        <td class="time-cell">08:55 – 27/06/2026</td>
+                        <td><span class="badge badge-rejected">Chưa nhận được tiền</span></td>
+                        <td class="center"><span class="badge badge-rejector">Nguyễn Tài Chính</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600">3</td>
+                        <td class="id-cell">TK-203</td>
+                        <td class="event-cell">Book Fair 2026</td>
+                        <td>Phan Anh Dũng</td>
+                        <td class="right amount-cell">350.000đ</td>
+                        <td class="time-cell">15:20 – 26/06/2026</td>
+                        <td><span class="badge badge-rejected">Sai nội dung chuyển khoản</span></td>
+                        <td class="center"><span class="badge badge-rejector">Phạm Thủ Quỹ</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL: TỪ CHỐI -->
+<div class="modal-overlay" id="rejectModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <div>
+                <h3>Từ chối xác nhận thanh toán</h3>
+                <p>Đơn hàng: <strong id="modalTargetId"></strong></p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <label class="section-label">Chọn lý do từ chối:</label>
+        <div class="reason-options">
+            <label class="reason-option">
+                <input type="radio" name="rejectReason" value="Chưa nhận được tiền" onchange="onReasonChange(this)"/>
+                <span>Chưa nhận được tiền</span>
+            </label>
+            <label class="reason-option">
+                <input type="radio" name="rejectReason" value="Sai số tiền" onchange="onReasonChange(this)"/>
+                <span>Sai số tiền</span>
+            </label>
+            <label class="reason-option">
+                <input type="radio" name="rejectReason" value="Sai nội dung chuyển khoản" onchange="onReasonChange(this)"/>
+                <span>Sai nội dung chuyển khoản</span>
+            </label>
+            <label class="reason-option">
+                <input type="radio" name="rejectReason" value="Khác" onchange="onReasonChange(this)"/>
+                <span>Khác</span>
+            </label>
+        </div>
+
+        <textarea id="otherReasonText" class="modal-textarea" placeholder="Nhập lý do cụ thể..." rows="3" oninput="updateSubmitBtn()"></textarea>
+
+        <form id="rejectForm" method="post" action="/finance/confirmTransfer/reject">
+            <input type="hidden" name="orderId" id="rejectOrderId"/>
+            <input type="hidden" name="rejectReason" id="rejectReasonHidden"/>
+            <input type="hidden" name="tab" value="pending"/>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Hủy</button>
+                <button type="button" class="btn-submit-reject" id="submitRejectBtn" disabled onclick="submitReject()">
+                    Xác nhận từ chối
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabName, clickedBtn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('panel-' + tabName).classList.add('active');
+        clickedBtn.classList.add('active');
+    }
+
+    function toggleDropdown() {
+        document.getElementById('profileDropdown').classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dd = document.querySelector('.profile-dropdown');
+        if (dd && !dd.contains(e.target)) {
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+    });
+
+    function openModal(orderId) {
+        document.getElementById('modalTargetId').textContent = orderId;
+        document.getElementById('rejectOrderId').value = orderId;
+        document.querySelectorAll("input[name='rejectReason']").forEach(r => r.checked = false);
+        document.getElementById('otherReasonText').value = '';
+        document.getElementById('otherReasonText').classList.remove('show');
+        document.getElementById('submitRejectBtn').disabled = true;
+        document.getElementById('rejectModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('rejectModal').classList.remove('show');
+    }
+
+    function closeModalOnOverlay(e) {
+        if (e.target === document.getElementById('rejectModal')) closeModal();
+    }
+
+    function onReasonChange(radio) {
+        const textarea = document.getElementById('otherReasonText');
+        if (radio.value === 'Khác') {
+            textarea.classList.add('show');
+        } else {
+            textarea.classList.remove('show');
+            textarea.value = '';
+        }
+        updateSubmitBtn();
+    }
+
+    function updateSubmitBtn() {
+        const selected = document.querySelector("input[name='rejectReason']:checked");
+        const other    = document.getElementById('otherReasonText').value.trim();
+        const btn      = document.getElementById('submitRejectBtn');
+        if (!selected) { btn.disabled = true; return; }
+        if (selected.value === 'Khác' && !other) { btn.disabled = true; return; }
+        btn.disabled = false;
+    }
+
+    function submitReject() {
+        const selected = document.querySelector("input[name='rejectReason']:checked");
+        if (!selected) return;
+        const reason = selected.value === 'Khác'
+            ? document.getElementById('otherReasonText').value.trim()
+            : selected.value;
+        document.getElementById('rejectReasonHidden').value = reason;
+        document.getElementById('rejectForm').submit();
+    }
+</script>
+</body>
+</html>
+
+

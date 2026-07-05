@@ -2,5 +2,6 @@ package vn.edu.fpt.model.constant;
 
 public enum PaymentStatus {
     PENDING,
-    SUCCESS
+    SUCCESS,
+    FAILED
 }

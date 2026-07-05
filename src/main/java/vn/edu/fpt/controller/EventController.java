@@ -10,10 +10,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.EventCategory;
+import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.security.CustomUserDetails;
@@ -33,29 +35,59 @@ public class EventController {
     public String CreateEvent(Model model,@AuthenticationPrincipal CustomUserDetails userDetails){
         List<EventCategory> eventCategoryList = eventService.getListEventCategory();
         List<cityDto> listCity = eventService.getListcity();
+        OrganizerProfile o =  eventService.GetOrganizerProfileByUserId(userDetails.getUser().getId());
         Long userId = userDetails.getUser().getId();
         model.addAttribute("eventCategoryList",eventCategoryList);
         model.addAttribute("citys",listCity);
         EventDTO eventDTO = new EventDTO();
         eventDTO.setOrganizerId(userId);
+        boolean hasOrganizerProfile = o != null;
+        model.addAttribute(
+                "hasOrganizerProfile",
+                hasOrganizerProfile
+        );
+        if (!hasOrganizerProfile) {
+            model.addAttribute(
+                    "organizerProfile",
+                    new OrganizerProfileDto()
+            );
+        }
         model.addAttribute("event", eventDTO);
         return "organizer/event/CreateOrganizerEvent";
     }
 
     @PostMapping("create/event")
-    public String SaveEvent(@Valid @ModelAttribute("event") EventDTO eventDTO,
-                            BindingResult result,Model model,@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (result.hasErrors()) {
-            List<EventCategory> eventCategoryList = eventService.getListEventCategory();
-            List<cityDto> listCity = eventService.getListcity();
-            model.addAttribute("eventCategoryList",eventCategoryList);
-            model.addAttribute("citys",listCity);
-            model.addAttribute("event",eventDTO);
+    public String saveEvent(
+            @Valid @ModelAttribute("event") EventDTO eventDTO,
+            BindingResult eventResult,
+            @ModelAttribute("organizerProfile")
+            OrganizerProfileDto organizerProfileDto,
+            BindingResult organizerResult,
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getUser().getId();
+        // kiểm tra đã có profile chưa
+        boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userId) != null;
+        // validate lỗi
+        if (eventResult.hasErrors() || (!hasOrganizerProfile && organizerResult.hasErrors())) {
+            model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
+            model.addAttribute("eventCategoryList", eventService.getListEventCategory());
+            model.addAttribute("citys", eventService.getListcity());
+            model.addAttribute("event", eventDTO);
+            // chỉ add organizerProfile nếu chưa có
+            if (!hasOrganizerProfile) {
+                model.addAttribute("organizerProfile", organizerProfileDto);
+            }
             return "organizer/event/CreateOrganizerEvent";
         }
-
-        eventService.saveEvent(eventDTO);
-
+        // tránh client sửa organizerId
+        eventDTO.setOrganizerId(userId);
+        // save
+        if (!hasOrganizerProfile) {
+            eventService.saveEvent(eventDTO, organizerProfileDto);
+        } else {
+            eventService.saveEvent(eventDTO, null);
+        }
         return "redirect:/organizer/dashboard";
     }
     @ResponseBody
@@ -66,7 +98,7 @@ public class EventController {
 //    sửa lại lấy theo OrnizerMember
     @GetMapping("list/event")
     public String ListEvent(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal AuthenticatedUser userDetails,
             @RequestParam(value = "status", required = false) String[] statuses,
             @RequestParam(defaultValue = "")                  String   keyword,
             @RequestParam(defaultValue = "1")                 int      page,
@@ -103,7 +135,7 @@ public class EventController {
 
     @GetMapping("/event/{id}")
     public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,Model model){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,4L)){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_VIEW_EDIT_EVENT")){
             return "organizer/DashboardOrganizer";
         }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);

@@ -2,7 +2,6 @@ package vn.edu.fpt.controller.hompage;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,21 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.model.Ticket;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.repository.FeaturedEventDTO;
-import vn.edu.fpt.repository.TicketProjection;
-import vn.edu.fpt.service.CityService;
-import vn.edu.fpt.service.EventService;
-import vn.edu.fpt.service.TicketService;
-import vn.edu.fpt.service.UserService;
+import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.service.impl.security.CustomOAuth2User;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+
 
 import java.util.List;
 
@@ -67,12 +61,12 @@ public class HomepageController {
 
     @GetMapping("/profile")
     public String getProfile(Model model,
-                             @AuthenticationPrincipal CustomUserDetails userDetails,
+                             @AuthenticationPrincipal AuthenticatedUser userDetails,
                              @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
         User user = new User();
         if(userDetails != null) {
 
-            user = this.userServiceImpl.findByUsername(userDetails.getUsername());
+            user = this.userServiceImpl.findByUsername(userDetails.getUser().getEmail());
         } else {
             user = this.userServiceImpl.findByUsername(oAuth2Users.getName());
         }
