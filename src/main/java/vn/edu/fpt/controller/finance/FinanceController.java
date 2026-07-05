@@ -58,9 +58,10 @@ public class FinanceController {
 
    @PostMapping("/createSettlement")
    public String createSettlementPage(Model model,
-                                      @ModelAttribute SettlementDTO request){
+                                      @ModelAttribute SettlementDTO dto){
 
-        settlementServiceImpl.createSettlement(request);
+
+        settlementServiceImpl.createSettlement(dto);
 
        return "finance/CreateSettlement";
    }
@@ -85,7 +86,7 @@ public class FinanceController {
        SettlementDTO dto = new SettlementDTO();
        dto.setEventId(eventId);
 
-       model.addAttribute("SettlementDTO", dto);
+       model.addAttribute("settlementDTO", dto);
 
 
        return "finance/CreateSettlement";
@@ -100,6 +101,15 @@ public class FinanceController {
                 ? userServiceImpl.findByUsername(userDetails.getUsername())
                 : userServiceImpl.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
+
+        long countAllSettlement = settlementServiceImpl.countAllSettlement();
+        model.addAttribute("countAllSettlement", countAllSettlement);
+
+        long countPendingSettlement = settlementServiceImpl.countPendingSettlement();
+        model.addAttribute("countPendingSettlement", countPendingSettlement);
+
+        long countCompletedSettlement = settlementServiceImpl.countCompletedSettlement();
+        model.addAttribute("countCompletedSettlement", countCompletedSettlement);
 
         return "finance/ListSettlement";
     }

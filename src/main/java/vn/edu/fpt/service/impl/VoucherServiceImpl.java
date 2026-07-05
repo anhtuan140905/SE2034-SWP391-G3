@@ -1,0 +1,125 @@
+package vn.edu.fpt.service.impl;
+
+import jakarta.validation.constraints.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.model.Event;
+import vn.edu.fpt.model.Voucher;
+import vn.edu.fpt.model.constant.DiscountType;
+import vn.edu.fpt.modelview.request.organizer.CreateVoucherRequest;
+import vn.edu.fpt.repository.EventRepository;
+import vn.edu.fpt.repository.VoucherRepository;
+import vn.edu.fpt.service.StaffService;
+import vn.edu.fpt.service.VoucherService;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class VoucherServiceImpl implements VoucherService {
+
+    private final VoucherRepository voucherRepository;
+    private final EventRepository eventRepository;
+    private final StaffService staffService;
+
+    @Override
+    @Transactional
+    public void createVoucher(Long evenId, Long userId, CreateVoucherRequest request) {
+
+        validatePermission(userId, evenId);
+
+        Event event = eventRepository.findById(evenId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện với id: " + evenId));
+
+        String normalizedCode = normalizeCode(request.getCode());
+
+        validateCreateVoucherBusiness(event, normalizedCode, request);
+
+        Voucher voucher = new Voucher();
+        voucher.setEvent(event);
+        voucher.setCode(normalizedCode);
+        voucher.setTitle(request.getTitle());
+        voucher.setDescription(request.getDescription());
+        voucher.setDiscountType(request.getDiscountType());
+        voucher.setDiscountValue(request.getDiscountValue());
+        voucher.setMaxUsage(request.getMaxUsage());
+        voucher.setValidFrom(request.getValidFrom());
+        voucher.setValidTo(request.getValidTo());
+        voucher.setIsActive(true);
+
+        voucherRepository.save(voucher);
+
+    }
+
+    private void validateCreateVoucherBusiness(Event event, String normalizedCode, CreateVoucherRequest request) {
+        validateUniqueCode(normalizedCode);
+        validateDateRange(request.getValidFrom(), request.getValidTo(), event.getStartTime());
+        validateDiscountRule(request.getDiscountType(), request.getDiscountValue());
+    }
+
+    // Validate the discount value of the voucher for 2 types of discounts: Fixed - Percent
+    private void validateDiscountRule(DiscountType discountType, BigDecimal discountValue) {
+        if (discountValue == null || discountValue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Giá trị giảm phải lớn hơn 0");
+        }
+
+        if (discountType == DiscountType.PERCENT && discountValue.compareTo(BigDecimal.valueOf(100)) > 0) {
+            throw new IllegalArgumentException("Giá trị giảm giá phần trăm không được lớn hơn 100");
+        }
+    }
+
+    // Validate the voucher's start and end dates
+    private void validateDateRange(LocalDateTime validFrom, LocalDateTime validTo, LocalDateTime eventEndTime) {
+        LocalDateTime now = LocalDateTime.now().minusMinutes(3);
+
+        if (validFrom.isBefore(now)) {
+            throw new IllegalArgumentException("Thời gian bắt đầu phải lớn hơn hoặc bằng thời điểm hiện tại");
+        }
+
+        if (!validTo.isAfter(validFrom)) {
+            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
+        }
+
+        if (validTo.isAfter(eventEndTime)) {
+            throw new IllegalArgumentException("Thời gian kết thúc voucher phải sau thời gian sự kiện kết thúc.");
+        }
+    }
+
+    // Validate the voucher code for the event
+    private void validateUniqueCode(String normalizedCode) {
+        if (voucherRepository.existsByCodeIgnoreCase(normalizedCode)) {
+            throw new IllegalArgumentException("Mã voucher đã tồn tại.");
+        }
+    }
+
+    // Normalizer voucher's code to upper case
+    private String normalizeCode(String code) {
+        return code == null ? null : code.toUpperCase().trim();
+    }
+
+    // Check permissions to create vouchers
+    private void validatePermission(Long userId, Long evenId) {
+        boolean hasPermission = staffService.checkPermission(userId, evenId, "CAN_CREATE_VOUCHER");
+
+        if (!hasPermission) {
+            throw new IllegalArgumentException("Bạn không có quyền tạo voucher");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Voucher> getVoucherByEvenId(Long evenId) {
+
+        return voucherRepository.findByEvent_EventId(evenId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Voucher getVoucherDetail(Long eventId, Long voucherId) {
+
+        return voucherRepository.findByEvent_EventIdAndVoucherId(eventId, voucherId).orElseThrow(() -> new IllegalStateException("Voucher không tồn tại hoặc không thuộc sự kiện này"));
+    }
+
+}

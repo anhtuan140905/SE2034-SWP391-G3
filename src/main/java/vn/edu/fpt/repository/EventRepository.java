@@ -363,7 +363,8 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     );
 
     @Query("""
-            select
+            
+                        select
             e.eventId as eventId,
             e.title as eventName,
             e.organizer.lastName as lastNameOrganizer,
@@ -405,6 +406,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
 
     @Query("""
+            
             select count(e.eventId)
             from Event e
             where e.endTime <= CURRENT_TIMESTAMP
@@ -420,6 +422,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countUnsettledEvents();
 
     @Query("""
+            
             select sum(o.totalAmount)
             from Event e
             left join Order o on e.eventId = o.event.eventId
@@ -429,6 +432,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
 
     @Query("""
+            
             select
             e.eventId as eventId,
             e.title as eventName,
@@ -443,7 +447,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             where tt.event.eventId = e.eventId
             )as soldTicket,
             
-            (select SUM(o.totalAmount) 
+            (select SUM(o.totalAmount)
             from Order o
             where o.event.eventId = e.eventId
             )as revenue,
@@ -454,11 +458,11 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             left join Settlement se on e.eventId = se.event.eventId
             
             where (e.endTime <= CURRENT_TIMESTAMP) and
-            (lower(e.title) like lower(concat('%', :keyword, '%')) 
+            (lower(e.title) like lower(concat('%', :keyword, '%'))
             or lower(e.organizer.lastName) like lower(concat('%', :keyword, '%'))
             or lower(e.organizer.middleName) like lower(concat('%', :keyword, '%'))
             or lower (e.organizer.firstName) like lower(concat('%', :keyword, '%')))
-            group by 
+            group by
             e.eventId,
             e.title,
             e.organizer.lastName,
