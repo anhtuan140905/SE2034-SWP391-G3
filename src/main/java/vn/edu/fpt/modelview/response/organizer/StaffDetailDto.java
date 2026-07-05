@@ -1,5 +1,7 @@
 package vn.edu.fpt.modelview.response.organizer;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +13,6 @@ public class StaffDetailDto {
     private String fullName;
     private String email;
     private Long roleId;
+    @NotEmpty(message = "Không Được để Trông Quyền Cụ Thể")
     private List<Long> permission;
 }

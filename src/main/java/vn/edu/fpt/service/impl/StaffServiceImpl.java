@@ -204,13 +204,13 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public boolean checkPermission(Long userId, Long eventId, Long permissionId) {
+    public boolean checkPermission(Long userId, Long eventId, String  permissionKey) {
         OrganizerMember organizerMember = organizerMemberRepository.CheckPermission(userId, eventId);
         if (organizerMember == null) {
             return false;
         }
         for (OrganizerMemberPermission omp : organizerMember.getPermissions()) {
-            if (omp.getPermission().getId().equals(permissionId)) {
+            if (omp.getPermission().getPermissionKey().equals(permissionKey)) {
                 return true;
             }
         }

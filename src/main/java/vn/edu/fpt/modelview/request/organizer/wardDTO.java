@@ -10,8 +10,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class wardDTO {
     @NotNull(message = "Phường/Xã phố không được để trống")
     private Long wardId;
