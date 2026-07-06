@@ -12,13 +12,11 @@ import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.constant.OrderStatus;
-import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.modelview.response.organizer.OrderDto;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.OrderProjection;
 import vn.edu.fpt.repository.OrderRepository;
-import vn.edu.fpt.repository.TicketProjection;
 import vn.edu.fpt.service.OrderService;
 
 import java.time.LocalDateTime;
@@ -31,10 +29,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final EventRepository eventRepository;
     @Override
-    public Page<OrderDto> getOrderbyEventID(Long eventId, String keyword, String status, Pageable pageable) {
+    public Page<OrderDto> getOrderbyEventID(Long eventId, String keyword, String status, int page) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "Order.orderId");
+        Pageable pageable =  PageRequest.of(page,10);
         String kw = (keyword == null || keyword.isBlank()) ? null : "%" + keyword + "%";
         String st = (status == null || status.isBlank()) ? null : status;
-        Event event = eventRepository.findById(eventId).orElseThrow(()-> new RuntimeException("Event Not Found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(()-> new RuntimeException("Không tìm thấy sự kiện "));
         Page<OrderProjection> projections = orderRepository.findOrderByEventId(eventId,kw, st,pageable);
         List<OrderDto> result = new ArrayList<>();
         for (OrderProjection p : projections) {
@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
 
     public Order getOrderForCheckout(Long orderId, User currentUser) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order không tồn tại"));
+                .orElseThrow(() -> new IllegalArgumentException("Đơn Hàng không tồn tại"));
 
         if (!order.getUser().getId().equals(currentUser.getId())) {
             throw new IllegalArgumentException("Bạn không có quyền xem order này");

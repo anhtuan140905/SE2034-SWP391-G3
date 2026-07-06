@@ -5,10 +5,14 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.Order;
 import vn.edu.fpt.model.Ticket;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
+import vn.edu.fpt.modelview.response.organizer.TicketTypeCheckinDto;
 
 import java.util.List;
 
 public interface TicketService {
+    List<TicketTypeCheckinDto> getDetailCheckinByTicketType(Long  eventId);
+    Long countTicketCheckInByEvent(Long eventID);
+    Integer countAllticketSelledOfEvent(Long eventId);
     long issuedTickets();
     @Transactional
     void generateTicketsForOrder(Order order);

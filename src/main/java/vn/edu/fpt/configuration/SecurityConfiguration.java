@@ -97,7 +97,7 @@ public class SecurityConfiguration {
                                 "/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/moderator/**").hasAuthority("ROLE_MODERATOR")
                         .requestMatchers("/finance/**").hasAuthority("ROLE_FINANCE")
-                        .requestMatchers("/organizer/**").hasAuthority("ROLE_ORGANIZER")
+                        .requestMatchers("/organizer/**").hasAnyAuthority("ROLE_ORGANIZER","ROLE_MANAGER","ROLE_STAFF")
                         .requestMatchers("/ticket/**", "/orders/**").hasAuthority("ROLE_ATTENDEE")
                         .anyRequest().authenticated()
                 )

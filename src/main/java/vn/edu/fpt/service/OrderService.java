@@ -13,7 +13,7 @@ import vn.edu.fpt.modelview.response.organizer.OrderDto;
 import java.util.List;
 
 public interface OrderService {
-    Page<OrderDto> getOrderbyEventID(Long eventId, String keyword, String status, Pageable pageable);
+    Page<OrderDto> getOrderbyEventID(Long eventId, String keyword, String status, int page);
     public Order findById(long id);
     public Order getOrderForCheckout(Long orderId, User currentUser);
     public Order handleSaveOrder(Order order);
