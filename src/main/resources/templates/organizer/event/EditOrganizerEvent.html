@@ -3,44 +3,35 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cổng Tạo Sự Kiện</title>
+    <title>Chỉnh Sửa Sự Kiện</title>
 
-    <!-- Bootstrap 5 -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
             rel="stylesheet"
     />
-    <!-- Google Fonts -->
     <link
             href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
     />
-    <!-- Material Symbols -->
     <link
             href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
     />
-    <!-- CSS tùy chỉnh -->
     <link rel="stylesheet" th:href="@{/organizer/css/CreateEvent.css}" />
 </head>
 <body>
-<!-- KHỐI TRANG TRÍ NỀN -->
 <div class="ambient-blob ambient-blob-1"></div>
 <div class="ambient-blob ambient-blob-2"></div>
 
-<!-- KHUNG TRANG -->
 <div class="page-wrapper d-flex flex-column">
-    <!-- ===== HEADER ===== -->
     <header class="page-header d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-3">
             <div class="header-icon">
-                <span class="material-symbols-outlined">add_circle</span>
+                <span class="material-symbols-outlined">edit</span>
             </div>
             <div>
-                <h1 class="header-title mb-0" th:text="${isEditMode} ? 'Chỉnh Sửa Sự Kiện' : 'Cổng Tạo Sự Kiện'">Cổng Tạo Sự Kiện</h1>
-                <p class="header-subtitle mb-0">
-                    THIẾT KẾ SỰ KIỆN TƯƠNG TÁC MỘT TRANG
-                </p>
+                <h1 class="header-title mb-0">Chỉnh Sửa Sự Kiện</h1>
+                <p class="header-subtitle mb-0">CẬP NHẬT THÔNG TIN SỰ KIỆN CỦA BẠN</p>
             </div>
         </div>
         <button type="button" class="btn btn-cancel" onclick="handleCancel()">
@@ -49,64 +40,48 @@
         </button>
     </header>
 
-    <!-- ===== VÙNG CUỘN FORM ===== -->
     <div class="form-scroll-area flex-grow-1">
         <div class="form-container">
-            <!-- Banner lỗi xác thực -->
-            <!--            <div-->
-            <!--                    id="validationError"-->
-            <!--                    class="alert alert-danger d-none align-items-center gap-3 mb-4 fade-in"-->
-            <!--                    role="alert"-->
-            <!--            >-->
-            <!--                <span class="material-symbols-outlined flex-shrink-0">error</span>-->
-            <!--                <span id="validationErrorMsg"></span>-->
-            <!--                <button-->
-            <!--                        type="button"-->
-            <!--                        class="btn-dismiss ms-auto"-->
-            <!--                        onclick="dismissError()"-->
-            <!--                >-->
-            <!--                    Đóng-->
-            <!--                </button>-->
-            <!--            </div>-->
 
-            <!-- ===== FORM CHÍNH ===== -->
             <form
                     id="eventForm"
                     novalidate
-                    th:action="@{'/organizer/event/' + ${event.eventId} + '/edit'}"
+                    th:action="@{/organizer/event/{id}/edit(id=${event.eventId})}"
                     method="post"
                     enctype="multipart/form-data"
                     th:object="${event}"
             >
-                <!-- eventId chỉ tồn tại ở chế độ Edit, dùng để controller biết cần update -->
-                <input type="hidden" th:if="${isEditMode}" th:field="*{eventId}" />
+                <!-- eventId để backend biết đang update event nào -->
+                <input type="hidden" th:field="*{eventId}" />
+                <!-- url banner cũ, dùng để JS biết "đã có banner" khi validate submit -->
+                <!-- ĐÃ SỬA: th:field phải là existBannerUrl (đúng tên field trong EventEditDTO) -->
+                <input type="hidden" id="existingBannerUrl" th:field="*{existBannerUrl}" />
+                <!-- danh sách id ảnh phụ bị xoá, JS sẽ đổ giá trị vào đây trước khi submit -->
+                <input type="hidden" id="removedImageIdsInput" name="removedImageIds" value="" />
+
                 <div class="form-card">
                     <!-- ========================================
-                                     SECTION 1: THÔNG TIN SỰ KIỆN
-                                ======================================== -->
+                         SECTION 1: THÔNG TIN SỰ KIỆN
+                    ======================================== -->
                     <section id="section-event-info" class="form-section">
                         <div class="section-header">
                             <span class="section-num">1</span>
                             <div>
                                 <h3 class="section-title">Thông Tin Sự Kiện</h3>
                                 <p class="section-subtitle">
-                                    Mô tả về sự kiện nổi bật của bạn và tải lên hình ảnh quảng
-                                    bá
+                                    Mô tả về sự kiện nổi bật của bạn và tải lên hình ảnh quảng bá
                                 </p>
                             </div>
                         </div>
 
                         <!-- Ảnh bìa -->
                         <div class="field-card mb-4">
-                            <div
-                                    class="d-flex justify-content-between align-items-center mb-3"
-                            >
+                            <div class="d-flex justify-content-between align-items-center mb-3">
                                 <label class="field-label mb-0">
                                     <span class="material-symbols-outlined text-purple">image</span>
                                     Ảnh Bìa (Banner) Sự Kiện
-                                    <span class="text-required">*</span>
                                 </label>
-                                <span class="mono-tag">KHUYẾN NGHỊ TỶ LỆ 16:9</span>
+                                <span class="mono-tag">ĐỂ TRỐNG NẾU GIỮ ẢNH CŨ</span>
                             </div>
 
                             <div class="upload-zone" id="bannerUploadZone" onclick="document.getElementById('bannerFileInput').click()">
@@ -119,33 +94,33 @@
                                         class="d-none"
                                         onchange="handleBannerFile(event)"
                                 />
+                                <!-- ĐÃ SỬA: event.existBannerUrl thay cho event.existingBannerUrl -->
                                 <div id="bannerPlaceholder"
-                                     th:class="${isEditMode and event.banner != null and !event.banner.isEmpty()} ? 'upload-placeholder d-none' : 'upload-placeholder'">
+                                     class="upload-placeholder"
+                                     th:classappend="${event.existBannerUrl != null and !#strings.isEmpty(event.existBannerUrl)} ? 'd-none' : ''">
                                     <div class="upload-icon-wrap mx-auto">
                                         <span class="material-symbols-outlined">landscape</span>
                                     </div>
                                     <p class="fw-bold mb-1" style="font-size: 11.5px">
                                         Thêm ảnh bìa sự kiện
                                     </p>
-                                    <span class="upload-hint"
-                                    >(Tỷ lệ khuyến nghị 16:9 – ví dụ: 1280×720 pixels)</span
-                                    >
+                                    <span class="upload-hint">(Tỷ lệ khuyến nghị 16:9 – ví dụ: 1280×720 pixels)</span>
                                 </div>
-                                <!-- Khi Edit: chỉ chọn ảnh mới nếu muốn thay banner, không thì giữ nguyên banner cũ -->
                                 <img
                                         id="bannerPreview"
-                                        th:src="${isEditMode} ? ${event.banner} : ''"
-                                        th:class="${isEditMode and event.banner != null and !event.banner.isEmpty()} ? 'banner-preview' : 'banner-preview d-none'"
+                                        th:src="${event.existBannerUrl}"
                                         alt="Xem trước ảnh bìa"
+                                        class="banner-preview"
+                                        th:classappend="${event.existBannerUrl != null and !#strings.isEmpty(event.existBannerUrl)} ? '' : 'd-none'"
                                 />
                                 <div
                                         id="bannerHoverOverlay"
-                                        class="upload-hover-overlay d-none"
+                                        class="upload-hover-overlay"
+                                        th:classappend="${event.existBannerUrl != null and !#strings.isEmpty(event.existBannerUrl)} ? '' : 'd-none'"
                                 >
                                     <span class="material-symbols-outlined">cloud_upload</span>
                                     <span>Thay đổi ảnh bìa</span>
                                 </div>
-
                             </div>
                             <div id="bannerError" style="color:red"></div>
                             <div class="text-danger"
@@ -155,10 +130,6 @@
                             </div>
                         </div>
 
-                        <div class="text-danger"
-                             th:if="${#fields.hasErrors('banner')}"
-                             th:errors="*{banner}">
-                        </div>
                         <!-- Thư viện ảnh -->
                         <div class="field-card mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -169,9 +140,8 @@
                                 <span class="mono-tag" id="galleryCount">0 ĐÃ THÊM</span>
                             </div>
                             <p class="field-hint mb-3">
-                                Cung cấp hình ảnh bổ sung hiển thị trong phần mô tả khi
-                                khách hàng mua vé (chân dung nghệ sĩ, sơ đồ bố trí, bản đồ
-                                phân khu).
+                                Cung cấp hình ảnh bổ sung hiển thị trong phần mô tả khi khách hàng mua vé.
+                                Bấm dấu X trên ảnh cũ để gỡ bỏ khỏi sự kiện.
                             </p>
 
                             <div class="row g-3 align-items-end">
@@ -191,7 +161,6 @@
                                             onchange="handleGalleryFiles(event)"
                                             multiple
                                             class="d-none"
-
                                     />
                                 </div>
                                 <div id="galleryErr"></div>
@@ -202,11 +171,8 @@
                         <!-- Tên, danh mục, mô tả -->
                         <div class="field-card">
                             <input type="hidden" th:field="*{organizerId}">
-                            <!-- Tên sự kiện -->
                             <div class="mb-4">
-                                <div
-                                        class="d-flex justify-content-between align-items-center mb-1"
-                                >
+                                <div class="d-flex justify-content-between align-items-center mb-1">
                                     <label for="eventName" class="field-label mb-0">
                                         Tên Sự Kiện <span class="text-required">*</span>
                                     </label>
@@ -216,14 +182,10 @@
                                         type="text"
                                         id="eventName"
                                         th:field="*{title}"
-                                        name="title"
                                         class="form-control field-input field-input-lg"
                                         maxlength="120"
                                         placeholder="Nhập tên hấp dẫn cho sự kiện của bạn..."
-                                        oninput="
-                        document.getElementById('nameCounter').textContent =
-                          this.value.length + ' / 120'
-                      "
+                                        oninput="document.getElementById('nameCounter').textContent = this.value.length + ' / 120'"
                                 />
                                 <div class="text-danger"
                                      style="font-size: small"
@@ -232,17 +194,11 @@
                                 </div>
                             </div>
 
-                            <!-- Danh mục -->
                             <div class="mb-4">
                                 <label for="category" class="field-label">
                                     Danh Mục Sự Kiện <span class="text-required">*</span>
                                 </label>
-                                <select
-                                        id="category"
-                                        name="categoryId"
-                                        th:field="*{categoryId}"
-                                        class="form-select field-input"
-                                >
+                                <select id="category" th:field="*{categoryId}" class="form-select field-input">
                                     <option value="">-- Chọn Danh Mục --</option>
                                     <option th:each="cat:${eventCategoryList}"
                                             th:value="${cat.categoryId}"
@@ -256,17 +212,14 @@
                                 </div>
                             </div>
 
-                            <!-- Mô tả -->
                             <div>
                                 <label for="description" class="field-label">
-                                    Mô Tả Chi Tiết / Nội Dung Chương Trình
-                                    <span class="text-required">*</span>
+                                    Mô Tả Chi Tiết / Nội Dung Chương Trình <span class="text-required">*</span>
                                 </label>
                                 <textarea
                                         id="description"
                                         maxlength="5000"
                                         th:field="*{description}"
-                                        name="description"
                                         class="form-control field-input"
                                         rows="8"
                                         placeholder="Nhập lịch trình chi tiết, danh sách nghệ sĩ/khách mời đặc biệt, quy định trang phục tham dự và các chính sách hoàn vé..."
@@ -282,36 +235,30 @@
                     <!-- /section-1 -->
 
                     <!-- ========================================
-                                     SECTION 3: THỜI GIAN & ĐỊA ĐIỂM
-                                ======================================== -->
+                         SECTION 2: THỜI GIAN & ĐỊA ĐIỂM
+                    ======================================== -->
                     <section id="section-date-venue" class="form-section">
                         <div class="section-header">
                             <span class="section-num">2</span>
                             <div>
                                 <h3 class="section-title">Thời Gian &amp; Địa Điểm</h3>
                                 <p class="section-subtitle">
-                                    Chọn ngày diễn ra sự kiện và địa điểm tổ chức đã được xác
-                                    minh trong hệ thống
+                                    Chọn ngày diễn ra sự kiện và địa điểm tổ chức đã được xác minh trong hệ thống
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Chọn ngày -->
                         <div class="field-card mb-4">
                             <label class="field-label">
-                    <span class="material-symbols-outlined text-purple"
-                    >calendar_today</span
-                    >
+                                <span class="material-symbols-outlined text-purple">calendar_today</span>
                                 Ngày Diễn Ra Sự Kiện <span class="text-required">*</span>
                             </label>
                             <p class="field-hint">
-                                Khi chỉnh sửa ngày này, lịch trình biểu diễn bên dưới sẽ tự
-                                động đồng bộ theo.
+                                Khi chỉnh sửa ngày này, lịch trình biểu diễn bên dưới sẽ tự động đồng bộ theo.
                             </p>
                             <div style="max-width: 280px" class="mt-2">
                                 <input
                                         type="date"
-                                        name="eventDate"
                                         th:field="*{eventDate}"
                                         id="inp-date"
                                         class="form-control field-input"
@@ -328,77 +275,65 @@
                         <!-- Địa điểm tổ chức -->
                         <div class="field-card" id="section-venue">
                             <label class="field-label">
-                    <span class="material-symbols-outlined text-purple"
-                    >location_on</span
-                    >
-                                Địa Điểm Tổ Chức Sự Kiện
-                                <span class="text-required">*</span>
+                                <span class="material-symbols-outlined text-purple">location_on</span>
+                                Địa Điểm Tổ Chức Sự Kiện <span class="text-required">*</span>
                             </label>
                             <p class="field-hint">
-                                Vui lòng điền thông tin chi tiết về địa điểm tổ chức để hệ
-                                thống tự động phát hành in lên phôi vé khách hàng.
+                                Vui lòng điền thông tin chi tiết về địa điểm tổ chức để hệ thống tự động phát hành in lên phôi vé khách hàng.
                             </p>
 
                             <label class="tier-field-label mt-3">
-                                Tên Địa Điểm / Nhà Thi Đấu
-                                <span class="text-required">*</span>
+                                Tên Địa Điểm / Nhà Thi Đấu <span class="text-required">*</span>
                             </label>
                             <input
                                     type="text"
                                     id="placeName"
-                                    name="placeName"
                                     th:field="*{venueName}"
                                     class="form-control field-input mt-1"
                                     placeholder="Ví dụ: Sân vận động Mỹ Đình, Trung tâm Triển lãm SECC sảnh A, Nhà thi đấu Phú Thọ..."
-                                    oninput="updateAddressPreview()"
                             />
                             <div class="text-danger"
                                  th:if="${#fields.hasErrors('venueName')}"
                                  th:errors="*{venueName}">
                             </div>
                             <div class="row g-3 mt-1">
+                                <!-- ĐÃ SỬA: address -> addressEdit -->
                                 <div class="col-12 col-md-4">
-                                    <label class="tier-field-label"
-                                    > Thành Phố
-                                        <span class="text-required">*</span></label
-                                    >
+                                    <label class="tier-field-label"> Thành Phố <span class="text-required">*</span></label>
                                     <select
                                             id="province"
-                                            name="province"
-                                            th:field="*{address.ward.city.id}"
+                                            th:field="*{addressEdit.ward.city.id}"
                                             class="form-select field-input mt-1"
-                                            onchange="updateAddressPreview()"
                                     >
                                         <option value="">-- Thành phố --</option>
                                         <option th:each="city:${citys}"
                                                 th:value="${city.id}"
                                                 th:text="${city.name}"
                                         ></option>
-
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('address.ward.city.id')}"
-                                         th:errors="*{address.ward.city.id}">
+                                         th:if="${#fields.hasErrors('addressEdit.ward.city.id')}"
+                                         th:errors="*{addressEdit.ward.city.id}">
                                     </div>
                                 </div>
 
                                 <div class="col-12 col-md-4">
-                                    <label class="tier-field-label"
-                                    >Phường
-                                        <span class="text-required">*</span></label
-                                    >
+                                    <label class="tier-field-label">Phường <span class="text-required">*</span></label>
+                                    <!-- ward hiện tại render sẵn 1 option, JS sẽ nạp lại đầy đủ danh sách và chọn đúng -->
                                     <select id="ward"
-                                            name="ward"
-                                            th:field="*{address.ward.wardId}"
-                                            class="form-select field-input mt-1">
-                                        <option value="">Chọn Thành Phố Trước</option>
-
+                                            th:field="*{addressEdit.ward.wardId}"
+                                            class="form-select field-input mt-1"
+                                            th:attr="data-selected-ward-id=${event.addressEdit != null and event.addressEdit.ward != null} ? ${event.addressEdit.ward.wardId} : ''">
+                                        <option th:if="${event.addressEdit != null and event.addressEdit.ward != null}"
+                                                th:value="${event.addressEdit.ward.wardId}"
+                                                th:text="${event.addressEdit.ward.name}"
+                                                selected></option>
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('address.ward.wardId')}"
-                                         th:errors="*{address.ward.wardId}">
+                                         th:if="${#fields.hasErrors('addressEdit.ward.wardId')}"
+                                         th:errors="*{addressEdit.ward.wardId}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-4">
@@ -406,82 +341,54 @@
                                     <input
                                             type="text"
                                             id="street"
-                                            name="street"
-                                            th:field="*{address.specieladdress}"
+                                            th:field="*{addressEdit.specieladdress}"
                                             class="form-control field-input mt-1"
                                             placeholder="Ví dụ: Số 1 Lữ Gia, Thăng Long Blvd..."
-                                            oninput="updateAddressPreview()"
                                     />
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('address.specieladdress')}"
-                                         th:errors="*{address.specieladdress}">
+                                         th:if="${#fields.hasErrors('addressEdit.specieladdress')}"
+                                         th:errors="*{addressEdit.specieladdress}">
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </section>
-                    <!-- /section-3 -->
+                    <!-- /section-2 -->
 
                     <!-- ========================================
-                                     SECTION 4: KHUNG GIỜ & MỐC THỜI GIAN
-                                ======================================== -->
+                         SECTION 3: KHUNG GIỜ & MỐC THỜI GIAN
+                    ======================================== -->
                     <section id="section-schedule" class="form-section">
                         <div class="section-header">
                             <span class="section-num">3</span>
                             <div>
-                                <h3 class="section-title">
-                                    Khung Giờ Đón Khách &amp; Lịch Trình Chi Tiết
-                                </h3>
+                                <h3 class="section-title">Khung Giờ Đón Khách &amp; Lịch Trình Chi Tiết</h3>
                                 <p class="section-subtitle">
-                                    Thiết lập khung giờ đón khách, thời lượng dự kiến và các
-                                    mốc trình diễn lịch trình nội bộ
+                                    Thiết lập khung giờ đón khách, thời lượng dự kiến và các mốc trình diễn lịch trình nội bộ
                                 </p>
                             </div>
                         </div>
 
                         <div class="field-card">
-                            <!-- Badge đồng bộ ngày -->
-                            <div
-                                    class="date-sync-badge mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2"
-                            >
+                            <div class="date-sync-badge mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
                                 <div class="d-flex align-items-center gap-2">
-                      <span
-                              class="material-symbols-outlined"
-                              style="color: #7c3aed; font-size: 16px"
-                      >calendar_today</span
-                      >
+                                    <span class="material-symbols-outlined" style="color: #7c3aed; font-size: 16px">calendar_today</span>
                                     <span>Ngày Sự Kiện:</span>
                                     <strong id="showtimeDateBadge" class="date-badge-value"
-                                    >Chưa thiết lập</strong
-                                    >
+                                            th:text="${event.eventDate != null} ? ${event.eventDate} : 'Chưa thiết lập'"
+                                    >Chưa thiết lập</strong>
                                 </div>
-                                <span class="date-sync-hint"
-                                >Tự động đồng bộ từ Mục 3 ở trên</span
-                                >
+                                <span class="date-sync-hint">Tự động đồng bộ từ Mục 2 ở trên</span>
                             </div>
 
-                            <!-- Giờ mở cửa / kết thúc -->
                             <div class="row g-4 mb-4">
                                 <div class="col-12 col-sm-6">
                                     <label for="startTime" class="field-label">
-                        <span
-                                class="material-symbols-outlined text-purple"
-                                style="font-size: 16px"
-                        >login</span
-                        >
-                                        Giờ Mở Cửa Đón Khách
-                                        <span class="text-required">*</span>
+                                        <span class="material-symbols-outlined text-purple" style="font-size: 16px">login</span>
+                                        Giờ Mở Cửa Đón Khách <span class="text-required">*</span>
                                     </label>
-                                    <input
-                                            type="time"
-                                            id="startTime"
-                                            th:field="*{startTime}"
-                                            name="startTime"
-                                            class="form-control field-input"
-                                            value="19:00"
-                                    />
+                                    <input type="time" id="startTime" th:field="*{startTime}" class="form-control field-input" />
                                     <div class="text-danger"
                                          style="font-size: small"
                                          th:if="${#fields.hasErrors('startTime')}"
@@ -490,22 +397,10 @@
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <label for="endTime" class="field-label">
-                        <span
-                                class="material-symbols-outlined text-purple"
-                                style="font-size: 16px"
-                        >logout</span
-                        >
-                                        Giờ Kết Thúc Dự Kiến
-                                        <span class="text-required">*</span>
+                                        <span class="material-symbols-outlined text-purple" style="font-size: 16px">logout</span>
+                                        Giờ Kết Thúc Dự Kiến <span class="text-required">*</span>
                                     </label>
-                                    <input
-                                            type="time"
-                                            id="endTime"
-                                            th:field="*{endTime}"
-                                            name="endTime"
-                                            class="form-control field-input"
-                                            value="22:30"
-                                    />
+                                    <input type="time" id="endTime" th:field="*{endTime}" class="form-control field-input" />
                                     <div class="text-danger"
                                          style="font-size: small"
                                          th:if="${#fields.hasErrors('endTime')}"
@@ -514,117 +409,84 @@
                                 </div>
                             </div>
 
-                            <!-- Mốc thời gian sự kiện -->
                             <div class="border-top pt-4">
-                                <div
-                                        class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3"
-                                >
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                     <div>
                                         <h4 class="ticket-section-title">
-                          <span
-                                  class="material-symbols-outlined text-purple"
-                                  style="font-size: 16px"
-                          >route</span
-                          >
+                                            <span class="material-symbols-outlined text-purple" style="font-size: 16px">route</span>
                                             Mốc Thời Gian Sự Kiện
                                         </h4>
                                         <p class="field-hint mb-0">
-                                            Thiết lập các mốc trình diễn / nội dung chương trình
-                                            theo thời gian.
+                                            Thiết lập các mốc trình diễn / nội dung chương trình theo thời gian.
                                         </p>
                                     </div>
                                 </div>
 
+                                <!-- danh sách agenda sẽ được JS render lại từ serverTimeline -->
                                 <div id="agendaList" class="agenda-wrap">
                                     <div class="agenda-empty" id="agendaEmpty">
-                                        Chưa có mốc thời gian nào được cấu hình. Nhấp "Thêm mốc
-                                        thời gian mới" phía dưới để bắt đầu!
+                                        Chưa có mốc thời gian nào được cấu hình. Nhấp "Thêm mốc thời gian mới" phía dưới để bắt đầu!
                                     </div>
                                 </div>
 
-                                <button
-                                        type="button"
-                                        class="btn-add-agenda mt-3"
-                                        onclick="addAgendaItem()"
-                                >
+                                <button type="button" class="btn-add-agenda mt-3" onclick="addAgendaItem()">
                                     <span class="material-symbols-outlined">add_circle</span>
                                     Thêm mốc thời gian mới
                                 </button>
                             </div>
                         </div>
                     </section>
-                    <!-- /section-4 -->
+                    <!-- /section-3 -->
 
                     <!-- ========================================
-                                     SECTION 5: PHÂN KHÚC VÉ MỞ BÁN
-                                ======================================== -->
+                         SECTION 4: PHÂN KHÚC VÉ MỞ BÁN
+                    ======================================== -->
                     <section id="section-tickets" class="form-section">
                         <div class="section-header">
                             <span class="section-num">4</span>
                             <div>
                                 <h3 class="section-title">Phân Khúc Vé Mở Bán</h3>
                                 <p class="section-subtitle">
-                                    Thiết lập các mốc giá và phân hạng vé ban đầu phát hành
-                                    cho sự kiện (Thường, VIP, Thẻ mời...)
+                                    Cập nhật các mốc giá và phân hạng vé cho sự kiện (Thường, VIP, Thẻ mời...).
                                 </p>
                             </div>
                         </div>
 
                         <div class="field-card">
-                            <div
-                                    class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3"
-                            >
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                                 <div>
                                     <h4 class="ticket-section-title">
-                        <span
-                                class="material-symbols-outlined text-purple"
-                                style="font-size: 16px"
-                        >confirmation_number</span
-                        >
+                                        <span class="material-symbols-outlined text-purple" style="font-size: 16px">confirmation_number</span>
                                         Các Phân Khúc Vé Mở Bán
                                     </h4>
                                     <p class="field-hint mb-0">
-                                        Mở bán các hạng vé GA, VIP, Standard hoặc phân loại vé
-                                        mới.
+                                        Mở bán các hạng vé GA, VIP, Standard hoặc phân loại vé mới.
                                     </p>
                                 </div>
-                                <button
-                                        type="button"
-                                        id="createTicketTier"
-                                        class="btn btn-purple-solid"
-                                        onclick="addTicketTier()"
-                                >
-                      <span
-                              class="material-symbols-outlined"
-                              style="font-size: 15px"
-                      >add</span
-                      >
+                                <button type="button" id="createTicketTier" class="btn btn-purple-solid" onclick="addTicketTier()">
+                                    <span class="material-symbols-outlined" style="font-size: 15px">add</span>
                                     Tạo Hạng Vé
                                 </button>
                             </div>
 
                             <div id="ticketTiersEmpty" class="ticket-empty-state">
-                                Chưa có phân khúc vé nào được cấu hình. Nhấp "Tạo Hạng Vé"
-                                để thiết lập giá trị đầu tiên!
+                                Chưa có phân khúc vé nào được cấu hình. Nhấp "Tạo Hạng Vé" để thiết lập giá trị đầu tiên!
                             </div>
                             <div id="ticketTiersContainer"></div>
+                            <!-- ĐÃ SỬA: ticketTypes -> ticketTypesEdit -->
                             <div class="text-danger"
                                  style="font-size: small"
-                                 th:if="${#fields.hasErrors('ticketTypes')}"
-                                 th:errors="*{ticketTypes}">
+                                 th:if="${#fields.hasErrors('ticketTypesEdit')}"
+                                 th:errors="*{ticketTypesEdit}">
                             </div>
                         </div>
                     </section>
-                    <!-- ===== NÚT HÀNH ĐỘNG ===== -->
-                    <div
-                            class="form-actions border-top pt-4 mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-end gap-3"
-                    >
-                        <button
-                                type="submit"
-                                class="btn btn-publish w-100 w-sm-auto"
-                        >
-                            <span class="material-symbols-outlined" th:text="${isEditMode} ? 'save' : 'celebration'">celebration</span>
-                            <span th:text="${isEditMode} ? 'Lưu Thay Đổi' : 'Đăng Sự Kiện'">Đăng Sự Kiện</span>
+                    <!-- /section-4 -->
+
+                    <div class="form-actions border-top pt-4 mt-2 d-flex flex-column flex-sm-row align-items-center justify-content-end gap-3">
+                        <button type="submit" class="btn btn-publish w-100 w-sm-auto">
+                            <span class="material-symbols-outlined">save</span>
+                            Cập Nhật Sự Kiện
                         </button>
                     </div>
                 </div>
@@ -637,26 +499,18 @@
 </div>
 <!-- /page-wrapper -->
 
-<!-- Toast thành công -->
 <div class="success-toast d-none" id="successToast">
     <span class="material-symbols-outlined">check_circle</span>
-    Sự kiện đã được lưu thành công!
+    Sự kiện đã được cập nhật thành công!
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- JS tùy chỉnh -->
+<!-- ĐÃ SỬA: ticketTypesEdit / timeLineEdit / existImages thay cho tên cũ -->
 <script th:inline="javascript">
-
-    // Dữ liệu khởi tạo cho JS. Ở chế độ EDIT: đầy đủ dữ liệu event hiện có (kèm id thật trong DB).
-    // Ở chế độ CREATE: chỉ khác rỗng khi có lỗi validate được server trả về (form redisplay).
-    const isEditMode   = /*[[${isEditMode}]]*/ false;
-    const serverTickets = /*[[${event.ticketTypes}]]*/ [];
-    const serverAgenda  = /*[[${event.timeLine}]]*/ [];
-    const serverGallery = /*[[${event.existingImages}]]*/ [];   // [{id, url}]
-    const serverBanner  = /*[[${event.banner}]]*/ '';
-
+    const serverTickets = /*[[${event.ticketTypesEdit}]]*/ [];
+    const serverTimeline = /*[[${event.timeLineEdit}]]*/ [];
+    const serverExistingImages = /*[[${event.existImages}]]*/ [];
 </script>
-<script th:src="@{/organizer/js/eventform.js}"></script>
+<script th:src="@{/organizer/js/editevent.js}"></script>
 </body>
 </html>

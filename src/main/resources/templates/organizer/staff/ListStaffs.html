@@ -1,314 +1,313 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>EventHub – Quản lý Thành viên</title>
+        <!DOCTYPE html>
+        <html lang="vi" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+        <head>
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <title>EventHub – Quản lý Thành viên</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-          rel="stylesheet"/>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+                  rel="stylesheet"/>
 
-    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}" href="/organizer/css/SideBar.css"/>
-    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}" href="/organizer/css/Header.css"/>
-    <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}" href="/organizer/css/ListStaffs.css"/>
-
-
-</head>
-<body>
-
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
-
-<th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
-
-<div class="main-wrapper">
-
-    <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
-
-    <main>
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="page-header">
-                <h2>Thành viên</h2>
-                <p class="mb-0">Quản lý kiểm soát viên soát vé di động, đối soát tài chính và phân quyền hệ thống.</p>
-            </div>
-            <button class="btn btn-gradient-pill" data-bs-toggle="modal" data-bs-target="#addStaffModal">
-                <i class="fa-solid fa-plus me-1"></i> Thêm thành viên
-            </button>
-        </div>
-        <form method="get" id="filterForm">
-            <div class="search-full-width">
-                <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                <input type="text" name="keyword" placeholder="Tìm kiếm thành viên" th:value="${keyword}"/>
-            </div>
-
-            <div class="d-flex justify-content-end mb-2">
-                <select name="roleId" class="f-control" onchange="this.form.submit()">
-                    <option value="">Tất cả</option>
-                    <option th:each="role : ${roles}"
-                            th:value="${role.id}"
-                            th:text="${role.name}"
-                            th:selected="${#strings.toString(roleId) == #strings.toString(role.id)}">
-                    </option>
-                </select>
-            </div>
-        </form>
-        <div class="table-container">
-            <table class="custom-table">
-                <thead>
-                <tr>
-                    <th>Mã TV</th>
-                    <th>Tên thành viên</th>
-                    <th>Vai trò</th>
-                    <th>Email</th>
-                    <th>Hành động</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="staff, iterStat : ${staffList}">
-                    <td class="text-muted" th:text="${iterStat.count}"></td>
-
-                    <td class="member-name" th:text="${staff.Name}"></td>
-
-                    <td><span class="badge-role badge-chu-su-kien" th:text="${staff.role}"></span></td>
-
-                    <td class="member-email" th:text="${staff.email}"></td>
-
-                    <td th:if="${staff.role != 'ROLE_ORGANIZER'}" >
-                        <a class="action-link"
-                           th:href="@{/organizer/event/{eventId}/members/edit(eventId=${eventId},staffId=${staff.memberId},currentPage=${currentPage})}">
-                            Xem chi tiết
-                        </a>
-                        <span class="action-separator">|</span>
-                        <span class="action-delete">Xóa</span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="pagination-container" th:if="${totalPages > 1}">
-
-            <!-- Prev -->
-            <a th:href="@{/organizer/event/{id}/members(id=${eventId},
-                  page=${currentPage - 1},
-                  keyword=${keyword},
-                  roleId=${roleId})}"
-               class="page-item-custom"
-               th:if="${currentPage > 0}"
-               th:classappend="${currentPage == 0} ? 'disabled'">
-                <i class="fa-solid fa-chevron-left"></i>
-            </a>
-
-            <!-- Số trang -->
-            <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-               th:href="@{/organizer/event/{id}/members(id=${eventId},
-                  page=${i},
-                  keyword=${keyword},
-                  roleId=${roleId})}"
-               class="page-item-custom"
-               th:classappend="${i == currentPage} ? 'active'"
-
-               th:text="${i + 1}">
-            </a>
-
-            <!-- Next -->
-            <a th:href="@{/organizer/event/{id}/members(id=${eventId},
-                  page=${currentPage + 1},
-                  keyword=${keyword},
-                  roleId=${roleId})}"
-               class="page-item-custom"
-               th:if="${currentPage < totalPages-1}"
-               th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-
-        </div>
-    </main>
-</div>
+            <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}" href="/organizer/css/SideBar.css"/>
+            <link rel="stylesheet" th:href="@{/organizer/css/Header.css}" href="/organizer/css/Header.css"/>
+            <link rel="stylesheet" th:href="@{/organizer/css/ListStaffs.css}" href="/organizer/css/ListStaffs.css"/>
 
 
-<!-- ================================================================
-     MODAL 1: THÊM THÀNH VIÊN MỚI
-     action  → th:action="@{/organizer/staff/invite}" method="post"
-     ================================================================ -->
-<div class="modal fade" id="addStaffModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        </head>
+        <body>
 
-            <div class="modal-head">
-                <div>
-                    <h5>Mời nhân viên mới</h5>
-                    <p>Cấp tài khoản tham gia vận hành nhanh chóng.</p>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+        <th:block th:replace="~{/organizer/Share/sidebar::sidebar}"></th:block>
+
+        <div class="main-wrapper">
+
+            <th:block th:replace="~{/organizer/Share/Header::header}"></th:block>
+
+            <main>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="page-header">
+                        <h2>Thành viên</h2>
+                        <p class="mb-0">Quản lý kiểm soát viên soát vé di động, đối soát tài chính và phân quyền hệ thống.</p>
+                    </div>
+                    <button class="btn btn-gradient-pill" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+                        <i class="fa-solid fa-plus me-1"></i> Thêm thành viên
+                    </button>
                 </div>
-                <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
+                <form method="get" id="filterForm">
+                    <div class="search-full-width">
+                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                        <input type="text" name="keyword" placeholder="Tìm kiếm thành viên" th:value="${keyword}"/>
+                    </div>
 
-            <div class="modal-body">
-                <div th:if="${errorMessage}" id="errorAlert" class="alert-modal alert-error">
-                    <span style="color: red" th:text="${errorMessage}"></span>
+                    <div class="d-flex justify-content-end mb-2">
+                        <select name="roleId" class="f-control" onchange="this.form.submit()">
+                            <option value="">Tất cả</option>
+                            <option th:each="role : ${roles}"
+                                    th:value="${role.id}"
+                                    th:text="${role.name}"
+                                    th:selected="${#strings.toString(roleId) == #strings.toString(role.id)}">
+                            </option>
+                        </select>
+                    </div>
+                </form>
+                <div th:if="${errorDelete}"  class="alert-modal alert-error">
+                    <span style="color: red" th:text="${errorDelete}"></span>
                 </div>
-                <form th:action="@{/organizer/event/{id}/members/invite(id=${eventId})}" method="post"
-                      th:object="${inviteMember}">
+                <div class="table-container">
+                    <table class="custom-table">
+                        <thead>
+                        <tr>
+                            <th>Mã TV</th>
+                            <th>Tên thành viên</th>
+                            <th>Vai trò</th>
+                            <th>Email</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="staff, iterStat : ${staffList}">
+                            <td class="text-muted" th:text="${iterStat.count}"></td>
+                            <td class="member-name" th:text="${staff.Name}"></td>
+                            <td><span class="badge-role badge-chu-su-kien" th:text="${staff.role}"></span></td>
+                            <td class="member-email" th:text="${staff.email}"></td>
+                            <td th:unless="${staff.role == 'ROLE_ORGANIZER' || staff.email == emailCurrentUser }" >
+                                <a class="action-link"
+                                   th:href="@{/organizer/event/{eventId}/members/edit(eventId=${eventId},staffId=${staff.memberId},currentPage=${currentPage})}">
+                                    Xem chi tiết
+                                </a>
+                                <span class="action-separator">|</span>
+                                <a class="action-link"
+                                   th:href="@{/organizer/event/{eventId}/members/delete(eventId=${eventId},staffId=${staff.memberId})}">
+                                    Xóa
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <!-- Thông tin cơ bản -->
-                    <div class="row g-2 mb-1">
-                        <div class="col-6">
+                <div class="pagination-container" th:if="${totalPages > 1}">
+
+                    <!-- Prev -->
+                    <a th:href="@{/organizer/event/{id}/members(id=${eventId},
+                          page=${currentPage - 1},
+                          keyword=${keyword},
+                          roleId=${roleId})}"
+                       class="page-item-custom"
+                       th:if="${currentPage > 0}"
+                       th:classappend="${currentPage == 0} ? 'disabled'">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+
+                    <!-- Số trang -->
+                    <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                       th:href="@{/organizer/event/{id}/members(id=${eventId},
+                          page=${i},
+                          keyword=${keyword},
+                          roleId=${roleId})}"
+                       class="page-item-custom"
+                       th:classappend="${i == currentPage} ? 'active'"
+                       th:text="${i + 1}">
+                    </a>
+
+                    <!-- Next -->
+                    <a th:href="@{/organizer/event/{id}/members(id=${eventId},
+                          page=${currentPage + 1},
+                          keyword=${keyword},
+                          roleId=${roleId})}"
+                       class="page-item-custom"
+                       th:if="${currentPage < totalPages-1}"
+                       th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+
+                </div>
+            </main>
+        </div>
+
+
+        <!-- ================================================================
+             MODAL 1: THÊM THÀNH VIÊN MỚI
+             action  → th:action="@{/organizer/staff/invite}" method="post"
+             ================================================================ -->
+        <div class="modal fade" id="addStaffModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-head">
+                        <div>
+                            <h5>Mời nhân viên mới</h5>
+                            <p>Cấp tài khoản tham gia vận hành nhanh chóng.</p>
+                        </div>
+                        <button type="button" class="btn-close-custom" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div th:if="${errorMessage}" id="errorAlert" class="alert-modal alert-error">
+                            <span style="color: red" th:text="${errorMessage}"></span>
+                        </div>
+                        <form th:action="@{/organizer/event/{id}/members/invite(id=${eventId})}" method="post"
+                              th:object="${inviteMember}">
+
+                            <!-- Thông tin cơ bản -->
+                            <div class="row g-2 mb-1">
+                                <div class="col-6">
+                                    <div class="f-group">
+                                        <label class="f-label" for="add-email">Email liên kết</label>
+                                        <input id="add-email" th:field="*{email}" type="email" class="f-control"
+                                               placeholder="name@company.com" required/>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="f-group">
-                                <label class="f-label" for="add-email">Email liên kết</label>
-                                <input id="add-email" th:field="*{email}" type="email" class="f-control"
-                                       placeholder="name@company.com" required/>
+                                <label class="f-label" for="add-role">Vai trò mặc định</label>
+                                <select id="add-role" th:field="*{roleId}" class="f-control">
+                                    <option th:each="role:${roles}"
+                                            th:value="${role.id}"
+                                            th:text="${role.name}"></option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="f-group">
-                        <label class="f-label" for="add-role">Vai trò mặc định</label>
-                        <select id="add-role" th:field="*{roleId}" class="f-control">
-                            <option th:each="role:${roles}"
-                                    th:value="${role.id}"
-                                    th:text="${role.name}"></option>
-                        </select>
-                    </div>
+                            <!-- Phân quyền chi tiết -->
+                            <div class="perm-block">
+                                <div class="perm-block-title">Quyền hạn</div>
+                                <div class="perm-item" th:each="permission:${permissions}">
+                                    <div class="perm-info">
+                                        <span class="perm-desc" th:text="${permission.description}"></span>
+                                    </div>
+                                    <input type="checkbox" th:field="*{permissionId}" name="permissions"
+                                           th:value="${permission.id}" class="perm-check"/>
+                                </div>
 
-                    <!-- Phân quyền chi tiết -->
-                    <div class="perm-block">
-                        <div class="perm-block-title">Quyền hạn</div>
-                        <div class="perm-item" th:each="permission:${permissions}">
-                            <div class="perm-info">
-                                <span class="perm-desc" th:text="${permission.description}"></span>
                             </div>
-                            <input type="checkbox" th:field="*{permissionId}" name="permissions"
-                                   th:value="${permission.id}" class="perm-check"/>
-                        </div>
 
+                            <div class="modal-footer-btns">
+                                <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
+                                <button type="submit" class="btn-submit-modal">Gửi lời mời</button>
+                            </div>
+
+                        </form>
                     </div>
 
-                    <div class="modal-footer-btns">
-                        <button type="button" class="btn-cancel-modal" data-bs-dismiss="modal">Bỏ qua</button>
-                        <button type="submit" class="btn-submit-modal">Gửi lời mời</button>
-                    </div>
-
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-<!-- ================================================================
-     MODAL 2: CHỈNH SỬA QUYỀN LỢI
-     action  → th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post"
-     ================================================================ -->
-<div th:if="${selectedMember != null}" th:classappend="${selectedMember != null} ? 'show d-block' : ''"
-     class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-head">
-                <div>
-                    <h5>Chỉnh sửa quyền lợi</h5>
-                    <p>Tuỳ chỉnh phân quyền thủ công cho Nhân Viên.</p>
                 </div>
-                <a style="text-decoration: none" th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
-                   class="btn-close-custom">
-                    <i class="fa-solid fa-xmark"></i>
-                </a>
             </div>
-
-            <div class="modal-body">
-                <form th:action="@{/organizer/event/{eventId}/members/update(eventId=${eventId})}" method="post" th:object="${selectedMember}">
-                    <input type="hidden" th:field="*{staffId}" />
-                    <input type="hidden" name="currentPage" th:value="${currentPage}">
-                    <!-- Hồ sơ (readonly) -->
-                    <div class="profile-box">
-                        <label class="f-label">Hồ sơ ban đầu</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="f-group mb-0">
-                                    <label class="f-label" for="edit-name">Họ &amp; tên</label>
-                                    <!--  -->
-                                    <input id="edit-name" th:field="*{fullName}" type="text" class="f-control"
-                                           readonly/>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="f-group mb-0">
-                                    <label class="f-label" for="edit-email">Email</label>
-                                    <!--  -->
-                                    <input id="edit-email" th:field="*{email}" type="email" class="f-control" readonly/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="f-group">
-                        <label class="f-label" for="edit-role">Vai trò tổng thể</label>
-                        <select id="edit-role" th:field="*{roleId}" class="f-control">
-                            <option th:each="role:${roles}"
-                                    th:value="${role.id}"
-                                    th:text="${role.name}"></option>
-                        </select>
-                    </div>
-                    <div th:if="${errorMessageEdit}" id="errorAlertEdit" class="alert-modal alert-error">
-                        <span style="color: red" th:text="${errorMessageEdit}"></span>
-                    </div>
-                    <!-- Phân quyền chi tiết -->
-                    <div class="perm-block">
-                        <div class="perm-block-title">Quyền hạn cụ thể</div>
-                        <div class="perm-item" th:each="perms : ${permissions}">
-                            <div class="perm-info">
-                                <span class="perm-desc"
-                                      th:text="${perms.description}">
-                                </span>
-                            </div>
-                            <input type="checkbox"
-                                   th:value="${perms.id}"
-                                   class="perm-check"
-                                   th:field="*{permission}"
-                                   th:checked="${#lists.contains(selectedMember.permission, perms.id)}"/>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer-btns">
-                        <a style="text-decoration:  none;text-align: center"
-                           th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
-                           class="btn-cancel-modal">
-                            Bỏ qua
-                        </a>
-                        <button type="submit" class="btn-submit-modal">Lưu thay đổi</button>
-                    </div>
-
-                </form>
-            </div>
-
         </div>
-    </div>
-</div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/organizer/js/sidebar.js}" src="/organizer/js/sidebar.js"></script>
-<script th:src="@{/organizer/js/Header.js}" src="/organizer/js/Header.js"></script>
-<script>
-    window.onload = function () {
-        const errorDiv = document.getElementById('errorAlert');
-        if (errorDiv) {
-            const modal = new bootstrap.Modal(document.getElementById('addStaffModal'));
-            modal.show();
-        }
-        const errorDivEdit = document.getElementById('errorAlertEdit');
-        console.log(errorDivEdit);
-        if (errorDivEdit) {
-            const modal = new bootstrap.Modal(document.getElementById('editRoleModal'));
-            modal.show();
-        }
-    };
-</script>
-</body>
-</html>
+        <!-- ================================================================
+             MODAL 2: CHỈNH SỬA QUYỀN LỢI
+             action  → th:action="@{/organizer/staff/update/{id}(id=${staff.id})}" method="post"
+             ================================================================ -->
+        <div th:if="${selectedMember != null}" th:classappend="${selectedMember != null} ? 'show d-block' : ''"
+             class="modal fade" id="editRoleModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-head">
+                        <div>
+                            <h5>Chỉnh sửa quyền lợi</h5>
+                            <p>Tuỳ chỉnh phân quyền thủ công cho Nhân Viên.</p>
+                        </div>
+                        <a style="text-decoration: none" th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
+                           class="btn-close-custom">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                    </div>
+
+                    <div class="modal-body">
+                        <form th:action="@{/organizer/event/{eventId}/members/update(eventId=${eventId})}" method="post" th:object="${selectedMember}">
+                            <input type="hidden" th:field="*{staffId}" />
+                            <input type="hidden" name="currentPage" th:value="${currentPage}">
+                            <!-- Hồ sơ (readonly) -->
+                            <div class="profile-box">
+                                <label class="f-label">Hồ sơ ban đầu</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="f-group mb-0">
+                                            <label class="f-label" for="edit-name">Họ &amp; tên</label>
+                                            <!--  -->
+                                            <input id="edit-name" th:field="*{fullName}" type="text" class="f-control"
+                                                   readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="f-group mb-0">
+                                            <label class="f-label" for="edit-email">Email</label>
+                                            <!--  -->
+                                            <input id="edit-email" th:field="*{email}" type="email" class="f-control" readonly/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="f-group">
+                                <label class="f-label" for="edit-role">Vai trò tổng thể</label>
+                                <select id="edit-role" th:field="*{roleId}" class="f-control">
+                                    <option th:each="role:${roles}"
+                                            th:value="${role.id}"
+                                            th:text="${role.name}"></option>
+                                </select>
+                            </div>
+                            <div th:if="${errorMessageEdit}" id="errorAlertEdit" class="alert-modal alert-error">
+                                <span style="color: red" th:text="${errorMessageEdit}"></span>
+                            </div>
+                            <!-- Phân quyền chi tiết -->
+                            <div class="perm-block">
+                                <div class="perm-block-title">Quyền hạn cụ thể</div>
+                                <div class="perm-item" th:each="perms : ${permissions}">
+                                    <div class="perm-info">
+                                        <span class="perm-desc"
+                                              th:text="${perms.description}">
+                                        </span>
+                                    </div>
+                                    <input type="checkbox"
+                                           th:value="${perms.id}"
+                                           class="perm-check"
+                                           th:field="*{permission}"
+                                           th:checked="${#lists.contains(selectedMember.permission, perms.id)}"/>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer-btns">
+                                <a style="text-decoration:  none;text-align: center"
+                                   th:href="@{/organizer/event/{id}/members(id=${eventId},currentPage=${currentPage})}"
+                                   class="btn-cancel-modal">
+                                    Bỏ qua
+                                </a>
+                                <button type="submit" class="btn-submit-modal">Lưu thay đổi</button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:src="@{/organizer/js/sidebar.js}" src="/organizer/js/sidebar.js"></script>
+        <script th:src="@{/organizer/js/Header.js}" src="/organizer/js/Header.js"></script>
+        <script>
+            window.onload = function () {
+                const errorDiv = document.getElementById('errorAlert');
+                if (errorDiv) {
+                    const modal = new bootstrap.Modal(document.getElementById('addStaffModal'));
+                    modal.show();
+                }
+                const errorDivEdit = document.getElementById('errorAlertEdit');
+                console.log(errorDivEdit);
+                if (errorDivEdit) {
+                    const modal = new bootstrap.Modal(document.getElementById('editRoleModal'));
+                    modal.show();
+                }
+            };
+        </script>
+        </body>
+        </html>

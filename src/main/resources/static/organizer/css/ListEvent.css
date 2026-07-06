@@ -461,6 +461,14 @@ html, body {
     color: #e37400;
     border: 1px solid #e37400;
 }
+.status-badge.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.tab-icon-pending {
+    color: #856404;
+}
 /* Event info */
 .event-body {
     flex: 1;
@@ -728,4 +736,48 @@ html, body {
     .pagination-wrapper { flex-direction: column; align-items: center; }
     .event-card-main { flex-direction: column; }
     .event-banner { width: 100%; height: 160px; }
+}
+.filter-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #6b7280;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-tab.active,
+.filter-tab-check.active {
+    background: #6d28d9;   /* tím đậm giống nút All */
+    color: #fff;
+    border-color: #6d28d9;
+}
+
+.filter-tab.active .tab-icon,
+.filter-tab-check.active .tab-icon {
+    color: #fff;
+}
+
+/* Ẩn chấm tròn radio mặc định, để style pill làm chủ đạo */
+.filter-tab-check input[type="radio"] {
+    display: none;
+}
+
+.filter-tab-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #6b7280;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
 }

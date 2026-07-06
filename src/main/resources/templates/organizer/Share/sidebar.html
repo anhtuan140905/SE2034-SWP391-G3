@@ -20,24 +20,31 @@
     </div>
 
     <nav class="sidebar-nav flex-grow-1">
-        <a th:href="@{/organizer/dashboard}" class="nav-item "
+        <a th:href="@{/organizer/dashboard}"
+           class="nav-item"
            th:classappend="${activeMenu == 'dashboard'} ? ' active' : ''">
             <span class="material-symbols-outlined">dashboard</span>
-            <span>Dashboard</span>
+            <span>Tổng Quan</span>
         </a>
-
-        <a href="#" class="nav-item" onclick="setTab(event, 'vouchers')">
+        <a href="#" class="nav-item" onclick="setTab(event,'vouchers')">
             <span class="material-symbols-outlined">local_offer</span>
-            <span>Discount Vouchers</span>
+            <span>Mã giảm giá</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event, 'orders')">
-            <span class="material-symbols-outlined">shopping_basket</span>
-            <span>Orders & Tickets</span>
+        <a th:href="@{/organizer/event/35/orders}" class="nav-item" onclick="setTab(event,'orders')">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span>Đơn hàng</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event, 'staff')">
+        <a href="#" class="nav-item" onclick="setTab(event,'staff')">
             <span class="material-symbols-outlined">groups</span>
-            <span>Staff Permissions</span>
+            <span>Nhân Viên</span>
+        </a>
+        <a th:href="@{/organizer/event/35/checkIn}" class="nav-item" onclick="setTab(event,'checkin')">
+            <span class="material-symbols-outlined">fact_check</span>
+            <span>Check in</span>
+        </a>
+        <a href="#" class="nav-item" onclick="setTab(event,'event-edit')">
+            <span class="material-symbols-outlined">edit_calendar</span>
+            <span>Chỉnh sửa sự kiện</span>
         </a>
     </nav>
-
 </aside>

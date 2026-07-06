@@ -3,27 +3,15 @@
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
     bannerUrl: "",
-
-    // Ảnh thư viện MỚI (file chưa lưu DB) — vẫn dùng blob URL để preview
-    additionalImages: [],
-    galleryFiles: [],
-
-    // Ảnh thư viện ĐÃ CÓ trong DB khi ở chế độ Edit: [{ id, url }]
-    existingImages: [],
-    // id các ảnh cũ user bấm xoá -> gửi lên server để controller xoá thật
-    deletedImageIds: [],
-
-    // id = key nội bộ để React-less render/lookup trong DOM (luôn có, sinh phía client)
-    // dbId = id thật trong DB (null nếu là dòng mới thêm, có giá trị nếu load từ server khi Edit)
-    agenda: [],          // { id, dbId, time, desc }
-    tiers: [],           // { id, dbId, name, zoneName, ... }
-
-    // dbId thật của các tier/agenda đã bị user xoá khỏi form khi Edit -> gửi cho server để DELETE
-    deletedTierIds: [],
-    deletedAgendaIds: [],
-
-    tierErrors: {},      // { [id]: { name?, price?, qty? } }
-    agendaErrors: {},    // { [id]: { time?, desc? } }
+    hasExistingBanner: false,   // true nếu event đã có banner cũ (chưa chọn ảnh mới)
+    existingImages: [],         // [{id, url}] ảnh phụ đã có trên server, chưa bị xoá
+    removedExistingImageIds: [],// id ảnh phụ bị người dùng bấm xoá
+    additionalImages: [],       // blob url preview của ảnh MỚI thêm
+    galleryFiles: [],           // File objects của ảnh MỚI thêm
+    agenda: [],                 // { id, time, desc }
+    tiers: [],                  // { id, ticketTypeId, name, zoneName, rowLetter, cols, totalQty, qty, price, desc }
+    tierErrors: {},             // { [tierId]: { name?, price?, qty? } }
+    agendaErrors: {},           // { [agendaId]: { time?, desc? } }
 };
 
 let tierIdCounter = 1;
@@ -38,16 +26,16 @@ function newAgendaId() {
 
 // ─── KHỞI TẠO ─────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-    // Khôi phục danh sách vé: xảy ra khi (a) Edit sự kiện có sẵn, hoặc
-    // (b) Create nhưng server trả lại form sau lỗi validate (redisplay).
+
+    // ---- Pre-fill hạng vé từ dữ liệu server (có ticketTypeId để backend update đúng bản ghi) ----
     if (typeof serverTickets !== "undefined" && serverTickets && serverTickets.length > 0) {
         state.tiers = serverTickets.map((ticket) => {
             const row = ticket.seat?.row || 1;
             const cols = ticket.seat?.seatNumber || 1;
             return {
                 id: newTierId(),
-                dbId: ticket.id ?? null,   // có giá trị nếu đây là ticket đã tồn tại trong DB
-                name: ticket.displayOrder || "",
+                ticketTypeId: ticket.ticketTypeId ?? null,
+                name: ticket.displayOrder ?? "",
                 zoneName: ticket.zoneName || "",
                 rowLetter: row,
                 cols: cols,
@@ -57,24 +45,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 desc: ticket.description || "",
             };
         });
-        renderTiers();
     }
+    renderTiers();
 
-    // Khôi phục mốc thời gian (agenda/timeline) tương tự ticket ở trên
-    if (typeof serverAgenda !== "undefined" && serverAgenda && serverAgenda.length > 0) {
-        state.agenda = serverAgenda.map((item) => ({
+    // ---- Pre-fill mốc thời gian từ dữ liệu server ----
+    if (typeof serverTimeline !== "undefined" && serverTimeline && serverTimeline.length > 0) {
+        state.agenda = serverTimeline.map((tl) => ({
             id: newAgendaId(),
-            dbId: item.id ?? null,
-            time: item.time || "",
-            desc: item.active || item.desc || "",
+            time: tl.time || "",
+            desc: tl.active || "",
         }));
-        renderAgenda();
     }
+    renderAgenda();
 
-    // Khôi phục ảnh thư viện đã có trong DB (chỉ có ở chế độ Edit)
-    if (typeof serverGallery !== "undefined" && serverGallery && serverGallery.length > 0) {
-        state.existingImages = serverGallery.map((img) => ({ id: img.id, url: img.url }));
-        renderGallery();
+    // ---- Pre-fill ảnh phụ đã có ----
+    if (typeof serverExistingImages !== "undefined" && serverExistingImages && serverExistingImages.length > 0) {
+        state.existingImages = serverExistingImages.map((img) => ({ id: img.id, url: img.url }));
+    }
+    renderGallery();
+
+    // ---- Banner cũ (nếu có) ----
+    const existingBannerInput = document.getElementById("existingBannerUrl");
+    if (existingBannerInput && existingBannerInput.value) {
+        state.hasExistingBanner = true;
     }
 
     const form = document.getElementById("eventForm");
@@ -87,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (startTimeEl) startTimeEl.addEventListener("change", revalidateAgendaTimes);
     if (endTimeEl) endTimeEl.addEventListener("change", revalidateAgendaTimes);
 
-    // Xử lý banner: validate kích thước ảnh (1280×720)
+    // Xử lý banner: validate kích thước ảnh (1280×720) khi chọn ảnh MỚI
     const bannerInput = document.getElementById("bannerFileInput");
     if (bannerInput) {
         bannerInput.addEventListener("change", function () {
@@ -105,7 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (img.width !== 1280 || img.height !== 720) {
                     if (error) error.textContent = "Ảnh phải có kích thước 1280×720 px.";
                     bannerInput.value = "";
-                    clearBanner();
+                    // Không chọn được ảnh mới -> quay lại trạng thái banner cũ (nếu có)
+                    restoreBannerAfterInvalid();
                 }
                 URL.revokeObjectURL(img.src);
             };
@@ -113,25 +107,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Dropdown ward theo city
+    // Dropdown ward theo city — nạp sẵn danh sách ward của city hiện tại và chọn đúng ward cũ
     const cityEl = document.getElementById("province");
     const wardEl = document.getElementById("ward");
     if (cityEl && wardEl) {
+        const preselectedWardId = wardEl.dataset.selectedWardId || "";
+
+        if (cityEl.value) {
+            loadWardsForCity(cityEl.value, preselectedWardId);
+        }
+
         cityEl.addEventListener("change", function () {
-            const cityValue = this.value;
-            if (!cityValue) return;
-            fetch(`/organizer/api/city?cityId=${cityValue}`)
-                .then((r) => r.json())
-                .then((wards) => {
-                    wardEl.innerHTML = '<option value="">--Chọn quận/huyện--</option>';
-                    wards.forEach((w) => {
-                        wardEl.innerHTML += `<option value="${w.wardId}">${w.name}</option>`;
-                    });
-                })
-                .catch((err) => console.error(err));
+            if (!this.value) return;
+            loadWardsForCity(this.value, null); // đổi city -> không giữ ward cũ
         });
     }
 });
+
+function loadWardsForCity(cityId, preselectedWardId) {
+    const wardEl = document.getElementById("ward");
+    fetch(`/organizer/api/city?cityId=${cityId}`)
+        .then((r) => r.json())
+        .then((wards) => {
+            wardEl.innerHTML = '<option value="">--Chọn quận/huyện--</option>';
+            wards.forEach((w) => {
+                const selected = preselectedWardId && String(w.wardId) === String(preselectedWardId) ? "selected" : "";
+                wardEl.innerHTML += `<option value="${w.wardId}" ${selected}>${w.name}</option>`;
+            });
+        })
+        .catch((err) => console.error(err));
+}
 
 // ─── ĐỒNG BỘ NGÀY ─────────────────────────────────────────────────────────────
 function handleDateChange(val) {
@@ -171,10 +176,17 @@ function clearBanner() {
     state.bannerUrl = "";
 }
 
+/** Khi ảnh mới chọn không hợp lệ (sai kích thước) -> quay lại hiển thị banner cũ nếu có */
+function restoreBannerAfterInvalid() {
+    const existingBannerInput = document.getElementById("existingBannerUrl");
+    if (existingBannerInput && existingBannerInput.value) {
+        setBanner(existingBannerInput.value);
+    } else {
+        clearBanner();
+    }
+}
+
 // ─── THƯ VIỆN ẢNH ─────────────────────────────────────────────────────────────
-// Có 2 nhóm ảnh hiển thị chung 1 lưới:
-//   1) state.existingImages: ảnh đã lưu trong DB (chỉ có khi Edit) -> xoá = đưa id vào deletedImageIds
-//   2) state.additionalImages/galleryFiles: ảnh mới chọn ở máy user -> xoá = bỏ khỏi mảng, không gọi server
 function handleGalleryFiles(e) {
     Array.from(e.target.files || []).forEach((file) => {
         state.galleryFiles.push(file);
@@ -184,7 +196,8 @@ function handleGalleryFiles(e) {
     renderGallery();
 }
 
-function removeGalleryImage(idx) {
+/** Xoá ảnh MỚI (chưa lưu server) khỏi danh sách chờ upload */
+function removeNewGalleryImage(idx) {
     URL.revokeObjectURL(state.additionalImages[idx]);
     state.additionalImages.splice(idx, 1);
     state.galleryFiles.splice(idx, 1);
@@ -192,10 +205,10 @@ function removeGalleryImage(idx) {
     renderGallery();
 }
 
-// Xoá 1 ảnh đã có sẵn trong DB (chế độ Edit)
-function removeExistingImage(imageId) {
-    state.deletedImageIds.push(imageId);
+/** Đánh dấu xoá ảnh CŨ (đã có trên server) — sẽ gửi id lên backend khi submit */
+function removeExistingGalleryImage(imageId) {
     state.existingImages = state.existingImages.filter((img) => img.id !== imageId);
+    state.removedExistingImageIds.push(imageId);
     renderGallery();
 }
 
@@ -227,7 +240,7 @@ function renderGallery() {
         <div class="gallery-item">
             <img src="${escHtml(img.url)}" alt="Ảnh đã lưu" loading="lazy"/>
             <button class="gallery-item-del" type="button"
-                    onclick="removeExistingImage(${img.id})" title="Xóa">
+                    onclick="removeExistingGalleryImage(${img.id})" title="Xóa">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>`,
@@ -241,7 +254,7 @@ function renderGallery() {
             <img src="${escHtml(url)}" alt="Ảnh mới ${i + 1}" loading="lazy"/>
             <span class="mono-tag" style="position:absolute;top:6px;left:6px;">MỚI</span>
             <button class="gallery-item-del" type="button"
-                    onclick="removeGalleryImage(${i})" title="Xóa">
+                    onclick="removeNewGalleryImage(${i})" title="Xóa">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>`,
@@ -259,16 +272,11 @@ function revalidateAgendaTimes() {
 }
 
 function addAgendaItem() {
-    state.agenda.push({ id: newAgendaId(), dbId: null, time: "", desc: "" });
+    state.agenda.push({ id: newAgendaId(), time: "", desc: "" });
     renderAgenda();
 }
 
 function deleteAgendaItem(id) {
-    const item = state.agenda.find((a) => a.id === id);
-    // Nếu mốc này đã tồn tại trong DB (đang Edit) -> ghi nhận để server xoá thật khi lưu
-    if (item && item.dbId) {
-        state.deletedAgendaIds.push(item.dbId);
-    }
     state.agenda = state.agenda.filter((a) => a.id !== id);
     delete state.agendaErrors[id];
     renderAgenda();
@@ -279,7 +287,6 @@ function updateAgendaField(id, field, value) {
     if (!item) return;
     item[field] = value;
 
-    // Xóa lỗi field này ngay khi user sửa
     if (state.agendaErrors[id]?.[field]) {
         delete state.agendaErrors[id][field];
         if (Object.keys(state.agendaErrors[id]).length === 0) {
@@ -343,7 +350,6 @@ function renderAgenda() {
             const errs = state.agendaErrors[a.id] || {};
             return `
         <div class="agenda-row" id="ag-${a.id}">
-            <input type="hidden" name="timeLine[${idx}].id" value="${a.dbId ?? ''}" />
             <div class="agenda-dot-wrap">
                 <div class="agenda-dot"></div>
                 ${idx < state.agenda.length - 1 ? '<div class="agenda-line"></div>' : ""}
@@ -354,7 +360,7 @@ function renderAgenda() {
                     <input type="time"
                            class="tier-input${errs.time ? " is-invalid-field" : ""}"
                            value="${escHtml(a.time)}"
-                           name="timeLine[${idx}].time"
+                           name="timeLineEdit[${idx}].time"
                            onchange="updateAgendaField('${a.id}','time',this.value)" />
                     ${errDiv(errs.time)}
                 </div>
@@ -363,7 +369,7 @@ function renderAgenda() {
                     <input type="text"
                            class="tier-input${errs.desc ? " is-invalid-field" : ""}"
                            value="${escHtml(a.desc)}"
-                           name="timeLine[${idx}].active"
+                           name="timeLineEdit[${idx}].active"
                            placeholder="Ví dụ: Mở cửa đón khách và nhạc khởi động pre-show"
                            oninput="updateAgendaField('${a.id}','desc',this.value)" />
                     ${errDiv(errs.desc)}
@@ -390,12 +396,12 @@ function computeTotalQty(row, cols) {
 function addTicketTier() {
     state.tiers.push({
         id: newTierId(),
-        dbId: null,
+        ticketTypeId: null,   // null = hạng vé MỚI, backend sẽ tạo mới
         name: "",
         zoneName: "",
         rowLetter: 1,
         cols: 1,
-        totalQty: 1,   // 1 hàng × 1 ghế
+        totalQty: 1,
         qty: 1,
         price: 0,
         desc: "",
@@ -404,11 +410,6 @@ function addTicketTier() {
 }
 
 function deleteTier(id) {
-    const tier = state.tiers.find((t) => t.id === id);
-    // Nếu hạng vé này đã tồn tại trong DB (đang Edit) -> ghi nhận để server xoá thật khi lưu
-    if (tier && tier.dbId) {
-        state.deletedTierIds.push(tier.dbId);
-    }
     state.tiers = state.tiers.filter((t) => t.id !== id);
     delete state.tierErrors[id];
     renderTiers();
@@ -420,15 +421,12 @@ function updateTierField(id, field, value) {
 
     tier[field] = value;
 
-    // Khi thay đổi hàng hoặc số ghế → tính lại sức chứa
     if (field === "rowLetter" || field === "cols") {
         tier.totalQty = computeTotalQty(tier.rowLetter, tier.cols);
 
-        // Nếu qty đang vượt sức chứa mới → clamp và thông báo lỗi real-time
         if (tier.qty > tier.totalQty) {
             tier.qty = tier.totalQty;
         }
-        // Xóa lỗi qty nếu đang hợp lệ sau khi sức chứa thay đổi
         if (state.tierErrors[id]?.qty && tier.qty >= 1 && tier.qty <= tier.totalQty) {
             delete state.tierErrors[id].qty;
         }
@@ -436,7 +434,6 @@ function updateTierField(id, field, value) {
         return;
     }
 
-    // Khi user nhập số lượng vé → validate real-time ngay lập tức
     if (field === "qty") {
         const numQty = parseInt(value) || 0;
         if (numQty > tier.totalQty) {
@@ -446,7 +443,6 @@ function updateTierField(id, field, value) {
             if (!state.tierErrors[id]) state.tierErrors[id] = {};
             state.tierErrors[id].qty = "Số lượng vé phải lớn hơn hoặc bằng 1.";
         } else {
-            // Hợp lệ → xóa lỗi qty
             if (state.tierErrors[id]?.qty) {
                 delete state.tierErrors[id].qty;
                 if (Object.keys(state.tierErrors[id]).length === 0) {
@@ -458,7 +454,6 @@ function updateTierField(id, field, value) {
         return;
     }
 
-    // Các field khác: xóa lỗi ngay khi user sửa
     if (state.tierErrors[id]?.[field]) {
         delete state.tierErrors[id][field];
         if (Object.keys(state.tierErrors[id]).length === 0) {
@@ -523,20 +518,24 @@ function renderTiers() {
     container.innerHTML = state.tiers
         .map((t, idx) => {
             const errs = state.tierErrors[t.id] || {};
+            const isExisting = t.ticketTypeId != null;
             return `
         <div class="ticket-tier-card fade-in" id="card-${t.id}">
-            <input type="hidden" name="ticketTypes[${idx}].id" value="${t.dbId ?? ''}" />
 
             <div class="ticket-tier-header">
                 <div class="d-flex align-items-center gap-2">
                     <span class="tier-num-badge">${idx + 1}</span>
                     <span class="tier-config-label">Cấu Hình Chi Tiết Hạng Vé</span>
+                    ${isExisting ? '<span class="mono-tag">ĐÃ LƯU</span>' : '<span class="mono-tag">MỚI</span>'}
                 </div>
                 <button type="button" class="btn-delete-tier" onclick="deleteTier('${t.id}')">
                     <span class="material-symbols-outlined">delete</span>
                     Gỡ bỏ hạng vé
                 </button>
             </div>
+
+            <!-- id hạng vé hiện có, để backend biết update thay vì tạo mới -->
+            <input type="hidden" name="ticketTypesEdit[${idx}].ticketTypeId" value="${t.ticketTypeId ?? ""}" />
 
             <!-- Cấu hình sơ đồ ghế ngồi & sức chứa -->
             <div class="seat-config-box mt-3">
@@ -558,7 +557,7 @@ function renderTiers() {
                             type="number"
                             min="1" max="26"
                             value="${escHtml(t.rowLetter)}"
-                            name="ticketTypes[${idx}].seat.row"
+                            name="ticketTypesEdit[${idx}].seat.row"
                             placeholder="Nhập số hàng"
                             onblur ="updateTierField(
                                 '${t.id}',
@@ -577,7 +576,7 @@ function renderTiers() {
                         <input
                             type="number"
                             class="tier-input"
-                            name="ticketTypes[${idx}].seat.seatNumber"
+                            name="ticketTypesEdit[${idx}].seat.seatNumber"
                             min="1" max="100"
                             value="${escHtml(t.cols)}"
                             onblur ="updateTierField(
@@ -599,7 +598,7 @@ function renderTiers() {
                             <span class="computed-auto">Tự động</span>
                         </div>
                         <div class="row-stepper-sub">= Hàng × Ghế/hàng</div>
-                        <input type="hidden" name="ticketTypes[${idx}].capacity" value="${t.totalQty}" />
+                        <input type="hidden" name="ticketTypesEdit[${idx}].capacity" value="${t.totalQty}" />
                     </div>
 
                 </div>
@@ -616,7 +615,7 @@ function renderTiers() {
                         type="number"
                         class="tier-input${errs.name ? " is-invalid-field" : ""}"
                         placeholder="Ví dụ: 1, 2"
-                        name="ticketTypes[${idx}].displayOrder"
+                        name="ticketTypesEdit[${idx}].displayOrder"
                         value="${escHtml(t.name || "")}"
                         onblur ="updateTierField('${t.id}', 'name', this.value)" />
                     ${errDiv(errs.name)}
@@ -629,7 +628,7 @@ function renderTiers() {
                         type="text"
                         class="tier-input${errs.zoneName ? " is-invalid-field" : ""}"
                         placeholder="Ví dụ: Standee A, Zone VIP..."
-                        name="ticketTypes[${idx}].zoneName"
+                        name="ticketTypesEdit[${idx}].zoneName"
                         value="${escHtml(t.zoneName || "")}"
                         onblur ="updateTierField('${t.id}', 'zoneName', this.value)" />
                     ${errDiv(errs.zoneName)}
@@ -642,7 +641,7 @@ function renderTiers() {
                         <input
                             type="number"
                             class="tier-input tier-input-mono${errs.price ? " is-invalid-field" : ""}"
-                            name="ticketTypes[${idx}].price"
+                            name="ticketTypesEdit[${idx}].price"
                             placeholder="Ví dụ: 250000"
                             value="${escHtml(t.price)}"
                             min="0"
@@ -660,7 +659,7 @@ function renderTiers() {
                     <input
                         type="number"
                         class="tier-input tier-input-mono${errs.qty ? " is-invalid-field" : ""}"
-                        name="ticketTypes[${idx}].stock"
+                        name="ticketTypesEdit[${idx}].stock"
                         min="1"
                         max="${t.totalQty}"
                         value="${escHtml(t.qty)}"
@@ -678,7 +677,7 @@ function renderTiers() {
                 </label>
                 <textarea
                     class="tier-input"
-                    name="ticketTypes[${idx}].description"
+                    name="ticketTypesEdit[${idx}].description"
                     rows="3"
                     placeholder="Ví dụ: Đồ uống chào mừng miễn phí, Ghế ngồi hàng đầu cận cảnh..."
                     onblur ="updateTierField('${t.id}', 'desc', this.value)"
@@ -691,45 +690,39 @@ function renderTiers() {
 }
 
 // ─── GỬI FORM ─────────────────────────────────────────────────────────────────
-// Chèn hidden input (name lặp lại) để Spring bind vào List<Long> ở phía controller.
-// Ví dụ: <input type="hidden" name="deletedTicketTypeIds" value="5"> x N dòng.
-function injectDeletedIdInputs(form, name, ids) {
-    form.querySelectorAll(`input[data-deleted-group="${name}"]`).forEach((el) => el.remove());
-    ids.forEach((id) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = id;
-        input.setAttribute("data-deleted-group", name);
-        form.appendChild(input);
-    });
-}
-
 function handleFormSubmit(e) {
     const tiersValid  = validateAllTiers();
     const agendaValid = validateAllAgenda();
+    const bannerInput = document.getElementById("bannerFileInput");
+    const bannerError = document.getElementById("bannerError");
+    let bannerValid = true;
+
+    // Banner hợp lệ nếu: đã chọn ảnh MỚI, hoặc đã có banner CŨ (không cần chọn lại)
+    const hasNewBanner = !!bannerInput?.files?.length;
+    if (!hasNewBanner && !state.hasExistingBanner) {
+        bannerValid = false;
+        if (bannerError) bannerError.textContent = "Vui lòng chọn ảnh banner.";
+    }
+
+    // Đổ danh sách id ảnh phụ bị xoá vào hidden input trước khi submit
+    const removedInput = document.getElementById("removedImageIdsInput");
+    if (removedInput) removedInput.value = state.removedExistingImageIds.join(",");
 
     renderTiers();
     renderAgenda();
 
-    if (!tiersValid || !agendaValid) {
+    if (!tiersValid || !agendaValid || !bannerValid) {
         e.preventDefault();
         scrollToFirstError();
         return false;
     }
-
-    // Chỉ cần thiết ở chế độ Edit, nhưng gọi luôn cũng vô hại (mảng rỗng ở Create)
-    const form = e.target || document.getElementById("eventForm");
-    injectDeletedIdInputs(form, "deletedTicketTypeIds", state.deletedTierIds);
-    injectDeletedIdInputs(form, "deletedTimeLineIds", state.deletedAgendaIds);
-    injectDeletedIdInputs(form, "deletedImageIds", state.deletedImageIds);
 
     dismissError();
     return true;
 }
 
 function handleCancel() {
-    if (confirm("Hủy bỏ tạo sự kiện? Tất cả thay đổi sẽ bị mất.")) {
+    if (confirm("Hủy bỏ chỉnh sửa sự kiện? Tất cả thay đổi chưa lưu sẽ bị mất.")) {
         window.history.back();
     }
 }
@@ -756,7 +749,7 @@ function showToast(isDraft) {
     if (span) {
         span.textContent = isDraft
             ? " Đã lưu bản nháp thành công!"
-            : " Sự kiện đã được đăng thành công!";
+            : " Sự kiện đã được cập nhật thành công!";
     }
     t.classList.remove("d-none");
     setTimeout(() => t.classList.add("d-none"), 4000);

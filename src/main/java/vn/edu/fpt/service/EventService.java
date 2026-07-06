@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
+import vn.edu.fpt.modelview.response.organizer.EventEditDTO;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
@@ -37,9 +38,12 @@ import vn.edu.fpt.repository.SumRevenueByMonthProjection;
 
 
 public interface EventService {
+
+  void publishEvent(Long eventId);
+    void updateEvent(EventEditDTO eventDTO);
   void SetStatusEvent();
-   EventDTO UpdateEventById(Long id);
-   OrganizerProfile GetOrganizerProfileByUserId(Long userId);
+    EventEditDTO UpdateEventById(Long id);
+   Boolean GetOrganizerProfileByUserId(Long userId);
     List<cityDto> getListcity();
     List<EventCategory> getListEventCategory();
     List<wardDTO> listWardDtos(Long cityId);
@@ -50,8 +54,8 @@ public interface EventService {
     Page<EventSearchResultDTO> searchEvents(EventSearchCriteria criteria, Pageable pageable);
     Event getEventById(Long id);
     EventSummaryProjection findEventDetailById(Long id);
-    Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page);
-    List<EventSummaryDto> findTop10Events();
+ Page<EventCardDTO> getEventCards(Long organizerId, String status, String keyword, int page);
+ List<EventSummaryDto> findTop10Events();
     EventDetailDTO getEventDetailById(Long id);
     long countAllEvent();
     long countAllUseActive();

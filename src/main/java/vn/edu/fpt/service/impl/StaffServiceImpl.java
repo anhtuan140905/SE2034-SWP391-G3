@@ -1,12 +1,11 @@
 package vn.edu.fpt.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.*;
+import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
 import vn.edu.fpt.modelview.response.organizer.PermissionDTO;
 import vn.edu.fpt.modelview.response.organizer.RoleDTO;
@@ -16,7 +15,6 @@ import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.StaffService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,19 +25,68 @@ public class StaffServiceImpl implements StaffService {
     private UserRepository userRepository;
     private EventRepository eventRepository;
     private OrganizerMemberRepository organizerMemberRepository;
+
+
+    @Override
+    public boolean compareRole(Long userId, Long staffId, Long eventId) {
+        OrganizerMember organizerMember = organizerMemberRepository.findbyUserIdAndEventId(userId,eventId)
+                                        .orElseThrow(()->new RuntimeException("Bạn Không Phải Nhân viên của sự kiện"));
+        String roleUser = organizerMember.getUserRole().getRole().getRoleName().toString();
+        if(roleUser.equals(RoleName.ROLE_ORGANIZER.toString())){
+            return false;
+        }
+        String roleStaff = organizerMemberRepository.getReferenceById(staffId).getUserRole().getRole().toString();
+        if(roleUser.equals(roleStaff)){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void deleteStaffByStaffId(Long staffId,Long eventId,Long userId) {
+        if(compareRole(userId,staffId,eventId)){
+            throw new RuntimeException("Bạn không có quyền sửa nhần viên này");
+        }
+        UserRole userRole = organizerMemberRepository.getReferenceById(staffId).getUserRole();
+        long usageCount = organizerMemberRepository.countByUserRole_Id(userRole.getId());
+        if(usageCount>1){
+            organizerMemberRepository.deleteById(staffId);
+        }else {
+            userRoleRepository.deleteById(userRole.getId());
+        }
+    }
+    @Override
+    public String getRoleNameByUserId(Long userId) {
+        List<UserRole> userRoles = userRoleRepository.finUserByUserId(userId);
+        if(userRoles !=null){
+        for (UserRole userRole : userRoles) {
+            String roleName = userRole.getRole()
+                    .getRoleName()
+                    .name();
+            if (roleName.equals("ROLE_MANAGER")) {
+                return roleName;
+            }
+        }}
+        return "";
+    }
     //        before update
 //        kiem tra roleid dang ruoc va rodeid - nguoi update
 //        delete
 //        het su kien xem no con con userrole nay voi su kien khac khong , new khong thi xoa , neu con thi giu
-//        update
+//        updateq
 //        kiem tra userrole neu chua co thi them moi , neu co thi dung lai voi update
+//
+
+
     @Override
     @Transactional
-    public void updateStaff(StaffDetailDto dto) {
+    public void updateStaff(Long userId,StaffDetailDto dto,Long eventId) {
+        if(compareRole(userId,dto.getStaffId(),eventId)){
+            throw new RuntimeException("Bạn không có quyền sửa nhần viên này");
+        }
         OrganizerMember member = organizerMemberRepository
                 .findById(dto.getStaffId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy staff"));
-
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
         updateRole(member, dto.getRoleId());
         updatePermissions(member, dto.getPermission());
         organizerMemberRepository.save(member);
@@ -47,17 +94,20 @@ public class StaffServiceImpl implements StaffService {
     // ─── XỬ LÝ ROLE ─────────────────────────────────────────────
     private void updateRole(OrganizerMember member, Long newRoleId) {
         UserRole oldUserRole = member.getUserRole();
+//        if no change role
         if (oldUserRole.getRole().getId().equals(newRoleId)) {
-            return; // không đổi role
+            return; // no change role
         }
+//        if this user had this new role in other event -> use role again
         Long userId = oldUserRole.getUser().getId();
         Optional<UserRole> existing = userRoleRepository.findByUserIdAndRoleId(userId, newRoleId);
         if (existing.isPresent()) {
             member.setUserRole(existing.get());
             return;
         }
-        long usageCount = organizerMemberRepository
-                .countByUserRole_Id(oldUserRole.getId());
+//        if only 1 role with 1 event -> set role
+//        else add this user with new role
+        long usageCount = organizerMemberRepository.countByUserRole_Id(oldUserRole.getId());
         if (usageCount > 1) {
             UserRole newUserRole = new UserRole();
             newUserRole.setUser(oldUserRole.getUser());
@@ -89,8 +139,7 @@ public class StaffServiceImpl implements StaffService {
                 Permission permission = permissionRepository
                         .findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Permission không tồn tại: " + id));
-
+                                new RuntimeException("Quyền  không tồn tại" ));
                 OrganizerMemberPermission omp = new OrganizerMemberPermission();
                 omp.setOrganizerMember(member);
                 omp.setPermission(permission);
@@ -100,7 +149,7 @@ public class StaffServiceImpl implements StaffService {
     }
     @Override
     public StaffDetailDto getInfobyStaffID(Long id) {
-        OrganizerMember organizerMember = organizerMemberRepository.findById(id).orElseThrow(()->new RuntimeException("Staff not Found"));
+        OrganizerMember organizerMember = organizerMemberRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy nhân Viên"));
         StaffDetailDto dto = new StaffDetailDto();
         dto.setStaffId(id);
         String name = organizerMember.getUserRole().getUser().getLastName()
@@ -118,8 +167,13 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<PermissionDTO> getListPermission() {
-        List<Permission> permissions = permissionRepository.findAll();
+    public List<PermissionDTO> getListPermission(Long userId,Long eventId) {
+        List<Permission> permissions;
+        if(isOrganizer(userId,eventId)){
+            permissions = permissionRepository.getAllPermission();
+        }else{
+            permissions = permissionRepository.getStaffPermission();
+        }
         List<PermissionDTO> permissionDTOS = new ArrayList<>();
         for(Permission permission:permissions){
             PermissionDTO dto = new PermissionDTO();
@@ -130,8 +184,13 @@ public class StaffServiceImpl implements StaffService {
         return permissionDTOS;
     }
     @Override
-    public  List<RoleDTO> getRoleOfEvent(){
-        List<Role> roles = roleRepository.findRoleMemberOfOrganizer();
+    public  List<RoleDTO> getRoleOfEvent(Long userId,Long eventId){
+        List<Role> roles ;
+        if(isOrganizer(userId,eventId)){
+            roles = roleRepository.findRoleMemberOfOrganizer();
+        }else{
+            roles = roleRepository.findRoleMemberOfManager();
+        }
         List<RoleDTO> dtos = new ArrayList<>();
         for (Role role:roles){
             RoleDTO dto = new RoleDTO();
@@ -141,7 +200,17 @@ public class StaffServiceImpl implements StaffService {
         }
         return dtos;
     }
-
+    private boolean isOrganizer(Long userId, Long eventId){
+        OrganizerMember organizerMember = organizerMemberRepository.findbyUserIdAndEventId(userId,eventId).orElse(null);
+        if (organizerMember==null){
+            throw new RuntimeException("Không tim thấy người dùng");
+        }
+        if(organizerMember.getUserRole().getRole().getRoleName()== RoleName.ROLE_ORGANIZER){
+            return true;
+        }else {
+            return false;
+        }
+    }
     @Override
     @Transactional
     public void assignMember(MemberRequestDTO memberRequestDTO,
@@ -149,13 +218,13 @@ public class StaffServiceImpl implements StaffService {
         User user = userRepository.findByEmail(memberRequestDTO.getEmail());
 //        if user not found which means user not in database
         if(user==null){
-            throw new RuntimeException("User Not Found With Email:"+ memberRequestDTO.getEmail());
+            throw new RuntimeException("Không tìm thấy người Dùng");
         }
         boolean alreadyExists = organizerMemberRepository
                 .findbyUserIdAndEventId(user.getId(), EventId)
                 .isPresent();
         if (alreadyExists) {
-            throw new RuntimeException("User này đã có role trong event!");
+            throw new RuntimeException("Người Dùng  đã có role trong Sự kiên!");
         }
         UserRole userRole = userRoleRepository.findByUserIdAndRoleId(user.getId(), memberRequestDTO.getRoleId()).orElse(null);
         if(userRole==null){
@@ -165,7 +234,7 @@ public class StaffServiceImpl implements StaffService {
             userRole.setRole(role);
             userRoleRepository.save(userRole);
         }
-        Event event = eventRepository.findById(EventId).orElseThrow(()->new RuntimeException("Event Not Found With :"+EventId));
+        Event event = eventRepository.findById(EventId).orElseThrow(()->new RuntimeException("Không tìm thấy Sự kiện"));
         OrganizerMember orgMember = new OrganizerMember();
         orgMember.setUserRole(userRole);
         orgMember.setEvent(event);
@@ -185,8 +254,10 @@ public class StaffServiceImpl implements StaffService {
         }
 
     @Override
-    public Page<StaffResponceDTO> getStaffbyEventID(Long id, String keyword, Long roleId, Pageable pageable) {
-        Page<OrganizerMember> organizerMemberList = organizerMemberRepository.getOrganizerMemberByEventID(id,keyword,roleId, pageable);
+    public Page<StaffResponceDTO> getStaffbyEventID(Long id, String keyword, Long roleId,int page) {
+        int size = 10;
+        Sort sort = Sort.by(Sort.Direction.ASC, "userRole.role.id");
+        Page<OrganizerMember> organizerMemberList = organizerMemberRepository.getOrganizerMemberByEventID(id,keyword,roleId, PageRequest.of(page, size,sort));
         List<StaffResponceDTO> dtos = new ArrayList<>();
         for (OrganizerMember organizerMember : organizerMemberList) {
             StaffResponceDTO dto = new StaffResponceDTO();
@@ -200,7 +271,7 @@ public class StaffServiceImpl implements StaffService {
             dtos.add(dto);
         }
 
-        return new PageImpl<>(dtos, pageable, organizerMemberList.getTotalElements());
+        return new PageImpl<>(dtos, PageRequest.of(page, size,sort), organizerMemberList.getTotalElements());
     }
 
     @Override

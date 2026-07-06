@@ -92,15 +92,38 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             nativeQuery = true)
     EventSummaryProjection findEventDetailById(Long id);
 
-@Query("""
+
+    //    @Query(value = "SELECT e.event_id, e.title, e.thumbnail_url, e.start_time, op.company_name, e.description,\n" +
+//            "           MIN(tt.price) as min_price,\n" +
+//            "           ec.category_name as category_name,\n" +
+//            "           v.venue_name as venue_name,\n" +
+//            "           ci.name as city_name,\n" +
+//            "           COUNT(DISTINCT od.order_detail_id) as sold_count\n" +
+//            "           FROM events e \n" +
+//            "           JOIN ticket_types tt ON tt.event_id = e.event_id\n" +
+//            "           JOIN event_categories ec ON ec.category_id = e.category_id\n" +
+//            "           JOIN venues v ON v.venue_id = e.venue_id\n" +
+//            "           JOIN addresses a ON a.id = v.address_id\n" +
+//            "           JOIN wards w ON w.id = a.ward_id\n" +
+//            "           JOIN city ci ON ci.id = w.city_id\n" +
+//            "\t\t   JOIN users u  ON e.organizer_id = u.id\n" +
+//            "\t\t   JOIN organizer_profiles op ON u.id = op.user_id\n" +
+//            "           LEFT JOIN orders o ON o.event_id = e.event_id AND o.status = 'PAID'\n" +
+//            "           LEFT JOIN order_details od ON od.order_id = o.order_id\n" +
+//            "           WHERE e.status = 'APPROVED' AND e.event_id = :id\n" +
+//            "           GROUP BY e.event_id, e.title, e.thumbnail_url, e.start_time, ec.category_name, v.venue_name, ci.name, op.company_name, e.description",
+//            nativeQuery = true)
+//    EventSummaryProjection findEventDetailById(Long id);
+
+    //
+    @Query("""
         SELECT e FROM Event e
         JOIN OrganizerMember o ON o.event = e
         JOIN o.userRole ur
         WHERE ur.user.id = :organizerId
           AND (
-                :#{#statusList == null} = true
-                OR :#{#statusList.size()} = 0
-                OR e.status IN :statusList
+                :status IS NULL
+                OR e.status = :status
               )
           AND (
                 :keyword IS NULL
@@ -108,9 +131,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
                 OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
               )
         """)
-    Page<Event> findByMultiStatusAndKeyword(
+    Page<Event> findByStatusAndKeyword(
             @Param("organizerId") Long organizerId,
-            @Param("statusList") List<String> statusList,
+            @Param("status") EventStatus status,
             @Param("keyword") String keyword,
             Pageable pageable
     );
@@ -379,47 +402,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             order by e.endTime ASC
             """)
     List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
-@Query("""
-select
-e.eventId as eventId,
-e.title as eventName,
-e.organizer.lastName as lastNameOrganizer,
-e.organizer.middleName as middleNameOrganizer,
-e.organizer.firstName as firstNameOrganizer,
-e.endTime as endTime,
-se.settlementId as settlementId,
-
-(select SUM(tt.soldQuantity)
-from TicketType tt
-where tt.event.eventId = e.eventId
-)as soldTicket,
-
-(select SUM(o.totalAmount) 
-from Order o
-where o.event.eventId = e.eventId and o.status = 'PAID'
-)as revenue,
-
-se.status as status
-
-from Event e
-left join Settlement se on e.eventId = se.event.eventId
-
-
-where e.endTime <= CURRENT_TIMESTAMP 
-group by 
-e.eventId,
-e.title,
-e.organizer.lastName,
-e.organizer.middleName,
-e.organizer.firstName,
-e.endTime,
-se.status,
-se.settlementId 
-
-order by e.endTime ASC
-""")
-
-List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
 
 
     @Query("""
@@ -507,6 +489,8 @@ List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
             @Param("today") LocalDate today,
             Pageable pageable
     );
+}
+
 
 
 
