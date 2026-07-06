@@ -21,7 +21,7 @@ import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.*;
-import vn.edu.fpt.service.impl.security.CustomOAuth2User;
+import vn.edu.fpt.security.CustomOAuth2User;
 
 
 import java.util.List;

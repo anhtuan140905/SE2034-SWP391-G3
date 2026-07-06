@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -159,7 +160,8 @@
                         <button type="button"
                                 class="heart_top btn-favorite"
                                 th:data-id="${featuredEvent.event_id}"
-                                style="z-index: 3;">
+                                style="z-index: 3;"
+                                sec:authorize="isAuthenticated()">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                         <div class="event-date-badge">
@@ -193,7 +195,7 @@
                           th:text="${'+' + featuredEvent.soldCount + ' đã bán'}">+0 đã bán</span>
                         </div>
                         <a class="btn btn-book-now"
-                           th:href="@{/api/events/{id}/seat-map(id=${featuredEvent.event_id})}">
+                           th:href="@{/events/{id}/choose_seat(id=${featuredEvent.event_id})}">
                             Mua vé <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>
@@ -234,7 +236,8 @@
                         <button type="button"
                                 class="heart_top btn-favorite"
                                 th:data-id="${event.id}"
-                                style="z-index: 3;">
+                                style="z-index: 3;"
+                                sec:authorize="isAuthenticated()">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                         <span class="event-badge-price"
@@ -273,7 +276,7 @@
                           th:text="${'+' + event.soldCount + ' đã bán'}">+0 đã bán</span>
                         </div>
                         <a class="btn btn-book-now"
-                           th:href="@{/api/events/{id}/seat-map(id=${event.id})}">
+                           th:href="@{/events/{id}/choose_seat(id=${event.id})}">
                             Mua vé <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>

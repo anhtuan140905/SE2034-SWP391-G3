@@ -12,17 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
-import vn.edu.fpt.model.constant.PaymentMethod;
 import vn.edu.fpt.model.constant.PaymentStatus;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.PaymentService;
 import vn.edu.fpt.service.impl.VNPayService;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor

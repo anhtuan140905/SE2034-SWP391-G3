@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl.security;
+package vn.edu.fpt.security;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -16,9 +16,7 @@ import vn.edu.fpt.repository.UserRoleRepository;
 import vn.edu.fpt.service.RoleService;
 
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 @Service

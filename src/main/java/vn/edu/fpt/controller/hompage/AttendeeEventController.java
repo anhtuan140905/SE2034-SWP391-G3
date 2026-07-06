@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.FavouriteEvent;
 import vn.edu.fpt.model.TimeLineEvent;
@@ -60,13 +61,20 @@ public class AttendeeEventController {
         model.addAttribute("criteria", criteria);
         model.addAttribute("dynamicMonths", dynamicMonths);
         model.addAttribute("categories", this.eventCategoryService.listEventCategories());
-//        model.addAttribute("cities", this.cityService.getListCityHaveApprovedEvents());
+        model.addAttribute("cities", this.cityService.getListCityHaveApprovedEvents());
         return "homepage/ListPublicEvents";
     }
 
     @GetMapping("/events/detail/{id}")
-    public String viewDetailEvent(@PathVariable long id, Model model) {
+    public String viewDetailEvent(@PathVariable long id,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
         EventSummaryProjection event = this.eventService.findEventDetailById(id);
+        if (event == null) {
+            redirectAttributes.addFlashAttribute("toastMessage", "Sự kiện không tồn tại hoặc đã kết thúc.");
+            redirectAttributes.addFlashAttribute("toastType", "error");
+            return "redirect:/events";
+        }
         List<TimeLineEvent> timeline = this.timeLineEventService.findByEvent_EventIdOrderByTimeAsc(id);
         model.addAttribute("event", event);
         model.addAttribute("timeline", timeline);

@@ -6,25 +6,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import vn.edu.fpt.model.UserRole;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
-import vn.edu.fpt.modelview.request.auth.RegisterUserDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
-import vn.edu.fpt.service.CityService;
-import vn.edu.fpt.service.UserService;
-import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.impl.CityServiceImpl;
 import vn.edu.fpt.service.impl.CloudinaryService;
 import vn.edu.fpt.service.impl.UserServiceImpl;
 import vn.edu.fpt.service.impl.WardServiceImpl;
-import vn.edu.fpt.service.impl.security.CustomOAuth2User;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+import vn.edu.fpt.security.CustomOAuth2User;
+import vn.edu.fpt.security.CustomUserDetails;
 
 import java.util.List;
 

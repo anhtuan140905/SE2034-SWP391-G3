@@ -12,10 +12,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-import vn.edu.fpt.service.impl.security.CustomAuthenticationFailureHandler;
-import vn.edu.fpt.service.impl.security.CustomDaoAuthenticationProvider;
-import vn.edu.fpt.service.impl.security.CustomOAuth2UserService;
-import vn.edu.fpt.service.impl.security.CustomUserDetailsService;
+import vn.edu.fpt.security.CustomAuthenticationFailureHandler;
+import vn.edu.fpt.security.CustomDaoAuthenticationProvider;
+import vn.edu.fpt.security.CustomOAuth2UserService;
+import vn.edu.fpt.security.CustomUserDetailsService;
 
 import java.util.List;
 
