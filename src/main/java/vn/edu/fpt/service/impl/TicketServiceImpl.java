@@ -180,7 +180,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private void applyComputeStatus (TicketDTO t){
-        boolean isCheckIn = "true".equals(t.getStatus());
+        boolean isCheckIn = Boolean.TRUE.equals(t.getCheckedIn());
         if(isCheckIn){
             t.setStatus("USED");
         } else if (t.getEndTime() != null && t.getEndTime().isBefore(LocalDateTime.now())) {

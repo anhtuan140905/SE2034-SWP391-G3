@@ -89,9 +89,9 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/events", "/auth/**", "/css/**",
+                                "/", "/events/**", "/events", "/auth/**", "/css/**",
                                 "/js/**", "/homepage/**",
-                                "/auth/css/**", "/auth/js/**"
+                                "/auth/css/**", "/auth/js/**", "/api/events/*/seat-map"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")

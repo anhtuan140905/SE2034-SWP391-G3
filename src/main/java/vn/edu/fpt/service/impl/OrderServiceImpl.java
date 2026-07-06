@@ -2,9 +2,7 @@ package vn.edu.fpt.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,48 +78,6 @@ public class OrderServiceImpl implements OrderService {
             order.setStatus(OrderStatus.CANCELLED);
             this.orderRepository.save(order);
         }
-    }
-
-
-    @Override
-    public List<TicketDTO> viewOrder(Long userId, String tab) {
-        List<TicketDTO> allTickets = orderRepository.viewOrder(userId)
-                .stream()
-                .map(TicketDTO::new)
-                .peek(this::applyComputedStatus)
-                .toList();
-
-        return switch (tab) {
-            case "upcoming" -> allTickets.stream()
-                    .filter(t -> "ACTIVE".equals(t.getStatus()))
-                    .toList();
-            case "used" -> allTickets.stream()
-                    .filter(t -> "USED".equals(t.getStatus()))
-                    .toList();
-            case "expired" -> allTickets.stream()
-                    .filter(t -> "EXPIRED".equals(t.getStatus()))
-                    .toList();
-            default -> allTickets;
-        };
-    }
-
-    private void applyComputedStatus(TicketDTO t) {
-        boolean isCheckedIn = "true".equals(t.getStatus());
-        if (isCheckedIn) {
-            t.setStatus("USED");
-        } else if (t.getEndTime() != null && t.getEndTime().isBefore(LocalDateTime.now())) {
-            t.setStatus("EXPIRED");
-        } else {
-            t.setStatus("ACTIVE");
-        }
-    }
-
-    public List<TicketDTO> viewOrderDetail(Long orderId) {
-        return orderRepository.viewOrderDetail(orderId)
-                .stream()
-                .map(TicketDTO::new)
-                .peek(this::applyComputedStatus)
-                .toList();
     }
 
     @Override

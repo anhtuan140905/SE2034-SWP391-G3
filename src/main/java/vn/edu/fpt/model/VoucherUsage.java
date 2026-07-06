@@ -11,7 +11,9 @@ import java.time.Instant;
 
 
 @Entity
-@Table(name = "voucher_usages")
+@Table(name = "voucher_usages",
+        indexes = @Index(name = "idx_voucher_usages_voucher_id", columnList = "voucher_id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = "order_id"))
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class VoucherUsage {

@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.common.error.ServiceValidationException;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.constant.TokenType;
@@ -13,6 +14,8 @@ import vn.edu.fpt.repository.VerifyTokenRepository;
 import vn.edu.fpt.service.impl.EmailService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -47,6 +50,8 @@ public class PasswordResetService {
         if(user == null) {
             throw new UsernameNotFoundException("Email không tồn tại!");
         }
+        this.verifyTokenRepository.deleteByEmailAndType(email, TokenType.FORGOT_PASSWORD_OTP);
+
         String otp = generateOtp();
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(otp);
@@ -58,22 +63,23 @@ public class PasswordResetService {
         return verificationToken;
     }
 
+    @Transactional
     public boolean verifyOtp(String otp, VerificationToken verificationToken) {
-
         String storedOtp = verificationToken.getToken();
         LocalDateTime expiry = verificationToken.getExpiryDate();
 
-        if(storedOtp == null || expiry == null) {
-            return false;
-        }
-        if(LocalDateTime.now().isAfter(expiry)) {
-            return false;
-        }
-        return storedOtp.equals(otp);
+        if (storedOtp == null || expiry == null) return false;
+        if (LocalDateTime.now().isAfter(expiry)) return false;
+        if (!storedOtp.equals(otp)) return false;
+
+        verificationToken.setUsed(true);
+        this.verifyTokenRepository.save(verificationToken);
+        return true;
     }
 
     @Transactional
-    public boolean resetPassword(String newPassword, String email) {
+    public boolean resetPassword(String newPassword, String confirmPassword, String email) {
+        validatePasswordStrength(newPassword, confirmPassword);
         if(email == null) {
             return false;
         }
@@ -86,5 +92,25 @@ public class PasswordResetService {
         this.userRepository.save(user);
         this.verifyTokenRepository.deleteByEmail(email);
         return true;
+    }
+
+    private static final int MIN_PASSWORD_LENGTH = 8;
+
+    private void validatePasswordStrength(String newPassword, String confirmPassword) {
+        ServiceValidationException ex = new ServiceValidationException();
+
+        if (newPassword == null || newPassword.isBlank()) {
+            ex.add("newPassword", "Mật khẩu không được để trống!");
+        } else if (newPassword.length() < MIN_PASSWORD_LENGTH) {
+            ex.add("newPassword", "Mật khẩu phải có ít nhất 8 ký tự.");
+        }
+
+        if (newPassword != null && !newPassword.equals(confirmPassword)) {
+            ex.add("confirmPassword", "Mật khẩu xác nhận không khớp.");
+        }
+
+        if (ex.hasErrors()) {
+            throw ex;
+        }
     }
 }

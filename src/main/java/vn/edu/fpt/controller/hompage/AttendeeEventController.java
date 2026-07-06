@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.FavouriteEvent;
+import vn.edu.fpt.model.TimeLineEvent;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
@@ -39,6 +40,7 @@ public class AttendeeEventController {
     private final FavouriteEventService favouriteEventService;
     private final UserService userService;
     private final RecommendationService recommendationService;
+    private final TimeLineEventService timeLineEventService;
     @GetMapping("/events")
     public String listEvents(
             @PageableDefault(size = 9, sort = "startTime") Pageable pageable,
@@ -65,8 +67,10 @@ public class AttendeeEventController {
     @GetMapping("/events/detail/{id}")
     public String viewDetailEvent(@PathVariable long id, Model model) {
         EventSummaryProjection event = this.eventService.findEventDetailById(id);
+        List<TimeLineEvent> timeline = this.timeLineEventService.findByEvent_EventIdOrderByTimeAsc(id);
         model.addAttribute("event", event);
-        return "homepage/ViewPubliclEvent";
+        model.addAttribute("timeline", timeline);
+        return "homepage/view-public-event";
     }
 
     @GetMapping("/favourites")

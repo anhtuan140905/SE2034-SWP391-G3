@@ -25,6 +25,7 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
     @Query("SELECT e FROM Event e WHERE (e.status = :activeStatus AND e.endTime < :now) Or (e.startTime <= :now AND e.endTime >= :now)")
     List<Event> findEndedEvents(@Param("activeStatus") EventStatus activeStatus, @Param("now") LocalDateTime now);
+
     @Query("SELECT COUNT(e) FROM Event e WHERE e.status IN :statuses")
     long countHostedEvents(@Param("statuses") List<EventStatus> statuses);
 
@@ -361,13 +362,15 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     );
 
     @Query("""
-            select
+            
+                        select
             e.eventId as eventId,
             e.title as eventName,
             e.organizer.lastName as lastNameOrganizer,
             e.organizer.middleName as middleNameOrganizer,
             e.organizer.firstName as firstNameOrganizer,
             e.endTime as endTime,
+            se.settlementId as settlementId,
             
             (select SUM(tt.soldQuantity)
             from TicketType tt
@@ -393,13 +396,16 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             e.organizer.middleName,
             e.organizer.firstName,
             e.endTime,
-            se.status
+            se.status,
+            se.settlementId 
             
             order by e.endTime ASC
             """)
     List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
 
+
     @Query("""
+            
             select count(e.eventId)
             from Event e
             where e.endTime <= CURRENT_TIMESTAMP
@@ -415,16 +421,17 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     long countUnsettledEvents();
 
     @Query("""
+            
             select sum(o.totalAmount)
             from Event e
-            left join Settlement se on e.eventId = se.event.eventId
             left join Order o on e.eventId = o.event.eventId
-            where e.endTime <= CURRENT_TIMESTAMP
+            where e.endTime <= CURRENT_TIMESTAMP and o.status = 'PAID'
             """)
     Long sumTotalRevenue();
 
 
     @Query("""
+            
             select
             e.eventId as eventId,
             e.title as eventName,
@@ -432,13 +439,14 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             e.organizer.middleName as middleNameOrganizer,
             e.organizer.firstName as firstNameOrganizer,
             e.endTime as endTime,
+            se.settlementId as settlementId,
             
             (select SUM(tt.soldQuantity)
             from TicketType tt
             where tt.event.eventId = e.eventId
             )as soldTicket,
             
-            (select SUM(o.totalAmount) 
+            (select SUM(o.totalAmount)
             from Order o
             where o.event.eventId = e.eventId
             )as revenue,
@@ -449,18 +457,19 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             left join Settlement se on e.eventId = se.event.eventId
             
             where (e.endTime <= CURRENT_TIMESTAMP) and
-            (lower(e.title) like lower(concat('%', :keyword, '%')) 
+            (lower(e.title) like lower(concat('%', :keyword, '%'))
             or lower(e.organizer.lastName) like lower(concat('%', :keyword, '%'))
             or lower(e.organizer.middleName) like lower(concat('%', :keyword, '%'))
             or lower (e.organizer.firstName) like lower(concat('%', :keyword, '%')))
-            group by 
+            group by
             e.eventId,
             e.title,
             e.organizer.lastName,
             e.organizer.middleName,
             e.organizer.firstName,
             e.endTime,
-            se.status
+            se.status,
+            se.settlementId
             
             order by e.endTime DESC
             """)
@@ -481,3 +490,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             Pageable pageable
     );
 }
+
+
+

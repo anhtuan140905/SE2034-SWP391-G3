@@ -1,13 +1,12 @@
 package vn.edu.fpt.modelview.request.auth;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import vn.edu.fpt.model.constant.Gender;
 
 import java.time.LocalDate;
 
@@ -15,13 +14,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterUserDTO {
-    @NotBlank(message = "First name không được để trống!")
+    @NotBlank(message = "Họ không được để trống!")
+    @Size(max = 10, message = "Họ tối đa 20 ký tự")
     private String firstName;
-    @NotBlank(message = "Middle name không được để trống!")
+    @NotBlank(message = "Tên đệm không được để trống!")
+    @Size(max = 15, message = "Tên đệm tối đa 20 ký tự")
     private String middleName;
-    @NotBlank(message = "Last name không được để trống!")
+    @NotBlank(message = "Tên không được để trống!")
+    @Size(max = 10, message = "Tên tối đa 20 ký tự")
     private String lastName;
     @NotBlank(message = "Số điện thoại không được để trống!")
+    @Pattern(regexp = "^(0|\\+84)(3|5|7|8|9)[0-9]{8}$", message = "Số điện thoại không hợp lệ")
     private String phone;
     @NotBlank(message = "Email không được để trống!")
     @Email(message = "Email không hợp lệ")
@@ -32,8 +35,8 @@ public class RegisterUserDTO {
     @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     @NotBlank(message = "Confirm password không được để trống!")
     private String confirmPassword;
-    @NotBlank(message = "Vui lòng chọn gender")
-    private String gender;
+    @NotNull(message = "Vui lòng chọn giới tính")
+    private Gender gender;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
 }

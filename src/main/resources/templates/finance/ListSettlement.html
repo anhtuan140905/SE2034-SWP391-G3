@@ -248,6 +248,8 @@
             background: #ffffff;
             color: #84759b;
             transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .pill:hover { border-color: #ff1b8d; color: #ff1b8d; }
@@ -271,6 +273,7 @@
             flex: 1;
             position: relative;
             min-width: 200px;
+            display: flex;
         }
 
         .search-wrap svg {
@@ -508,8 +511,10 @@
     <div class="main">
 
         <div class="page-header">
-            <h1>Quản Lý Quyết Toán</h1>
-            <p>Xem và quản lý tất cả các yêu cầu quyết toán và lịch sử thanh toán</p>
+            <div>
+                <h1>Quản Lý Quyết Toán</h1>
+                <p>Xem và quản lý tất cả các yêu cầu quyết toán và lịch sử thanh toán</p>
+            </div>
         </div>
 
         <!-- STATS BAR -->
@@ -524,7 +529,7 @@
                 </div>
                 <div>
                     <div class="stat-mini-label">Tổng Quyết Toán</div>
-                    <div class="stat-mini-value" id="stat-total">—</div>
+                    <div class="stat-mini-value" th:text="${countAllSettlement}">0</div>
                 </div>
             </div>
             <div class="stat-mini">
@@ -535,7 +540,7 @@
                 </div>
                 <div>
                     <div class="stat-mini-label">Chờ Xử Lý</div>
-                    <div class="stat-mini-value" id="stat-pending">—</div>
+                    <div class="stat-mini-value" th:text="${countPendingSettlement}">0</div>
                 </div>
             </div>
             <div class="stat-mini">
@@ -545,8 +550,8 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="stat-mini-label">Đã Phê Duyệt</div>
-                    <div class="stat-mini-value" id="stat-approved">—</div>
+                    <div class="stat-mini-label">Đã Thanh Toán</div>
+                    <div class="stat-mini-value" th:text="${countCompletedSettlement}">0</div>
                 </div>
             </div>
             <div class="stat-mini">
@@ -558,36 +563,37 @@
                 </div>
                 <div>
                     <div class="stat-mini-label">Tổng Chi Trả</div>
-                    <div class="stat-mini-value" id="stat-payout">—</div>
+                    <div class="stat-mini-value"
+                         >0đ</div>
                 </div>
             </div>
         </div>
 
         <!-- PILLS -->
         <div class="pills">
-            <button class="pill active" onclick="filterSettlements('All', this)">Tất Cả</button>
-            <button class="pill" onclick="filterSettlements('Pending', this)">Chờ Xử Lý</button>
-            <button class="pill" onclick="filterSettlements('Approved', this)">Đã Phê Duyệt</button>
-            <button class="pill" onclick="filterSettlements('Paid', this)">Đã Thanh Toán</button>
+            <a >Tất Cả</a>
+            <a >Chờ Xử Lý</a>
+            <a>Đã Thanh Toán</a>
         </div>
 
         <!-- FILTER ROW -->
         <div class="filter-row">
-            <div class="search-wrap">
+            <form th:action="@{/finance/listSettlement}" method="get" class="search-wrap">
+                <input type="hidden" name="status" />
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <input class="search-input" type="text" id="settlementSearch"
-                       placeholder="Tìm theo tên sự kiện, mã ID hoặc ban tổ chức..."
-                       oninput="applySearch()"/>
-            </div>
+                <input class="search-input" type="text" name="keyword"
+
+                       placeholder="Tìm theo tên sự kiện, mã ID hoặc ban tổ chức..."/>
+            </form>
         </div>
 
         <!-- TABLE -->
         <div class="table-box">
             <div class="table-box-header">
                 <h2>Lịch Sử Quyết Toán</h2>
-                <span class="result-count" id="result-count"></span>
+                <span class="result-count" ></span>
             </div>
             <table>
                 <thead>
@@ -601,9 +607,29 @@
                     <th class="center">Thao Tác</th>
                 </tr>
                 </thead>
-                <tbody id="settlementTableBody"></tbody>
+                <tbody>
+                <tr >
+                    <td><span class="mono" ></span></td>
+                    <td style="font-weight:600" ></td>
+                    <td class="text-muted" ></td>
+                    <td class="right" style="font-weight:700; font-size:15px;"
+                        ></td>
+                    <td class="text-muted"
+                        ></td>
+                    <td class="center">
+                        <span class="badge pending" >Chờ Xử Lý</span>
+                        <span class="badge paid" >Đã Thanh Toán</span>
+                    </td>
+                    <td class="center">
+                        <a class="btn-action primary" >
+                            Xem Chi Tiết
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
             </table>
-            <div id="settlementEmpty" class="empty" style="display:none">
+            <div  class="empty">
                 Không tìm thấy quyết toán phù hợp.
             </div>
         </div>
@@ -612,78 +638,6 @@
 </div><!-- /wrapper -->
 
 <script>
-    const settlementsData = [
-        {id:'#SET-9821',organizer:'TechCorp Inc.',eventName:'Tech Summit 2026',netPayout:112500,generatedDate:'20/05/2026',status:'Approved'},
-        {id:'#SET-9812',organizer:'EventPro Ltd.',eventName:'Music Festival Spring',netPayout:220500,generatedDate:'18/05/2026',status:'Paid'},
-        {id:'#SET-9805',organizer:'BizEvents Co.',eventName:'Business Conference 2026',netPayout:91800,generatedDate:'16/05/2026',status:'Pending'},
-        {id:'#SET-9798',organizer:'Creative Studios',eventName:'Art Exhibition Gala',netPayout:60750,generatedDate:'15/05/2026',status:'Approved'},
-        {id:'#SET-9789',organizer:'Sports League Inc.',eventName:'Sports Championship Finals',netPayout:468000,generatedDate:'12/05/2026',status:'Paid'},
-        {id:'#SET-9776',organizer:'Culinary Events',eventName:'Food & Wine Festival',netPayout:141750,generatedDate:'10/05/2026',status:'Paid'},
-        {id:'#SET-9765',organizer:'DevCommunity',eventName:'Developer Meetup',netPayout:17280,generatedDate:'08/05/2026',status:'Pending'},
-        {id:'#SET-9752',organizer:'Fashion Forward',eventName:'Fashion Week Showcase',netPayout:132300,generatedDate:'05/05/2026',status:'Approved'},
-    ];
-
-    const statusMap = { Pending: 'Chờ Xử Lý', Approved: 'Đã Phê Duyệt', Paid: 'Đã Thanh Toán' };
-    const statusClass = { Pending: 'pending', Approved: 'approved', Paid: 'paid' };
-
-    document.getElementById('stat-total').textContent = settlementsData.length;
-    document.getElementById('stat-pending').textContent = settlementsData.filter(s => s.status === 'Pending').length;
-    document.getElementById('stat-approved').textContent = settlementsData.filter(s => s.status === 'Approved').length;
-    const totalPayout = settlementsData.reduce((sum, s) => sum + s.netPayout, 0);
-    document.getElementById('stat-payout').textContent = '$' + totalPayout.toLocaleString();
-
-    let currentFilter = 'All';
-
-    function renderSettlements(items) {
-        const tbody = document.getElementById('settlementTableBody');
-        const empty = document.getElementById('settlementEmpty');
-        document.getElementById('result-count').textContent = items.length + ' quyết toán';
-        if (items.length === 0) {
-            tbody.innerHTML = '';
-            empty.style.display = '';
-            return;
-        }
-        empty.style.display = 'none';
-        tbody.innerHTML = items.map(s => `
-            <tr>
-                <td><span class="mono">${s.id}</span></td>
-                <td style="font-weight:600">${s.organizer}</td>
-                <td class="text-muted">${s.eventName}</td>
-                <td class="right" style="font-weight:700; font-size:15px;">$${s.netPayout.toLocaleString()}</td>
-                <td class="text-muted">${s.generatedDate}</td>
-                <td class="center">
-                    <span class="badge ${statusClass[s.status]}">${statusMap[s.status]}</span>
-                </td>
-                <td class="center">
-                    <a class="btn-action primary" href="ViewSettlementDetails.html?id=${encodeURIComponent(s.id)}">
-                        Xem Chi Tiết
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-                    </a>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    function applySearch() {
-        const q = (document.getElementById('settlementSearch').value || '').toLowerCase();
-        let items = currentFilter === 'All' ? settlementsData : settlementsData.filter(s => s.status === currentFilter);
-        if (q) {
-            items = items.filter(s =>
-                s.id.toLowerCase().includes(q) ||
-                s.organizer.toLowerCase().includes(q) ||
-                s.eventName.toLowerCase().includes(q)
-            );
-        }
-        renderSettlements(items);
-    }
-
-    function filterSettlements(status, btn) {
-        currentFilter = status;
-        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        applySearch();
-    }
-
     function toggleDropdown() {
         document.getElementById('profileDropdown').classList.toggle('show');
     }
@@ -694,8 +648,6 @@
             document.getElementById('profileDropdown').classList.remove('show');
         }
     });
-
-    window.addEventListener('load', () => renderSettlements(settlementsData));
 </script>
 </body>
 </html>

@@ -135,7 +135,7 @@
                     <a th:href="@{/events}" class="btn btn-grad-cta">
                         Khám phá sự kiện <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <a href="#" th:href="@{/favorites}" class="btn btn-glass-secondary">
+                    <a href="#" th:href="@{/favourites}" class="btn btn-glass-secondary">
                         <i class="fa-solid fa-heart text-pink"></i> Sự kiện yêu thích
                     </a>
                 </div>
@@ -193,7 +193,7 @@
                           th:text="${'+' + featuredEvent.soldCount + ' đã bán'}">+0 đã bán</span>
                         </div>
                         <a class="btn btn-book-now"
-                           th:href="@{/events/{id}(id=${featuredEvent.event_id})}">
+                           th:href="@{/api/events/{id}/seat-map(id=${featuredEvent.event_id})}">
                             Mua vé <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>
@@ -273,7 +273,7 @@
                           th:text="${'+' + event.soldCount + ' đã bán'}">+0 đã bán</span>
                         </div>
                         <a class="btn btn-book-now"
-                           th:href="@{/events/detail/{id}(id=${event.id})}">
+                           th:href="@{/api/events/{id}/seat-map(id=${event.id})}">
                             Mua vé <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>

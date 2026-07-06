@@ -71,7 +71,7 @@
                         </li>
 
                         <!-- Sự kiện của tôi — chỉ hiện với Organizer -->
-                        <li>
+                        <li sec:authorize="hasRole('ROLE_ORGANIZER')">
                             <a class="dropdown-item" th:href="@{/organizer/list/event}">
                                 <i class="fa-solid fa-calendar-check dropdown-icon text-violet"></i> Sự kiện của tôi
                             </a>
@@ -80,7 +80,7 @@
                         <li>
                             <form method="post" th:action="@{/auth/logout}">
                                 <button class="dropdown-item text-danger">
-                                    <i class="fa-solid fa-arrow-right-from-bracket dropdown-icon text-danger"></i> Sign Out
+                                    <i class="fa-solid fa-arrow-right-from-bracket dropdown-icon text-danger"></i> Đăng xuất
                                 </button>
                             </form>
                         </li>

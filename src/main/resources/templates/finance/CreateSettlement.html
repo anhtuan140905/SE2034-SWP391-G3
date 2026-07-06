@@ -485,7 +485,7 @@
             <p>Lập hồ sơ quyết toán với tính toán tự động</p>
             </div>
         </div>
-        <form th:action="@{/finance/createSettlement}" method="post" th:object="${SettlementDTO}">
+        <form th:action="@{/finance/createSettlement}" method="post" th:object="${settlementDTO}">
         <div class="form-grid">
             <!-- CỘT TRÁI: Form -->
             <div class="card">
@@ -558,7 +558,7 @@
 
                 <div class="calc-formula">
                     <div class="formula-label">Công thức</div>
-                    <div class="formula-text">Doanh Thu − Phí Hệ Thống − Hoàn Tiền = Số Tiền Ròng</div>
+                    <div style="color: red">Doanh Thu − Phí Hệ Thống = Số Tiền Ròng</div>
                 </div>
 
                 <div class="calc-row">
@@ -607,7 +607,6 @@
             genBtn.disabled = true;
             document.getElementById('c-revenue').textContent = '0 đ';
             document.getElementById('c-fee').textContent = '−0 đ';
-            document.getElementById('c-refund').textContent = '−0 đ';
             document.getElementById('c-net').textContent = '0 đ';
             return;
         }
@@ -629,15 +628,6 @@
     }
 
 
-    function generateSettlement() {
-        const sel = document.getElementById('eventSelect').value;
-        const det = eventDetails[sel];
-        if (!det) return;
-        const fee    = det.revenue * 0.1;
-        const refund = parseFloat(document.getElementById('refundInput').value) || 0;
-        const net    = det.revenue - fee - refund;
-        alert('Hồ sơ quyết toán đã được tạo thành công!\nSố tiền chi trả ròng: ' + fmt(net));
-    }
 
     function toggleDropdown() {
         document.getElementById('profileDropdown').classList.toggle('show');

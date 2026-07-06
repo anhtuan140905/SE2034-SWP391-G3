@@ -18,7 +18,5 @@ public interface OrderService {
     public Order getOrderForCheckout(Long orderId, User currentUser);
     public Order handleSaveOrder(Order order);
     public void handleUpdateStatusOrder(Long orderId);
-    List<TicketDTO> viewOrder(Long userId,String tab);
-    List<TicketDTO> viewOrderDetail(Long orderId);
     List<Event> findPurchasedEventsByUserId(Long userId);
 }
