@@ -545,7 +545,7 @@ public class EventServiceImpl implements EventService {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(root.get("status"), EventStatus.ACTIVE));
-            predicates.add(cb.greaterThan(root.get("endTime"), LocalDateTime.now()));
+            predicates.add(cb.greaterThan(root.get("startTime"), LocalDateTime.now()));
 
             if (criteria.getKeyword() != null && !criteria.getKeyword().trim().isEmpty()) {
                 predicates.add(cb.like(cb.lower(root.get("title")), "%" + criteria.getKeyword().toLowerCase() + "%"));

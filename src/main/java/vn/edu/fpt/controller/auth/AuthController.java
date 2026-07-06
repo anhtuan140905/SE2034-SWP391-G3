@@ -18,7 +18,7 @@ import vn.edu.fpt.service.CityService;
 import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.service.VerifyTokenService;
 import vn.edu.fpt.service.WardService;
-import vn.edu.fpt.service.impl.security.PasswordResetService;
+import vn.edu.fpt.security.PasswordResetService;
 
 import java.util.List;
 import java.util.Map;

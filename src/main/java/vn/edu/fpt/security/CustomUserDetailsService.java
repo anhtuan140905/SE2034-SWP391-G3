@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl.security;
+package vn.edu.fpt.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

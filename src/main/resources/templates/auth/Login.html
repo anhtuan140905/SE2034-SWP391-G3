@@ -74,7 +74,7 @@
                     </div>
 
                     <button class="btn-primary" type="submit">
-                        Sign In
+                        Đăng nhập
                         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                   stroke-width="2.5"
@@ -85,30 +85,12 @@
                     <div class="field-remember">
                         <label class="check-wrap">
                             <input type="checkbox" name="remember-me"/>
-                            Remember me
+                            Nhớ tài khoản của tôi
                         </label>
                         <button type="button" class="text-btn" id="forgotBtn" th:onclick="|location.href='@{/auth/forgot-password}'|">Quên mật khẩu</button>                    </div>
                 </form>
 
                 <p class="reg-link">Chưa có tài khoản? <a th:href = "@{/auth/register}">Tạo tài khoản</a></p>
-            </div>
-
-            <div class="panel-forgot" id="pForgot">
-                <div class="form-head">
-                    <h1>Reset password 🔑</h1>
-                    <p>Nhập email để nhận mã OTP</p>
-                </div>
-                <div class="field">
-                    <input type="email" id="fEmail" placeholder=" " autocomplete="email"/>
-                    <label for="fEmail">Email Address</label>
-                </div>
-                <button class="btn-primary" type="button">
-                    Send OTP Code
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                </button>
-                <p class="reg-link" style="margin-top:1.125rem;">
-                    <a th:href = "@{/auth/login}" id="backBtn" style="color:#9b8bb0;font-weight:500;">← Back to sign in</a>
-                </p>
             </div>
         </div>
     </div>

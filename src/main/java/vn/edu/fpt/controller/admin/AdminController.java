@@ -12,8 +12,8 @@ import vn.edu.fpt.repository.SumRevenueByMonthProjection;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 import vn.edu.fpt.service.impl.TicketServiceImpl;
 import vn.edu.fpt.service.impl.UserServiceImpl;
-import vn.edu.fpt.service.impl.security.CustomOAuth2User;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+import vn.edu.fpt.security.CustomOAuth2User;
+import vn.edu.fpt.security.CustomUserDetails;
 
 import java.util.List;
 

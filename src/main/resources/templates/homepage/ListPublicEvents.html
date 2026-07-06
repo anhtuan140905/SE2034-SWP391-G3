@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,7 +162,13 @@
                           th:text="${event.minPrice != null ? 'Từ ' + #numbers.formatDecimal(event.minPrice, 0, 'POINT', 0, 'POINT') + ' đ' : 'Free'}">
                         Từ 2.000.000 VNĐ
                     </span>
-
+                    <button type="button"
+                            class="heart_top btn-favorite"
+                            th:data-id="${event.id}"
+                            style="z-index: 3;"
+                            sec:authorize="isAuthenticated()">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
                     <div class="event-date-badge">
                         <span class="day" th:text="${#temporals.format(event.date, 'dd/MM')}">12/07</span>
                     </div>
@@ -199,8 +206,8 @@
                         <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100" class="att-avatar" alt="Attendee">
                         <span class="att-more" th:text="|Đã bán ${event.soldTickets} vé|">+140 going</span>
                     </div>
-                    <a th:href="@{/events/book/{id}(id=${event.id})}" class="btn btn-book-now text-decoration-none text-white">
-                        Get Pass <i class="fa-solid fa-chevron-right"></i>
+                    <a th:href="@{/events/{id}/choose_seat(id=${event.id})}" class="btn btn-book-now text-decoration-none text-white">
+                        Mua vé <i class="fa-solid fa-chevron-right"></i>
                     </a>
                 </div>
             </div>

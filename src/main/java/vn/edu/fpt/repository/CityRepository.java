@@ -11,11 +11,10 @@ public interface CityRepository extends JpaRepository<City,Long> {
 
     City getCityById(Long id);
 
-//    @Query(value = "SELECT DISTINCT(c.name), c.id FROM events e\n" +
-//            "  JOIN venues v ON e.venue_id = v.venue_id\n" +
-//            "  JOIN addresses a ON v.address_id = a.id\n" +
-//            "  JOIN wards w ON a.ward_id = w.id\n" +
-//            "  JOIN city c ON w.city_id = c.id\n" +
-//            "  WHERE e.status = 'APPROVED'", nativeQuery = true)
-//    List<City> findAllCityHaveApprovedEvent();
+    @Query(value = "SELECT DISTINCT(c.name), c.id FROM events e\n" +
+            "  JOIN addresses a ON e.address_id = a.id\n" +
+            "  JOIN wards w ON a.ward_id = w.id\n" +
+            "  JOIN city c ON w.city_id = c.id\n" +
+            "  WHERE e.status = 'ACTIVE' AND e.start_time > GETDATE()", nativeQuery = true)
+    List<City> findAllCityHaveApprovedEvent();
 }

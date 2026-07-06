@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.common.error.ResourceNotFoundException;
 import vn.edu.fpt.model.EventCategory;
-import vn.edu.fpt.model.OrganizerProfile;
-import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
@@ -20,10 +18,9 @@ import vn.edu.fpt.modelview.response.organizer.EventEditDTO;
 import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.UserService;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
-import java.util.Arrays;
 import java.util.List;
 @Controller
 //@RestController

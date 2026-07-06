@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl.security;
+package vn.edu.fpt.security;
 
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

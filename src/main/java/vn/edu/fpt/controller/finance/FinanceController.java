@@ -17,8 +17,8 @@ import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.EventSummaryProjection;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.impl.*;
-import vn.edu.fpt.service.impl.security.CustomOAuth2User;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+import vn.edu.fpt.security.CustomOAuth2User;
+import vn.edu.fpt.security.CustomUserDetails;
 
 import java.math.BigDecimal;
 import java.util.List;
