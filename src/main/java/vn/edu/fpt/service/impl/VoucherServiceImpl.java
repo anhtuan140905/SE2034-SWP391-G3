@@ -110,7 +110,7 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Voucher> getVoucherByEvenId(Long evenId) {
+    public List<Voucher> getVoucherByEventId(Long evenId) {
 
         return voucherRepository.findByEvent_EventId(evenId);
     }

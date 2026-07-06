@@ -26,10 +26,19 @@
             <span class="material-symbols-outlined">dashboard</span>
             <span>Tổng Quan</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event,'vouchers')">
+
+        <a th:if="${eventId != null}"
+           th:href="@{/organizer/event/{eventId}/voucher(eventId=${eventId})}"
+           class="nav-item"
+           th:classappend="${activeMenu == 'vouchers'} ? ' active' : ''">
             <span class="material-symbols-outlined">local_offer</span>
             <span>Mã giảm giá</span>
         </a>
+        <a th:unless="${eventId != null}" href="#" class="nav-item" onclick="setTab(event,'vouchers')">
+            <span class="material-symbols-outlined">local_offer</span>
+            <span>Mã giảm giá</span>
+        </a>
+
         <a th:href="@{/organizer/event/35/orders}" class="nav-item" onclick="setTab(event,'orders')">
             <span class="material-symbols-outlined">shopping_bag</span>
             <span>Đơn hàng</span>

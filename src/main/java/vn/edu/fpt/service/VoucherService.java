@@ -8,7 +8,7 @@ import java.util.List;
 public interface VoucherService {
     void createVoucher(Long evenId, Long userId, CreateVoucherRequest request);
 
-    List<Voucher> getVoucherByEvenId(Long evenId);
+    List<Voucher> getVoucherByEventId(Long evenId);
 
     Voucher getVoucherDetail(Long eventId, Long voucherId);
 }
