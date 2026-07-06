@@ -629,19 +629,6 @@
                     <div class="stat-mini-value" th:text="${unsettledEventCount}">0</div>
                 </div>
             </div>
-            <div class="stat-mini">
-                <div class="stat-mini-icon green">
-                    <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
-                        <line x1="12" y1="1" x2="12" y2="23"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="stat-mini-label">Tổng Doanh Thu</div>
-
-                    <div class="stat-mini-value" th:text="${#numbers.formatInteger(totalRevenue != null ? totalRevenue:0, 1, 'POINT') + 'đ'}">0</div>
-                </div>
-            </div>
         </div>
 
 
@@ -740,13 +727,12 @@
                             <span th:if="${event.status == null and (event.revenue == null or event.revenue == 0)}"
                                   class="btn-action ghost"
                                   style="opacity:0.5; cursor:not-allowed;"
-                                  title="Sự kiện chưa có doanh thu, không thể tạo quyết toán">
-            Tạo Quyết Toán
-        </span>
+                                  title="Sự kiện chưa có doanh thu, không thể tạo quyết toán">Tạo Quyết Toán</span>
 
 
                             <a th:if="${event.status != null}"
-                               class="btn-action ghost">Tạo Quyết Toán</a>
+                               th:href="@{/finance/viewSettlementDetails(settlementId=${event.settlementId})}"
+                               class="btn-action ghost">Xem Chi Tiết</a>
                         </div>
                     </td>
                 </tr>

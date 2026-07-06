@@ -379,7 +379,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             
             (select SUM(o.totalAmount) 
             from Order o
-            where o.event.eventId = e.eventId
+            where o.event.eventId = e.eventId and o.status = 'PAID'
             )as revenue,
             
             se.status as status
@@ -388,7 +388,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             left join Settlement se on e.eventId = se.event.eventId
             
             
-            where e.endTime <= CURRENT_TIMESTAMP
+            where e.endTime <= CURRENT_TIMESTAMP 
             group by 
             e.eventId,
             e.title,
@@ -489,7 +489,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("today") LocalDate today,
             Pageable pageable
     );
-}
+
 
 
 
@@ -511,4 +511,6 @@ left join users u on e.organizer_id = u.id
 where se.settlement_id = :settlementId
 """,nativeQuery = true)
     EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId);
+
 }
+

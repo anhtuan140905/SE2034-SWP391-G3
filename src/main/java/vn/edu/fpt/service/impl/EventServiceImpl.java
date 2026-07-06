@@ -2,6 +2,7 @@ package vn.edu.fpt.service.impl;
 
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +17,7 @@ import vn.edu.fpt.common.error.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
+import vn.edu.fpt.model.constant.SettlementResult;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
@@ -41,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -56,6 +59,7 @@ public class EventServiceImpl implements EventService {
     private final TicketService ticketService;
     private final TicketTypeService ticketTypeService;
     private final  EventImageRepository eventImageRepository;
+    private final SettlementServiceImpl settlementServiceImpl;
 
 
     @Override
@@ -304,8 +308,23 @@ public class EventServiceImpl implements EventService {
             }else {
                 event.setStatus(EventStatus.ENDED);
                 // Thêm các logic khác (nếu có) vào đây...
+                processSettlement(event.getEventId());
             }
-            eventRepository.saveAll(eventSetStatus);
+
+        }
+        eventRepository.saveAll(eventSetStatus);
+    }
+
+    private void processSettlement(Long eventId) {
+        try {
+            SettlementResult result = settlementServiceImpl.autoCreateSettlement(eventId);
+            switch (result) {
+                case CREATED -> log.info("Đã tự động tạo settlement cho event {}", eventId);
+                case ALREADY_EXISTS -> log.debug("Event {} đã có settlement, bỏ qua", eventId);
+                case NO_REVENUE -> log.debug("Event {} không có doanh thu, bỏ qua settlement", eventId);
+            }
+        } catch (Exception e) {
+            log.error("Lỗi hệ thống khi tự động tạo settlement cho event {}", eventId, e);
         }
     }
 

@@ -4,10 +4,14 @@ package vn.edu.fpt.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Settlement;
+import vn.edu.fpt.model.constant.SettlementResult;
 import vn.edu.fpt.model.constant.SettlementStatus;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
 import vn.edu.fpt.repository.*;
@@ -20,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service("SettlementService")
 @AllArgsConstructor
 public class SettlementServiceImpl implements SettlementService {
@@ -116,5 +121,44 @@ public class SettlementServiceImpl implements SettlementService {
         settlement.setPaidAt(Instant.now());
 
         settlementRepository.save(settlement);
+    }
+
+    public SettlementSummaryProjection findEventDetailById(@Param("eventId") Long eventId){
+        return settlementRepository.findEventDetailById(eventId);
+    }
+
+    @Override
+    @Transactional
+    public SettlementResult autoCreateSettlement(Long eventId){
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện " + eventId));
+
+        if (settlementRepository.existsByEvent_EventId(eventId)){
+            return SettlementResult.ALREADY_EXISTS;
+        }
+
+        BigDecimal grossRevenue = orderRepository.calculateGrossRevenueByEventId(eventId);
+        if(grossRevenue == null || grossRevenue.compareTo(BigDecimal.ZERO) <= 0){
+            return SettlementResult.NO_REVENUE;
+        }
+
+        BigDecimal fee = grossRevenue.multiply(BigDecimal.valueOf(0.10)).setScale(2,RoundingMode.HALF_UP);
+        BigDecimal payout = grossRevenue.subtract(fee);
+
+        Settlement settlement = new Settlement();
+        settlement.setEvent(event);
+        settlement.setGrossRevenue(grossRevenue);
+        settlement.setPlatformFee(fee);
+        settlement.setPayoutAmount(payout);
+        settlement.setStatus(SettlementStatus.PENDING);
+
+        try{
+            settlementRepository.save(settlement);
+            return SettlementResult.CREATED;
+        }
+        catch (DataIntegrityViolationException e){
+            return SettlementResult.ALREADY_EXISTS;
+        }
+
     }
 }

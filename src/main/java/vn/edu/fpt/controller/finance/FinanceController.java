@@ -58,27 +58,32 @@ public class FinanceController {
                : userServiceImpl.findByUsername(oAuth2Users.getName());
        model.addAttribute("currentUser", currentUser);
 
+
+       Long totalRevenue = eventServiceImpl.sumTotalRevenue();
+       model.addAttribute("totalRevenue",totalRevenue);
+
        return "finance/DashboardFinance";
    }
 
-   @PostMapping("/createSettlement")
-   public String createSettlementPage(Model model,
-                                      @ModelAttribute SettlementDTO dto,
-                                      BindingResult result){
-       if(result.hasErrors()){
-           model.addAttribute("errorMessage", "Vui lòng kiểm tra lại thông tin");
-           return "finance/CreateSettlement";
-       }
+    @PostMapping("/createSettlement")
+    public String createSettlementPage(@ModelAttribute SettlementDTO dto,
+                                       BindingResult result,
+                                       RedirectAttributes redirectAttributes) {
 
-       try {
-           settlementServiceImpl.createSettlement(dto);
-       } catch (IllegalArgumentException | IllegalStateException ex) {
-           model.addAttribute("errorMessage", ex.getMessage());
-           return "finance/CreateSettlement";
-       }
-       settlementServiceImpl.createSettlement(dto);
-       return "redirect:/finance/ListEndedEvents";
-   }
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng kiểm tra lại thông tin");
+            return "redirect:/finance/createSettlement?eventId=" + dto.getEventId();
+        }
+
+        try {
+            settlementServiceImpl.createSettlement(dto);
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+            return "redirect:/finance/createSettlement?eventId=" + dto.getEventId();
+        }
+
+        return "redirect:/finance/listEndedEvents";
+    }
 
 
    @GetMapping("/createSettlement")
@@ -95,7 +100,9 @@ public class FinanceController {
 
        List<SettlementSummaryProjection> listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
        model.addAttribute("listEndedEvents", listEndedEvents);
-       model.addAttribute("selectedEndEvents", eventId);
+
+       SettlementSummaryProjection eventDetail =settlementServiceImpl.findEventDetailById(eventId);
+       model.addAttribute("eventDetail",eventDetail);
 
        SettlementDTO dto = new SettlementDTO();
        dto.setEventId(eventId);
@@ -208,9 +215,6 @@ return "redirect:/finance/viewSettlementDetails?settlementId=" + settlementId;
 
        long unsettledEventCount = eventServiceImpl.countUnsettledEvents();
        model.addAttribute("unsettledEventCount",unsettledEventCount);
-
-       Long totalRevenue = eventServiceImpl.sumTotalRevenue();
-       model.addAttribute("totalRevenue",totalRevenue);
 
 
        return "finance/ListEndedEvents";

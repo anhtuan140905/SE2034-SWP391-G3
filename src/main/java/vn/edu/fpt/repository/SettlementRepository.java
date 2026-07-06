@@ -102,4 +102,32 @@ left join users u on u.email = se.created_by
 where se.settlement_id = :settlementId
 """, nativeQuery = true)
     SettlementSummaryProjection getSettlementDetail(@Param("settlementId") Long settlementId);
+
+    @Query("""
+        select
+            e.eventId as eventId,
+            e.title as eventName,
+            e.organizer.lastName as lastNameOrganizer,
+            e.organizer.middleName as middleNameOrganizer,
+            e.organizer.firstName as firstNameOrganizer,
+            e.endTime as endTime,
+            se.settlementId as settlementId,
+
+            (select SUM(tt.soldQuantity)
+             from TicketType tt
+             where tt.event.eventId = e.eventId
+            ) as soldTicket,
+
+            (select SUM(o.totalAmount)
+             from Order o
+             where o.event.eventId = e.eventId and o.status = 'PAID'
+            ) as revenue,
+
+            se.status as status
+
+        from Event e
+        left join Settlement se on e.eventId = se.event.eventId
+        where e.eventId = :eventId
+        """)
+    SettlementSummaryProjection findEventDetailById(@Param("eventId") Long eventId);
 }
