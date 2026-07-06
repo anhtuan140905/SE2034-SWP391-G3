@@ -13,8 +13,8 @@ import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.impl.*;
-import vn.edu.fpt.service.impl.security.CustomOAuth2User;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
+import vn.edu.fpt.security.CustomOAuth2User;
+import vn.edu.fpt.security.CustomUserDetails;
 
 import java.util.List;
 

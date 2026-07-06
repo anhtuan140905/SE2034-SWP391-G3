@@ -2,7 +2,6 @@ package vn.edu.fpt.controller.organizer;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.modelview.response.organizer.OrderDto;
 import vn.edu.fpt.service.OrderService;
 import vn.edu.fpt.service.StaffService;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
-
-import java.util.List;
+import vn.edu.fpt.security.CustomUserDetails;
 
 @Controller
 @AllArgsConstructor

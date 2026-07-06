@@ -3,8 +3,6 @@ package vn.edu.fpt.controller.organizer;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +13,7 @@ import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
 import vn.edu.fpt.modelview.response.organizer.StaffDetailDto;
 import vn.edu.fpt.modelview.response.organizer.StaffResponceDTO;
 import vn.edu.fpt.service.StaffService;
-import vn.edu.fpt.service.impl.security.CustomUserDetails;
-
-import java.util.List;
+import vn.edu.fpt.security.CustomUserDetails;
 
 @Controller
 @RequestMapping("/organizer")

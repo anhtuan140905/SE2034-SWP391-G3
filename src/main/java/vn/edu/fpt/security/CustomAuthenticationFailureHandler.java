@@ -1,4 +1,4 @@
-package vn.edu.fpt.service.impl.security;
+package vn.edu.fpt.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -38,6 +38,7 @@ public class BookingController {
             model.addAttribute("isAuthenticated", false);
             return "homepage/ChooseSeat";
         }
+        model.addAttribute("isAuthenticated", true);
         Long userId = userDetails.getUserId();
         long ticketBought = this.ticketService.countCompletedTicketsByUserAndEvent(userId, eventId);
         long remaining = 3 - ticketBought;
