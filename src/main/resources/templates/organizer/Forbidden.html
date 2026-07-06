@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lỗi 403 - Không Có Quyền Truy Cập | EventHub</title>
+    <style>
+        /* Font chữ hiện đại */
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+        body {
+            font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+            /* Nền sáng với họa tiết lưới chấm bi mờ */
+            background-color: #fcfaff;
+            background-image: radial-gradient(#e0cceb 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .error-container {
+            max-width: 480px;
+            width: 100%;
+            margin: 20px;
+            background: #ffffff;
+            padding: 48px 40px;
+            border-radius: 16px;
+            box-shadow:
+                    0 4px 12px rgba(0, 0, 0, 0.03),
+                    0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3e8ff;
+            text-align: center;
+        }
+
+        h1 {
+            /* Áp dụng dải màu gradient tím - hồng cho chữ 403 */
+            background: linear-gradient(to right, #8735e6, #e62f8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 88px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        h2 {
+            margin-top: 16px;
+            color: #374151;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-top: 12px;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 32px;
+            /* Màu nền gradient giống nút trong ảnh của bạn */
+            background: linear-gradient(to right, #8735e6, #e62f8b);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            /* Thêm bóng đổ nhẹ màu hồng để nút nổi bật hơn */
+            box-shadow: 0 4px 12px rgba(230, 47, 139, 0.25);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-home:hover {
+            /* Đảo ngược gradient hoặc làm tối đi một chút khi đưa chuột vào */
+            background: linear-gradient(to right, #7629ce, #d0257b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(230, 47, 139, 0.4);
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h1>403</h1>
+    <h2>Truy cập bị từ chối</h2>
+    <p>
+        Bạn không có quyền truy cập vào trang này. Vui lòng kiểm tra lại đường
+        dẫn hoặc đăng nhập vào tài khoản của bạn.
+    </p>
+    <a href="/" class="btn-home">Về Trang Chủ</a>
+</div>
+</body>
+</html>

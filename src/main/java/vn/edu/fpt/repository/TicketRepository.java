@@ -11,7 +11,17 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT COUNT(*) FROM Ticket")
     long ticketIssued();
-
+      @Query(value = "select COUNT(*) from tickets t \n" +
+              "join order_details od on t.order_detail_id = od.order_detail_id\n" +
+              "join orders o on o.order_id = od.order_id\n" +
+              "where t.is_checked_in = 1 and o.event_id = :eventId",nativeQuery = true)
+    Long countCheckInTicketsByEventId(@Param("eventId") Long eventId);
+    @Query(value = "SELECT COUNT(*) AS checked_in_count\n" +
+            "FROM tickets t\n" +
+            "JOIN seats s ON t.seat_id = s.seat_id\n" +
+            "WHERE s.ticket_type_id = :ticketTypeId\n" +
+            "  AND t.is_checked_in = 1",nativeQuery = true)
+    Long countCheckInTicketsByTicketTypeId(Long ticketTypeId);
 //    long countByUserId(Long userId);
 //
 //    @Query("""

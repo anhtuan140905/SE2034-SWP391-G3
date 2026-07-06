@@ -1,34 +1,51 @@
 <!-- HEADER -->
 <header th:fragment="header"
-        class="top-header d-flex align-items-center justify-content-between px-4"
->
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        class="top-header d-flex align-items-center justify-content-between px-4">
     <div class="d-flex align-items-center gap-3 flex-grow-1">
         <button class="btn-icon d-lg-none" onclick="toggleSidebar(true)">
             <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="search-wrap position-relative">
-            <a th:href="@{/organizer/list/event}" class="breadcrumb-link">
-                <span class="material-symbols-outlined" style="font-size:17px">arrow_back</span>
-                Back to Events
-            </a>
             <button
                     class="search-clear d-none"
                     id="searchClear"
-                    onclick="clearSearch()"
+
             >
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
     </div>
     <div class="d-flex align-items-center gap-3">
-        <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
-                alt="Avatar"
-                class="user-avatar"
-        />
-        <div class="d-none d-md-block text-start">
-            <div class="user-name">Minh Event Corp</div>
-            <div class="user-role">Administrator</div>
+        <div class="user-menu-wrap position-relative">
+            <div class="user-name-trigger" id="userMenuTrigger" onclick="toggleUserMenu(event)">
+            <span class="user-avatar-icon">
+                <img th:src="@{/images/default-avatar.png}" alt="avatar" />
+            </span>
+                <span class="user-name" sec:authentication="name">my29052005@gmail.com</span>
+                <span class="material-symbols-outlined user-caret">expand_more</span>
+            </div>
+
+            <!-- Dropdown -->
+            <div class="user-dropdown" id="userDropdown">
+                <a th:href="@{/}" class="user-dropdown-item">
+                    <span class="material-symbols-outlined">home</span>
+                    Trang Chủ
+                </a>
+                <a th:href="@{/}" class="user-dropdown-item">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    Thông Tin
+                </a>
+                <a th:href="@{/organizer/list/event}" class="user-dropdown-item">
+                    <span class="material-symbols-outlined">event</span>
+                    Sự kiện của tôi
+                </a>
+                    <a th:href="@{/auth/login}" class="user-dropdown-item user-dropdown-item--danger">
+                        <span class="material-symbols-outlined">logout</span>
+                        Đăng xuất
+                    </a>
+            </div>
         </div>
     </div>
 </header>

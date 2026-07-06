@@ -14,4 +14,6 @@ public interface RoleRepository extends JpaRepository<Role,Long> {
     Role findByRoleName(RoleName roleName);
     @Query("SELECT r FROM Role r WHERE r.roleName IN ('ROLE_MANAGER', 'ROLE_STAFF')")
     List<Role> findRoleMemberOfOrganizer();
+    @Query("SELECT r FROM Role r WHERE r.roleName lIKE '%ROLE_STAFF%'")
+    List<Role> findRoleMemberOfManager();
 }

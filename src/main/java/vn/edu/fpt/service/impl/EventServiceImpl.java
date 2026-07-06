@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import vn.edu.fpt.common.error.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
@@ -26,9 +27,7 @@ import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.request.organizer.*;
-import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
-import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
-import vn.edu.fpt.modelview.response.organizer.TicketTypeDTO;
+import vn.edu.fpt.modelview.response.organizer.*;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.repository.EventRepository;
@@ -56,13 +55,241 @@ public class EventServiceImpl implements EventService {
     private final OrganizerProfileRepository organizerProfileRepository;
     private final TicketService ticketService;
     private final TicketTypeService ticketTypeService;
+    private final  EventImageRepository eventImageRepository;
 
 
     @Override
-    public EventDTO UpdateEventById(Long id) {
+    public EventEditDTO UpdateEventById(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy sự kiện này"));
-        return null;
+        EventEditDTO dto = new EventEditDTO();
+//        set trường đơn
+        dto.setEventId(event.getEventId());
+        dto.setOrganizerId(event.getOrganizer().getId());
+        dto.setCategoryId(event.getCategory().getCategoryId());
+        dto.setTitle(event.getTitle());
+        dto.setDescription(event.getDescription());
+        dto.setEventDate(event.getDate());
+        dto.setVenueName(event.getVenueName());
+        dto.setExistBannerUrl(event.getThumbnailUrl());
+        dto.setStartTime(event.getStartTime().toLocalTime());
+        dto.setEndTime(event.getEndTime().toLocalTime());
+//        set address
+        addressEditDTO addressDto = new addressEditDTO();
+        addressDto.setAddressId(event.getAddress().getId());
+        addressDto.setSpecieladdress(event.getAddress().getSpecificAddress());
+
+        wardEditDTO wardDto = new wardEditDTO();
+        wardDto.setWardId(event.getAddress().getWard().getId());
+        wardDto.setName(event.getAddress().getWard().getName());
+
+        cityEditDto cityDto = new cityEditDto();
+        cityDto.setId(event.getAddress().getWard().getCity().getId());
+        cityDto.setName(event.getAddress().getWard().getCity().getName());
+        wardDto.setCity(cityDto);
+
+        addressDto.setWard(wardDto);
+        dto.setAddressEdit(addressDto);
+//        Set timeline
+        List<timeLineEditDTO> timeLineDTOs = new ArrayList<>();
+        if (event.getTimeLine() != null) {
+            for (TimeLineEvent tl : event.getTimeLine()) {
+                timeLineEditDTO tlDto = new timeLineEditDTO();
+                tlDto.setTimeLineId(tl.getTimeId());
+                tlDto.setTime(tl.getTime());
+                tlDto.setActive(tl.getDescription());
+                timeLineDTOs.add(tlDto);
+            }
+        }
+        dto.setTimeLineEdit(timeLineDTOs);
+        List<TicketTypeResponseDTO> ticketypeResponseDTOS = new ArrayList<>();
+        if(event.getTicketTypes()!=null){
+            for(TicketType tt:event.getTicketTypes()){
+//               single field;
+                TicketTypeResponseDTO t = new TicketTypeResponseDTO();
+                t.setTicketTypeId(tt.getTicketTypeId());
+                t.setDisplayOrder(tt.getDisplayOrder());
+                t.setZoneName(tt.getZoneName());
+                t.setPrice(tt.getPrice());
+                t.setStock(tt.getTotalQuantity().longValue());
+                t.setDescription(tt.getDescription());
+//                seat
+                Set<String> rowLabels = new HashSet<>();
+                Set<Integer> seatNumbers = new HashSet<>();
+                if (tt.getSeats() != null) {
+                    for (Seat s : tt.getSeats()) {
+                        if (s.getRowLabel() != null) {
+                            rowLabels.add(s.getRowLabel());
+                        }
+                        if (s.getSeatNumber() != null) {
+                            seatNumbers.add(s.getSeatNumber());
+                        }
+                    }
+                }
+                seatEditDTO seatDTO = new seatEditDTO();
+                seatDTO.setRow(Math.max(1, rowLabels.size()));
+                seatDTO.setSeatNumber(Math.max(1, seatNumbers.size()));
+                t.setSeat(seatDTO);
+                ticketypeResponseDTOS.add(t);
+            }
+
+        }
+        dto.setTicketTypesEdit(ticketypeResponseDTOS);
+        List<ExistImageDTO> existingImages = new ArrayList<>();
+        if (event.getImages() != null) {
+            for (EventImage img : event.getImages()) {
+                existingImages.add(new ExistImageDTO(img.getImageId(), img.getImageUrl()));
+            }
+        }
+        dto.setExistImages(existingImages);
+       return dto;
     }
+
+
+    @Override
+    public void publishEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sự kiện với id: " + eventId));
+
+        if (event.getStatus() != EventStatus.PENDING) {
+            throw new IllegalStateException("Chỉ có thể đăng sự kiện đang ở trạng thái PENDING. "
+                    + "Trạng thái hiện tại: " + event.getStatus());
+        }
+
+        event.setStatus(EventStatus.ACTIVE);
+         eventRepository.save(event);
+    }
+
+    @Override
+    @Transactional
+    public void updateEvent(EventEditDTO eventDTO) {
+        Event event = eventRepository.findById(eventDTO.getEventId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện với ID: " + eventDTO.getEventId()));
+        // Field đơn giản
+        EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Not Found Category With ID :" + eventDTO.getCategoryId()));
+        event.setCategory(eventCategory);
+        event.setVenueName(eventDTO.getVenueName());
+        event.setTitle(eventDTO.getTitle());
+        event.setDescription(eventDTO.getDescription());
+        event.setDate(eventDTO.getEventDate());
+        event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(), eventDTO.getStartTime()));
+        event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(), eventDTO.getEndTime()));
+
+        // Banner: chỉ update nếu có file mới
+        if (eventDTO.getBanner() != null && !eventDTO.getBanner().isEmpty()) {
+            String urlBanner = cloudinaryService.uploadFile(eventDTO.getBanner(), "Banner");
+            event.setThumbnailUrl(urlBanner);
+        }
+
+        // Địa chỉ
+        Address address = event.getAddress();
+        if (address == null) {
+            address = new Address();
+        }
+        address.setSpecificAddress(eventDTO.getAddressEdit().getSpecieladdress());
+
+        Ward ward = wardRepository.findById(eventDTO.getAddressEdit().getWard().getWardId())
+                .orElseThrow(() -> new RuntimeException("Not Found Ward"));
+        City city = cityRepository.getCityById(eventDTO.getAddressEdit().getWard().getCity().getId());
+        ward.setCity(city);
+        address.setWard(ward);
+        event.setAddress(address);
+
+        // Ảnh phụ: xoá ảnh bị gỡ
+        if (eventDTO.getRemovedImageIds() != null && !eventDTO.getRemovedImageIds().isBlank()) {
+            String[] idParts = eventDTO.getRemovedImageIds().split(",");
+            List<Long> removedIds = new ArrayList<>();
+            for (String idStr : idParts) {
+                if (idStr == null || idStr.trim().isEmpty()) {
+                    continue;
+                }
+                removedIds.add(Long.parseLong(idStr.trim()));
+            }
+
+            List<EventImage> remainImages = new ArrayList<>();
+            for (EventImage img : event.getImages()) {
+                boolean isRemoved = false;
+                for (Long removedId : removedIds) {
+                    if (img.getImageId().equals(removedId)) {
+                        isRemoved = true;
+                        break;
+                    }
+                }
+                if (!isRemoved) {
+                    remainImages.add(img);
+                }
+            }
+            event.getImages().clear();
+            event.getImages().addAll(remainImages);
+
+            if (!removedIds.isEmpty()) {
+                eventImageRepository.deleteAllByIdInBatch(removedIds);
+            }
+        }
+
+        // Ảnh phụ: thêm ảnh mới
+        if (eventDTO.getImageFiles() != null && !eventDTO.getImageFiles().isEmpty()) {
+            for (MultipartFile img : eventDTO.getImageFiles()) {
+                if (img == null || img.isEmpty()) {
+                    continue;
+                }
+                EventImage image = new EventImage();
+                String urlImage = cloudinaryService.uploadFile(img, "Image");
+                image.setImageUrl(urlImage);
+                image.setEvent(event);
+                event.getImages().add(image);
+            }
+        }
+
+        // Lịch trình: xoá hết & tạo lại
+        event.getTimeLine().clear();
+        if (eventDTO.getTimeLineEdit() != null) {
+            for (timeLineEditDTO dtoTl : eventDTO.getTimeLineEdit()) {
+                TimeLineEvent timeLineEvent = new TimeLineEvent();
+                timeLineEvent.setTime(dtoTl.getTime());
+                timeLineEvent.setDescription(dtoTl.getActive());
+                timeLineEvent.setEvent(event);
+                event.getTimeLine().add(timeLineEvent);
+            }
+        }
+
+        // Hạng vé + ghế: xoá hết & tạo lại
+        event.getTicketTypes().clear();
+
+        if (eventDTO.getTicketTypesEdit() != null) {
+            Map<Integer, String> rowLabelMap = new HashMap<>();
+            for (int i = 1; i <= 26; i++) {
+                rowLabelMap.put(i, String.valueOf((char) ('A' + i - 1)));
+            }
+
+            for (TicketTypeResponseDTO ticketTypeDto : eventDTO.getTicketTypesEdit()) {
+                TicketType ticketType = new TicketType();
+                ticketType.setEvent(event);
+                ticketType.setDescription(ticketTypeDto.getDescription());
+                ticketType.setZoneName(ticketTypeDto.getZoneName());
+                ticketType.setPrice(ticketTypeDto.getPrice());
+                ticketType.setTotalQuantity(ticketTypeDto.getStock().intValue());
+                ticketType.setSoldQuantity(0);
+                ticketType.setDisplayOrder(ticketTypeDto.getDisplayOrder());
+
+                List<Seat> seats = new ArrayList<>();
+                for (Integer i = 1; i <= ticketTypeDto.getSeat().getSeatNumber(); i++) {
+                    for (Integer j = 1; j <= ticketTypeDto.getSeat().getRow(); j++) {
+                        Seat seat = new Seat();
+                        seat.setSeatNumber(i);
+                        seat.setRowLabel(rowLabelMap.get(j));
+                        seat.setTicketType(ticketType);
+                        seats.add(seat);
+                    }
+                }
+                ticketType.setSeats(seats);
+                event.getTicketTypes().add(ticketType);
+            }
+        }
+
+        eventRepository.save(event);
+    }
+
     @Override
     public void SetStatusEvent() {
         List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
@@ -83,8 +310,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public OrganizerProfile GetOrganizerProfileByUserId(Long userId) {
-         return organizerProfileRepository.findByUserId(userId).orElse(null);
+    public Boolean GetOrganizerProfileByUserId(Long userId) {
+        OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId).orElse(null);
+        if(organizerProfile!=null){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     @Override
@@ -205,7 +437,7 @@ public class EventServiceImpl implements EventService {
         event.setDate(eventDTO.getEventDate());
         event.setStartTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getStartTime()));
         event.setEndTime(LocalDateTime.of(eventDTO.getEventDate(),eventDTO.getEndTime()));
-        event.setStatus(EventStatus.ACTIVE);
+        event.setStatus(EventStatus.PENDING);
         List<EventImage> urlImages = new ArrayList<>();
         if(eventDTO.getImageFiles() != null && !eventDTO.getImageFiles().isEmpty()){
             for (MultipartFile Image: eventDTO.getImageFiles()){
@@ -266,7 +498,7 @@ public class EventServiceImpl implements EventService {
         event.setTicketTypes(ticketTypes);
         eventRepository.save(event);
 //        Cấp quyền cho organizer
-        List<Long> permissions =  permissionRepository.getALLIdPermission();
+        List<Long> permissions =  permissionRepository.getPermissionsOfOrganizer();
         MemberRequestDTO memberRequestDTO = new MemberRequestDTO(user.getEmail(),5L,permissions);
         staffService.assignMember(memberRequestDTO,event.getEventId());
     }
@@ -401,28 +633,21 @@ public class EventServiceImpl implements EventService {
 
 
 
-
     @Override
-    public Page<EventCardDTO> getEventCards(Long organizerId, String[] statuses, String keyword, int page) {
-
-        List<String> statusList = new ArrayList<>();
-        if (statuses != null) {
-            for (String s : statuses) {
-                if (s != null
-                        && !s.isBlank()
-                        && !s.equalsIgnoreCase("ALL")) {
-                    String upperStatus = s.toUpperCase();
-                    if (!statusList.contains(upperStatus)) {
-                        statusList.add(upperStatus);
-                    }
-                }
+    public Page<EventCardDTO> getEventCards(Long organizerId, String status, String keyword, int page) {
+        EventStatus normalizedStatus = null;
+        if (status != null && !status.isBlank() && !status.equalsIgnoreCase("ALL")) {
+            try {
+                normalizedStatus = EventStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                // status không hợp lệ -> coi như "All", không lọc
+                normalizedStatus = null;
             }
         }
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), 9);
-        Page<Event> entityPage = this.eventRepository.findByMultiStatusAndKeyword(organizerId, statusList, keyword, pageable);
+        Page<Event> entityPage = this.eventRepository.findByStatusAndKeyword(organizerId, normalizedStatus, keyword, pageable);
         return entityPage.map(this::toDTO);
     }
-
     private EventCardDTO toDTO(Event event) {
         EventCardDTO dto = new EventCardDTO();
         dto.setId(event.getEventId());

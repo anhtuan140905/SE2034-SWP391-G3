@@ -12,22 +12,25 @@ function toggleSidebar(open) {
         document.body.style.overflow = "";
     }
 }
-function handleSearch(value) {
-    var clearBtn = document.getElementById("searchClear");
-
-    clearBtn.classList.toggle(
-        "d-none",
-        value.length === 0
-    );
+function toggleUserMenu(event) {
+    event.stopPropagation();
+    var dropdown = document.getElementById("userDropdown");
+    var trigger = document.getElementById("userMenuTrigger");
+    dropdown.classList.toggle("show");
+    trigger.classList.toggle("open");
 }
-function clearSearch() {
-    var input = document.getElementById("searchInput");
 
-    input.value = "";
+document.addEventListener("click", function (e) {
+    var dropdown = document.getElementById("userDropdown");
+    var trigger = document.getElementById("userMenuTrigger");
 
-    document
-        .getElementById("searchClear")
-        .classList.add("d-none");
-
-    input.focus();
-}
+    if (
+        dropdown &&
+        dropdown.classList.contains("show") &&
+        !dropdown.contains(e.target) &&
+        !trigger.contains(e.target)
+    ) {
+        dropdown.classList.remove("show");
+        trigger.classList.remove("open");
+    }
+});

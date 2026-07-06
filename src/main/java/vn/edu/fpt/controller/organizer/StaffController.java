@@ -31,12 +31,11 @@ public class StaffController {
                              @RequestParam(defaultValue = "0") int page,
                              @AuthenticationPrincipal CustomUserDetails userDetails,
                              Model model) {
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
-            return "organizer/DashboardOrganizer";
-        }
-        int size = 10;
-        Sort sort = Sort.by(Sort.Direction.ASC, "userRole.role.id");
-        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, PageRequest.of(page, size,sort));
+//        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
+//            return "organizer/DashboardOrganizer";
+//        }
+
+        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, page);
         if (!model.containsAttribute("inviteMember")) {
             model.addAttribute("inviteMember", new MemberRequestDTO());
         }
@@ -46,9 +45,10 @@ public class StaffController {
         model.addAttribute("eventId", id);
         model.addAttribute("keyword", keyword);
         model.addAttribute("roleId", roleId);
+        model.addAttribute("emailCurrentUser",userDetails.getEmail());
         model.addAttribute("inviteMember", new MemberRequestDTO());
-        model.addAttribute("permissions", staffService.getListPermission());
-        model.addAttribute("roles", staffService.getRoleOfEvent());
+        model.addAttribute("permissions", staffService.getListPermission(userDetails.getUser().getId(),id));
+        model.addAttribute("roles", staffService.getRoleOfEvent(userDetails.getUser().getId(),id));
         return "organizer/staff/ListStaffs";
     }
     @PostMapping("/event/{id}/members/invite")
@@ -58,9 +58,9 @@ public class StaffController {
                                RedirectAttributes redirectAttributes,
                                @AuthenticationPrincipal CustomUserDetails userDetails
                                ){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
-            return "organizer/DashboardOrganizer";
-        }
+//        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
+//            return "organizer/DashboardOrganizer";
+//        }
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMsg);
@@ -81,37 +81,62 @@ public class StaffController {
             @PathVariable Long eventId,
             @RequestParam Long staffId,
             @RequestParam int currentPage,
-            Model model,@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
-            return "organizer/DashboardOrganizer";
+            Model model,@AuthenticationPrincipal CustomUserDetails userDetails
+            ,RedirectAttributes redirectAttributes) {
+//        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
+//            return "organizer/DashboardOrganizer";
+//        }
+        if(staffService.compareRole(userDetails.getUserId(),staffId,eventId)){
+            redirectAttributes.addFlashAttribute("errorDelete","Bạn không có quyền sửa nhần viên này");
+            return "redirect:/organizer/event/" + eventId + "/members";
         }
         model.addAttribute("selectedMember",staffService.getInfobyStaffID(staffId));
-        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(eventId, "", null, PageRequest.of(currentPage,10));
+        Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(eventId, "", null, currentPage);
         model.addAttribute("staffList", staffPage.getContent());
         model.addAttribute("totalPages", staffPage.getTotalPages());
+        model.addAttribute("emailCurrentUser",userDetails.getEmail());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("eventId", eventId);
         model.addAttribute("keyword", "");
         model.addAttribute("roleId", null);
         model.addAttribute("inviteMember", new MemberRequestDTO());
-        model.addAttribute("permissions", staffService.getListPermission());
-        model.addAttribute("roles", staffService.getRoleOfEvent());
+        model.addAttribute("permissions", staffService.getListPermission(userDetails.getUser().getId(),eventId));
+        model.addAttribute("roles", staffService.getRoleOfEvent(userDetails.getUser().getId(),eventId));
         return "organizer/staff/ListStaffs";
     }
     @PostMapping("/event/{eventId}/members/update")
-    public String updateMenber(@PathVariable Long eventId,@Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto,
-                               BindingResult result,RedirectAttributes redirectAttributes,
+    public String updateMenber(@PathVariable Long eventId,
+                               @Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto,
+                               BindingResult result,
+                               RedirectAttributes redirectAttributes,
                                @AuthenticationPrincipal CustomUserDetails userDetails ){
-        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
-            return "organizer/DashboardOrganizer";
-        }
+//        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
+//            return "organizer/DashboardOrganizer";
+//        }
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessageEdit", errorMsg);
             redirectAttributes.addFlashAttribute("selectedMember", staffDetailDto);
             return "redirect:/organizer/event/" + eventId + "/members";
         }
-            staffService.updateStaff(staffDetailDto);
+        try {
+            staffService.updateStaff(userDetails.getUserId(),staffDetailDto,eventId);
+        }catch (RuntimeException e){
+
+            redirectAttributes.addFlashAttribute("errorDelete", e.getMessage());
+        }
+        return "redirect:/organizer/event/" + eventId + "/members";
+    }
+    @GetMapping("/event/{eventId}/members/delete")
+    public String delete(@RequestParam Long staffId,
+                         @PathVariable Long eventId,
+                         @AuthenticationPrincipal CustomUserDetails userDetails,
+                         RedirectAttributes redirectAttributes){
+        try {
+            staffService.deleteStaffByStaffId(staffId,eventId,userDetails.getUserId());
+        }catch (RuntimeException e){
+            redirectAttributes.addFlashAttribute("errorDelete",e.getMessage());
+        }
         return "redirect:/organizer/event/" + eventId + "/members";
     }
 }

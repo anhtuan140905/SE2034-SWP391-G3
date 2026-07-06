@@ -117,24 +117,23 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     //
     @Query("""
-            SELECT e FROM Event e
-            JOIN OrganizerMember o ON o.event = e
-            JOIN o.userRole ur
-            WHERE ur.user.id = :organizerId
-              AND (
-                    :#{#statusList == null} = true
-                    OR :#{#statusList.size()} = 0
-                    OR e.status IN :statusList
-                  )
-              AND (
-                    :keyword IS NULL
-                    OR :keyword = ''
-                    OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-                  )
-            """)
-    Page<Event> findByMultiStatusAndKeyword(
+        SELECT e FROM Event e
+        JOIN OrganizerMember o ON o.event = e
+        JOIN o.userRole ur
+        WHERE ur.user.id = :organizerId
+          AND (
+                :status IS NULL
+                OR e.status = :status
+              )
+          AND (
+                :keyword IS NULL
+                OR :keyword = ''
+                OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+              )
+        """)
+    Page<Event> findByStatusAndKeyword(
             @Param("organizerId") Long organizerId,
-            @Param("statusList") List<String> statusList,
+            @Param("status") EventStatus status,
             @Param("keyword") String keyword,
             Pageable pageable
     );
@@ -490,6 +489,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("today") LocalDate today,
             Pageable pageable
     );
-
-
 }
+
+
+

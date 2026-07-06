@@ -9,6 +9,7 @@ import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.UserRole;
 import vn.edu.fpt.model.constant.RoleName;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,9 +20,9 @@ public interface UserRoleRepository extends JpaRepository<UserRole,Long> {
     Optional<UserRole> findByUserIdAndRoleId(Long userId, Long roleId);
 
     Optional<UserRole> findByUser_Id(Long userId);
-
-
     @Query("SELECT r FROM Role r WHERE r.roleName = :roleName")
     Optional<Role> findByRoleName(@Param("roleName") RoleName roleName);
+    @Query("SELECT u FROM UserRole u WHERE u.user.id = :userId")
+    List<UserRole> finUserByUserId(Long userId);
 
 }

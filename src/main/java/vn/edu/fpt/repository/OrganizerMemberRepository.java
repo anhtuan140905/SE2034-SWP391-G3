@@ -18,16 +18,16 @@ import java.util.Optional;
 @Repository
 public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMember, Long>{
     long countByUserRole_Id(Long userRoleId);
-    OrganizerMember findByUserRoleAndEvent(UserRole userRole, Event event);
+    @Query(value = "delete organizer_members  where id = :staffId",nativeQuery = true)
+    Void DeleteByIdStaff(@Param("staffId") Long staffId);
+
+//    OrganizerMember findByUserRoleAndEvent(UserRole userRole, Event event);
     @Query("""
-    SELECT o FROM OrganizerMember o
-    WHERE o.event.id = :eventId
+    SELECT o FROM OrganizerMember o WHERE o.event.id = :eventId
     AND (:roleId IS NULL OR o.userRole.role.id = :roleId)
-    AND (:keyword = '' OR 
-         LOWER(o.userRole.user.email) LIKE LOWER(CONCAT('%',:keyword,'%'))
-      OR LOWER(CONCAT(o.userRole.user.lastName, o.userRole.user.firstName)) 
-         LIKE LOWER(CONCAT('%',:keyword,'%')))
-    """)
+    AND (:keyword = '' OR LOWER(o.userRole.user.email) LIKE LOWER(CONCAT('%',:keyword,'%'))
+    OR LOWER(CONCAT(o.userRole.user.lastName, o.userRole.user.firstName)) 
+    LIKE LOWER(CONCAT('%',:keyword,'%')))""")
     Page<OrganizerMember> getOrganizerMemberByEventID(@Param("eventId") Long eventId,
                                                       @Param("keyword") String keyword,
                                                       @Param("roleId") Long roleId, Pageable pageable);
@@ -35,4 +35,5 @@ public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMembe
     OrganizerMember CheckPermission(@Param("userId") Long userId, @Param("eventId")  Long eventId);
     @Query("SELECT om FROM OrganizerMember om JOIN om.userRole ur where  ur.user.id = :userId and om.event.eventId = :eventId")
     Optional<OrganizerMember> findbyUserIdAndEventId(@Param("userId") Long userId, @Param("eventId")  Long eventId);
+
 }

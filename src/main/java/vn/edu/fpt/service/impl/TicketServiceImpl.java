@@ -9,18 +9,13 @@ import vn.edu.fpt.model.*;
 import vn.edu.fpt.modelview.response.booking.OrderEmailDTO;
 import vn.edu.fpt.modelview.response.booking.TicketEmailDTO;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
-import vn.edu.fpt.repository.SeatLockRepository;
-import vn.edu.fpt.repository.TicketProjection;
-import vn.edu.fpt.repository.TicketRepository;
-import vn.edu.fpt.repository.TicketTypeRepository;
+import vn.edu.fpt.modelview.response.organizer.TicketTypeCheckinDto;
+import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.TicketService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service("TicketService")
 @AllArgsConstructor
@@ -30,6 +25,43 @@ public class TicketServiceImpl implements TicketService {
     private final SeatLockRepository  seatLockRepository;
     private final EmailService emailService;
     private final CloudinaryService cloudinaryService;
+    private final EventRepository eventRepository;
+
+    @Override
+    public List<TicketTypeCheckinDto> getDetailCheckinByTicketType(Long  eventId) {
+        List<TicketType> ticketTypes = eventRepository.getReferenceById(eventId).getTicketTypes();
+        ticketTypes.sort(Comparator.comparing(TicketType::getDisplayOrder));
+        List<TicketTypeCheckinDto> ticketTypeCheckinDtos = new ArrayList<>();
+        for(TicketType tt : ticketTypes){
+            TicketTypeCheckinDto dto = new TicketTypeCheckinDto();
+            dto.setTypeName(tt.getZoneName());
+            dto.setPrice(tt.getPrice());
+            dto.setSoldTicket(tt.getSoldQuantity());
+            dto.setChecked(ticketRepository.countCheckInTicketsByTicketTypeId(tt.getTicketTypeId().longValue()));
+            int percent = tt.getSoldQuantity() > 0
+                    ? (int)((dto.getChecked() * 100.0) / tt.getSoldQuantity())
+                    : 0;
+            dto.setPercent(percent);
+            ticketTypeCheckinDtos.add(dto);
+        }
+        return ticketTypeCheckinDtos;
+    }
+
+    @Override
+    public Long countTicketCheckInByEvent(Long eventID) {
+        return ticketRepository.countCheckInTicketsByEventId(eventID);
+    }
+
+    @Override
+    public Integer countAllticketSelledOfEvent(Long eventId) {
+        List<TicketType> ticketTypes = eventRepository.getReferenceById(eventId).getTicketTypes();
+        Integer totalTicketSelled = 0;
+        for (TicketType tt:ticketTypes){
+            totalTicketSelled = totalTicketSelled + tt.getSoldQuantity();
+        }
+        return totalTicketSelled;
+    }
+
     @Override
     public long issuedTickets() {
         return this.ticketRepository.ticketIssued();
