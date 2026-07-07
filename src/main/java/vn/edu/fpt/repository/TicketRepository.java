@@ -53,15 +53,15 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
 
     @Query("""
-            SELECT COUNT(DISTINCT t.ticketId)
-            FROM Ticket t
-            JOIN OrderDetail ord on t.orderDetail.orderDetailId = ord.orderDetailId
-            JOIN Order o on ord.order.orderId = o.orderId
-            WHERE o.user.id = :userId
-            AND t.isCheckedIn = false
-            AND o.event.startTime > CURRENT_TIMESTAMP
-            AND o.status = 'PAID'
-            """)
+SELECT COUNT(DISTINCT t.ticketId)
+FROM Ticket t
+JOIN OrderDetail ord on t.orderDetail.orderDetailId = ord.orderDetailId
+JOIN Order o on ord.order.orderId = o.orderId
+WHERE o.user.id = :userId
+AND t.isCheckedIn = false
+AND o.event.endTime > CURRENT_TIMESTAMP
+AND o.status = 'PAID'
+""")
     long countUpcomingTicket(@Param("userId") Long userId);
 
 

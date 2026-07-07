@@ -21,5 +21,8 @@ public interface EventSummaryProjection {
     Long getTotalTickets();
     String getStatus();
     Double getSalesRate();
+    String getLastNameOrganizer();
+    String getMiddleNameOrganizer();
+    String getFirstNameOrganizer();
 
 }
