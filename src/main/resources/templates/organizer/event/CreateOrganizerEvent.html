@@ -730,18 +730,13 @@
                                 </div>
                                 <div class="col-12 col-md-4">
                                     <label class="tier-field-label">Tên Ngân Hàng <span class="text-required">*</span></label>
-                                    <select class="form-select field-input" th:field="*{bankName}">
+                                    <select class="form-select field-input" th:field="*{bankId}">
                                         <option value="">-- Chọn Ngân Hàng --</option>
-                                        <option value="Vietcombank">Vietcombank</option>
-                                        <option value="Techcombank">Techcombank</option>
-                                        <option value="BIDV">BIDV</option>
-                                        <option value="MB Bank">MB Bank</option>
-                                        <option value="Agribank">Agribank</option>
-                                        <option value="TPBank"> TPBank</option>
-                                        <option value="VPBank">VPBank</option>
-                                        <option value="HDBank">HDBank</option>
-                                        <option value="Sacombank">Sacombank</option>
-                                        <option value="SHB">SHB</option>
+                                        <option
+                                                th:each="bank : ${banks}"
+                                                th:value="${bank.bankId}"
+                                                th:text="${bank.bankName}">
+                                        </option>
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"

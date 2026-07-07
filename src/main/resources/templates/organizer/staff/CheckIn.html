@@ -1,141 +1,144 @@
-    <!DOCTYPE html>
-    <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Check-in | EventHub Organizer Portal</title>
+        <!DOCTYPE html>
+        <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Check-in | EventHub Organizer Portal</title>
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-        <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}" href="SideBar.css">
-        <link rel="stylesheet" th:href="@{/organizer/css/Header.css}" href="Header.css">
-        <!-- CSS riêng cho NỘI DUNG trang Check-in (không đụng tới header/sidebar) -->
-        <link rel="stylesheet" th:href="@{/organizer/css/checkin.css}" href="checkin.css">
-    </head>
-    <body>
+            <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}" href="SideBar.css">
+            <link rel="stylesheet" th:href="@{/organizer/css/Header.css}" href="Header.css">
+            <!-- CSS riêng cho NỘI DUNG trang Check-in (không đụng tới header/sidebar) -->
+            <link rel="stylesheet" th:href="@{/organizer/css/checkin.css}" href="checkin.css">
+        </head>
+        <body>
 
-    <!-- ===== SIDEBAR (dùng lại fragment sẵn có của bạn) ===== -->
-    <th:block th:replace="/organizer/Share/sidebar::sidebar"></th:block>
+        <!-- ===== SIDEBAR (dùng lại fragment sẵn có của bạn) ===== -->
+        <th:block th:replace="/organizer/Share/sidebar::sidebar"></th:block>
 
-    <!-- Overlay cho mobile, đi kèm sidebar hiện có -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+        <!-- Overlay cho mobile, đi kèm sidebar hiện có -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
 
-    <div class="main-wrapper">
+        <div class="main-wrapper">
 
-        <!-- ===== HEADER (dùng lại fragment sẵn có của bạn) ===== -->
-        <th:block th:replace="/organizer/Share/Header::header"></th:block>
+            <!-- ===== HEADER (dùng lại fragment sẵn có của bạn) ===== -->
+            <th:block th:replace="/organizer/Share/Header::header"></th:block>
 
-        <!-- =====================================================
-             NỘI DUNG CHECK-IN — GIAO DIỆN HTML TĨNH
-             Toàn bộ số liệu dưới đây do server render sẵn qua Thymeleaf
-             (th:text, th:each...). Không dùng JS để tính toán hay đổi
-             dữ liệu phía client — đổi sự kiện sẽ submit form và server
-             trả về trang mới với số liệu tương ứng.
-             ===================================================== -->
-        <main class="content-area ci-fade-in">
+            <!-- =====================================================
+                 NỘI DUNG CHECK-IN — GIAO DIỆN HTML TĨNH
+                 Toàn bộ số liệu dưới đây do server render sẵn qua Thymeleaf
+                 (th:text, th:each...). Không dùng JS để tính toán hay đổi
+                 dữ liệu phía client — đổi sự kiện sẽ submit form và server
+                 trả về trang mới với số liệu tương ứng.
+                 ===================================================== -->
+            <main class="content-area ci-fade-in">
 
-            <!-- Page header + chọn sự kiện -->
-            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
-                <div>
-                    <h1 class="checkin-page-title">Check-in</h1>
-                    <p class="checkin-page-sub">Hệ thống quản lý, đối soát vé vào cửa thời gian thực</p>
+                <!-- Page header + chọn sự kiện -->
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+                    <div>
+                        <h1 class="checkin-page-title">Check-in</h1>
+                        <p class="checkin-page-sub">Hệ thống quản lý, đối soát vé vào cửa thời gian thực</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- TỔNG QUAN -->
-            <div class="mb-4">
-                <h3 class="ci-section-title">Tổng quan</h3>
-                <div class="row g-3">
+                <!-- TỔNG QUAN -->
+                <div class="mb-4">
+                    <h3 class="ci-section-title">Tổng quan</h3>
+                    <div class="row g-3">
 
-                    <!-- Card vòng tròn tiến độ -->
-                    <div class="col-12 col-lg-12">
-                        <div class="ci-card ci-overview-card h-100">
-                            <div>
-                                <span class="ci-overview-label">Đã check-in</span>
-                                <!-- th:text="${checkedInCount}" -->
-                                <h2 class="ci-overview-value"
-                                    th:text="${checked} + ' vé'">
-                                </h2>
-                                <!-- th:text="${totalSold}" -->
-                                <p class="ci-overview-caption">
-                                    Đã bán <span th:text="${totalTicketsSold}"></span> vé
-                                </p>
-                            </div>
+                        <!-- Card vòng tròn tiến độ -->
+                        <div class="col-12 col-lg-12">
+                            <div class="ci-card ci-overview-card h-100">
+                                <div>
+                                    <span class="ci-overview-label">Đã check-in</span>
+                                    <!-- th:text="${checkedInCount}" -->
+                                    <h2 class="ci-overview-value"
+                                        th:text="${checked} + ' vé'">
+                                    </h2>
+                                    <!-- th:text="${totalSold}" -->
+                                    <p class="ci-overview-caption">
+                                        Đã bán <span th:text="${totalTicketsSold}"></span> vé
+                                    </p>
+                                </div>
 
-                            <div class="ci-ring-wrap">
-                                <svg viewBox="0 0 96 96">
-                                    <defs>
-                                        <linearGradient id="ciRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stop-color="#7c3aed"/>
-                                            <stop offset="100%" stop-color="#db2777"/>
-                                        </linearGradient>
-                                    </defs>
-                                    <circle class="ci-ring-bg" cx="48" cy="48" r="38"></circle>
-                                    <circle class="ci-ring-progress"
-                                            cx="48"
-                                            cy="48"
-                                            r="38"
-                                            th:style="'stroke-dasharray:238.76;stroke-dashoffset:' + ${offset}">
-                                    </circle>
-                                </svg>
-                                <div class="ci-ring-center">
-                                    <span class="ci-ring-percent"
-                                          th:text="${percent} + '%'">
-                                    </span>
+                                <div class="ci-ring-wrap">
+                                    <svg viewBox="0 0 96 96">
+                                        <defs>
+                                            <linearGradient id="ciRingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#7c3aed"/>
+                                                <stop offset="100%" stop-color="#db2777"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <circle class="ci-ring-bg" cx="48" cy="48" r="38"></circle>
+                                        <circle class="ci-ring-progress"
+                                                cx="48"
+                                                cy="48"
+                                                r="38"
+                                                th:style="'stroke-dasharray:238.76;stroke-dashoffset:' + ${offset}">
+                                        </circle>
+                                    </svg>
+                                    <div class="ci-ring-center">
+                                        <span class="ci-ring-percent"
+                                              th:text="${percent} + '%'">
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
-
                 </div>
-            </div>
 
-            <!-- CHI TIẾT THEO LOẠI VÉ -->
-            <div>
-                <h3 class="ci-section-title">Chi tiết</h3>
-                <div class="ci-card ci-table-card">
-                    <div class="ci-table-scroll">
-                        <table class="ci-table">
-                            <thead>
-                            <tr>
-                                <th>Loại vé</th>
-                                <th class="text-end">Giá bán</th>
-                                <th class="text-center">Đã check-in</th>
-                                <th class="text-end">Tỉ lệ check-in</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="item : ${checkinDetails}">
-                                <td class="ci-td-name" th:text="${item.typeName}">VIP</td>
-                                <td class="text-end ci-td-price" th:text="${item.price}">2.500.000đ</td>
-                                <td class="ci-td-count"
-                                    th:text="${item.checked + ' / ' + item.soldTicket}">
-                                </td>
-                                <td>
-                                    <div class="ci-progress-cell">
-                                        <div class="ci-progress-track">
-                                            <div class="ci-progress-fill"   th:style="'width:' + ${item.percent} + '%'"></div>
+                <!-- CHI TIẾT THEO LOẠI VÉ -->
+                <div>
+                    <h3 class="ci-section-title">Chi tiết</h3>
+                    <div class="ci-card ci-table-card">
+                        <div class="ci-table-scroll">
+                            <table class="ci-table">
+                                <thead>
+                                <tr>
+                                    <th>Loại vé</th>
+                                    <th class="text-end">Giá bán</th>
+                                    <th class="text-center">Đã check-in</th>
+                                    <th class="text-end">Tỉ lệ check-in</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${checkinDetails}">
+                                    <td class="ci-td-name" th:text="${item.typeName}">VIP</td>
+                                    <td class="text-end ci-td-price"
+                                        th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        2.500.000 đ
+                                    </td>
+                                    <td class="ci-td-count"
+                                        th:text="${item.checked + ' / ' + item.soldTicket}">
+                                    </td>
+                                    <td>
+                                        <div class="ci-progress-cell">
+                                            <div class="ci-progress-track">
+                                                <div class="ci-progress-fill"   th:style="'width:' + ${item.percent} + '%'"></div>
+                                            </div>
+                                            <span class="ci-progress-percent" th:text="${item.percent + '%'}"></span>
                                         </div>
-                                        <span class="ci-progress-percent" th:text="${item.percent + '%'}"></span>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </main>
-    </div>
+            </main>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/organizer/js/sidebar.js"></script>
-    <script src="/organizer/js/Header.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/organizer/js/sidebar.js"></script>
+        <script src="/organizer/js/Header.js"></script>
 
-    </body>
-    </html>
+        </body>
+        </html>
