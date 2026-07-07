@@ -2,7 +2,6 @@ package vn.edu.fpt.controller.finance;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,14 +12,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
-import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.modelview.response.finance.SettlementSummaryDTO;
 import vn.edu.fpt.repository.EventSummaryProjection;
+import vn.edu.fpt.repository.SettlementAgingProjection;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
 
-import java.math.BigDecimal;
+
 import java.util.List;
 
 @Controller
@@ -61,6 +61,24 @@ public class FinanceController {
 
        Long totalRevenue = eventServiceImpl.sumTotalRevenue();
        model.addAttribute("totalRevenue",totalRevenue);
+
+       Long pendingPayoutAmount = settlementServiceImpl.sumPendingPayoutAmount();
+       model.addAttribute("pendingPayoutAmount", pendingPayoutAmount);
+
+       long nearDueCount = settlementServiceImpl.countNearDuePendingSettlements();
+       model.addAttribute("nearDueCount", nearDueCount);
+
+       Long totalPaidAmount = settlementServiceImpl.sumPayoutAmount();
+       model.addAttribute("totalPaidAmount", totalPaidAmount);
+
+       long unsettledEventCount = settlementServiceImpl.countUnsettledEvents();
+       model.addAttribute("unsettledEventCount",unsettledEventCount);
+
+       List<SettlementSummaryProjection> platformFeeByMonth = settlementServiceImpl.platformFeeByMonth();
+       model.addAttribute("platformFeeByMonth",platformFeeByMonth);
+
+       SettlementAgingProjection settlementAging = settlementServiceImpl.getSettlementAging();
+       model.addAttribute("settlementAging", settlementAging);
 
        return "finance/DashboardFinance";
    }
@@ -137,7 +155,7 @@ public class FinanceController {
         Long totalPaidAmount = settlementServiceImpl.sumPayoutAmount();
         model.addAttribute("totalPaidAmount", totalPaidAmount);
 
-        List<SettlementSummaryProjection> listSettlements;
+        List<SettlementSummaryDTO> listSettlements;
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             listSettlements = settlementServiceImpl.searchSettlement(keyword);
@@ -216,6 +234,9 @@ return "redirect:/finance/viewSettlementDetails?settlementId=" + settlementId;
        long unsettledEventCount = eventServiceImpl.countUnsettledEvents();
        model.addAttribute("unsettledEventCount",unsettledEventCount);
 
+       long settledEventCount = settlementServiceImpl.countPendingSettlement();
+       model.addAttribute("settledEventCount", settledEventCount);
+
 
        return "finance/ListEndedEvents";
    }
@@ -282,5 +303,7 @@ return "redirect:/finance/viewSettlementDetails?settlementId=" + settlementId;
         }
         return "redirect:/finance/profile";
     }
+
+
 
 }

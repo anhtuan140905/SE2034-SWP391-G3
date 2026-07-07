@@ -310,9 +310,9 @@ public class EventServiceImpl implements EventService {
                 // Thêm các logic khác (nếu có) vào đây...
                 processSettlement(event.getEventId());
             }
-
+            eventRepository.saveAll(eventSetStatus);
         }
-        eventRepository.saveAll(eventSetStatus);
+
     }
 
     private void processSettlement(Long eventId) {

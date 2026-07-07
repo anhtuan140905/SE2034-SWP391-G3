@@ -618,6 +618,7 @@
                     <div class="stat-mini-value" th:text="${countEndEvent}">0</div>
                 </div>
             </div>
+
             <div class="stat-mini">
                 <div class="stat-mini-icon orange">
                     <svg fill="none" stroke="#f97316" stroke-width="2" viewBox="0 0 24 24">
@@ -627,6 +628,18 @@
                 <div>
                     <div class="stat-mini-label">Chưa Tạo Quyết Toán</div>
                     <div class="stat-mini-value" th:text="${unsettledEventCount}">0</div>
+                </div>
+            </div>
+
+            <div class="stat-mini">
+                <div class="stat-mini-icon pink">
+                    <svg fill="none" stroke="#ff1b8d" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-mini-label">Đã Tạo Quyết Toán</div>
+                    <div class="stat-mini-value" th:text="${settledEventCount}">0</div>
                 </div>
             </div>
         </div>

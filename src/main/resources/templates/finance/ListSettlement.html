@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Cổng Tài Chính – Danh Sách Quyết Toán</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
         body {
             background: #fff0f5;
@@ -22,7 +27,8 @@
             width: 260px;
             padding: 20px;
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
             height: 100vh;
             z-index: 100;
         }
@@ -64,9 +70,15 @@
             color: white;
         }
 
-        .menu a svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .menu a svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
 
-        .menu-group { margin-bottom: 10px; }
+        .menu-group {
+            margin-bottom: 10px;
+        }
 
         .menu-parent {
             justify-content: space-between !important;
@@ -80,7 +92,8 @@
         }
 
         .menu-parent .chevron {
-            width: 14px; height: 14px;
+            width: 14px;
+            height: 14px;
             transition: transform 0.25s ease;
         }
 
@@ -108,7 +121,9 @@
             max-height: 200px;
         }
 
-        .submenu li { margin: 0; }
+        .submenu li {
+            margin: 0;
+        }
 
         .submenu a {
             padding: 11px 14px;
@@ -133,7 +148,8 @@
             background: #ffffff;
             border-bottom: 1px solid rgba(255, 42, 122, 0.12);
             position: sticky;
-            top: 0; z-index: 90;
+            top: 0;
+            z-index: 90;
             padding: 12px 25px;
             display: flex;
             align-items: center;
@@ -152,7 +168,9 @@
             font-size: 14px;
         }
 
-        .topbar .search-box::placeholder { color: #84759b; }
+        .topbar .search-box::placeholder {
+            color: #84759b;
+        }
 
         .topbar-right {
             margin-left: auto;
@@ -161,7 +179,9 @@
             gap: 18px;
         }
 
-        .profile-dropdown { position: relative; }
+        .profile-dropdown {
+            position: relative;
+        }
 
         .profile {
             display: flex;
@@ -171,7 +191,8 @@
         }
 
         .profile img {
-            width: 42px; height: 42px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             border: 2px solid #ff1b8d;
             object-fit: cover;
@@ -197,8 +218,15 @@
             overflow: hidden;
         }
 
-        .dropdown-menu.show { display: block; }
-        .dropdown-menu ul { list-style: none; padding: 8px 0; margin: 0; }
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
 
         .dropdown-menu ul li a,
         .dropdown-logout {
@@ -217,30 +245,49 @@
             cursor: pointer;
         }
 
-        .dropdown-menu ul li a:hover { background: rgba(255, 27, 141, 0.07); color: #ff1b8d; }
-        .dropdown-logout { color: #e11d48; }
-        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
-        .divider { border-top: 1px solid rgba(255, 42, 122, 0.1); margin: 6px 0; }
+        .dropdown-menu ul li a:hover {
+            background: rgba(255, 27, 141, 0.07);
+            color: #ff1b8d;
+        }
+
+        .dropdown-logout {
+            color: #e11d48;
+        }
+
+        .dropdown-logout:hover {
+            background: rgba(225, 29, 72, 0.07);
+            color: #e11d48;
+        }
+
+        .divider {
+            border-top: 1px solid rgba(255, 42, 122, 0.1);
+            margin: 6px 0;
+        }
 
         /* ================= MAIN ================= */
-        .main { padding: 25px; flex: 1; }
+        .main {
+            padding: 25px;
+            flex: 1;
+        }
+
         .page-header {
-            display:flex;
-            align-items:center;
-            gap:14px;
-            margin-bottom:25px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 25px;
         }
 
-        .page-header h1{
-            font-size:26px;
-            font-weight:bold;
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: bold;
         }
 
-        .page-header p{
-            color:#9ca3af;
-            margin-top:5px;
-            font-size:14px;
+        .page-header p {
+            color: #9ca3af;
+            margin-top: 5px;
+            font-size: 14px;
         }
+
         /* ================= STATS BAR ================= */
         .stats-bar {
             display: grid;
@@ -266,7 +313,8 @@
         }
 
         .stat-mini-icon {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -274,14 +322,38 @@
             flex-shrink: 0;
         }
 
-        .stat-mini-icon svg { width: 20px; height: 20px; }
-        .stat-mini-icon.pink   { background: rgba(255, 27, 141, 0.1); }
-        .stat-mini-icon.orange { background: rgba(249, 115, 22, 0.1); }
-        .stat-mini-icon.blue   { background: rgba(59, 130, 246, 0.1); }
-        .stat-mini-icon.green  { background: rgba(16, 185, 129, 0.1); }
+        .stat-mini-icon svg {
+            width: 20px;
+            height: 20px;
+        }
 
-        .stat-mini-label { font-size: 12px; color: #84759b; margin-bottom: 2px; }
-        .stat-mini-value { font-size: 20px; font-weight: bold; color: #1e0e34; }
+        .stat-mini-icon.pink {
+            background: rgba(255, 27, 141, 0.1);
+        }
+
+        .stat-mini-icon.orange {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .stat-mini-icon.blue {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .stat-mini-icon.green {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-mini-label {
+            font-size: 12px;
+            color: #84759b;
+            margin-bottom: 2px;
+        }
+
+        .stat-mini-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e0e34;
+        }
 
         .tabs {
             display: flex;
@@ -330,7 +402,8 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 16px; height: 16px;
+            width: 16px;
+            height: 16px;
             color: #84759b;
         }
 
@@ -346,8 +419,14 @@
             transition: 0.2s;
         }
 
-        .search-input::placeholder { color: #84759b; }
-        .search-input:focus { border-color: #ff1b8d; box-shadow: 0 0 0 3px rgba(255,27,141,0.1); }
+        .search-input::placeholder {
+            color: #84759b;
+        }
+
+        .search-input:focus {
+            border-color: #ff1b8d;
+            box-shadow: 0 0 0 3px rgba(255, 27, 141, 0.1);
+        }
 
         .btn-filter {
             padding: 10px 20px;
@@ -362,7 +441,7 @@
         }
 
         .btn-filter:hover {
-            box-shadow: 0 4px 16px rgba(255,27,141,0.35);
+            box-shadow: 0 4px 16px rgba(255, 27, 141, 0.35);
             transform: translateY(-1px);
         }
 
@@ -382,10 +461,20 @@
             justify-content: space-between;
         }
 
-        .table-box-header h2 { color: #1e0e34; font-size: 16px; }
-        .result-count { font-size: 12px; color: #84759b; }
+        .table-box-header h2 {
+            color: #1e0e34;
+            font-size: 16px;
+        }
 
-        table { width: 100%; border-collapse: collapse; }
+        .result-count {
+            font-size: 12px;
+            color: #84759b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
         table th {
             color: #84759b;
@@ -397,8 +486,13 @@
             white-space: nowrap;
         }
 
-        table th.right { text-align: right; }
-        table th.center { text-align: center; }
+        table th.right {
+            text-align: right;
+        }
+
+        table th.center {
+            text-align: center;
+        }
 
         table td {
             padding: 14px 20px;
@@ -407,12 +501,25 @@
             font-size: 14px;
         }
 
-        table td.right { text-align: right; }
-        table td.center { text-align: center; }
+        table td.right {
+            text-align: right;
+        }
 
-        table tr:last-child td { border-bottom: none; }
-        table tr:hover { background: rgba(255, 42, 122, 0.02); }
-        table tbody tr:nth-child(even) { background: rgba(255, 42, 122, 0.01); }
+        table td.center {
+            text-align: center;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        table tr:hover {
+            background: rgba(255, 42, 122, 0.02);
+        }
+
+        table tbody tr:nth-child(even) {
+            background: rgba(255, 42, 122, 0.01);
+        }
 
         .mono {
             font-family: monospace;
@@ -421,7 +528,9 @@
             font-weight: 600;
         }
 
-        .text-muted { color: #84759b; }
+        .text-muted {
+            color: #84759b;
+        }
 
         /* ================= BADGE ================= */
         .badge {
@@ -432,11 +541,11 @@
             font-weight: bold;
         }
 
-        .badge.pending   {
+        .badge.pending {
             color: #f97316;
         }
 
-        .badge.paid      {
+        .badge.paid {
             color: #10b981;
         }
 
@@ -458,21 +567,27 @@
         .btn-action.primary {
             background: linear-gradient(to right, #ff1b8d, #ec4899);
             color: #fff;
-            box-shadow: 0 2px 10px rgba(255,27,141,0.25);
+            box-shadow: 0 2px 10px rgba(255, 27, 141, 0.25);
         }
 
         .btn-action.primary:hover {
-            box-shadow: 0 4px 20px rgba(255,27,141,0.4);
+            box-shadow: 0 4px 20px rgba(255, 27, 141, 0.4);
             transform: translateY(-1px);
         }
 
-        .btn-action.ghost {
-            background: #fff0f5;
-            color: #84759b;
-            border: 1px solid rgba(255, 42, 122, 0.15);
+        .time-overdue {
+            color: #dc2626;
+            font-weight: 600;
         }
 
-        .btn-action.ghost:hover { color: #ff1b8d; border-color: #ff1b8d; }
+        .time-warning {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .time-completed {
+            color: #16a34a;
+        }
 
         /* ================= EMPTY ================= */
         .empty {
@@ -483,17 +598,29 @@
 
         /* ================= RESPONSIVE ================= */
         @media (max-width: 1100px) {
-            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 900px) {
-            .sidebar { width: 220px; }
-            .wrapper { margin-left: 220px; }
+            .sidebar {
+                width: 220px;
+            }
+
+            .wrapper {
+                margin-left: 220px;
+            }
         }
 
         @media (max-width: 600px) {
-            .sidebar { display: none; }
-            .wrapper { margin-left: 0; }
+            .sidebar {
+                display: none;
+            }
+
+            .wrapper {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -506,10 +633,12 @@
 
     <div class="menu">
         <!-- 1. Dashboard -->
-        <a th:href="@{/finance/dashboard}" >
+        <a th:href="@{/finance/dashboard}">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
             </svg>
             Bảng Điều Khiển
         </a>
@@ -535,7 +664,8 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
                         </svg>
                         Sự Kiện Đã Kết Thúc
                     </a>
@@ -543,9 +673,11 @@
                 <li>
                     <a th:href="@{/finance/listSettlement}" class="active">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                            <line x1="8" y1="6" x2="21" y2="6"/>
+                            <line x1="8" y1="12" x2="21" y2="12"/>
                             <line x1="8" y1="18" x2="21" y2="18"/>
-                            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/>
+                            <line x1="3" y1="12" x2="3.01" y2="12"/>
                             <line x1="3" y1="18" x2="3.01" y2="18"/>
                         </svg>
                         Danh Sách Quyết Toán
@@ -571,14 +703,17 @@
                     <img th:unless="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
                          src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="default"/>
                     <div class="profile-info">
-                        <div class="name" th:text="${currentUser != null ? currentUser.email: 'Nhân Viên Tài Chính'}">Nhân Viên Tài Chính</div>
+                        <div class="name" th:text="${currentUser != null ? currentUser.email: 'Nhân Viên Tài Chính'}">
+                            Nhân Viên Tài Chính
+                        </div>
                     </div>
                     <i class="fa-solid fa-chevron-down" style="font-size:12px; color:#84759b; margin-left:6px;"></i>
                 </div>
 
                 <div class="dropdown-menu" id="profileDropdown">
                     <ul>
-                        <li><a th:href="@{/finance/profile}"><i class="fa-regular fa-user"></i> Thông Tin Của Tôi</a></li>
+                        <li><a th:href="@{/finance/profile}"><i class="fa-regular fa-user"></i> Thông Tin Của Tôi</a>
+                        </li>
                         <li><a th:href="@{/finance/dashboard}"><i class="fa-solid fa-shield"></i> Kênh Quản Trị</a></li>
                         <li><a th:href="@{/settings}"><i class="fa-solid fa-sliders"></i> Cài Đặt</a></li>
                         <li class="divider"></li>
@@ -610,7 +745,8 @@
             <div class="stat-mini">
                 <div class="stat-mini-icon pink">
                     <svg fill="none" stroke="#ff1b8d" stroke-width="2" viewBox="0 0 24 24">
-                        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
                         <line x1="8" y1="18" x2="21" y2="18"/>
                         <line x1="3" y1="6" x2="3.01" y2="6"/>
                     </svg>
@@ -623,7 +759,8 @@
             <div class="stat-mini">
                 <div class="stat-mini-icon orange">
                     <svg fill="none" stroke="#f97316" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
                     </svg>
                 </div>
                 <div>
@@ -634,7 +771,8 @@
             <div class="stat-mini">
                 <div class="stat-mini-icon blue">
                     <svg fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
                     </svg>
                 </div>
                 <div>
@@ -652,11 +790,12 @@
                 <div>
                     <div class="stat-mini-label">Tổng Chi Trả</div>
                     <div class="stat-mini-value"
-                         th:text="${#numbers.formatInteger(totalPaidAmount != null ? totalPaidAmount:0, 1, 'POINT') + 'đ'}">0đ</div>
+                         th:text="${#numbers.formatInteger(totalPaidAmount != null ? totalPaidAmount:0, 1, 'POINT') + 'đ'}">
+                        0đ
+                    </div>
                 </div>
             </div>
         </div>
-
 
 
         <form th:action="@{/finance/listSettlement}" method="get">
@@ -666,7 +805,8 @@
             <div class="filter-row">
                 <div class="search-wrap">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
                     <input class="search-input"
                            type="text"
@@ -704,7 +844,8 @@
         <div class="table-box">
             <div class="table-box-header">
                 <h2>Lịch Sử Quyết Toán</h2>
-                <span class="result-count" th:text="${listSettlements != null ? #lists.size(listSettlements) + ' kết quả' : '0 kết quả'}"></span>
+                <span class="result-count"
+                      th:text="${listSettlements != null ? #lists.size(listSettlements) + ' kết quả' : '0 kết quả'}"></span>
             </div>
 
             <table th:unless="${listSettlements == null or #lists.isEmpty(listSettlements)}">
@@ -715,6 +856,7 @@
                     <th>Tên Sự Kiện</th>
                     <th class="right">Số Tiền Chi Trả</th>
                     <th>Ngày Tạo</th>
+                    <th>Thời Gian Xử Lý</th>
                     <th class="center">Trạng Thái</th>
                     <th class="center">Thao Tác</th>
                 </tr>
@@ -723,13 +865,27 @@
                 <tr th:each="settlement, settlementStat : ${listSettlements}">
                     <td><span th:text="${settlementStat.count}">N/A</span></td>
                     <td style="font-weight:600"
-                        th:text="${settlement.lastNameOrganizer + ' ' + settlement.middleNameOrganizer + ' ' + settlement.firstNameOrganizer}">N/A</td>
-                    <td  style="font-weight:600"
-                            th:text="${settlement.eventName}">N/A</td>
+                        th:text="${settlement.lastNameOrganizer + ' ' + settlement.middleNameOrganizer + ' ' + settlement.firstNameOrganizer}">
+                        N/A
+                    </td>
+                    <td style="font-weight:600"
+                        th:text="${settlement.eventName}">N/A
+                    </td>
                     <td class="right" style="font-weight:600; font-size:15px;"
-                        th:text="${#numbers.formatInteger(settlement.payoutAmount != null ? settlement.payoutAmount:0, 1, 'POINT') + 'đ'}">0đ</td>
-                    <td   style="font-weight:600"
-                        th:text="${#temporals.format(settlement.createAt,'dd/MM/yyyy HH:mm')}">N/A</td>
+                        th:text="${#numbers.formatInteger(settlement.payoutAmount != null ? settlement.payoutAmount:0, 1, 'POINT') + 'đ'}">
+                        0đ
+                    </td>
+                    <td style="font-weight:600"
+                        th:text="${#temporals.format(settlement.createAt,'dd/MM/yyyy HH:mm')}">N/A
+                    </td>
+                    <td style="font-weight:600"
+                        th:text="${settlement.timeDisplay}"
+                        th:classappend="
+            ${#strings.contains(settlement.timeDisplay, 'Quá hạn')} ? 'time-overdue' :
+            (${#strings.contains(settlement.timeDisplay, 'Còn')} ? 'time-warning' :
+            'time-completed')">
+                        >N/A
+                    </td>
                     <td class="center">
                         <span th:if="${settlement.status == 'PENDING'}" class="badge pending">Chờ Xử Lý</span>
                         <span th:if="${settlement.status == 'COMPLETED'}" class="badge paid">Đã Thanh Toán</span>
@@ -738,7 +894,10 @@
                         <a class="btn-action primary"
                            th:href="@{/finance/viewSettlementDetails(settlementId=${settlement.settlementId})}">
                             Xem Chi Tiết
-                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                                 viewBox="0 0 24 24">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
                         </a>
                     </td>
                 </tr>
@@ -758,7 +917,7 @@
         document.getElementById('profileDropdown').classList.toggle('show');
     }
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         const dropdown = document.querySelector('.profile-dropdown');
         if (dropdown && !dropdown.contains(e.target)) {
             document.getElementById('profileDropdown').classList.remove('show');
@@ -770,7 +929,7 @@
     }
 
 
-    (function() {
+    (function () {
         const path = window.location.pathname;
         if (path.includes('/finance/listEndedEvents') || path.includes('/finance/listSettlement')) {
             document.getElementById('settlementGroup').classList.add('open');

@@ -1,11 +1,16 @@
 package vn.edu.fpt.modelview.response.finance;
 
+import lombok.Getter;
+import lombok.Setter;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+@Getter
+@Setter
 public class SettlementSummaryDTO {
     private Long settlementId;
     private Long eventId;
@@ -31,6 +36,9 @@ public class SettlementSummaryDTO {
     private String firstNameFinance;
     private LocalDateTime updateAt;
     private LocalDateTime paidAt;
+    private String timeDisplay;
+    private String createdBy;
+    private Integer month;
 
 
     public SettlementSummaryDTO(SettlementSummaryProjection projection) {
@@ -58,5 +66,34 @@ public class SettlementSummaryDTO {
         this.platformFee = projection.getPlatformFee();
         this.updateAt = projection.getUpdateAt();
         this.paidAt = projection.getPaidAt();
+        this.createdBy = projection.getCreatedBy();
+        this.month = projection.getMonth();
+    }
+
+    public void calculateTimeDisplay() {
+
+        if ("PENDING".equals(status)) {
+
+            LocalDateTime deadline = createAt.plusHours(72);
+
+            long hours = Duration.between(LocalDateTime.now(), deadline).toHours();
+
+            if (hours < 0) {
+                timeDisplay = "Quá hạn " + (-hours) + " giờ";
+            } else {
+                timeDisplay = "Còn " + hours + " giờ";
+            }
+
+        } else if ("COMPLETED".equals(status)) {
+
+            if (paidAt != null) {
+                DateTimeFormatter formatter =
+                        DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+
+                timeDisplay = "Đã trả lúc " + paidAt.format(formatter);
+            } else {
+                timeDisplay = "Đã thanh toán";
+            }
+        }
     }
 }

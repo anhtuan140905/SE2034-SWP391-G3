@@ -311,7 +311,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             SELECT COUNT(DISTINCT o.event.eventId)
             FROM Order o
             WHERE o.user.id = :userId AND o.status = 'PAID'
-            AND o.event.startTime > CURRENT_TIMESTAMP
+            AND o.event.endTime > CURRENT_TIMESTAMP
             """)
     long countUpcomingEvent(@Param("userId") Long userId);
 
@@ -420,6 +420,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             """)
     long countUnsettledEvents();
 
+
     @Query("""
             
             select sum(o.totalAmount)
@@ -503,7 +504,9 @@ u.middle_name as middleNameOrganizer,
 u.last_name as lastNameOrganizer,
 e.end_time as endTime,
 (select sum(tt.sold_quantity)
-from ticket_types tt ) as totalTickets
+from ticket_types tt 
+where tt.event_id = e.event_id
+) as totalTickets
 
 from settlements se\s
 left join events e on se.event_id = e.event_id

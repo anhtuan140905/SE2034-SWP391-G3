@@ -542,7 +542,8 @@
     <div class="main">
 
         <a class="back-btn" onclick="history.back()" href="#">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"
+            th:href="@{/finance/listSettlement(tab='all')}"/></svg>
             Quay Lại Danh Sách Quyết Toán
         </a>
 
@@ -566,6 +567,9 @@
                         <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                         Đánh Dấu Đã Thanh Toán
                     </button>
+                    <div th:if="${successMessage}">
+                        <span th:text="${successMessage}"></span>
+                    </div>
                 </form>
             </div>
         </div>
@@ -585,7 +589,7 @@
                 <div class="detail-rows">
                     <div class="detail-row">
                         <span class="dr-label">Mã Sự Kiện</span>
-                        <span class="dr-value mono" th:text="${eventDetail.id}">N/A</span>
+                        <span class="dr-value" th:text="${eventDetail.id}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Tên Sự Kiện</span>
@@ -643,18 +647,24 @@
                 <div class="detail-rows">
                     <div class="detail-row">
                         <span class="dr-label">Mã Quyết Toán</span>
-                        <span class="dr-value mono" th:text="${settlementDetail.settlementId}">N/A</span>
+                        <span class="dr-value" th:text="${settlementDetail.settlementId}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ngày Tạo</span>
                         <span class="dr-value" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}">N/A</span>
                     </div>
                     <div class="detail-row">
+                        <span class="dr-label">Người Tạo</span>
+                        <span class="dr-value"
+                              th:text="${settlementDetail.createdBy == null ? 'Hệ Thống Tạo Tự Động' : settlementDetail.createdBy}">
+                            Hệ Thống Tạo Tự Động</span>
+                    </div>
+                    <div class="detail-row">
                         <span class="dr-label">Phương Thức Thanh Toán</span>
                         <span class="dr-value">Chuyển Khoản Ngân Hàng</span>
                     </div>
                     <div class="detail-row">
-                        <span class="dr-label">Người Xử Lý</span>
+                        <span class="dr-label">Người Phê Duyệt</span>
                         <span class="dr-value" th:text="${settlementDetail.lastNameFinance + ' ' + settlementDetail.middleNameFinance + ' ' + settlementDetail.firstNameFinance}">N/A</span>
                     </div>
                     <div class="detail-row">

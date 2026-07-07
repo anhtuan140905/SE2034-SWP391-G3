@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Cổng Tài Chính – Bảng Điều Khiển</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
 
@@ -246,8 +247,8 @@
         }
         /* ================= CARDS ================= */
         .cards {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -258,7 +259,6 @@
             border-radius: 20px;
             padding: 22px;
             transition: 0.3s;
-            flex: 1 1 260px;
         }
 
         .card:hover {
@@ -266,10 +266,7 @@
             box-shadow: 0 0 20px rgba(255, 42, 122, 0.1);
         }
 
-        .card.alert {
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            background: linear-gradient(180deg, rgba(239,68,68,0.05) 0%, #ffffff 60%);
-        }
+
 
         .value {
             font-size: 28px;
@@ -290,19 +287,21 @@
         }
 
         /* ================= CHARTS ================= */
+
         .charts {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-
         .chart-box {
             background: #ffffff;
             border: 1px solid rgba(255, 42, 122, 0.15);
             border-radius: 22px;
             padding: 25px;
             height: 400px;
+            display: flex;
+            flex-direction: column;
         }
 
         .chart-box h2 {
@@ -317,8 +316,13 @@
             margin-bottom: 16px;
         }
 
-        canvas { width: 100%; height: 280px; }
+        .chart-canvas-wrapper {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+        }
 
+        canvas { width: 100% !important; height: 100% !important; }
         /* ================= TABLE ================= */
         .table-box {
             background: #ffffff;
@@ -546,31 +550,29 @@
         <div class="cards">
             <div class="card">
                 <p class="card-label">Tổng Doanh Thu Nền Tảng</p>
-                <div class="value" th:text="${#numbers.formatInteger(totalRevenue != null ? totalRevenue:0, 1, 'POINT') + 'đ'}">0đ</div>
+                <div class="value" th:text="${#numbers.formatInteger(totalRevenue != null ? totalRevenue : 0, 1, 'POINT') + 'đ'}">0đ</div>
             </div>
 
             <div class="card">
-                <p class="card-label">Phí Nền Tảng Thu Được</p>
-                <div class="value">$284,739</div>
+                <p class="card-label">Đang Chờ Thanh Toán</p>
+                <div class="value" th:text="${#numbers.formatInteger(pendingPayoutAmount != null ? pendingPayoutAmount : 0, 1, 'POINT') + 'đ'}">0đ</div>
+                <div class="card-sub" >
+                    <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${nearDueCount} + ' sắp quá hạn'"></span>
+                </div>
             </div>
 
             <div class="card">
-                <p class="card-label">Quyết Toán Đang Chờ</p>
-                <div class="value">$156,820</div>
+                <p class="card-label">Đã Thanh Toán</p>
+                <div class="value" th:text="${#numbers.formatInteger(totalPaidAmount != null ? totalPaidAmount :0, 1, 'POINT') + 'đ'}">0đ</div>
             </div>
 
-            <div class="card">
-                <p class="card-label">Thanh Toán Thành Công</p>
-                <div class="value">$2,405,833</div>
+            <div class="card" >
+                <p class="card-label">Cần Xử Lý Thủ Công</p>
+                <div class="value" th:text="${unsettledEventCount} + ' sự kiện'">0 sự kiện</div>
+                <a
+                   th:href="@{/finance/listEndedEvents(tab='pending')}"
+                   class="card-sub" style="text-decoration: underline;">Xử lý ngay</a>
             </div>
-
-            <!-- NEW CARD: Settlement sắp quá hạn (24h tới) -->
-            <div class="card alert">
-                <p class="card-label">Settlement Sắp Quá Hạn (24h tới)</p>
-                <div class="value">7</div>
-                <div class="card-sub"><i class="fa-solid fa-triangle-exclamation"></i> Cần xử lý trước khi vi phạm SLA 3 ngày</div>
-            </div>
-
         </div>
 
         <!-- CHARTS -->
@@ -578,224 +580,156 @@
             <div class="chart-box">
                 <h2>Phí Nền Tảng Thu Được Theo Tháng</h2>
                 <p class="chart-sub">Tổng phí dịch vụ nền tảng thu được từ các đơn hàng, theo từng tháng</p>
-                <canvas id="revenueChart"></canvas>
+                <div class="chart-canvas-wrapper">
+                    <canvas id="revenueChart"></canvas>
+                </div>
             </div>
 
             <div class="chart-box">
                 <h2>Aging Quyết Toán Đang Chờ Xử Lý</h2>
                 <p class="chart-sub">Số settlement đang chờ, tính theo thời gian đã trôi qua kể từ khi tạo (SLA thanh toán: 3 ngày)</p>
-                <canvas id="settlementChart"></canvas>
-            </div>
-        </div>
-
-        <!-- TWO COL -->
-        <div class="two-col">
-            <div class="table-box" style="margin-bottom:0">
-                <h2>Hoạt Động Gần Đây</h2>
-                <p>Các sự kiện tài chính mới nhất</p>
-                <div class="activity-item">
-                    <div class="activity-dot success"></div>
-                    <div>
-                        <div class="activity-text">Quyết toán #SET-9821 đã được duyệt</div>
-                        <div class="activity-time">2 giờ trước</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-dot info"></div>
-                    <div>
-                        <div class="activity-text">Sự kiện mới kết thúc: Tech Summit 2026</div>
-                        <div class="activity-time">5 giờ trước</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-dot success"></div>
-                    <div>
-                        <div class="activity-text">Đã thanh toán cho Ban Tổ Chức #ORG-445</div>
-                        <div class="activity-time">1 ngày trước</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-dot pending"></div>
-                    <div>
-                        <div class="activity-text">Quyết toán #SET-9812 vừa được tạo</div>
-                        <div class="activity-time">1 ngày trước</div>
-                    </div>
-                </div>
-                <div class="activity-item" style="margin-bottom:0">
-                    <div class="activity-dot warning"></div>
-                    <div>
-                        <div class="activity-text">Hoàn tiền cho Sự Kiện #EVT-7723</div>
-                        <div class="activity-time">2 ngày trước</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-box" style="margin-bottom:0">
-                <h2>Tổng Hợp Công Việc Đang Chờ</h2>
-                <p>Các đầu việc cần xử lý</p>
-                <div class="task-item orange">
-                    <span class="task-label">Quyết Toán Chờ Phê Duyệt</span>
-                    <span class="task-count orange">23</span>
-                </div>
-                <div class="task-item blue">
-                    <span class="task-label">Sự Kiện Sẵn Sàng Quyết Toán</span>
-                    <span class="task-count blue">47</span>
-                </div>
-                <div class="task-item purple">
-                    <span class="task-label">Đã Duyệt – Chờ Thanh Toán</span>
-                    <span class="task-count purple">12</span>
+                <div class="chart-canvas-wrapper">
+                    <canvas id="settlementChart"></canvas>
                 </div>
             </div>
         </div>
+
+
+
 
     </div><!-- /main -->
 </div><!-- /wrapper -->
 
-<script th:inline="none">
-    // ============ Chart 1: Phí nền tảng thu được theo tháng (1 line) ============
-    (function() {
-        const canvas = document.getElementById('revenueChart');
-        const ctx = canvas.getContext('2d');
-        const labels = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+<script th:inline="javascript">
 
-        // Dữ liệu mẫu — thay bằng SUM(fee) group by tháng từ Order/Settlement khi tích hợp backend
-        const feeData = [18500,22800,19200,24700,28100,31200,29600,34400,36700,39300,42800,46200];
+    //Chart 1
+    const platformFeeData = [[${platformFeeByMonth}]];
+    console.log(platformFeeData);
 
-        function draw() {
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = 280 * dpr;
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = '280px';
-            ctx.setTransform(1,0,0,1,0,0);
-            ctx.scale(dpr, dpr);
-            const W = rect.width, H = 280;
-            const padL = 60, padR = 20, padT = 20, padB = 40;
-            const chartW = W - padL - padR, chartH = H - padT - padB;
-            ctx.clearRect(0, 0, W, H);
+    const platformFeeByMonthArr = Array(12).fill(0);
+    platformFeeData.forEach(item => {
+        platformFeeByMonthArr[item.month - 1] = item.platformFee;
+    });
 
-            const maxVal = 50000;
-            const xStep = chartW / (labels.length - 1);
-            const toX = i => padL + i * xStep;
-            const toY = v => padT + chartH - (v / maxVal) * chartH;
+    const formatVND = (value) => {
+        if (value >= 1_000_000_000) return new Intl.NumberFormat('vi-VN').format(value / 1_000_000_000) + ' tỷ đ';
+        if (value >= 1_000_000) return new Intl.NumberFormat('vi-VN').format(value / 1_000_000) + ' tr đ';
+        return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+    };
 
-            // grid
-            for (let i = 0; i <= 5; i++) {
-                const y = padT + (chartH / 5) * i;
-                ctx.beginPath(); ctx.strokeStyle = 'rgba(255,42,122,0.1)';
-                ctx.setLineDash([4,4]); ctx.lineWidth = 1;
-                ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
-                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'right';
-                ctx.fillText('$' + ((50000 - i * 10000) / 1000) + 'k', padL - 8, y + 4);
+    const revenueCtx = document.getElementById('revenueChart');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: [
+                'Tháng 1','Tháng 2','Tháng 3','Tháng 4',
+                'Tháng 5','Tháng 6','Tháng 7','Tháng 8',
+                'Tháng 9','Tháng 10','Tháng 11','Tháng 12'
+            ],
+            datasets: [{
+                label: 'Phí nền tảng thu được',
+                data: platformFeeByMonthArr,
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139,92,246,0.25)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#1e0e34', font: { weight: '600' } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => ' ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' đ'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#4b3d60',
+                        font: { weight: '600', size: 12 },
+                        callback: (value) => formatVND(value)
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
             }
-
-            ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
-            labels.forEach((l, i) => ctx.fillText(l, toX(i), H - 10));
-
-            // gradient fill under the line
-            const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
-            grad.addColorStop(0, 'rgba(139,92,246,0.25)');
-            grad.addColorStop(1, 'rgba(139,92,246,0)');
-
-            ctx.beginPath(); ctx.moveTo(toX(0), toY(feeData[0]));
-            feeData.forEach((v, i) => {
-                if (i === 0) return;
-                const cx = (toX(i-1)+toX(i))/2;
-                ctx.bezierCurveTo(cx, toY(feeData[i-1]), cx, toY(v), toX(i), toY(v));
-            });
-            ctx.lineTo(toX(feeData.length-1), padT+chartH);
-            ctx.lineTo(toX(0), padT+chartH);
-            ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
-
-            // line
-            ctx.beginPath(); ctx.strokeStyle = '#8b5cf6'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-            ctx.moveTo(toX(0), toY(feeData[0]));
-            feeData.forEach((v, i) => {
-                if (i === 0) return;
-                const cx = (toX(i-1)+toX(i))/2;
-                ctx.bezierCurveTo(cx, toY(feeData[i-1]), cx, toY(v), toX(i), toY(v));
-            });
-            ctx.stroke();
-
-            // points
-            feeData.forEach((v, i) => {
-                ctx.beginPath(); ctx.arc(toX(i), toY(v), 4, 0, Math.PI*2);
-                ctx.fillStyle = '#8b5cf6'; ctx.fill();
-            });
         }
+    });
 
-        window.addEventListener('load', () => { setTimeout(draw, 50); window.addEventListener('resize', draw); });
-    })();
 
-    // ============ Chart 2: Aging của Settlement đang chờ (SLA 3 ngày / 72h) ============
-    (function() {
-        const canvas = document.getElementById('settlementChart');
-        const ctx = canvas.getContext('2d');
+    //Chart 2
+    const agingObj = /*[[${settlementAging}]]*/ {};
+    console.log(agingObj);
 
-        // Dữ liệu mẫu — thay bằng COUNT(*) group theo khoảng giờ từ ended_at/created_at đến hiện tại
-        const buckets = [
-            { label: '0–24h',           count: 18, color: '#10b981' }, // an toàn
-            { label: '24–48h',          count: 11, color: '#f59e0b' }, // theo dõi
-            { label: '48–72h',          count: 7,  color: '#f97316' }, // sắp đến hạn
-            { label: '> 72h (Quá hạn)', count: 3,  color: '#ef4444' }  // vi phạm SLA
-        ];
+    const agingLabels = ['0–24h', '24–48h', '48–72h', '> 72h (Quá hạn)'];
+    const agingColors = ['#10b981', '#f59e0b', '#f97316', '#ef4444'];
 
-        function draw() {
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = 280 * dpr;
-            canvas.style.width = rect.width + 'px';
-            canvas.style.height = '280px';
-            ctx.setTransform(1,0,0,1,0,0);
-            ctx.scale(dpr, dpr);
-            const W = rect.width, H = 280;
-            const padL = 40, padR = 20, padT = 20, padB = 50;
-            const chartW = W - padL - padR, chartH = H - padT - padB;
-            ctx.clearRect(0, 0, W, H);
+    const agingData = [
+        agingObj?.bucket0 ?? 0,
+        agingObj?.bucket1 ?? 0,
+        agingObj?.bucket2 ?? 0,
+        agingObj?.bucket3 ?? 0
+    ];
 
-            const maxVal = Math.max(...buckets.map(b => b.count)) + 4;
-            const groupW = chartW / buckets.length;
-            const barW = groupW * 0.5;
-
-            // grid
-            const steps = 4;
-            for (let i = 0; i <= steps; i++) {
-                const y = padT + (chartH / steps) * i;
-                ctx.beginPath(); ctx.strokeStyle = 'rgba(255,42,122,0.1)';
-                ctx.setLineDash([4,4]); ctx.lineWidth = 1;
-                ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
-                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'right';
-                ctx.fillText(Math.round(maxVal - (maxVal/steps)*i), padL - 6, y + 4);
+    const settlementCtx = document.getElementById('settlementChart');
+    new Chart(settlementCtx, {
+        type: 'bar',
+        data: {
+            labels: agingLabels,
+            datasets: [{
+                label: 'Số settlement',
+                data: agingData,
+                backgroundColor: agingColors,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => ' ' + context.parsed.y + ' settlement'
+                    }
+                },
+                subtitle: {
+                    display: true,
+                    text: 'Ngưỡng SLA thanh toán: 72 giờ kể từ khi sự kiện kết thúc',
+                    color: '#84759b',
+                    font: { style: 'italic', size: 11 },
+                    padding: { top: 10 }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#4b3d60', font: { weight: '600', size: 12 } },
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#4b3d60',
+                        font: { weight: '600', size: 12 },
+                        stepSize: 1,
+                        precision: 0
+                    },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                }
             }
-
-            buckets.forEach((b, i) => {
-                const x = padL + i * groupW + (groupW - barW) / 2;
-                const barH = (b.count / maxVal) * chartH;
-                const y = padT + chartH - barH;
-
-                ctx.fillStyle = b.color;
-                ctx.beginPath();
-                ctx.roundRect(x, y, barW, barH, [6,6,0,0]);
-                ctx.fill();
-
-                // value on top of bar
-                ctx.fillStyle = '#1e0e34'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center';
-                ctx.fillText(b.count, x + barW / 2, y - 8);
-
-                // x label (2 lines if needed)
-                ctx.fillStyle = '#84759b'; ctx.font = '11px Arial'; ctx.textAlign = 'center';
-                ctx.fillText(b.label, x + barW / 2, H - 32);
-            });
-
-            // caption dòng dưới: nhắc SLA 72h
-            ctx.fillStyle = '#84759b'; ctx.font = 'italic 10.5px Arial'; ctx.textAlign = 'center';
-            ctx.fillText('Ngưỡng SLA thanh toán: 72 giờ kể từ khi sự kiện kết thúc', W/2, H - 10);
         }
-
-        window.addEventListener('load', () => { setTimeout(draw, 50); window.addEventListener('resize', draw); });
-    })();
+    });
 
     function toggleDropdown() {
         document.getElementById('profileDropdown').classList.toggle('show');

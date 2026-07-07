@@ -29,5 +29,8 @@ public interface SettlementSummaryProjection {
     String getFirstNameFinance();
     LocalDateTime getUpdateAt();
     LocalDateTime getPaidAt();
+    String getCreatedBy();
+    Integer getMonth();
+
 
 }

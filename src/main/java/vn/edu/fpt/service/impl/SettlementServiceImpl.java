@@ -14,6 +14,7 @@ import vn.edu.fpt.model.Settlement;
 import vn.edu.fpt.model.constant.SettlementResult;
 import vn.edu.fpt.model.constant.SettlementStatus;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
+import vn.edu.fpt.modelview.response.finance.SettlementSummaryDTO;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.SettlementService;
 
@@ -91,17 +92,41 @@ public class SettlementServiceImpl implements SettlementService {
         return settlementRepository.sumPayoutAmount();
     }
 
-    public List<SettlementSummaryProjection> listSettlement(String tab){
-        List<SettlementSummaryProjection> list = settlementRepository.listSettlement();
-        return switch (tab == null ? "all" : tab){
-            case "pending" -> list.stream().filter(se -> "PENDING".equals(se.getStatus())).toList();
-            case "completed" -> list.stream().filter(se -> "COMPLETED".equals(se.getStatus())).toList();
+    public List<SettlementSummaryDTO> listSettlement(String tab) {
+
+        List<SettlementSummaryDTO> list = settlementRepository.listSettlement()
+                .stream()
+                .map(SettlementSummaryDTO::new)
+                .toList();
+
+        list.forEach(SettlementSummaryDTO::calculateTimeDisplay);
+
+        return switch (tab == null ? "all" : tab) {
+
+            case "pending" ->
+                    list.stream()
+                            .filter(se -> "PENDING".equals(se.getStatus()))
+                            .toList();
+
+            case "completed" ->
+                    list.stream()
+                            .filter(se -> "COMPLETED".equals(se.getStatus()))
+                            .toList();
+
             default -> list;
         };
     }
 
-    public List<SettlementSummaryProjection> searchSettlement(@Param("keyword") String keyword){
-        return settlementRepository.searchSettlement(keyword);
+    public List<SettlementSummaryDTO> searchSettlement(String keyword) {
+
+        return settlementRepository.searchSettlement(keyword)
+                .stream()
+                .map(projection -> {
+                    SettlementSummaryDTO dto = new SettlementSummaryDTO(projection);
+                    dto.calculateTimeDisplay();
+                    return dto;
+                })
+                .toList();
     }
 
     public SettlementSummaryProjection getSettlementDetail(@Param("settlementId") Long settlementId){
@@ -160,5 +185,25 @@ public class SettlementServiceImpl implements SettlementService {
             return SettlementResult.ALREADY_EXISTS;
         }
 
+    }
+
+    public Long sumPendingPayoutAmount(){
+        return settlementRepository.sumPendingPayoutAmount();
+    }
+
+    public long countNearDuePendingSettlements(){
+        return settlementRepository.countNearDuePendingSettlements();
+    }
+
+    public long countUnsettledEvents(){
+        return settlementRepository.countUnsettledEvents();
+    }
+
+    public List<SettlementSummaryProjection> platformFeeByMonth(){
+        return settlementRepository.platformFeeByMonth();
+    }
+
+    public SettlementAgingProjection getSettlementAging(){
+        return settlementRepository.getSettlementAging();
     }
 }
