@@ -133,7 +133,6 @@ public class EventController {
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
         model.addAttribute("event", eventDetailDTO);
         model.addAttribute("eventId", id);
-        model.addAttribute("activeMenu", "vouchers");
 
         return "organizer/event/ViewOrganizerEvent";
     }
