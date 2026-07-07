@@ -76,10 +76,19 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     );
 
     @Query("""
-select sum(o.totalAmount)
-from Event e left join Order o on e.eventId = o.event.eventId
-where o.event.eventId = :eventId and o.status = 'PAID'
-""")
+    SELECT sum(o.totalAmount)
+    from Event e left join Order o on e.eventId = o.event.eventId
+    where o.event.eventId = :eventId and o.status = 'PAID'
+    """)
     BigDecimal calculateGrossRevenueByEventId(@Param("eventId") Long eventId);
 
+    @Query("SELECT COUNT(t) FROM Ticket t JOIN t.orderDetail od JOIN od.order o WHERE o.event.eventId = :eventId AND o.status = 'PAID'")
+    Long countPaidTicketsByEventId(@Param("eventId") Long eventId);
+
+    @Query("SELECT CAST(o.createdAt AS date) as orderDate, SUM(o.totalAmount) " +
+           "FROM Order o " +
+           "WHERE o.event.eventId = :eventId AND o.status = :status AND o.createdAt >= :startDate " +
+           "GROUP BY CAST(o.createdAt AS date) " +
+           "ORDER BY orderDate ASC")
+    List<Object[]> getDailyRevenueByEventId(@Param("eventId") Long eventId, @Param("status") OrderStatus status, @Param("startDate") Instant startDate);
 }

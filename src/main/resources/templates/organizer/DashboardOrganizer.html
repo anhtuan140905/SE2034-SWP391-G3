@@ -2,334 +2,228 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
+    <title>EventHub Pro - Tổng quan doanh thu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EventHub – Dashboard</title>
-
-    <!-- Bootstrap 5 -->
     <link
+            rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet"
     />
-    <!-- Material Symbols -->
     <link
-            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
     />
-    <!-- Google Fonts -->
     <link
-            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
+            th:href="@{/organizer/css/sidebar.css}"
+            href="/organizer/css/SideBar.css"
     />
-    <link rel="stylesheet" th:href="@{/organizer/css/Header.css}">
-    <link rel="stylesheet" th:href="@{/organizer/css/SideBar.css}">
-    <link rel="stylesheet" th:href="@{/organizer/css/dashboard.css}" />
+    <link
+            rel="stylesheet"
+            th:href="@{/organizer/css/Header.css}"
+            href="/organizer/css/Header.css"
+    />
+    <link
+            rel="stylesheet"
+            th:href="@{/organizer/css/dashboard.css}"
+            href="/organizer/css/dashboard.css"
+    />
 </head>
 <body>
-<!-- ===== SIDEBAR ===== -->
-<th:block th:replace="/organizer/Share/sidebar::sidebar"></th:block>
-
-
-<!-- Overlay (mobile) -->
 <div
         class="sidebar-overlay"
         id="sidebarOverlay"
         onclick="toggleSidebar(false)"
 ></div>
 
-<!-- ===== MAIN WRAPPER ===== -->
+<aside class="sidebar" id="sidebar" th:replace="~{/organizer/Share/sidebar::sidebar}">
+
+</aside>
+
 <div class="main-wrapper">
-    <!-- HEADER -->
-    <th:block th:replace="/organizer/Share/Header::header"></th:block>
-    <!-- PAGE CONTENT -->
-    <main class="page-content">
-        <div class="animate-fade-in">
-            <!-- Page Title -->
-            <div class="mb-4">
-                <h1 class="page-title mb-1">Control Center</h1>
-                <p class="page-sub">
-                    Real-time activity matrix, ticket parameters, and venue traffic
-                    reports.
+    <header
+            class="top-header d-flex align-items-center justify-content-between px-4"
+            th:replace="~{/organizer/Share/Header::header}"
+    >
+
+    </header>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main>
+        <div style="max-width: 1080px; margin: 0 auto">
+            <div class="dashboard-content">
+                <!-- Page title -->
+                <div class="dc-page-title d-flex align-items-center gap-2 mb-1">
+                <span class="material-symbols-outlined dc-title-icon"
+                >grid_view</span
+                >
+                    <h2 class="mb-0">Tổng quan doanh thu</h2>
+                </div>
+                <p class="dc-subtitle mb-4">
+                    Theo dõi doanh số vé, doanh thu trực quan, tỉ lệ lấp đầy phòng
+                    vé thời gian thực.
                 </p>
-            </div>
 
-            <!-- ===== FEATURED CAMPAIGN BANNER ===== -->
-            <div
-                    class="campaign-banner mb-4"
-                    id="campaignBanner"
-                    onclick="goToEvents()"
-            >
-                <!-- Decorative blurs -->
-                <div class="banner-blur banner-blur-1"></div>
-                <div class="banner-blur banner-blur-2"></div>
+                <div class="dc-section-label mb-3">CHỈ SỐ PHÂN TÍCH</div>
 
-                <!-- Mobile bg image -->
-                <div class="banner-mobile-bg d-md-none">
-                    <img
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4eS1ChxTB17daDwUhc-1cQVzlJWTJpu15fzW4Kl6QZVLJoUpFPkGpGks4wGKM4dBsMRe9U3eAnHVq1l6G0fg7rytXuOIxwNi_T4MnvLgdctLF5iQsTa8q8UhQYXKRCfWUVWAanxLVk32h8zwf8iHmLLjJGeTjcNHrAot5HBfN5meHWsYnGfUXYjl4EdGR6-cn120kWu0HAHrw6z9Ct76O02iohOu2GLvn9D25Uwcb1siOLgX9huePzMmabSnl-Rg20844dnRbdKMj"
-                            alt="Banner"
-                            class="banner-mobile-img"
-                    />
-                    <div class="banner-mobile-overlay"></div>
-                </div>
-
-                <!-- Desktop circle image -->
-                <div class="banner-circle-wrap d-none d-md-flex">
-                    <div class="banner-ring banner-ring-1"></div>
-                    <div class="banner-ring banner-ring-2"></div>
-                    <div class="banner-ring banner-ring-3"></div>
-                    <div class="banner-circle-img-wrap">
-                        <img
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4eS1ChxTB17daDwUhc-1cQVzlJWTJpu15fzW4Kl6QZVLJoUpFPkGpGks4wGKM4dBsMRe9U3eAnHVq1l6G0fg7rytXuOIxwNi_T4MnvLgdctLF5iQsTa8q8UhQYXKRCfWUVWAanxLVk32h8zwf8iHmLLjJGeTjcNHrAot5HBfN5meHWsYnGfUXYjl4EdGR6-cn120kWu0HAHrw6z9Ct76O02iohOu2GLvn9D25Uwcb1siOLgX9huePzMmabSnl-Rg20844dnRbdKMj"
-                                alt="Event"
-                                class="banner-circle-img"
-                                id="bannerCircleImg"
-                        />
-                        <div class="banner-circle-vignette"></div>
-                    </div>
-                </div>
-
-                <!-- Banner text content -->
-                <div class="banner-content">
-                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge-featured">⭐ FEATURED CAMPAIGN</span>
-                        <span class="badge-onsale">
-                  <span class="badge-dot"></span>
-                  OFFICIAL TICKETS ON SALE
-                </span>
-                    </div>
-                    <div class="mb-2">
-                <span class="banner-category" id="bannerCategory"
-                >ENTERTAINMENT</span
-                >
-                        <h2 class="banner-title" id="bannerTitle">
-                            Summer Music Fest 2024
-                        </h2>
-                    </div>
-                    <div class="banner-meta d-flex flex-wrap gap-3 mb-3">
-                <span class="d-flex align-items-center gap-1">
-                  <span
-                          class="material-symbols-outlined"
-                          style="font-size: 15px; color: #a78bfa"
-                  >calendar_today</span
-                  >
-                  <span id="bannerDate">15 Aug 2024</span>
-                </span>
-                        <span class="d-flex align-items-center gap-1">
-                  <span
-                          class="material-symbols-outlined"
-                          style="font-size: 15px; color: #a78bfa"
-                  >location_on</span
-                  >
-                  <span id="bannerLocation">Hanoi Stadium, Mỹ Đình</span>
-                </span>
-                    </div>
-                    <div class="banner-progress-wrap mb-4">
-                        <div
-                                class="d-flex justify-content-between banner-progress-labels mb-1"
-                        >
-                            <span id="bannerSoldLabel">1,200 / 15,000 tickets sold</span>
-                            <span id="bannerPct">8%</span>
-                        </div>
-                        <div class="banner-progress-track">
-                            <div
-                                    class="banner-progress-fill"
-                                    id="bannerFill"
-                                    style="width: 8%"
-                            ></div>
-                        </div>
-                    </div>
-                    <button class="btn-banner-cta">
-                <span class="material-symbols-outlined" style="font-size: 16px"
-                >arrow_forward</span
-                >
-                        Manage Campaign
-                    </button>
-                </div>
-
-                <!-- Footer row -->
-                <div
-                        class="banner-footer d-flex align-items-center justify-content-between"
-                >
-              <span class="d-flex align-items-center gap-2">
-                <span
-                        class="material-symbols-outlined"
-                        style="font-size: 14px; color: #34d399"
-                >trending_up</span
-                >
-                <span
-                >Real-time analytics:
-                  <strong class="text-white"
-                  >+1,240 page views today</strong
-                  ></span
-                >
-              </span>
-                    <span class="banner-footer-mono d-none d-sm-inline"
-                    >Automated ticket engine running stably</span
-                    >
-                </div>
-            </div>
-
-            <!-- ===== KPI BENTO CARDS ===== -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="kpi-card">
-                        <div>
-                            <div class="kpi-label">Total Revenue</div>
-                            <div class="kpi-value">₫4.13B</div>
-                            <div class="kpi-badge kpi-badge-green">
-                    <span class="material-symbols-outlined kpi-badge-icon"
-                    >trending_up</span
-                    >
-                                +18.4% this month
+                <!-- Stat cards -->
+                <div class="dc-stats-grid mb-4" th:if="${stats != null}">
+                    <div class="dc-stats-grid-item">
+                        <div class="card dc-stats-card h-100">
+                            <div class="card-body">
+                                <div class="dc-stat-icon dc-stat-icon--purple">
+                                    <span class="material-symbols-outlined">attach_money</span>
+                                </div>
+                                <div class="dc-stat-label">DOANH THU</div>
+                                <div class="dc-stat-value" th:text="${stats.totalRevenue != null ? #numbers.formatDecimal(stats.totalRevenue, 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">999.600.000đ</div>
+                                <hr class="dc-stat-divider" />
+                                <div class="dc-stat-footnote">Tổng doanh thu thực tế</div>
                             </div>
                         </div>
-                        <div class="kpi-icon-wrap">
-                  <span class="material-symbols-outlined kpi-icon"
-                  >account_balance_wallet</span
-                  >
-                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="kpi-card">
-                        <div>
-                            <div class="kpi-label">Tickets Sold</div>
-                            <div class="kpi-value" id="kpiTickets">15,850</div>
-                            <div class="kpi-badge kpi-badge-purple">
-                    <span class="material-symbols-outlined kpi-badge-icon"
-                    >confirmation_number</span
-                    >
-                                85% occupancy rate
+                    <div class="dc-stats-grid-item">
+                        <div class="card dc-stats-card h-100">
+                            <div class="card-body">
+                                <div class="dc-stat-icon dc-stat-icon--pink">
+                                    <span class="material-symbols-outlined">confirmation_number</span>
+                                </div>
+                                <div class="dc-stat-label">SỐ VÉ ĐÃ BÁN</div>
+                                <div class="dc-stat-value" th:text="${stats.totalTicketsSold != null ? stats.totalTicketsSold + ' vé' : '0 vé'}">2.856 vé</div>
+                                <hr class="dc-stat-divider" />
+                                <div class="dc-stat-footnote">Tổng số vé thanh toán thành công</div>
                             </div>
                         </div>
-                        <div class="kpi-icon-wrap">
-                  <span class="material-symbols-outlined kpi-icon"
-                  >local_activity</span
-                  >
-                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="kpi-card">
-                        <div>
-                            <div class="kpi-label">Conversion Rate</div>
-                            <div class="kpi-value">88.5%</div>
-                            <div class="kpi-badge kpi-badge-pink">
-                    <span class="material-symbols-outlined kpi-badge-icon"
-                    >bolt</span
-                    >
-                                Active Promotions
+                    <div class="dc-stats-grid-item">
+                        <div class="card dc-stats-card h-100">
+                            <div class="card-body">
+                                <div class="dc-stat-icon dc-stat-icon--violet">
+                                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                                </div>
+                                <div class="dc-stat-label">TIỀN KẾT TOÁN</div>
+                                <div class="dc-stat-value" th:text="${stats.settledAmount != null ? #numbers.formatDecimal(stats.settledAmount, 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">111.600.000đ</div>
+                                <hr class="dc-stat-divider" />
                             </div>
                         </div>
-                        <div class="kpi-icon-wrap">
-                  <span class="material-symbols-outlined kpi-icon"
-                  >analytics</span
-                  >
-                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- ===== WEEKLY REVENUE CHART ===== -->
-            <div class="glass-card p-4 mb-4">
-                <div
-                        class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2"
-                >
-                    <div>
-                        <h3 class="section-title mb-1">Weekly Revenue Breakdown</h3>
-                        <p class="section-sub mb-0">
-                            Visual cash flow analysis in Million VND
+                <!-- Chart card -->
+                <div class="card dc-chart-card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-4">
+                            <div>
+                                <h3 class="dc-card-title mb-1">
+                                    Biểu đồ phân tích doanh thu
+                                </h3>
+                                <p class="dc-card-subtitle mb-0">
+                                    Biểu diễn trực quan dòng tiền theo thời gian
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Khung biểu đồ cột tĩnh thuần CSS/HTML kết hợp Thymeleaf -->
+                        <div class="dc-bar-chart mt-4">
+                            <div class="dc-bar-chart-grid" style="display: flex; gap: 12px; height: 300px;">
+                                
+                                <!-- Trục Y hiển thị các vạch định mức doanh thu bên trái -->
+                                <div class="dc-y-axis" style="display: flex; flex-direction: column; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; text-align: right; width: 52px; flex-shrink: 0; padding-bottom: 2px;">
+                                    <span>Max</span>
+                                    <span>Mid</span>
+                                    <span>0</span>
+                                </div>
+
+                                <!-- Khu vực hiển thị lưới ngang và các cột dựng đứng -->
+                                <div class="dc-bars-area" style="position: relative; flex: 1; height: 100%;">
+                                    
+                                    <!-- Các đường kẻ lưới ngang mờ phía sau -->
+                                    <div class="dc-gridlines" style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none;">
+                                        <div style="border-top: 1px dashed rgba(0, 0, 0, 0.06); width: 100%; height: 0;"></div>
+                                        <div style="border-top: 1px dashed rgba(0, 0, 0, 0.06); width: 100%; height: 0;"></div>
+                                        <div style="border-top: 1px dashed rgba(0, 0, 0, 0.06); width: 100%; height: 0;"></div>
+                                    </div>
+
+                                    <!-- Danh sách các cột dọc động -->
+                                    <div class="dc-bars" style="position: relative; height: 100%; display: flex; align-items: end; justify-content: space-between; padding: 0 8px;">
+                                        
+                                        <div th:each="item : ${chartDataList}" 
+                                             class="dc-bar" 
+                                             th:style="'height: ' + ${item.heightPercent} + '%; flex: 1; max-width: 46px; background: linear-gradient(180deg, #a855f7 0%, #7c3aed 100%); border-radius: 8px 8px 3px 3px; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.18); transition: opacity 0.2s ease; cursor: pointer;'"
+                                             th:title="${item.date} + ' - Doanh thu: ' + ${#numbers.formatDecimal(item.revenue, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trục X hiển thị ngày tháng -->
+                            <div class="dc-x-axis" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94a3b8; margin-top: 10px; padding: 0 8px 0 64px; display: flex; justify-content: space-between;">
+                                <span th:each="item : ${chartDataList}" 
+                                      th:text="${item.date}" 
+                                      style="flex: 1; max-width: 46px; text-align: center;">05/06</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table card -->
+                <div class="card dc-table-card mb-4">
+                    <div class="card-body">
+                        <h3 class="dc-card-title mb-1">Chi tiết trạng thái vé bán</h3>
+                        <p class="dc-card-subtitle mb-3">
+                            Danh sách cụ thể các loại vé, mức giá và tỉ lệ chuyển đổi thực tế
                         </p>
-                    </div>
-                    <div class="week-badge">
-                <span
-                        class="material-symbols-outlined"
-                        style="font-size: 14px; color: #7c3aed"
-                >calendar_today</span
-                >
-                        Week 24 (Current)
-                    </div>
-                </div>
 
-                <!-- Bar chart -->
-                <div class="chart-area" id="chartArea">
-                    <!-- Bars injected by JS -->
-                </div>
-
-                <div class="chart-insight mt-3">
-                    <div class="d-flex align-items-center gap-2 flex-grow-1">
-                <span
-                        class="material-symbols-outlined"
-                        style="font-size: 18px; color: #7c3aed"
-                >insights</span
-                >
-                        <span
-                        >Ticket booking peaked on <strong>Wednesday (Wed)</strong> due
-                  to early bird VIP passes launch and flash vouchers.</span
-                        >
+                        <div class="table-responsive">
+                            <table class="table dc-table align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th>LOẠI VÉ</th>
+                                    <th>GIÁ BÁN</th>
+                                    <th>ĐÃ BÁN</th>
+                                    <th>TỈ LỆ BÁN</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${#lists.isEmpty(ticketStats)}">
+                                    <td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu vé bán cho sự kiện này.</td>
+                                </tr>
+                                <tr th:each="ticket : ${ticketStats}">
+                                    <td>
+                                        <span class="dc-dot dc-dot--purple"></span>
+                                        <span th:text="${ticket.zoneName}">Loại vé</span>
+                                    </td>
+                                    <td th:text="${ticket.price != null ? #numbers.formatDecimal(ticket.price, 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">0đ</td>
+                                    <td th:text="${ticket.soldQuantity + ' / ' + ticket.totalStock}">0 / 0</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress dc-progress">
+                                                <div class="progress-bar dc-progress-bar" th:style="'width: ' + ${ticket.percentSold} + '%'"></div>
+                                            </div>
+                                            <span class="dc-percent" th:text="${ticket.percentSold} + '%'">0%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <button
-                            class="btn-link-purple"
-                            onclick="
-                  showToast(
-                    'Vouchers',
-                    'Navigating to Discount Vouchers.',
-                    'info',
-                  )
-                "
-                    >
-                        View Vouchers
-                    </button>
-                </div>
-            </div>
-
-            <!-- ===== ACTIVE CAMPAIGNS GRID ===== -->
-            <div class="dark-panel p-4">
-                <div
-                        class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2"
-                >
-                    <div>
-                        <h3 class="section-title text-white mb-1">
-                            Active Event Campaigns
-                        </h3>
-                        <p class="section-sub text-white-50 mb-0">
-                            Overview of currently live and upcoming events
-                        </p>
-                    </div>
-                    <button
-                            class="btn-link-purple"
-                            onclick="showToast('Events', 'View all events page.', 'info')"
-                    >
-                        View all (6)
-                    </button>
-                </div>
-
-                <div class="row g-4" id="eventsGrid">
-                    <!-- Injected by JS -->
                 </div>
             </div>
         </div>
-        <!-- end animate-fade-in -->
     </main>
 </div>
-<!-- end main-wrapper -->
-
-<!-- Toast notification -->
-<div class="toast-wrap" id="toastWrap">
-    <div class="custom-toast" id="customToast">
-        <span class="material-symbols-outlined toast-icon" id="toastIcon"
-        >check_circle</span
-        >
-        <div>
-            <div class="toast-title" id="toastTitle">Notification</div>
-            <div class="toast-desc" id="toastDesc"></div>
-        </div>
-    </div>
-</div>
-
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/organizer/js/dashboard.js}"></script>
-<script th:src="@{/organizer/js/sidebar.js}"></script>
-<script th:src="@{/organizer/js/Header.js}"></script>
+
+<!-- Sidebar & Header JS -->
+<script
+        th:src="@{/organizer/js/sidebar.js}"
+        src="/organizer/js/sidebar.js"
+></script>
+<script
+        th:src="@{/organizer/js/Header.js}"
+        src="/organizer/js/Header.js"
+></script>
+
 </body>
 </html>

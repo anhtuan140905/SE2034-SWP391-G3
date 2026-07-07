@@ -3,13 +3,15 @@ package vn.edu.fpt.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Settlement;
 
 @Repository
 public interface SettlementRepository extends JpaRepository<Settlement, Long>, JpaSpecificationExecutor<Event> {
-
+    @Query("select s from Settlement s where s.event.eventId = :eventId and s.status ='COMPLETED'")
+    Settlement getPayoutAmountByEventId(@Param("eventId") Long eventId);
     boolean existsByEvent_EventId(Long eventId);
 
     @Query("""

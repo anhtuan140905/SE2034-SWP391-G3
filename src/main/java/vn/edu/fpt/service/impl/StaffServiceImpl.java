@@ -227,6 +227,7 @@ public class StaffServiceImpl implements StaffService {
             throw new RuntimeException("Người Dùng  đã có role trong Sự kiên!");
         }
         UserRole userRole = userRoleRepository.findByUserIdAndRoleId(user.getId(), memberRequestDTO.getRoleId()).orElse(null);
+
         if(userRole==null){
             userRole = new UserRole();
             userRole.setUser(user);

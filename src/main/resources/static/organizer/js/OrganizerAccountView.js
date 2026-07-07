@@ -16,36 +16,6 @@ function toggleSidebar(open) {
         document.body.style.overflow = "";
     }
 }
-
-/* ---------- Logout ---------- */
-function handleLogout(event) {
-    event.preventDefault();
-    if (confirm("Are you sure you want to sign out?")) {
-        showToast(
-            "Signed Out",
-            "You have been successfully signed out.",
-            "warning",
-        );
-    }
-}
-
-/* ---------- Search ---------- */
-function handleSearch(value) {
-    var clearBtn = document.getElementById("searchClear");
-    if (value.length > 0) {
-        clearBtn.classList.remove("d-none");
-    } else {
-        clearBtn.classList.add("d-none");
-    }
-}
-
-function clearSearch() {
-    var input = document.getElementById("searchInput");
-    input.value = "";
-    document.getElementById("searchClear").classList.add("d-none");
-    input.focus();
-}
-
 /* ---------- Save profile form ---------- */
 function handleSave(event) {
     event.preventDefault();
@@ -75,7 +45,6 @@ function toggleSecret() {
 var toastTimeout = null;
 
 function showToast(title, desc, type) {
-    var wrap = document.getElementById("toastWrap");
     var toast = document.getElementById("customToast");
     var titleEl = document.getElementById("toastTitle");
     var descEl = document.getElementById("toastDesc");

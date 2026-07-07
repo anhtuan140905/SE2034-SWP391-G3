@@ -1,6 +1,7 @@
 package vn.edu.fpt.modelview.request.organizer;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class OrganizerProfileDto {
 
+    private Long IdProfile;
     @NotBlank(message = "Mã số thuế không được để trống")
     @Size(min = 10 ,max = 20, message = "Mã số thuế tối đa 20 ký tự")
     @Pattern(
@@ -42,9 +44,8 @@ public class OrganizerProfileDto {
     @NotBlank(message = "Số tài  khoản không được để trống")
     private String bankAccountNumber;
 
-    @Size(max = 100, message = "Tên ngân hàng tối đa 100 ký tự")
-    @NotBlank(message = "Tên ngân hàng không được để trống")
-    private String bankName;
+    @NotNull(message = "Vui lòng chọn ngân hàng")
+    private Long bankId;
 
     @Size(max = 100, message = "Tên chi nhánh tối đa 100 ký tự")
     @NotBlank(message = "Tên chi nhánh  khoản không được để trống")

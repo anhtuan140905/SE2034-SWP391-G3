@@ -21,4 +21,6 @@ public interface TicketTypeRepository extends CrudRepository<TicketType, Integer
             "WHERE tt.event.id IN :eventIds " +
             " GROUP BY tt.event.id")
     List<Object[]> findMinPriceByEventIds(@Param("eventIds") List<Long> eventIds);
+
+    List<TicketType> findByEvent_EventId(Long eventId);
 }

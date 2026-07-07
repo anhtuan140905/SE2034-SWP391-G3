@@ -34,8 +34,9 @@ public class OrganizerProfile {
     @Column(name = "bank_account_number", columnDefinition = "NVARCHAR(30)")
     private String bankAccountNumber;
 
-    @Column(name = "bank_name", columnDefinition = "NVARCHAR(100)")
-    private String bankName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 
     @Column(name = "bank_branch", columnDefinition = "NVARCHAR(100)")
     private String bankBranch;
