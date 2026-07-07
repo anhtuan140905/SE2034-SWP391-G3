@@ -117,20 +117,20 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     //
     @Query("""
-        SELECT e FROM Event e
-        JOIN OrganizerMember o ON o.event = e
-        JOIN o.userRole ur
-        WHERE ur.user.id = :organizerId
-          AND (
-                :status IS NULL
-                OR e.status = :status
-              )
-          AND (
-                :keyword IS NULL
-                OR :keyword = ''
-                OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-              )
-        """)
+            SELECT e FROM Event e
+            JOIN OrganizerMember o ON o.event = e
+            JOIN o.userRole ur
+            WHERE ur.user.id = :organizerId
+              AND (
+                    :status IS NULL
+                    OR e.status = :status
+                  )
+              AND (
+                    :keyword IS NULL
+                    OR :keyword = ''
+                    OR LOWER(e.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  )
+            """)
     Page<Event> findByStatusAndKeyword(
             @Param("organizerId") Long organizerId,
             @Param("status") EventStatus status,

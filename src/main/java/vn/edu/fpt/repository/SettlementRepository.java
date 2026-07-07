@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface SettlementRepository extends JpaRepository<Settlement, Long>, JpaSpecificationExecutor<Event> {
-
+    @Query("select s from Settlement s where s.event.eventId = :eventId and s.status ='COMPLETED'")
+    Settlement getPayoutAmountByEventId(@Param("eventId") Long eventId);
     boolean existsByEvent_EventId(Long eventId);
 
     @Query(value = """

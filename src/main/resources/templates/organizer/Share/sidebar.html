@@ -20,29 +20,37 @@
     </div>
 
     <nav class="sidebar-nav flex-grow-1">
-        <a th:href="@{/organizer/dashboard}"
+        <a th:href="@{/organizer/event/{id}/dashboard(id=${eventId})}"
            class="nav-item"
            th:classappend="${activeMenu == 'dashboard'} ? ' active' : ''">
             <span class="material-symbols-outlined">dashboard</span>
             <span>Tổng Quan</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event,'vouchers')">
+
+        <a th:if="${eventId != null}"
+           th:href="@{/organizer/event/{eventId}/voucher(eventId=${eventId})}"
+           class="nav-item"
+           th:classappend="${activeMenu == 'vouchers'} ? ' active' : ''">
             <span class="material-symbols-outlined">local_offer</span>
             <span>Mã giảm giá</span>
         </a>
-        <a th:href="@{/organizer/event/35/orders}" class="nav-item" onclick="setTab(event,'orders')">
+        <a th:unless="${eventId != null}" href="#" class="nav-item" onclick="setTab(event,'vouchers')">
+            <span class="material-symbols-outlined">local_offer</span>
+            <span>Mã giảm giá</span>
+        </a>
+        <a th:href="@{/organizer/event/{id}/orders(id=${eventId})}" class="nav-item" onclick="setTab(event,'orders')">
             <span class="material-symbols-outlined">shopping_bag</span>
             <span>Đơn hàng</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event,'staff')">
+        <a th:href="@{/organizer/event/{id}/members(id=${eventId})}" class="nav-item" onclick="setTab(event,'staff')">
             <span class="material-symbols-outlined">groups</span>
             <span>Nhân Viên</span>
         </a>
-        <a th:href="@{/organizer/event/35/checkIn}" class="nav-item" onclick="setTab(event,'checkin')">
+        <a th:href="@{/organizer/event/{id}/checkIn(id=${eventId})}" class="nav-item" onclick="setTab(event,'checkin')">
             <span class="material-symbols-outlined">fact_check</span>
             <span>Check in</span>
         </a>
-        <a href="#" class="nav-item" onclick="setTab(event,'event-edit')">
+        <a th:href="@{/organizer/event/{eventId}/edit(eventId=${eventId})}" class="nav-item" onclick="setTab(event,'event-edit')">
             <span class="material-symbols-outlined">edit_calendar</span>
             <span>Chỉnh sửa sự kiện</span>
         </a>

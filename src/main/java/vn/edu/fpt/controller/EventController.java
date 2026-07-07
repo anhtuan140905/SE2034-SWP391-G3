@@ -44,6 +44,7 @@ public class EventController {
         model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
         if (!hasOrganizerProfile) {
             model.addAttribute("organizerProfile", new OrganizerProfileDto());
+            model.addAttribute("banks",eventService.getListBank());
         }
         model.addAttribute("event", eventDTO);
         return "organizer/event/CreateOrganizerEvent";
@@ -53,7 +54,7 @@ public class EventController {
     public String saveEvent(
             @Valid @ModelAttribute("event") EventDTO eventDTO,
             BindingResult eventResult,
-            @ModelAttribute("organizerProfile")
+            @Valid @ModelAttribute("organizerProfile")
             OrganizerProfileDto organizerProfileDto,
             BindingResult organizerResult,
             Model model,
@@ -81,7 +82,7 @@ public class EventController {
         } else {
             eventService.saveEvent(eventDTO, null);
         }
-        return "redirect:/organizer/dashboard";
+        return "redirect:/organizer/event/MyEvent";
     }
 
     @ResponseBody
@@ -132,6 +133,8 @@ public class EventController {
 //        }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
         model.addAttribute("event", eventDetailDTO);
+        model.addAttribute("eventId", id);
+
         return "organizer/event/ViewOrganizerEvent";
     }
 
@@ -154,8 +157,8 @@ public class EventController {
 
 //        try {
 
-        EventEditDTO eventDTO = eventService.UpdateEventById(eventId);
-
+        EventEditDTO eventDTO = eventService.getEventUpdateById(eventId);
+        model.addAttribute("eventId", eventId);
         model.addAttribute("event", eventDTO);
         model.addAttribute("eventCategoryList", eventService.getListEventCategory());
         model.addAttribute("citys", eventService.getListcity());
