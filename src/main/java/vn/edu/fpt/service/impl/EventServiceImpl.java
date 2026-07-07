@@ -294,6 +294,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void SetStatusEvent() {
         List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
         if (eventSetStatus.isEmpty()) {
@@ -308,7 +309,7 @@ public class EventServiceImpl implements EventService {
                 event.setStatus(EventStatus.ENDED);
                 List<OrganizerMember> organizerMemberList = organizerMemberRepository.findByEventId(event.getEventId());
                 for (OrganizerMember organizerMember:organizerMemberList){
-                    if(organizerMember.getUserRole().getRole().getRoleName().equals(RoleName.ROLE_ORGANIZER)){
+                    if(organizerMember.getUserRole().getRole().getRoleName().toString().equals(RoleName.ROLE_ORGANIZER.toString())){
                         UserRole userRole = userRoleRepository.findByUserIdAndRoleId(organizerMember.getUserRole().getUser().getId(),roleRepository.findByRoleName(RoleName.ROLE_ATTENDEE).getId()).orElseThrow(()-> new RuntimeException("người này không có role attendee "));
                         organizerMember.setUserRole(userRole);
                         organizerMemberRepository.save(organizerMember);
@@ -317,8 +318,8 @@ public class EventServiceImpl implements EventService {
                     staffService.deleteStaffByStaffId(organizerMember.getId(),event.getEventId(),organizerMember.getUserRole().getUser().getId());
                 }
             }
-            eventRepository.saveAll(eventSetStatus);
         }
+        eventRepository.saveAll(eventSetStatus);
     }
 
     @Override
