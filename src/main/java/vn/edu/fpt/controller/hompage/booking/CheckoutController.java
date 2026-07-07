@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import vn.edu.fpt.common.error.VoucherValidationException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
@@ -32,9 +33,9 @@ public class CheckoutController {
     private final SeatLockService seatLockService;
     private final VNPayService vnPayService;
 
-    // Gọi từ trang chọn ghế khi user bấm "Tiến hành thanh toán"
     @PostMapping("/proceed")
     public String proceedToPayment(@RequestParam("seatIds") List<Long> seatIds,
+                                   @RequestParam(value = "voucherId", required = false) Long voucherId,
                                    @AuthenticationPrincipal AuthenticatedUser currentUser) {
         if (currentUser == null) {
             return "redirect:/login";
@@ -42,10 +43,14 @@ public class CheckoutController {
 
         User user = currentUser.getUser();
         try {
-            Long orderId = checkoutService.proceedToPayment(seatIds, user);
+            Long orderId = checkoutService.proceedToPayment(seatIds, voucherId, user);
             return "redirect:/checkout/" + orderId;
+        } catch (VoucherValidationException ex) {
+            Long eventId = checkoutService.resolveEventIdFromSeats(seatIds);
+            return "redirect:/events/" + eventId + "/choose_seat?error=voucher&code=" + ex.getErrorCode();
         } catch (IllegalStateException | IllegalArgumentException ex) {
-            return "redirect:/events/1/choose_seat?error=conflict";
+            Long eventId = checkoutService.resolveEventIdFromSeats(seatIds);
+            return "redirect:/events/" + eventId + "/choose_seat?error=conflict";
         }
     }
     @PostMapping("/toggle-lock")

@@ -5,11 +5,13 @@ package vn.edu.fpt.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.edu.fpt.common.error.VoucherValidationException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.CheckoutService;
+import vn.edu.fpt.service.VoucherService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -26,11 +28,12 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final SeatRepository seatRepository;
+    private final VoucherService  voucherService;
 
     private static final long CHECKOUT_TTL_MINUTES = 10;
 
     @Transactional
-    public Long proceedToPayment(List<Long> seatIds, User currentUser) {
+    public Long proceedToPayment(List<Long> seatIds, Long voucherId, User currentUser) {
         if (seatIds == null || seatIds.isEmpty()) {
             throw new IllegalArgumentException("Chưa chọn ghế nào");
         }
@@ -64,17 +67,34 @@ public class CheckoutServiceImpl implements CheckoutService {
         seatLockRepository.saveAll(locks);
 
         // 2. Tính tổng tiền (Giữ nguyên code cũ của bạn)
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal subAmount = BigDecimal.ZERO;
         Event event = locks.get(0).getSeat().getTicketType().getEvent();
         for (SeatLock lock : locks) {
-            totalAmount = totalAmount.add(lock.getSeat().getTicketType().getPrice());
+            subAmount = subAmount.add(lock.getSeat().getTicketType().getPrice());
         }
+
+        // 2.5 MỚI: validate voucher nếu có, tính discount
+        Voucher appliedVoucher = null;
+        BigDecimal discount = BigDecimal.ZERO;
+
+        if (voucherId != null) {
+            var result = voucherService.validate(voucherId, event.getEventId(), currentUser.getId(), subAmount);
+            if (!result.isValid()) {
+                throw new VoucherValidationException(result.getErrorCode());
+            }
+            appliedVoucher = result.getVoucher();
+            discount = result.getDiscount();
+        }
+
+        BigDecimal totalAmount = subAmount.subtract(discount);
 
         // 3. Tạo Order (Giữ nguyên code cũ của bạn)
         Order order = Order.builder()
                 .user(currentUser)
                 .event(event)
                 .totalAmount(totalAmount)
+                .voucher(appliedVoucher)
+                .discountAmount(discount)
                 .status(OrderStatus.PENDING_PAYMENT)
                 .expiresAt(newExpiry)
                 .build();
@@ -151,4 +171,13 @@ public class CheckoutServiceImpl implements CheckoutService {
         // Khi user bỏ chọn ghế (click lại lần 2), xóa bản ghi lock này đi để người khác chọn
         seatLockRepository.deleteBySeatSeatIdAndUserId(seatId, user.getId());
     }
+    @Override
+    public Long resolveEventIdFromSeats(List<Long> seatIds) {
+        if (seatIds == null || seatIds.isEmpty()) {
+            throw new IllegalArgumentException("seatIds rỗng");
+        }
+        SeatLock lock = seatLockRepository.findBySeatSeatId(seatIds.get(0))
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lock cho ghế " + seatIds.get(0)));
+        return lock.getSeat().getTicketType().getEvent().getEventId();
     }
+}

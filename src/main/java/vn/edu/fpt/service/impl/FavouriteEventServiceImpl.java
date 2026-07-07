@@ -75,4 +75,10 @@ public class FavouriteEventServiceImpl implements FavouriteEventService {
     public List<Long> findFavouriteCategoryByUserId(Long userId) {
         return this.favouriteEventRepository.findFavouriteCategoryIdsByUserId(userId);
     }
+
+    @Override
+    @Transactional
+    public void removeFavourite(Long userId, Long eventId) {
+        this.favouriteEventRepository.deleteByUserIdAndEventEventId(userId, eventId);
+    }
 }

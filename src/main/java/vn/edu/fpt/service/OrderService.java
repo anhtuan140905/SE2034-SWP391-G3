@@ -19,4 +19,5 @@ public interface OrderService {
     public Order handleSaveOrder(Order order);
     public void handleUpdateStatusOrder(Long orderId);
     List<Event> findPurchasedEventsByUserId(Long userId);
+    boolean existsByVoucher_VoucherIdAndUserIdAndStatus(Long voucherId, Long userId, OrderStatus orderStatus);
 }

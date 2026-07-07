@@ -112,6 +112,14 @@ public class AttendeeEventController {
         }
     }
 
+    @PostMapping("/favourites/{eventId}/remove")
+    @ResponseBody
+    public ResponseEntity<Void> removeFavourite(@PathVariable Long eventId,
+                                                @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        this.favouriteEventService.removeFavourite(userDetails.getUser().getId(), eventId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/recommendation")
     public String recommendationPage(
             @AuthenticationPrincipal AuthenticatedUser userDetails,
