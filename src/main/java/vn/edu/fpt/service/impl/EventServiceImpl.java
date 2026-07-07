@@ -2,6 +2,7 @@ package vn.edu.fpt.service.impl;
 
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +17,8 @@ import vn.edu.fpt.common.error.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
+import vn.edu.fpt.model.constant.SettlementResult;
+import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
@@ -41,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -56,10 +60,15 @@ public class EventServiceImpl implements EventService {
     private final TicketService ticketService;
     private final TicketTypeService ticketTypeService;
     private final  EventImageRepository eventImageRepository;
+    private final SettlementServiceImpl settlementServiceImpl;
 
 
+    private final OrganizerMemberRepository organizerMemberRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final RoleRepository roleRepository;
+    private final BankRepository bankRepository;
     @Override
-    public EventEditDTO UpdateEventById(Long id) {
+    public EventEditDTO getEventUpdateById(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(()->new RuntimeException("Không tìm thấy sự kiện này"));
         EventEditDTO dto = new EventEditDTO();
 //        set trường đơn
@@ -291,6 +300,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void SetStatusEvent() {
         List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
         if (eventSetStatus.isEmpty()) {
@@ -300,13 +310,40 @@ public class EventServiceImpl implements EventService {
             // Đổi trạng thái sự kiện Là Kết thúc
             if (event.getStartTime().isBefore(LocalDateTime.now()) && event.getEndTime().isAfter(LocalDateTime.now()) ){
                 event.setStatus(EventStatus.INACTIVE);
-                // Thêm các logic khác (nếu có) vào đây.
+
             }else {
                 event.setStatus(EventStatus.ENDED);
                 // Thêm các logic khác (nếu có) vào đây...
+                processSettlement(event.getEventId());
+                List<OrganizerMember> organizerMemberList = organizerMemberRepository.findByEventId(event.getEventId());
+                for (OrganizerMember organizerMember:organizerMemberList){
+                    if(organizerMember.getUserRole().getRole().getRoleName().toString().equals(RoleName.ROLE_ORGANIZER.toString())){
+                        UserRole userRole = userRoleRepository.findByUserIdAndRoleId(organizerMember.getUserRole().getUser().getId(),roleRepository.findByRoleName(RoleName.ROLE_ATTENDEE).getId()).orElseThrow(()-> new RuntimeException("người này không có role attendee "));
+                        organizerMember.setUserRole(userRole);
+                        organizerMemberRepository.save(organizerMember);
+                        continue;
+                    }
+                    staffService.deleteStaffByStaffId(organizerMember.getId(),event.getEventId(),organizerMember.getUserRole().getUser().getId());
+                }
+           
             }
-            eventRepository.saveAll(eventSetStatus);
+          eventRepository.saveAll(eventSetStatus);
         }
+
+    }
+
+    private void processSettlement(Long eventId) {
+        try {
+            SettlementResult result = settlementServiceImpl.autoCreateSettlement(eventId);
+            switch (result) {
+                case CREATED -> log.info("Đã tự động tạo settlement cho event {}", eventId);
+                case ALREADY_EXISTS -> log.debug("Event {} đã có settlement, bỏ qua", eventId);
+                case NO_REVENUE -> log.debug("Event {} không có doanh thu, bỏ qua settlement", eventId);
+            }
+        } catch (Exception e) {
+            log.error("Lỗi hệ thống khi tự động tạo settlement cho event {}", eventId, e);
+        }
+        
     }
 
     @Override
@@ -317,6 +354,17 @@ public class EventServiceImpl implements EventService {
         }else {
             return false;
         }
+    }
+
+    @Override
+    public List<BankDto> getListBank() {
+        List<Bank> banks = bankRepository.findAll();
+        List<BankDto> bankDtos = new ArrayList<>();
+        for (Bank bank:banks){
+            BankDto dto = new BankDto(bank.getId(),bank.getShortName());
+            bankDtos.add(dto);
+        }
+        return bankDtos;
     }
 
     @Override
@@ -411,11 +459,13 @@ public class EventServiceImpl implements EventService {
         organizerProfile.setCompanyName(profileDto.getCompanyName());
         organizerProfile.setLegalAddress(profileDto.getLegalAddress());
         organizerProfile.setBankAccountName(profileDto.getBankAccountName());
-        organizerProfile.setBankName(profileDto.getBankName());
+        Bank bank =  bankRepository.getReferenceById(organizerProfileDto.getBankId());
+        organizerProfile.setBank(bank);
         organizerProfile.setBankBranch(profileDto.getBankBranch());
         organizerProfile.setBusinessType(profileDto.getBusinessType());
         organizerProfile.setLegalName(profileDto.getLegalName());
-        organizerProfileRepository.save(organizerProfile);}
+        organizerProfileRepository.save(organizerProfile);
+            }
 //        Lưu Event
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
                 .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
@@ -760,5 +810,7 @@ public  List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") St
         return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
     }
 
-
+public EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId){
+        return eventRepository.getEventDetail(settlementId);
+}
 }

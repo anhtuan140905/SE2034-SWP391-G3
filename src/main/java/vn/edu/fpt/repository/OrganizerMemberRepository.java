@@ -35,5 +35,7 @@ public interface OrganizerMemberRepository extends  JpaRepository<OrganizerMembe
     OrganizerMember CheckPermission(@Param("userId") Long userId, @Param("eventId")  Long eventId);
     @Query("SELECT om FROM OrganizerMember om JOIN om.userRole ur where  ur.user.id = :userId and om.event.eventId = :eventId")
     Optional<OrganizerMember> findbyUserIdAndEventId(@Param("userId") Long userId, @Param("eventId")  Long eventId);
+    @Query("SELECT om FROM OrganizerMember om  where  om.event.eventId = :eventId")
+    List<OrganizerMember> findByEventId(Long eventId);
 
 }

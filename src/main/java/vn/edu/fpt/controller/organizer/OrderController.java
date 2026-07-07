@@ -27,9 +27,10 @@ public class OrderController {
                                          @RequestParam(defaultValue = "0") int page,
                                          @AuthenticationPrincipal CustomUserDetails userDetails
                                         , Model model){
-//        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_VIEW_ORDERS")){
-//            return "organizer/DashboardOrganizer";
-//        }
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_VIEW_ORDERS")){
+            model.addAttribute("eventId", id);
+            return "organizer/Forbidden";
+        }
         Page<OrderDto> orders =  orderService.getOrderbyEventID(id,keyword,status, page);
         model.addAttribute("orders",orders.getContent());
         model.addAttribute("totalPages",  orders.getTotalPages());

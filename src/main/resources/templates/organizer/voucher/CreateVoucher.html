@@ -34,6 +34,11 @@
                 </a>
             </div>
 
+            <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                <span class="material-symbols-outlined">error</span>
+                <span th:text="${error}"></span>
+            </div>
+
             <form th:action="@{/organizer/event/{id}/voucher/create(id=${eventId})}"
                   th:object="${createVoucherRequest}"
                   method="post">

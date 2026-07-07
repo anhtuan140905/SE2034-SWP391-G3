@@ -3,6 +3,7 @@ package vn.edu.fpt.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.query.Param;
+import vn.edu.fpt.model.Bank;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.model.OrganizerProfile;
@@ -16,6 +17,7 @@ import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.request.homepage.EventSearchCriteria;
 import vn.edu.fpt.modelview.response.homepage.EventHomeDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSearchResultDTO;
+import vn.edu.fpt.modelview.response.organizer.BankDto;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.request.organizer.EventDTO;
 import vn.edu.fpt.modelview.request.organizer.cityDto;
@@ -42,8 +44,9 @@ public interface EventService {
   void publishEvent(Long eventId);
     void updateEvent(EventEditDTO eventDTO);
   void SetStatusEvent();
-    EventEditDTO UpdateEventById(Long id);
+    EventEditDTO getEventUpdateById(Long id);
    Boolean GetOrganizerProfileByUserId(Long userId);
+   List<BankDto> getListBank();
     List<cityDto> getListcity();
     List<EventCategory> getListEventCategory();
     List<wardDTO> listWardDtos(Long cityId);
@@ -80,5 +83,5 @@ public interface EventService {
             PageRequest page
     );
     List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page);
-
+    EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId);
 }

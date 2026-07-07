@@ -19,6 +19,7 @@ public class CheckInController {
         Long checked = ticketService.countTicketCheckInByEvent(eventId);
         double percent = totalTicketsSold > 0 ? (checked * 100.0 / totalTicketsSold) : 0;
         double offset = 238.76 * (1 - percent / 100);
+        model.addAttribute("eventId", eventId);
         model.addAttribute("percent", Math.round(percent));
         model.addAttribute("checkinDetails",ticketService.getDetailCheckinByTicketType(eventId));
         model.addAttribute("offset", offset);

@@ -28,6 +28,9 @@ public class EventSummaryDto {
     private Long totalTickets;
     private String status;
     private Double salesRate;
+    private String lastNameOrganizer;
+    private String middleNameOrganizer;
+    private String firstNameOrganizer;
 
 
     public EventSummaryDto(EventSummaryProjection projection) {
@@ -46,6 +49,9 @@ public class EventSummaryDto {
         this.totalTickets = projection.getTotalTickets();
         this.status = projection.getStatus();
         this.salesRate = projection.getSalesRate();
+        this.firstNameOrganizer = projection.getFirstNameOrganizer();
+        this.middleNameOrganizer = projection.getMiddleNameOrganizer();
+        this.lastNameOrganizer = projection.getLastNameOrganizer();
     }
 
 }
