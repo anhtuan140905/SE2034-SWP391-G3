@@ -29,6 +29,7 @@ public class VoucherController {
 
         model.addAttribute("eventId", eventId);
         model.addAttribute("vouchers", vouchers);
+        model.addAttribute("activeMenu", "vouchers");
 
         return "organizer/voucher/VoucherManagement";
     }
@@ -41,6 +42,7 @@ public class VoucherController {
 
         model.addAttribute("eventId", eventId);
         model.addAttribute("voucher", voucher);
+        model.addAttribute("activeMenu", "vouchers");
 
         return "organizer/voucher/ViewVoucher";
     }
@@ -49,6 +51,7 @@ public class VoucherController {
     public String createVoucherForm(@PathVariable Long eventId, Model model) {
         model.addAttribute("eventId", eventId);
         model.addAttribute("discountType", DiscountType.values());
+        model.addAttribute("activeMenu", "vouchers");
 
         if (!model.containsAttribute("createVoucherRequest")) {
             model.addAttribute("createVoucherRequest", new CreateVoucherRequest());
@@ -67,7 +70,7 @@ public class VoucherController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("eventId", eventId);
             model.addAttribute("discountType", DiscountType.values());
-            System.out.println("VALIDATION ERRORS: " + bindingResult.getAllErrors());
+            model.addAttribute("activeMenu", "vouchers");
 
             return "organizer/voucher/CreateVoucher";
         }
@@ -76,14 +79,15 @@ public class VoucherController {
             voucherService.createVoucher(eventId, customUserDetails.getUserId(), request);
         } catch (IllegalArgumentException e) {
             model.addAttribute("eventId", eventId);
+            model.addAttribute("activeMenu", "vouchers");
             model.addAttribute("discountType", DiscountType.values());
             model.addAttribute("error", e.getMessage());
-            System.out.println("BUSINESS ERROR: " + e.getMessage());
 
             return "organizer/voucher/CreateVoucher";
         }
 
         redirectAttributes.addFlashAttribute("successMessage", "Tạo voucher thành công!");
+
         return "redirect:/organizer/event/" + eventId + "/voucher";
     }
 
