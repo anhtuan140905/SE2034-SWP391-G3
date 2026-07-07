@@ -82,4 +82,5 @@ where o.event.eventId = :eventId and o.status = 'PAID'
 """)
     BigDecimal calculateGrossRevenueByEventId(@Param("eventId") Long eventId);
 
+    boolean existsByVoucher_VoucherIdAndUserIdAndStatus(Long voucherId, Long userId, OrderStatus orderStatus);
 }

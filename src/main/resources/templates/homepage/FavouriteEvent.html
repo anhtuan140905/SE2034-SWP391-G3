@@ -50,7 +50,7 @@
         </div>
         <h5 class="text-white font-extrabold text-lg">Danh sách yêu thích trống</h5>
         <p class="text-secondary-light text-sm max-w-md mx-auto mt-2">Bạn chưa đánh dấu trái tim yêu thích cho sự kiện nào. Hãy dạo quanh trang chủ hoặc tìm kiếm để ghim chiếc vé mơ ước nhé!</p>
-        <a th:href="@{/home}" href="/home" class="btn btn-grad-cta text-xs px-4 rounded-pill text-white font-bold mt-4 text-decoration-none">
+        <a th:href="@{/}" class="btn btn-grad-cta text-xs px-4 rounded-pill text-white font-bold mt-4 text-decoration-none">
             <i class="fa-solid fa-compass me-1.5"></i> Trở về Trang chủ
         </a>
     </div>
@@ -78,13 +78,14 @@
 
                 <div class="favorite-time">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <span>19:00 - 22:00, 09 Tháng 08, 2026</span> </div>
+                    <span th:text="${#temporals.format(event.startTime, 'HH:mm') + ', ' + #temporals.format(event.startTime, 'dd/MM/yyyy')}">19:00, 09/08/2026</span>
+                </div>
 
                 <div class="favorite-location">
                     <i class="fa-solid fa-location-dot"></i>
                     <div>
                         <strong th:text="${event.venueName}">TRUNG TÂM HỘI NGHỊ QUỐC GIA</strong>
-                        <p class="favorite-address" th:text="${event.description}">Số 57 Đường Phạm Hùng, Hà Nội</p>
+                        <p class="favorite-address" th:text="${event.description}">mô tả</p>
                     </div>
                 </div>
 
@@ -96,8 +97,7 @@
                         <i class="fa-solid fa-chevron-right Price-arrow"></i>
                     </div>
 
-                    <a th:href="@{/events/book/{id}(id=${event.eventId})}"
-                       class="btn-buy-ticket">
+                    <a th:href="@{/events/{id}/choose_seat(id=${event.eventId})}" class="btn-buy-ticket">
                         Mua vé ngay
                     </a>
                 </div>

@@ -4,6 +4,10 @@ const limitReached = seatMapRoot.dataset.limitReached === 'true';
 const MAX_SEATS = 3;
 let selectedSeats = [];
 let zoneConfig = [];
+let availableVouchers = [];
+let vouchersFetched = false;
+let pendingVoucher = null;
+let selectedVoucher = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.getElementById('seat-map-root');
@@ -17,7 +21,71 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-submit-booking')
         .addEventListener('click', () => handleSubmit(eventId));
 
+    // MỚI: xử lý voucher
+        const voucherSelect = document.getElementById('voucher-select');
+        const btnApply = document.getElementById('btn-apply-voucher');
+
+        if (voucherSelect && btnApply) {
+            voucherSelect.addEventListener('change', (e) => {
+                const voucherId = e.target.value;
+                pendingVoucher = availableVouchers.find(v => String(v.voucherId) === voucherId) || null;
+                btnApply.disabled = !pendingVoucher;
+                btnApply.textContent = 'Áp dụng';
+
+                if (!pendingVoucher && selectedVoucher) {
+                    selectedVoucher = null;
+                    refreshSummary();
+                }
+            });
+
+            btnApply.addEventListener('click', async () => {
+                if (!pendingVoucher) return;
+                btnApply.disabled = true;
+                btnApply.textContent = 'Đang kiểm tra...';
+
+                const subtotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
+                try {
+                    const res = await fetch(
+                        `/api/vouchers/${pendingVoucher.voucherId}/validate?eventId=${eventId}&subtotal=${subtotal}`
+                    );
+                    if (!res.ok) {
+                        const err = await res.json();
+                        showToast(mapErrorMessage(err.errorCode));
+                        pendingVoucher = null;
+                        voucherSelect.value = '';
+                        btnApply.textContent = 'Áp dụng';
+                        return;
+                    }
+                    const data = await res.json();
+                    selectedVoucher = { ...pendingVoucher, confirmedDiscount: data.discount };
+                    refreshSummary();
+                    btnApply.textContent = 'Đã áp dụng';
+                } catch (err) {
+                    btnApply.textContent = 'Áp dụng';
+                    btnApply.disabled = false;
+                }
+            });
+        }
+
+        // MỚI: đọc lỗi voucher/conflict từ query string khi redirect quay lại
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('error') === 'voucher') {
+            showToast(mapErrorMessage(params.get('code')));
+        } else if (params.get('error') === 'conflict') {
+            showToast('Một số ghế đã được người khác giữ, vui lòng chọn lại ghế.');
+        }
 });
+
+function mapErrorMessage(code) {
+    const map = {
+        VOUCHER_NOT_FOUND: 'Voucher không tồn tại.',
+        VOUCHER_EXPIRED: 'Voucher đã hết hạn.',
+        VOUCHER_EXHAUSTED: 'Voucher đã hết lượt sử dụng.',
+        VOUCHER_ALREADY_USED: 'Bạn đã sử dụng voucher này rồi.',
+        VOUCHER_ALREADY_PENDING: 'Bạn đang có đơn hàng khác giữ voucher này.'
+    };
+    return map[code] || 'Voucher không hợp lệ.';
+}
 
 async function loadSeatMap(eventId) {
     showLoadingState();
@@ -58,6 +126,35 @@ async function loadSeatMap(eventId) {
         console.error('[choose_seat] Lỗi load seat map:', err);
         showErrorState();
     }
+}
+
+async function fetchAvailableVouchers(eventId) {
+    if (vouchersFetched) return;
+    vouchersFetched = true;
+    try {
+        const res = await fetch(`/api/events/${eventId}/vouchers`, {
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return;
+        availableVouchers = await res.json();
+        renderVoucherOptions();
+    } catch (err) {
+        console.error('[choose_seat] Lỗi tải voucher:', err);
+    }
+}
+
+function renderVoucherOptions() {
+    const select = document.getElementById('voucher-select');
+    if (!select) return;
+    select.innerHTML = '<option value="">-- Không áp dụng --</option>';
+    availableVouchers.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.voucherId;
+        opt.textContent = v.discountType === 'PERCENT'
+            ? `${v.title} (-${v.discountValue}%)`
+            : `${v.title} (-${formatVND(v.discountValue)})`;
+        select.appendChild(opt);
+    });
 }
 
 function renderAllZones(zones) {
@@ -273,10 +370,46 @@ function refreshSummary() {
     const count    = selectedSeats.length;
     const subtotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
 
-    document.getElementById('tickets-count').textContent       = count;
-    document.getElementById('subtotal-calc').textContent       = formatVND(subtotal);
-    document.getElementById('total-calc').textContent          = formatVND(subtotal);
+    // MỚI: tính discount dựa trên số server đã confirm (không tự tính lại percent ở client)
+    let discount = 0;
+    if (selectedVoucher && count > 0) {
+        discount = Math.min(Number(selectedVoucher.confirmedDiscount) || 0, subtotal);
+    }
+    const total = subtotal - discount;
+
+    document.getElementById('tickets-count').textContent = count;
+    document.getElementById('subtotal-calc').textContent = formatVND(subtotal);
+    document.getElementById('total-calc').textContent    = formatVND(total);
     document.getElementById('selected-summary-count').textContent = `${count}/${MAX_SEATS}`;
+
+    // MỚI: hiện/ẩn dòng giảm giá
+    const discountRow = document.getElementById('discount-row');
+    if (discountRow) {
+        if (discount > 0) {
+            discountRow.style.display = 'flex';
+            document.getElementById('discount-calc').textContent = `-${formatVND(discount)}`;
+        } else {
+            discountRow.style.display = 'none';
+        }
+    }
+
+    // MỚI: hiện/ẩn voucher-section theo số ghế đã chọn
+    const voucherSection = document.getElementById('voucher-section');
+    if (voucherSection) {
+        if (count > 0) {
+            voucherSection.style.display = 'block';
+            const eventId = document.getElementById('seat-map-root').dataset.eventId;
+            fetchAvailableVouchers(eventId);
+        } else {
+            voucherSection.style.display = 'none';
+            pendingVoucher = null;
+            selectedVoucher = null;
+            const select = document.getElementById('voucher-select');
+            const btnApply = document.getElementById('btn-apply-voucher');
+            if (select) select.value = '';
+            if (btnApply) { btnApply.disabled = true; btnApply.textContent = 'Áp dụng'; }
+        }
+    }
 
     const badgesContainer = document.getElementById('selected-seats-badges');
     const emptyHint       = document.getElementById('empty-seats-hint');
@@ -325,6 +458,10 @@ async function handleSubmit(eventId) {
     try {
         const formData = new URLSearchParams();
         selectedSeats.forEach(s => { formData.append('seatIds', s.seatId); });
+        formData.append('eventId', eventId); // MỚI — để server redirect lỗi đúng event, không cần suy ngược
+        if (selectedVoucher) {
+            formData.append('voucherId', selectedVoucher.voucherId); // MỚI
+        }
 
         const res = await fetch('/checkout/proceed', {
             method: 'POST',
@@ -333,14 +470,7 @@ async function handleSubmit(eventId) {
         });
 
         if (res.ok) {
-            const htmlContent = await res.text();
-            if (htmlContent.includes('Tóm tắt đơn hàng') || res.url.includes('/checkout/')) {
-                window.location.href = res.url;
-            } else {
-                alert('Có lỗi bất ngờ xảy ra, vui lòng chọn lại ghế.');
-                selectedSeats = [];
-                await loadSeatMap(eventId);
-            }
+            window.location.href = res.url;
         } else {
             throw new Error(`Mã lỗi: ${res.status}`);
         }

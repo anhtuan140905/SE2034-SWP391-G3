@@ -122,15 +122,18 @@ public class RecommendationService {
                 .collect(Collectors.toList());
 
         if(level == UserLevel.WARM_PURCHASED && profile != null) {
-            Map<Long, String> reasons = this.geminiService.generateReasons(dtos, profile);
-            if(!reasons.isEmpty()) {
-                List<RecommendationDTO> finalDtos = dtos;
-                dtos = reasons.keySet().stream().map(eventId -> finalDtos.stream()
-                        .filter(d -> d.getEventId().equals(eventId))
-                        .findFirst().orElse(null))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-                dtos.forEach(dto -> dto.setReason(reasons.get(dto.getEventId())));
+            try {
+                Map<Long, String> reasons = this.geminiService.generateReasons(dtos, profile);
+                if(!reasons.isEmpty()) {
+                    List<RecommendationDTO> finalDtos = dtos;
+                    dtos = reasons.keySet().stream().map(eventId -> finalDtos.stream()
+                            .filter(d -> d.getEventId().equals(eventId))
+                            .findFirst().orElse(null))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                    dtos.forEach(dto -> dto.setReason(reasons.get(dto.getEventId())));
+                }
+            } catch (Exception e) {
             }
         }
         return dtos;

@@ -13,11 +13,13 @@ import java.time.Instant;
 @Entity
 @Table(name = "voucher_usages",
         indexes = @Index(name = "idx_voucher_usages_voucher_id", columnList = "voucher_id"),
-        uniqueConstraints = @UniqueConstraint(columnNames = "order_id"))
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "order_id"),
+                @UniqueConstraint(name = "uk_voucher_user", columnNames = {"voucher_id", "user_id"})
+        })
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class VoucherUsage {
-    // Chỉ có created_by + created_at — insert một lần khi dùng voucher, không extends BaseAuditEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,10 @@ public class VoucherUsage {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    // user_id không lưu trực tiếp — query qua Orders.user_id khi cần
+    // MỚI: denormalize để DB tự chặn race condition, không query qua Order nữa
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(name = "used_at")
     private Instant usedAt;
 

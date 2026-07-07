@@ -1,7 +1,3 @@
-/**
- * EventHub - Isolated Favourite Events Interactive Mechanics Script
- * Custom-built specifically for managing bookmarked items, real-time unlinking, search filters & toast alerts
- */
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Dynamic Navbar scroll state detection
@@ -142,19 +138,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleEl = columnEl.querySelector('.favorite-title a');
         const eventTitle = titleEl ? titleEl.textContent : 'Sự kiện';
 
-        // Add fading vanish styling
         columnEl.classList.add('removing');
 
-        // Show success untagging notification
-        showEventToast('Đã gỡ sự kiện', `Đã hủy ghim thành công <strong>${eventTitle}</strong> khỏi danh sách yêu thích.`, 'info');
-
-        // Delay DOM destruction to let animations breathe
-        setTimeout(() => {
-            columnEl.remove();
-            applyFavoritesFilters();
-            checkEmptyState();
-        }, 400);
-    };
+            fetch(`/favourites/${id}/remove`, { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Xóa thất bại');
+                    showEventToast('Đã gỡ sự kiện', `Đã hủy ghim thành công <strong>${eventTitle}</strong> khỏi danh sách yêu thích.`, 'info');
+                    setTimeout(() => {
+                        columnEl.remove();
+                        checkEmptyState();
+                    }, 400);
+                })
+                .catch(() => {
+                    columnEl.classList.remove('removing');
+                    showEventToast('Lỗi', 'Không thể gỡ sự kiện khỏi danh sách yêu thích. Vui lòng thử lại.', 'danger');
+                });
+        };
 
     // 4. Compact Real-time Custom Toast Notification Engine
     window.showEventToast = function(title, message, type = 'info') {

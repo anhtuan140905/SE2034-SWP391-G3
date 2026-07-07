@@ -102,6 +102,25 @@
                 <div class="summary-divider"></div>
                 <div class="total-row"><span class="total-label">Tổng cộng</span><span class="total-price" id="total-calc">0 ₫</span></div>
 
+                <div class="voucher-section" id="voucher-section" style="display:none;">
+                    <div class="summary-divider"></div>
+                    <label class="voucher-label" style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">
+                        <i class="fa-solid fa-tag me-1 text-pink"></i> Mã giảm giá
+                    </label>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" id="voucher-select">
+                            <option value="">-- Không áp dụng --</option>
+                        </select>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btn-apply-voucher" disabled style="white-space:nowrap;">
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2" id="discount-row" style="display:none;">
+                        <span style="font-size:13px;">Giảm giá</span>
+                        <span class="text-success" id="discount-calc" style="font-weight:600;">-0 ₫</span>
+                    </div>
+                </div>
+
                 <button type="button" class="btn-payment btn-block" id="btn-submit-booking" disabled>
                     Tiếp tục thanh toán <i class="fa-solid fa-chevron-right ms-1"></i>
                 </button>
