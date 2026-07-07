@@ -133,6 +133,8 @@ public class EventController {
 //        }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
         model.addAttribute("event", eventDetailDTO);
+        model.addAttribute("eventId", id);
+
         return "organizer/event/ViewOrganizerEvent";
     }
 
