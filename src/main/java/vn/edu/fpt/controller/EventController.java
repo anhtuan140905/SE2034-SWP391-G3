@@ -71,6 +71,7 @@ public class EventController {
             // chỉ add organizerProfile nếu chưa có
             if (!hasOrganizerProfile) {
                 model.addAttribute("organizerProfile", organizerProfileDto);
+                model.addAttribute("banks",eventService.getListBank());
             }
             return "organizer/event/CreateOrganizerEvent";
         }
@@ -82,7 +83,7 @@ public class EventController {
         } else {
             eventService.saveEvent(eventDTO, null);
         }
-        return "redirect:/organizer/event/MyEvent";
+        return "redirect:/organizer/list/event";
     }
 
     @ResponseBody
@@ -187,6 +188,6 @@ public class EventController {
         eventDTO.setEventId(eventId);
             eventService.updateEvent(eventDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật sự kiện thành công.");
-        return "redirect:/organizer/dashboard";
+        return "redirect:/organizer/list/event";
     }
 }

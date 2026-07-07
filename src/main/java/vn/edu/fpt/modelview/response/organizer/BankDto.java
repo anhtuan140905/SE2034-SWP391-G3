@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BankDto {
     @NotNull(message = "Không được để trống Ngân Hàng")
-    private Long banKId;
+    private Long bankId;
     private String bankName;
 }
