@@ -36,9 +36,14 @@ public class SettlementSummaryDTO {
     private String firstNameFinance;
     private LocalDateTime updateAt;
     private LocalDateTime paidAt;
+    private String bankAccountName;
+    private String bankAccountNumber;
+    private String bankBranch;
+    private String bankName;
     private String timeDisplay;
     private String createdBy;
     private Integer month;
+
 
 
     public SettlementSummaryDTO(SettlementSummaryProjection projection) {
@@ -66,6 +71,10 @@ public class SettlementSummaryDTO {
         this.platformFee = projection.getPlatformFee();
         this.updateAt = projection.getUpdateAt();
         this.paidAt = projection.getPaidAt();
+        this.bankAccountName = projection.getBankAccountName();
+        this.bankAccountNumber = projection.getBankAccountNumber();
+        this.bankBranch = projection.getBankBranch();
+        this.bankName = projection.getBankName();
         this.createdBy = projection.getCreatedBy();
         this.month = projection.getMonth();
     }

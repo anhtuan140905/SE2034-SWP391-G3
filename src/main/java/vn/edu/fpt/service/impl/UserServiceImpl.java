@@ -213,7 +213,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void updateUser(Long id, UpdateUserStatusDTO request) {
+    public void updateUser(Long id,
+                           UpdateUserStatusDTO request,
+                           Long currentUserId){
+
+        if (currentUserId.equals(id)) {
+            throw new RuntimeException("You cannot modify your own account.");
+        }
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
