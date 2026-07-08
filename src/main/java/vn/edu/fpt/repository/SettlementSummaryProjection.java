@@ -29,6 +29,10 @@ public interface SettlementSummaryProjection {
     String getFirstNameFinance();
     LocalDateTime getUpdateAt();
     LocalDateTime getPaidAt();
+    String getBankAccountName();
+    String getBankAccountNumber();
+    String getBankBranch();
+    String getBankName();
     String getCreatedBy();
     Integer getMonth();
 

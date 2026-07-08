@@ -125,7 +125,9 @@ catch (Exception e){
             @Valid @ModelAttribute("dto") UpdateUserStatusDTO dto,
             BindingResult result,
             Model model,
-            @RequestParam Long id) {
+            @RequestParam Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
         if (result.hasErrors()) {
             model.addAttribute("user", userServiceImpl.findById(id));
@@ -133,7 +135,11 @@ catch (Exception e){
             return "admin/user/EditUser";
         }
 
-        userServiceImpl.updateUser(id, dto);
+        User currentUser = (userDetails != null)
+                ? userServiceImpl.findByUsername(userDetails.getUsername())
+                : userServiceImpl.findByUsername(oAuth2Users.getName());
+
+        userServiceImpl.updateUser(id, dto, currentUser.getId());
 
         return "redirect:/admin/listuser";
     }

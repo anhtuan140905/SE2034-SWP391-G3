@@ -545,7 +545,7 @@
                     <div class="form-group">
                         <label>Phân Quyền Người Dùng</label>
 
-                        <select name="roleName">
+                        <select name="roleName" th:disabled="${user.id == currentUser.id}">
                             <option value="ROLE_MODERATOR" th:selected = "${roleName.name() == 'ROLE_MODERATOR'}">Kiểm duyệt viên</option>
                             <option value="ROLE_FINANCE" th:selected = "${roleName.name() == 'ROLE_FINANCE'}">Nhân viên tài chính</option>
                             <option value="ROLE_ATTENDEE" th:selected = "${roleName.name() == 'ROLE_ATTENDEE'}">Người Dùng</option>
@@ -556,7 +556,7 @@
                     <div class="form-group">
                         <label>Trạng Thái Hoạt Động</label>
 
-                        <select name="isActive">
+                        <select name="isActive" th:disabled="${user.id == currentUser.id}">
                             <option value="true" th:selected = "${user.isActive == true}">Đang Hoạt Động</option>
                             <option value="false" th:selected = "${user.isActive == false}">Ngừng Hoạt Động</option>
                         </select>
@@ -583,7 +583,7 @@
 
                 <div class="actions">
 
-                    <button type="submit" class="save-btn">
+                    <button type="submit" class="save-btn" th:disabled="${user.id == currentUser.id}">
 
                         Lưu Thay Đổi
                     </button>

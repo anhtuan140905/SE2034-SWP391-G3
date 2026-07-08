@@ -97,10 +97,16 @@ se.status as status,
 se.gross_revenue as revenue,
 se.platform_fee as platformFee,
 se.payout_amount as payoutAmount,
-CAST(se.updated_at AS datetime2) as updateAt,
-CAST(se.paid_at AS datetime2) as paidAt
+CAST(se.updated_at as datetime2) as updateAt,
+CAST(se.paid_at as datetime2) as paidAt,
+o.bank_account_name as bankAccountName,
+o.bank_account_number as bankAccountNumber,
+o.bank_branch as bankBranch,
+b.name as bankName
 from settlements se
 left join users u on u.email = se.updated_by
+left join organizer_profiles o on u.id = o.user_id
+left join banks b on o.bank_id = b.id
 where se.settlement_id = :settlementId
 """, nativeQuery = true)
     SettlementSummaryProjection getSettlementDetail(@Param("settlementId") Long settlementId);
