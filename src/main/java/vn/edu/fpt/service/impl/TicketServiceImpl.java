@@ -1,8 +1,10 @@
 package vn.edu.fpt.service.impl;
 
 import com.cloudinary.utils.ObjectUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.common.QrCodeUtil;
 import vn.edu.fpt.model.*;
@@ -192,8 +194,12 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 
-    public TicketDTO viewDetailTicket(Long ticketId){
-        TicketProjection projection = ticketRepository.viewDetailTicket(ticketId);
+    public TicketDTO viewDetailTicket(Long ticketId, Long userId){
+        TicketProjection projection = ticketRepository.viewDetailTicket(ticketId, userId);
+
+        if(projection == null){
+            throw new EntityNotFoundException("Không tìm thấy vé.");
+        }
         TicketDTO dto = new TicketDTO(projection);
         applyComputeStatus(dto);
         return dto;

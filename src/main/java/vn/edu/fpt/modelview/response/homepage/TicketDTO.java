@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class TicketDTO {
     private Long ticketId;
     private Long orderId;
+    private Long userId;
     private String eventName;
     private String categoryName;
     private String thumbnailUrl;
@@ -42,6 +43,7 @@ public class TicketDTO {
     public TicketDTO(TicketProjection projection) {
         this.ticketId = projection.getTicketId();
         this.orderId = projection.getOrderId();
+        this.userId = projection.getUserId();
         this.eventName = projection.getEventName();
         this.categoryName = projection.getCategoryName();
         this.thumbnailUrl = projection.getThumbnailUrl();

@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -94,6 +93,10 @@ public class SettlementServiceImpl implements SettlementService {
 
     public List<SettlementSummaryDTO> listSettlement(String tab) {
 
+        if (!List.of("all", "pending", "completed").contains(tab)) {
+            throw new IllegalArgumentException("Trạng thái lọc không hợp lệ.");
+        }
+
         List<SettlementSummaryDTO> list = settlementRepository.listSettlement()
                 .stream()
                 .map(SettlementSummaryDTO::new)
@@ -119,6 +122,9 @@ public class SettlementServiceImpl implements SettlementService {
 
     public List<SettlementSummaryDTO> searchSettlement(String keyword) {
 
+        if(keyword == null){
+            throw new IllegalArgumentException("Từ khóa tìm kiếm không hợp lệ.");
+        }
         return settlementRepository.searchSettlement(keyword)
                 .stream()
                 .map(projection -> {
@@ -139,7 +145,7 @@ public class SettlementServiceImpl implements SettlementService {
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy quyết toán"));
 
         if (settlement.getStatus() != SettlementStatus.PENDING) {
-            throw new IllegalStateException("Chỉ có thể xác nhận thanh toán khi đang ở trạng thái PENDING");
+            throw new IllegalStateException("Quyết toán này đã được thanh toán.");
         }
 
         settlement.setStatus(SettlementStatus.COMPLETED);

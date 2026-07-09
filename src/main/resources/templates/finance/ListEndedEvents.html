@@ -484,6 +484,36 @@
             border-color: transparent;
         }
 
+        .alert-danger{
+            margin-bottom:16px;
+            padding:12px 16px;
+            border-radius:8px;
+            border:1px solid #f5c2c7;
+            background:#fdecea;
+            color:#b42318;
+        }
+        .empty {
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .empty svg {
+            display: block;
+            margin: 0 auto 12px;
+        }
+
+        .empty-title {
+            font-weight: 600;
+            color: #1e0e34;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .empty-sub {
+            font-size: 13px;
+            color: #84759b;
+        }
+
         /* ================= RESPONSIVE ================= */
         @media (max-width: 900px) {
             .sidebar { width: 220px; }
@@ -645,46 +675,46 @@
         </div>
 
 
-        <form th:action="@{/finance/listEndedEvents}" method="get">
-
-            <input type="hidden" name="tab" th:value="${tab != null ? tab:'all'}">
-
-            <div class="filter-row">
-                <div class="search-wrap">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <input class="search-input"
-                           type="text"
-                           name="keyword"
-                           th:value="${keyword}"
-                           placeholder="Tìm theo tên sự kiện, hoặc tên ban tổ chức..."/>
-                </div>
-
-
-                <button type="submit" class="btn-filter">
-                    <i class="fa-solid fa-magnifying-glass" style="margin-right:6px;"></i>Tìm Kiếm
-                </button>
+        <div th:if="${error}" class="alert-danger">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>
+            <span th:text="${error}"></span>
+        </div>
+        <form th:action="@{/finance/listEndedEvents}" method="get" class="filter-row">
+            <div class="search-wrap">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input class="search-input"
+                       type="text"
+                       name="keyword"
+                       th:value="${keyword}"
+                       placeholder="Tìm theo tên sự kiện, hoặc tên ban tổ chức..."/>
             </div>
 
-            <div class="tabs">
-                <a class="tab-btn"
-                   th:classappend="${tab == 'all' or tab == null ? 'active' : ''}"
-                   th:href="@{/finance/listEndedEvents(tab='all')}">
-                    Tất Cả
-                </a>
-                <a class="tab-btn"
-                   th:classappend="${tab == 'pending' ? 'active' : ''}"
-                   th:href="@{/finance/listEndedEvents(tab='pending')}">
-                    Chưa Tạo Quyết Toán
-                </a>
-                <a class="tab-btn"
-                   th:classappend="${tab == 'completed' ? 'active' : ''}"
-                   th:href="@{/finance/listEndedEvents(tab='completed')}">
-                    Đã Tạo Quyết Toán
-                </a>
-            </div>
+            <button type="submit" class="btn-filter">
+                <i class="fa-solid fa-magnifying-glass" style="margin-right:6px;"></i>Tìm Kiếm
+            </button>
         </form>
+
+
+        <div class="tabs">
+            <a class="tab-btn"
+               th:classappend="${tab == 'all' or tab == null ? 'active' : ''}"
+               th:href="@{/finance/listEndedEvents(tab='all')}">
+                Tất Cả
+            </a>
+            <a class="tab-btn"
+               th:classappend="${tab == 'pending' ? 'active' : ''}"
+               th:href="@{/finance/listEndedEvents(tab='pending')}">
+                Chưa Tạo Quyết Toán
+            </a>
+            <a class="tab-btn"
+               th:classappend="${tab == 'completed' ? 'active' : ''}"
+               th:href="@{/finance/listEndedEvents(tab='completed')}">
+                Đã Tạo Quyết Toán
+            </a>
+        </div>
 
 
         <div class="table-box">
@@ -752,6 +782,17 @@
                 </tbody>
             </table>
 
+            <div th:if="${listEndedEvents == null or #lists.isEmpty(listEndedEvents)}" class="empty">
+                <svg width="40" height="40" fill="none" stroke="#84759b" stroke-width="1.5" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+
+                <p th:if="${notFoundMessage}" th:text="${notFoundMessage}" class="empty-title"></p>
+                <p th:unless="${notFoundMessage}" class="empty-title">Không có sự kiện nào phù hợp.</p>
+
+                <p class="empty-sub">Vui lòng thử lại với từ khóa khác.</p>
+            </div>
 
         </div>
 
