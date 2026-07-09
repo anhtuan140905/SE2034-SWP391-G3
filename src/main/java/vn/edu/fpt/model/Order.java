@@ -32,6 +32,15 @@ public class Order extends BaseAuditEntity{
     @Column(name = "total_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_id") // nullable — không phải Order nào cũng dùng voucher
+    private Voucher voucher;
+
+    // MỚI
+    @Column(name = "discount_amount", precision = 15, scale = 2)
+    @Builder.Default
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
     @Column(name = "expires_at")
     private Instant expiresAt;
 

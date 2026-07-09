@@ -53,15 +53,15 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
 
     @Query("""
-            SELECT COUNT(DISTINCT t.ticketId)
-            FROM Ticket t
-            JOIN OrderDetail ord on t.orderDetail.orderDetailId = ord.orderDetailId
-            JOIN Order o on ord.order.orderId = o.orderId
-            WHERE o.user.id = :userId
-            AND t.isCheckedIn = false
-            AND o.event.startTime > CURRENT_TIMESTAMP
-            AND o.status = 'PAID'
-            """)
+SELECT COUNT(DISTINCT t.ticketId)
+FROM Ticket t
+JOIN OrderDetail ord on t.orderDetail.orderDetailId = ord.orderDetailId
+JOIN Order o on ord.order.orderId = o.orderId
+WHERE o.user.id = :userId
+AND t.isCheckedIn = false
+AND o.event.endTime > CURRENT_TIMESTAMP
+AND o.status = 'PAID'
+""")
     long countUpcomingTicket(@Param("userId") Long userId);
 
 
@@ -140,6 +140,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             from
             tickets t 
             join order_details ord on t.order_detail_id = ord.order_detail_id
+            join orders o on ord.order_id = o.order_id
             join seats s on ord.seat_id = s.seat_id
             join ticket_types tt on s.ticket_type_id = tt.ticket_type_id
             join events e on tt.event_id = e.event_id
@@ -147,9 +148,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             left join addresses a on e.address_id = a.id
             left join wards w on a.ward_id = w.id
             left join city c on w.city_id = c.id
-            where t.ticket_id = :ticketId
+            where t.ticket_id = :ticketId and o.user_id = :userId
             """, nativeQuery = true)
-    TicketProjection viewDetailTicket(@Param("ticketId") Long ticketID);
+    TicketProjection viewDetailTicket(@Param("ticketId") Long ticketID, @Param("userId") Long userId);
 
     @Query("SELECT COUNT(t) FROM Ticket t " +
             "WHERE t.orderDetail.order.user.id = :userId " +

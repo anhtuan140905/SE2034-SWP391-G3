@@ -56,6 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const displayTime = formatTimeStr(item.startTime);
         const price       = formatPrice(item.minPrice);
 
+        const buyButton = `
+            <a href="/events/${item.eventId}/choose_seat"
+               class="btn mt-3"
+               style="background: linear-gradient(to right, #ff2a7a, #8c2bff); color: white; font-weight: 600; border-radius: 12px; padding: 8px 20px; font-size: 0.85rem; align-self: flex-start;">
+                Mua vé ngay <i class="fa-solid fa-chevron-right ms-1"></i>
+            </a>`;
+
         const timeBlock = displayTime
             ? `<div class="col-sm-6"><span><i class="fa-solid fa-clock text-brand-pink me-2"></i> Bắt đầu lúc ${displayTime}</span></div>`
             : '';
@@ -137,6 +144,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         ${reasonBlock}
+                        <div class="card-body p-4 d-flex flex-column justify-content-between flex-grow-1" style="z-index: 2;">
+                            <div>
+                                <h5 class="card-title text-white fw-bold mb-3" style="font-size: 1.35rem; line-height: 1.4;">
+                                    ${item.title}
+                                </h5>
+                                <div class="row g-2" style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">
+                                    ...
+                                </div>
+                            </div>
+
+                            ${reasonBlock}
+                            ${buyButton}
+                        </div>
                     </div>
 
                     <div class="d-none d-lg-flex flex-column justify-content-center align-items-center text-center p-4"

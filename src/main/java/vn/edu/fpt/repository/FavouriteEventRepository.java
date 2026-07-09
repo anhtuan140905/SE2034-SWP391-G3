@@ -20,4 +20,5 @@ public interface FavouriteEventRepository extends JpaRepository<FavouriteEvent, 
             "JOIN fe.event e " +
             "WHERE fe.user.id = :userId")
     List<Long> findFavouriteCategoryIdsByUserId(@Param("userId") Long userId);
+    void deleteByUserIdAndEventEventId(Long userId, Long eventId);
 }

@@ -7,11 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Voucher;
 import vn.edu.fpt.model.constant.DiscountType;
+import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.modelview.request.organizer.CreateVoucherRequest;
+import vn.edu.fpt.modelview.response.homepage.VoucherValidationResult;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.VoucherRepository;
+import vn.edu.fpt.service.OrderService;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.VoucherService;
+import vn.edu.fpt.service.VoucherUsageService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +28,8 @@ public class VoucherServiceImpl implements VoucherService {
     private final VoucherRepository voucherRepository;
     private final EventRepository eventRepository;
     private final StaffService staffService;
+    private final VoucherUsageService voucherUsageService;
+    private final OrderService orderService;
 
     @Override
     @Transactional
@@ -120,6 +126,36 @@ public class VoucherServiceImpl implements VoucherService {
     public Voucher getVoucherDetail(Long eventId, Long voucherId) {
 
         return voucherRepository.findByEvent_EventIdAndVoucherId(eventId, voucherId).orElseThrow(() -> new IllegalStateException("Voucher không tồn tại hoặc không thuộc sự kiện này"));
+    }
+
+    @Override
+    public VoucherValidationResult validate(Long voucherId, Long eventId, Long userId, BigDecimal subtotal) {
+        Voucher v = voucherRepository.findByVoucherIdAndEvent_EventId(voucherId, eventId).orElse(null);
+
+        if (v == null) return VoucherValidationResult.invalid("VOUCHER_NOT_FOUND");
+        if (v.getValidTo().isBefore(LocalDateTime.now())) return VoucherValidationResult.invalid("VOUCHER_EXPIRED");
+        if (this.voucherUsageService.countVoucherUsageByVoucherId(voucherId) >= v.getMaxUsage()) return VoucherValidationResult.invalid("VOUCHER_EXHAUSTED");
+
+        // Đã dùng thành công rồi (Order đã confirm payment)
+        if (this.voucherUsageService.existsByVoucher_VoucherIdAndUserId(voucherId, userId)) {
+            return VoucherValidationResult.invalid("VOUCHER_ALREADY_USED");
+        }
+
+        // MỚI: đang có Order pending khác cũng giữ voucher này (chưa confirm, chưa hết hạn)
+        if (this.orderService.existsByVoucher_VoucherIdAndUserIdAndStatus(voucherId, userId, OrderStatus.PENDING_PAYMENT)) {
+            return VoucherValidationResult.invalid("VOUCHER_ALREADY_PENDING");
+        }
+
+        BigDecimal discount = v.getDiscountType() == DiscountType.PERCENT
+                ? subtotal.multiply(v.getDiscountValue()).divide(BigDecimal.valueOf(100)).min(subtotal)
+                : v.getDiscountValue().min(subtotal);
+
+        return VoucherValidationResult.valid(v, discount);
+    }
+
+    @Override
+    public List<Voucher> findAvailableVouchersByEvent(Long eventId) {
+        return this.voucherRepository.findAvailableVouchersByEvent(eventId, LocalDateTime.now());
     }
 
 }

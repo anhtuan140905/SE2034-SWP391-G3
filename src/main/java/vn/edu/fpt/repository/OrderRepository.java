@@ -82,6 +82,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     """)
     BigDecimal calculateGrossRevenueByEventId(@Param("eventId") Long eventId);
 
+    boolean existsByVoucher_VoucherIdAndUserIdAndStatus(Long voucherId, Long userId, OrderStatus orderStatus);
     @Query("SELECT COUNT(t) FROM Ticket t JOIN t.orderDetail od JOIN od.order o WHERE o.event.eventId = :eventId AND o.status = 'PAID'")
     Long countPaidTicketsByEventId(@Param("eventId") Long eventId);
 

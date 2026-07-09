@@ -12,4 +12,5 @@ public interface FavouriteEventService {
     FavouriteEvent handleAddEventToFavouriteEvent(Long userId, Long eventId);
     List<EventHomeDTO> findAllByUserId(Long userId);
     List<Long> findFavouriteCategoryByUserId(Long userId);
+    void removeFavourite(Long userId, Long eventId);
 }

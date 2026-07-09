@@ -2,6 +2,7 @@ package vn.edu.fpt.service.impl;
 
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +17,7 @@ import vn.edu.fpt.common.error.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
+import vn.edu.fpt.model.constant.SettlementResult;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 
@@ -42,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("EventService")
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -57,6 +60,9 @@ public class EventServiceImpl implements EventService {
     private final TicketService ticketService;
     private final TicketTypeService ticketTypeService;
     private final  EventImageRepository eventImageRepository;
+    private final SettlementServiceImpl settlementServiceImpl;
+
+
     private final OrganizerMemberRepository organizerMemberRepository;
     private final UserRoleRepository userRoleRepository;
     private final RoleRepository roleRepository;
@@ -294,6 +300,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void SetStatusEvent() {
         List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
         if (eventSetStatus.isEmpty()) {
@@ -306,9 +313,11 @@ public class EventServiceImpl implements EventService {
 
             }else {
                 event.setStatus(EventStatus.ENDED);
+                // Thêm các logic khác (nếu có) vào đây...
+                processSettlement(event.getEventId());
                 List<OrganizerMember> organizerMemberList = organizerMemberRepository.findByEventId(event.getEventId());
                 for (OrganizerMember organizerMember:organizerMemberList){
-                    if(organizerMember.getUserRole().getRole().getRoleName().equals(RoleName.ROLE_ORGANIZER)){
+                    if(organizerMember.getUserRole().getRole().getRoleName().toString().equals(RoleName.ROLE_ORGANIZER.toString())){
                         UserRole userRole = userRoleRepository.findByUserIdAndRoleId(organizerMember.getUserRole().getUser().getId(),roleRepository.findByRoleName(RoleName.ROLE_ATTENDEE).getId()).orElseThrow(()-> new RuntimeException("người này không có role attendee "));
                         organizerMember.setUserRole(userRole);
                         organizerMemberRepository.save(organizerMember);
@@ -316,9 +325,25 @@ public class EventServiceImpl implements EventService {
                     }
                     staffService.deleteStaffByStaffId(organizerMember.getId(),event.getEventId(),organizerMember.getUserRole().getUser().getId());
                 }
+           
             }
-            eventRepository.saveAll(eventSetStatus);
+          eventRepository.saveAll(eventSetStatus);
         }
+
+    }
+
+    private void processSettlement(Long eventId) {
+        try {
+            SettlementResult result = settlementServiceImpl.autoCreateSettlement(eventId);
+            switch (result) {
+                case CREATED -> log.info("Đã tự động tạo settlement cho event {}", eventId);
+                case ALREADY_EXISTS -> log.debug("Event {} đã có settlement, bỏ qua", eventId);
+                case NO_REVENUE -> log.debug("Event {} không có doanh thu, bỏ qua settlement", eventId);
+            }
+        } catch (Exception e) {
+            log.error("Lỗi hệ thống khi tự động tạo settlement cho event {}", eventId, e);
+        }
+        
     }
 
     @Override
@@ -746,6 +771,9 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
     }
 
 public List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab){
+    if (!List.of("all", "pending", "completed").contains(tab)) {
+        throw new IllegalArgumentException("Trạng thái lọc không hợp lệ.");
+    }
         List<SettlementSummaryProjection> list = eventRepository.findEndedEventsWithSettlementStatus();
         return switch (tab == null ? "all" : tab) {
             case "pending" -> list.stream()
@@ -785,5 +813,7 @@ public  List<SettlementSummaryProjection> searchEndedEvents(@Param("keyword") St
         return this.eventRepository.findUpcomingEvents(EventStatus.ACTIVE, today, page);
     }
 
-
+public EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId){
+        return eventRepository.getEventDetail(settlementId);
+}
 }

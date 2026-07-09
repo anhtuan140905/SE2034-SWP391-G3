@@ -31,7 +31,7 @@ public interface UserService {
     public List<User> getActivatedOrganizers();
     public List<FeaturedOrganizerDto> getFeaturedOrganizers();
     public User handleSaveUser(User user);
-    public void updateUser(Long id, UpdateUserStatusDTO request);
+    public void updateUser(Long id, UpdateUserStatusDTO request, Long currentUserId);
     public List<ActivityDTO> getUserActivities(Long userId);
     public String findCityNameByUserId(Long userId);
 }

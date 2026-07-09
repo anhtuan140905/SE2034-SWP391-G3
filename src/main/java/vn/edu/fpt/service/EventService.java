@@ -83,5 +83,5 @@ public interface EventService {
             PageRequest page
     );
     List<Event> findUpcomingEvent(EventStatus status, LocalDate today, PageRequest page);
-
+    EventSummaryProjection getEventDetail(@Param("settlementId") Long settlementId);
 }

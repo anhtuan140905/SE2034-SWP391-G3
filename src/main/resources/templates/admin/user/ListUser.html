@@ -600,9 +600,16 @@
                             <a th:href="@{/admin/viewdetailuser(id=${user.id})}">
                                 <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
                             </a>
-                            <a th:href="@{/admin/edituser(id=${user.id})}">
-                                <button class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></button>
+                            <a th:if="${user.id != currentUser.id}"
+                               th:href="@{/admin/edituser(id=${user.id})}">
+                                <i class="fa-solid fa-pen"></i>
                             </a>
+
+                            <i th:if="${user.id == currentUser.id}"
+                               class="fa-solid fa-pen"
+                               style="color: #ccc; cursor: not-allowed;"
+                               title="You cannot edit your own account">
+                            </i>
                         </div>
                     </td>
                 </tr>

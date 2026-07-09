@@ -80,4 +80,9 @@ public class OrderServiceImpl implements OrderService {
     public List<Event> findPurchasedEventsByUserId(Long userId) {
         return this.orderRepository.findPurchasedEvents(userId, OrderStatus.PAID);
     }
+
+    @Override
+    public boolean existsByVoucher_VoucherIdAndUserIdAndStatus(Long voucherId, Long userId, OrderStatus orderStatus) {
+        return this.orderRepository.existsByVoucher_VoucherIdAndUserIdAndStatus(voucherId, userId, orderStatus);
+    }
 }
