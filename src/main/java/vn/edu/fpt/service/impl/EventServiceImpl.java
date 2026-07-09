@@ -771,6 +771,9 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
     }
 
 public List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab){
+    if (!List.of("all", "pending", "completed").contains(tab)) {
+        throw new IllegalArgumentException("Trạng thái lọc không hợp lệ.");
+    }
         List<SettlementSummaryProjection> list = eventRepository.findEndedEventsWithSettlementStatus();
         return switch (tab == null ? "all" : tab) {
             case "pending" -> list.stream()

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public interface TicketProjection {
      Long getOrderId();
      Long getTicketId();
+     Long getUserId();
      String getEventName();
      String getCategoryName();
      String getThumbnailUrl();

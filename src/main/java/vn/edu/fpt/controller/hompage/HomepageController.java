@@ -1,5 +1,6 @@
 package vn.edu.fpt.controller.hompage;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.modelview.response.homepage.TicketDTO;
 import vn.edu.fpt.repository.FeaturedEventDTO;
+import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.*;
 import vn.edu.fpt.security.CustomOAuth2User;
@@ -163,10 +165,25 @@ public class HomepageController {
         return "homepage/ViewOwnTicket";
     }
     @GetMapping("/my-detailtickets")
-    public String getViewDetailTicket(Long ticketId, Model model) {
-        TicketDTO ticketDetail = ticketServiceImpl.viewDetailTicket(ticketId);
+    public String getViewDetailTicket(@RequestParam Long ticketId,
+                                      Model model,
+                                      @AuthenticationPrincipal CustomUserDetails userDetails,
+                                      @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
-        model.addAttribute("ticketDetail", ticketDetail);
-        return "homepage/ViewDetailTicket";
+        User currentUser = (userDetails != null)
+                ? userServiceImpl.findByUsername(userDetails.getUsername())
+                : userServiceImpl.findByUsername(oAuth2Users.getName());
+        model.addAttribute("currentUser", currentUser);
+
+        try{
+            TicketDTO ticketDetail = ticketServiceImpl.viewDetailTicket(ticketId, currentUser.getId());
+
+            model.addAttribute("ticketDetail", ticketDetail);
+            return "homepage/ViewDetailTicket";
+        }
+        catch (EntityNotFoundException e){
+            return "redirect:/my-tickets";
+        }
+
     }
 }
