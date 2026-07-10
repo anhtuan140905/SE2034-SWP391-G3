@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.fpt.common.error.ResourceNotFoundException;
+import vn.edu.fpt.common.error.TaxCodeExists;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
 import vn.edu.fpt.model.constant.OrderStatus;
@@ -175,7 +176,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sự kiện với ID: " + eventDTO.getEventId()));
         // Field đơn giản
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Not Found Category With ID :" + eventDTO.getCategoryId()));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy loại sự kiện với ID: " + eventDTO.getCategoryId()));
         event.setCategory(eventCategory);
         event.setVenueName(eventDTO.getVenueName());
         event.setTitle(eventDTO.getTitle());
@@ -198,7 +199,7 @@ public class EventServiceImpl implements EventService {
         address.setSpecificAddress(eventDTO.getAddressEdit().getSpecieladdress());
 
         Ward ward = wardRepository.findById(eventDTO.getAddressEdit().getWard().getWardId())
-                .orElseThrow(() -> new RuntimeException("Not Found Ward"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phường/xã với ID: " + eventDTO.getAddressEdit().getWard().getWardId()));
         City city = cityRepository.getCityById(eventDTO.getAddressEdit().getWard().getCity().getId());
         ward.setCity(city);
         address.setWard(ward);
@@ -318,9 +319,9 @@ public class EventServiceImpl implements EventService {
                 List<OrganizerMember> organizerMemberList = organizerMemberRepository.findByEventId(event.getEventId());
                 for (OrganizerMember organizerMember:organizerMemberList){
                     if(organizerMember.getUserRole().getRole().getRoleName().toString().equals(RoleName.ROLE_ORGANIZER.toString())){
-                        UserRole userRole = userRoleRepository.findByUserIdAndRoleId(organizerMember.getUserRole().getUser().getId(),roleRepository.findByRoleName(RoleName.ROLE_ATTENDEE).getId()).orElseThrow(()-> new RuntimeException("người này không có role attendee "));
-                        organizerMember.setUserRole(userRole);
-                        organizerMemberRepository.save(organizerMember);
+                        OrganizerProfile organizerProfile = organizerMember.getUserRole().getUser().getOrganizerProfile();
+                        organizerProfile.setIsActive(false);
+                        organizerProfileRepository.save(organizerProfile);
                         continue;
                     }
                     staffService.deleteStaffByStaffId(organizerMember.getId(),event.getEventId(),organizerMember.getUserRole().getUser().getId());
@@ -448,11 +449,14 @@ public class EventServiceImpl implements EventService {
         }
         Event event =  new Event();
         User user = userRepository.findById(eventDTO.getOrganizerId())
-                .orElseThrow(()-> new RuntimeException("Not Found User With ID : "+eventDTO.getOrganizerId()));
+                .orElseThrow(()-> new RuntimeException("Không tìm thấy user với Id: "+eventDTO.getOrganizerId()));
         event.setOrganizer(user);
 //        Lưu Organizer Profile
         if (organizerProfileDto!=null){
         OrganizerProfileDto profileDto  = organizerProfileDto ;
+        if(organizerProfileRepository.existsByTaxCode(profileDto.getTaxCode())){
+            throw new TaxCodeExists("Mã số thuế đã tồn tại");
+        }
         OrganizerProfile organizerProfile = new OrganizerProfile();
         organizerProfile.setUser(user);
         organizerProfile.setTaxCode(profileDto.getTaxCode());
@@ -464,11 +468,12 @@ public class EventServiceImpl implements EventService {
         organizerProfile.setBankBranch(profileDto.getBankBranch());
         organizerProfile.setBusinessType(profileDto.getBusinessType());
         organizerProfile.setLegalName(profileDto.getLegalName());
+        organizerProfile.setIsActive(true);
         organizerProfileRepository.save(organizerProfile);
             }
 //        Lưu Event
         EventCategory eventCategory = eventCategoryRepository.findById(eventDTO.getCategoryId())
-                .orElseThrow(()-> new RuntimeException("Not Found Category With ID :"+eventDTO.getCategoryId()));
+                .orElseThrow(()-> new RuntimeException("Không tìm thấy loại sự kiện với ID: " + eventDTO.getCategoryId()));
         event.setCategory(eventCategory);
         event.setVenueName(eventDTO.getVenueName());
         event.setTitle(eventDTO.getTitle());
@@ -479,7 +484,7 @@ public class EventServiceImpl implements EventService {
         Address address = new Address();
         address.setSpecificAddress(eventDTO.getAddress().getSpecieladdress());
         Ward ward = wardRepository.findById(eventDTO.getAddress().getWard().getWardId())
-                .orElseThrow(()->new RuntimeException("Not Found Ward "));
+                .orElseThrow(()->new RuntimeException("Không tìm thấy phường/xã với ID: " + eventDTO.getAddress().getWard().getWardId()));
         City city = cityRepository.getCityById(eventDTO.getAddress().getWard().getCity().getId());
         ward.setCity(city);
         address.setWard(ward);

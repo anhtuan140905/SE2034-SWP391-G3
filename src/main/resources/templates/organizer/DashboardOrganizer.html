@@ -180,7 +180,7 @@
                                     <th>LOẠI VÉ</th>
                                     <th>GIÁ BÁN</th>
                                     <th>ĐÃ BÁN</th>
-                                    <th>TỈ LỆ BÁN</th>
+                                    <th class="text-end">TỈ LỆ BÁN</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -195,8 +195,8 @@
                                     <td th:text="${ticket.price != null ? #numbers.formatDecimal(ticket.price, 0, 'COMMA', 0, 'POINT') + 'đ' : '0đ'}">0đ</td>
                                     <td th:text="${ticket.soldQuantity + ' / ' + ticket.totalStock}">0 / 0</td>
                                     <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="progress dc-progress">
+                                        <div class="d-flex align-items-center gap-2 justify-content-end">
+                                            <div class="progress dc-progress" style="width: 100px;">
                                                 <div class="progress-bar dc-progress-bar" th:style="'width: ' + ${ticket.percentSold} + '%'"></div>
                                             </div>
                                             <span class="dc-percent" th:text="${ticket.percentSold} + '%'">0%</span>

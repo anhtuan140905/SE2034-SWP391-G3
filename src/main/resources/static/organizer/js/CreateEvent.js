@@ -83,6 +83,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const cityEl = document.getElementById("province");
     const wardEl = document.getElementById("ward");
     if (cityEl && wardEl) {
+        // Tự động load Phường/Xã nếu Tỉnh/Thành đã có sẵn giá trị (khi bị lỗi reload lại)
+        if (cityEl.value) {
+            fetch(`/organizer/api/city?cityId=${cityEl.value}`)
+                .then((r) => r.json())
+                .then((wards) => {
+                    wardEl.innerHTML = '<option value="">--Chọn quận/huyện--</option>';
+                    wards.forEach((w) => {
+                        wardEl.innerHTML += `<option value="${w.wardId}">${w.name}</option>`;
+                    });
+                    
+                    // Lấy lại giá trị Phường/Xã cũ đã lưu trong HTML
+                    const savedWard = wardEl.getAttribute("data-selected");
+                    if (savedWard) {
+                        wardEl.value = savedWard;
+                    }
+                })
+                .catch((err) => console.error(err));
+        }
+
         cityEl.addEventListener("change", function () {
             const cityValue = this.value;
             if (!cityValue) return;
@@ -349,13 +368,10 @@ function updateTierField(id, field, value) {
     // Khi thay đổi hàng hoặc số ghế → tính lại sức chứa
     if (field === "rowLetter" || field === "cols") {
         tier.totalQty = computeTotalQty(tier.rowLetter, tier.cols);
+        tier.qty = tier.totalQty; // Luôn bằng sức chứa
 
-        // Nếu qty đang vượt sức chứa mới → clamp và thông báo lỗi real-time
-        if (tier.qty > tier.totalQty) {
-            tier.qty = tier.totalQty;
-        }
         // Xóa lỗi qty nếu đang hợp lệ sau khi sức chứa thay đổi
-        if (state.tierErrors[id]?.qty && tier.qty >= 1 && tier.qty <= tier.totalQty) {
+        if (state.tierErrors[id]?.qty) {
             delete state.tierErrors[id].qty;
         }
         renderTiers();
@@ -584,14 +600,12 @@ function renderTiers() {
                     </label>
                     <input
                         type="number"
-                        class="tier-input tier-input-mono${errs.qty ? " is-invalid-field" : ""}"
+                        class="tier-input tier-input-mono"
                         name="ticketTypes[${idx}].stock"
-                        min="1"
-                        max="${t.totalQty}"
-                        value="${escHtml(t.qty)}"
-                        onblur ="updateTierField('${t.id}', 'qty', parseInt(this.value) || 0)" />
-                    ${errDiv(errs.qty)}
-                    <div class="row-stepper-sub">Tối đa: ${t.totalQty} (theo sức chứa)</div>
+                        value="${escHtml(t.totalQty)}"
+                        readonly
+                        style="background-color: #f1f5f9; cursor: not-allowed;" />
+                    <div class="row-stepper-sub">Tự động bằng sức chứa (${t.totalQty})</div>
                 </div>
 
             </div>

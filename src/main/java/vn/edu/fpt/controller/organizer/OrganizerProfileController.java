@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import vn.edu.fpt.common.error.ProfileNotFoundException;
 import vn.edu.fpt.modelview.request.organizer.OrganizerProfileDto;
 import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.EventService;
@@ -25,15 +26,17 @@ public class OrganizerProfileController {
     private final EventService eventService;
 
     @GetMapping("/profile")
-    public String viewProfileOrganizer(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String viewProfileOrganizer(Model model, @AuthenticationPrincipal CustomUserDetails userDetails,
+                                       RedirectAttributes redirectAttributes) {
         Long userId = userDetails.getUser().getId();
         OrganizerProfileDto dto;
         try {
             dto = organizerProfileService.getOrganizerProfileByUserId(userId);
-        } catch (Exception e) {
-            dto = new OrganizerProfileDto();
-        }
+        } catch (ProfileNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage",e.getMessage());
+            return "redirect:/organizer/list/event";
 
+        }
         model.addAttribute("organizerProfile", dto);
         model.addAttribute("banks", eventService.getListBank());
         return "organizer/UpdateProfileOrganizer";

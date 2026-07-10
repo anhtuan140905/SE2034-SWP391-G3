@@ -154,7 +154,11 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M4 10v10M20 10v10M9 10v10M15 10v10"/><path d="M2 20h20"/></svg>
                             <select th:field="*{bankId}">
                                 <option value="" disabled selected>Chọn ngân hàng</option>
-                                <option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.name} + ' (' + ${bank.shortName} + ')'"></option>
+                                <option
+                                        th:each="bank : ${banks}"
+                                        th:value="${bank.bankId}"
+                                        th:text="${bank.bankName}">
+                                </option>
                             </select>
                             <span class="chevrons">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
@@ -170,11 +174,11 @@
                             <input type="text" th:field="*{bankBranch}" placeholder="Nhập chi nhánh ngân hàng">
                         </div>
                     </div>
-                </div>
+                </div>organizer/event/MyEvent.
             </form>
 
             <div class="card-footer">
-                <button type="button" class="btn btn-cancel">Cancel</button>
+                <button type="button" onclick="window.location.href='/organizer/list/event'" class="btn btn-cancel">Cancel</button>
                 <button type="submit" form="profileForm" class="btn btn-save">Save Profile</button>
             </div>
         </div>

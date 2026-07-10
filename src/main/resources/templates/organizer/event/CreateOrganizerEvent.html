@@ -69,6 +69,8 @@
 <!--                </button>-->
 <!--            </div>-->
 
+
+
             <!-- ===== FORM CHÍNH ===== -->
             <form
                     id="eventForm"
@@ -387,9 +389,9 @@
                                     <select id="ward"
                                             name="ward"
                                             th:field="*{address.ward.wardId}"
+                                            th:data-selected="*{address.ward.wardId}"
                                             class="form-select field-input mt-1">
-                                        <option value="">Chọn Thành Phố Trước</option>
-
+                                        <option value="">Chọn Quận/Huyện</option>
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
@@ -555,6 +557,8 @@
                                      SECTION 5: PHÂN KHÚC VÉ MỞ BÁN
                                 ======================================== -->
                     <section id="section-tickets" class="form-section">
+                        <div th:if="${errorMessage}" class="text-danger"
+                             style="font-size: small" th:text="${errorMessage}"></div>
                         <div class="section-header">
                             <span class="section-num">4</span>
                             <div>
@@ -740,8 +744,8 @@
                                     </select>
                                     <div class="text-danger"
                                          style="font-size: small"
-                                         th:if="${#fields.hasErrors('bankName')}"
-                                         th:errors="*{bankName}">
+                                         th:if="${#fields.hasErrors('bankId')}"
+                                         th:errors="*{bankId}">
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-4">
@@ -756,14 +760,6 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-start gap-3 mt-4 p-3"
-                                 style="border-radius: var(--radius-xl); background: rgba(124,58,237,.04); border: 1px solid rgba(124,58,237,.15);">
-                                <span class="material-symbols-outlined" style="font-size:16px; color:var(--purple); flex-shrink:0; margin-top:1px;">info</span>
-                                <p style="font-size:11px; color:#4c1d95; line-height:1.6; margin:0;">
-                                    Thông tin ngân hàng sẽ được đội ngũ vận hành xác minh trong vòng <strong>1–2 ngày làm việc</strong>
-                                    trước khi doanh thu được giải ngân. Vui lòng đảm bảo tên chủ tài khoản khớp hoàn toàn với tên pháp lý đã đăng ký.
-                                </p>
-                            </div>
                         </div>
                     </section>
                     <!-- ===== NÚT HÀNH ĐỘNG ===== -->
