@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.common.error.ResourceNotFoundException;
+import vn.edu.fpt.common.error.TaxCodeExists;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
@@ -58,7 +59,8 @@ public class EventController {
             OrganizerProfileDto organizerProfileDto,
             BindingResult organizerResult,
             Model model,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
         Long userId = userDetails.getUser().getId();
         // kiểm tra đã có profile chưa
         boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userId);
@@ -68,19 +70,36 @@ public class EventController {
             model.addAttribute("eventCategoryList", eventService.getListEventCategory());
             model.addAttribute("citys", eventService.getListcity());
             model.addAttribute("event", eventDTO);
+
             // chỉ add organizerProfile nếu chưa có
             if (!hasOrganizerProfile) {
                 model.addAttribute("organizerProfile", organizerProfileDto);
+                model.addAttribute("banks", eventService.getListBank());
             }
             return "organizer/event/CreateOrganizerEvent";
         }
         // tránh client sửa organizerId
         eventDTO.setOrganizerId(userId);
         // save
-        if (!hasOrganizerProfile) {
-            eventService.saveEvent(eventDTO, organizerProfileDto);
-        } else {
-            eventService.saveEvent(eventDTO, null);
+        try {
+            if (!hasOrganizerProfile) {
+                eventService.saveEvent(eventDTO, organizerProfileDto);
+            } else {
+                eventService.saveEvent(eventDTO, null);
+            }
+        } catch (TaxCodeExists e) {
+            model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
+            model.addAttribute("eventCategoryList", eventService.getListEventCategory());
+            model.addAttribute("citys", eventService.getListcity());
+            model.addAttribute("event", eventDTO);
+
+            if (!hasOrganizerProfile) {
+                model.addAttribute("organizerProfile", organizerProfileDto);
+                model.addAttribute("banks", eventService.getListBank());
+                model.addAttribute("errorMessage", "Mã số thuế đã tồn tại. Vui lòng kiểm tra lại.");
+            }
+
+            return "organizer/event/CreateOrganizerEvent";
         }
         return "redirect:/organizer/event/MyEvent";
     }
@@ -126,7 +145,7 @@ public class EventController {
     }
 
 
-    @GetMapping("/event/{id}")
+    @GetMapping("/event/detail/{id}")
     public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 //        if (!staffService.checkPermission(userDetails.getUser().getId(), id, "CAN_VIEW_EDIT_EVENT")) {
 //            return "organizer/DashboardOrganizer";
@@ -189,6 +208,6 @@ public class EventController {
         eventDTO.setEventId(eventId);
             eventService.updateEvent(eventDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật sự kiện thành công.");
-        return "redirect:/organizer/dashboard";
+        return "organizer/event/MyEvent";
     }
 }

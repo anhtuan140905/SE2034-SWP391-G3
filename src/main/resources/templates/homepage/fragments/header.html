@@ -71,7 +71,7 @@
                         </li>
 
                         <!-- Sự kiện của tôi — chỉ hiện với Organizer -->
-                        <li sec:authorize="hasRole('ROLE_ORGANIZER')">
+                        <li sec:authorize="hasAnyRole('ROLE_ORGANIZER', 'ROLE_MANAGER', 'ROLE_STAFF')">
                             <a class="dropdown-item" th:href="@{/organizer/list/event}">
                                 <i class="fa-solid fa-calendar-check dropdown-icon text-violet"></i> Sự kiện của tôi
                             </a>

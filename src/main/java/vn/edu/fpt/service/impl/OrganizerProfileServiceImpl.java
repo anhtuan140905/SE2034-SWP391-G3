@@ -1,6 +1,7 @@
 package vn.edu.fpt.service.impl;
 
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.common.error.ProfileNotFoundException;
 import vn.edu.fpt.model.Bank;
 import vn.edu.fpt.model.OrganizerProfile;
 import vn.edu.fpt.modelview.request.organizer.OrganizerProfileDto;
@@ -29,7 +30,7 @@ public class OrganizerProfileServiceImpl implements OrganizerProfileService {
 
     @Override
     public OrganizerProfileDto getOrganizerProfileByUserId(Long userId) {
-        OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId).orElseThrow(()->new RuntimeException("Người dùng này không có organizerProfile"));
+        OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId).orElseThrow(()->new ProfileNotFoundException("Người dùng này không có organizerProfile"));
         OrganizerProfileDto dto = new OrganizerProfileDto();
         dto.setIdProfile(organizerProfile.getId());
         dto.setTaxCode(organizerProfile.getTaxCode());
@@ -50,7 +51,7 @@ public class OrganizerProfileServiceImpl implements OrganizerProfileService {
     @Override
     public void updateProfile(Long userId, OrganizerProfileDto dto) {
         OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Người dùng này không có organizerProfile"));
+                .orElseThrow(() -> new ProfileNotFoundException("Người dùng này không có organizerProfile"));
 
         organizerProfile.setTaxCode(dto.getTaxCode());
         organizerProfile.setCompanyName(dto.getCompanyName());

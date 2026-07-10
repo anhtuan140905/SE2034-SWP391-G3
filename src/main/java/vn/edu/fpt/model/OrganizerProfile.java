@@ -58,4 +58,7 @@ public class OrganizerProfile {
 
     @Column(name = "legal_address", length = 300)
     private String legalAddress;          // Địa chỉ xuất hoá đơn
+
+    @Column(name = "is_active")
+    private Boolean isActive;
 }
