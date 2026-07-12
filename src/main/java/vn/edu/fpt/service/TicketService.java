@@ -30,4 +30,5 @@ public interface TicketService {
     TicketDTO viewDetailTicket(Long ticketId, Long userId);
     long countCompletedTicketsByUserAndEvent(Long userId, Long eventId);
     List<Object[]> countSoldTicketsByEventIds(List<Long> eventIds);
+    int getRemainingTicketQuota(Long userId, Long eventId);
 }

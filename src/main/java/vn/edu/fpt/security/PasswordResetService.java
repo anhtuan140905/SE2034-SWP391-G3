@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.edu.fpt.common.error.ServiceValidationException;
+import vn.edu.fpt.exception.ServiceValidationException;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.constant.TokenType;
@@ -14,8 +14,6 @@ import vn.edu.fpt.repository.VerifyTokenRepository;
 import vn.edu.fpt.service.impl.EmailService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 @Service

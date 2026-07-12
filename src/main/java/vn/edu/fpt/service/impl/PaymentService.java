@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+    private static final int MAX_TICKETS_PER_EVENT = 3;
 
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
@@ -68,6 +69,15 @@ public class PaymentService {
         }
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new IllegalStateException("Order không ở trạng thái chờ thanh toán");
+        }
+
+        int orderTicketCount = order.getOrderDetails().size();
+        long boughtTickets = ticketService.countCompletedTicketsByUserAndEvent(
+                order.getUser().getId(),
+                order.getEvent().getEventId()
+        );
+        if (boughtTickets + orderTicketCount > MAX_TICKETS_PER_EVENT) {
+            throw new IllegalStateException("Bạn chỉ được mua tối đa 3 vé cho sự kiện này.");
         }
 
         Payment payment = paymentRepository.findByOrder_OrderId(order.getOrderId())

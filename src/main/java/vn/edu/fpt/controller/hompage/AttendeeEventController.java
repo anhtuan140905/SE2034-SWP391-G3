@@ -142,4 +142,9 @@ public class AttendeeEventController {
 
         return ResponseEntity.ok(recommendations);
     }
+
+    @GetMapping("/403")
+    public String accessDeniedPage() {
+        return "homepage/403";
+    }
 }

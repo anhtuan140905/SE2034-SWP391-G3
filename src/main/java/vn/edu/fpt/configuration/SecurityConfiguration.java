@@ -91,7 +91,8 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/", "/events/**", "/events", "/auth/**", "/css/**",
                                 "/js/**", "/homepage/**",
-                                "/auth/css/**", "/auth/js/**", "/api/events/*/seat-map"
+                                "/auth/css/**", "/auth/js/**", "/api/events/*/seat-map",
+                                "/403"
                         ).permitAll()
                         .requestMatchers(
                                 "/admin/**").hasAuthority("ROLE_ADMIN")
@@ -130,7 +131,11 @@ public class SecurityConfiguration {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.disable())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/403")
+                );;
+
         return http.build();
 
     }

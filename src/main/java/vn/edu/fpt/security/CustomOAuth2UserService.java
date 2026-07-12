@@ -40,11 +40,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // Gọi Google/Facebook API lấy attributes
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId(); // "google" | "facebook"
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String email = extractEmail(registrationId, attributes);
 
         if (email == null || email.isBlank()) {

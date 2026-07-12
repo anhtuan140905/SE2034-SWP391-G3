@@ -1,6 +1,5 @@
 package vn.edu.fpt.service.impl;
 
-import io.micrometer.common.lang.NonNull;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import vn.edu.fpt.common.error.ServiceValidationException;
+import vn.edu.fpt.exception.ServiceValidationException;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.RoleName;
@@ -20,8 +19,6 @@ import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.*;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.UserService;
-
-import vn.edu.fpt.model.constant.TicketStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

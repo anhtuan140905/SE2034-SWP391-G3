@@ -4,10 +4,10 @@
         <div class="footer-glow-circle circle-left"></div>
         <div class="footer-glow-circle circle-right"></div>
     </div>
-    <div class="container footer-content-wrap">
-        <div class="row gy-5">
+    <div class="container footer-content-wrap d-flex">
+        <div class="row gy-5 align-items-center justify-content-center">
             <!-- Brand Column -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-lg-12 col-md-12">
                 <a class="d-flex align-items-center mb-3 footer-brand" href="#" th:href="@{/home}">
                     <div class="brand-dots me-2">
                         <span class="dot pink"></span>
@@ -16,51 +16,9 @@
                     </div>
                     <span class="brand-text text-white">Event<span class="highlight">Hub</span></span>
                 </a>
-                <p class="footer-tagline text-secondary-light pe-lg-4">
-                    Elevating your event experiences through cutting-edge technology, intuitive interfaces, and vibrant event discovery. Match, meet, and master events together.
+                <p class="footer-tagline text-secondary-light pe-lg-4" style="color: white !important;">
+                    Nâng tầm trải nghiệm sự kiện của bạn thông qua công nghệ tiên tiến, giao diện trực quan và khả năng khám phá sự kiện sống động. Kết nối, gặp gỡ và làm chủ sự kiện cùng nhau.
                 </p>
-                <div class="social-links d-flex gap-3 mt-4">
-                    <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f social-icon"></i></a>
-                    <a href="#" class="social-circle" aria-label="Twitter"><i class="fa-brands fa-x-twitter social-icon"></i></a>
-                    <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram social-icon"></i></a>
-                    <a href="#" class="social-circle" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in social-icon"></i></a>
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 col-6">
-                <h5 class="footer-title">Discover</h5>
-                <ul class="list-unstyled footer-links-list">
-                    <li><a href="#" th:href="@{/events?category=music}"><i class="fa-solid fa-music link-bullet text-pink"></i> Music Events</a></li>
-                    <li><a href="#" th:href="@{/events?category=tech}"><i class="fa-solid fa-laptop-code link-bullet text-violet"></i> Tech Conferences</a></li>
-                    <li><a href="#" th:href="@{/events?category=art}"><i class="fa-solid fa-palette link-bullet text-orange"></i> Art & Galleries</a></li>
-                    <li><a href="#" th:href="@{/events?category=sports}"><i class="fa-solid fa-volleyball link-bullet text-success"></i> Sports & Fitness</a></li>
-                </ul>
-            </div>
-
-            <!-- Organizer Links -->
-            <div class="col-lg-2 col-md-6 col-6">
-                <h5 class="footer-title">For Hosts</h5>
-                <ul class="list-unstyled footer-links-list">
-                    <li><a href="#" th:href="@{/host}"><i class="fa-solid fa-plus link-bullet text-pink"></i> Create an Event</a></li>
-                    <li><a href="#" th:href="@{/pricing}"><i class="fa-solid fa-gem link-bullet text-violet"></i> Pricing Plans</a></li>
-                    <li><a href="#" th:href="@{/faq}"><i class="fa-solid fa-circle-question link-bullet text-orange"></i> FAQ Support</a></li>
-                    <li><a href="#" th:href="@{/guidelines}"><i class="fa-solid fa-shield-halved link-bullet text-info"></i> Host guidelines</a></li>
-                </ul>
-            </div>
-
-            <!-- Newsletter -->
-            <div class="col-lg-4 col-md-6">
-                <h5 class="footer-title">Stay in the Loop</h5>
-                <p class="text-secondary-light mb-3">Subscribe to receive updates on premium curation and local events happening near you.</p>
-                <form class="newsletter-form" th:action="@{/newsletter/subscribe}" method="post">
-                    <div class="newsletter-input-group">
-                        <input type="email" name="email" class="form-control newsletter-input" placeholder="Your email address" required aria-label="Email address">
-                        <button type="submit" class="btn btn-newsletter-submit">
-                            <i class="fa-regular fa-paper-plane text-white font-medium"></i>
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
 
@@ -68,16 +26,9 @@
 
         <div class="row align-items-center footer-bottom">
             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <p class="copyright mb-0">
-                    &copy; <span id="currentYear">2026</span> EventHub. All Rights Reserved. Crafted with <i class="fa-solid fa-heart text-danger pulse"></i> for premium creators.
+                <p class="copyright mb-0" style="color: white !important;">
+                    &copy; <span id="currentYear">2026</span> EventHub. Bảo lưu mọi quyền. Được thiết kế dành cho các <i class="fa-solid fa-heart text-danger pulse"></i>nhà sáng tạo chuyên nghiệp.
                 </p>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <div class="footer-legal-links d-flex justify-content-center justify-content-md-end gap-4">
-                    <a href="#" th:href="@{/terms}">Terms of Service</a>
-                    <a href="#" th:href="@{/privacy}">Privacy Policy</a>
-                    <a href="#" th:href="@{/cookie-policy}">Cookie Preferences</a>
-                </div>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.fpt.common.error.ServiceValidationException;
+import vn.edu.fpt.exception.ServiceValidationException;
 import vn.edu.fpt.model.VerificationToken;
 import vn.edu.fpt.model.Ward;
 import vn.edu.fpt.model.constant.TokenType;

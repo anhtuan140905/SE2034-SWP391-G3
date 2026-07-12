@@ -28,7 +28,7 @@ public class TicketServiceImpl implements TicketService {
     private final EmailService emailService;
     private final CloudinaryService cloudinaryService;
     private final EventRepository eventRepository;
-
+    public static final int MAX_TICKETS_PER_EVENT = 3;
     @Override
     public List<TicketTypeCheckinDto> getDetailCheckinByTicketType(Long  eventId) {
         List<TicketType> ticketTypes = eventRepository.getReferenceById(eventId).getTicketTypes();
@@ -214,6 +214,15 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Object[]> countSoldTicketsByEventIds(List<Long> eventIds) {
         return this.ticketRepository.countSoldTicketsByEventIds(eventIds);
+    }
+
+    @Override
+    public int getRemainingTicketQuota(Long userId, Long eventId) {
+        if (userId == null) {
+            return MAX_TICKETS_PER_EVENT;
+        }
+        long ticketBought = ticketRepository.countCompletedTicketsByUserAndEvent(userId, eventId);
+        return Math.max(0, MAX_TICKETS_PER_EVENT - (int) ticketBought);
     }
 
 }

@@ -1,4 +1,4 @@
-package vn.edu.fpt.common.error;
+package vn.edu.fpt.exception;
 
 public class TimeRangeException extends RuntimeException{
     private final String field;

@@ -40,16 +40,13 @@ public class BookingController {
         }
         model.addAttribute("isAuthenticated", true);
         Long userId = userDetails.getUserId();
-        long ticketBought = this.ticketService.countCompletedTicketsByUserAndEvent(userId, eventId);
-        long remaining = 3 - ticketBought;
-        model.addAttribute("event", eventService.getEventById(eventId));
-
-        if(remaining <= 0) {
+        int remaining = ticketService.getRemainingTicketQuota(userId, eventId);
+        if (remaining <= 0) {
             model.addAttribute("limitReached", true);
-            model.addAttribute("message", "Bạn đã mua tối đa 3 vé cho sự kiện này.");
+            model.addAttribute("message", "Bạn đã mua tối đa số lượng vé cho phép cho sự kiện này.");
             return "homepage/ChooseSeat";
         }
-        model.addAttribute("remainingSlots", remaining);
+        model.addAttribute("remainingSlots", 3 - remaining);
         model.addAttribute("limitReached", false);
         return "homepage/ChooseSeat";
     }

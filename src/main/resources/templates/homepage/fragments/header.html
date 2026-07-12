@@ -70,10 +70,31 @@
                             </a>
                         </li>
 
-                        <!-- Sự kiện của tôi — chỉ hiện với Organizer -->
+                        <!-- Sự kiện của tôi — hiện với Organizer, Manager, Staff -->
                         <li sec:authorize="hasAnyRole('ROLE_ORGANIZER', 'ROLE_MANAGER', 'ROLE_STAFF')">
                             <a class="dropdown-item" th:href="@{/organizer/list/event}">
                                 <i class="fa-solid fa-calendar-check dropdown-icon text-violet"></i> Sự kiện của tôi
+                            </a>
+                        </li>
+
+                        <!-- Link quản trị Admin -->
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="dropdown-item" th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-user-shield dropdown-icon text-info"></i> Quản trị Admin
+                            </a>
+                        </li>
+
+                        <!-- Link quản trị Moderator -->
+                        <li sec:authorize="hasRole('ROLE_MODERATOR')">
+                            <a class="dropdown-item" th:href="@{/moderator/dashboard}">
+                                <i class="fa-solid fa-user-check dropdown-icon text-warning"></i> Quản trị Moderator
+                            </a>
+                        </li>
+
+                        <!-- Link quản trị Finance -->
+                        <li sec:authorize="hasRole('ROLE_FINANCE')">
+                            <a class="dropdown-item" th:href="@{/finance/dashboard}">
+                                <i class="fa-solid fa-wallet dropdown-icon text-success"></i> Quản trị Finance
                             </a>
                         </li>
                         <li><hr class="dropdown-divider border-secondary-subtle"></li>

@@ -144,19 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
 
                         ${reasonBlock}
-                        <div class="card-body p-4 d-flex flex-column justify-content-between flex-grow-1" style="z-index: 2;">
-                            <div>
-                                <h5 class="card-title text-white fw-bold mb-3" style="font-size: 1.35rem; line-height: 1.4;">
-                                    ${item.title}
-                                </h5>
-                                <div class="row g-2" style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">
-                                    ...
-                                </div>
-                            </div>
-
-                            ${reasonBlock}
-                            ${buyButton}
-                        </div>
+                        ${buyButton}
                     </div>
 
                     <div class="d-none d-lg-flex flex-column justify-content-center align-items-center text-center p-4"

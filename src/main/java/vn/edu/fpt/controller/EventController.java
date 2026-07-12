@@ -9,8 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.common.error.ResourceNotFoundException;
+
 import vn.edu.fpt.common.error.TaxCodeExists;
+import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;

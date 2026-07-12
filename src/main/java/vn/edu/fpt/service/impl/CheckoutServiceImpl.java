@@ -5,7 +5,7 @@ package vn.edu.fpt.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.edu.fpt.common.error.VoucherValidationException;
+import vn.edu.fpt.exception.VoucherValidationException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
@@ -31,13 +31,19 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final VoucherService  voucherService;
 
     private static final long CHECKOUT_TTL_MINUTES = 10;
+    private static final int MAX_TICKETS_PER_EVENT = 3;
 
     @Transactional
     public Long proceedToPayment(List<Long> seatIds, Long voucherId, User currentUser) {
+        if (currentUser == null) {
+            throw new IllegalArgumentException("Vui lòng đăng nhập trước khi thanh toán");
+        }
         if (seatIds == null || seatIds.isEmpty()) {
             throw new IllegalArgumentException("Chưa chọn ghế nào");
         }
-
+        if (seatIds.size() > MAX_TICKETS_PER_EVENT) {
+            throw new IllegalStateException("Bạn chỉ được mua tối đa 3 vé cho sự kiện này.");
+        }
         Instant now = Instant.now();
         Instant newExpiry = now.plus(CHECKOUT_TTL_MINUTES, ChronoUnit.MINUTES);
 

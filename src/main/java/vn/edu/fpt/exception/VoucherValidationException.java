@@ -1,4 +1,4 @@
-package vn.edu.fpt.common.error;
+package vn.edu.fpt.exception;
 
 import lombok.Getter;
 

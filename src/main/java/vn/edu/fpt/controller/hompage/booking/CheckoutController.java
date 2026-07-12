@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.common.error.VoucherValidationException;
+import vn.edu.fpt.exception.VoucherValidationException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.constant.PaymentStatus;
