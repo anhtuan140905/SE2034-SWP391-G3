@@ -32,14 +32,12 @@ import java.util.List;
 @AllArgsConstructor
 public class HomepageController {
     private final UserServiceImpl userServiceImpl;
+    private final UserService userService;
     private final CityService cityService;
     private final CloudinaryService cloudinaryService;
     private final EventService eventService;
     private final TicketService ticketService;
     private final EventCategoryServiceImpl eventCategoryService;
-    private final TicketServiceImpl ticketServiceImpl;
-    private final EventServiceImpl eventServiceImpl;
-    private final OrderServiceImpl orderServiceImpl;
 
     @GetMapping("/")
     public String homepage(
@@ -135,26 +133,26 @@ public class HomepageController {
         User user = userServiceImpl.findByUsername(email);
         Long userId = user.getId();
 
-        long countTicket = ticketServiceImpl.countAllTicketOfUser(userId);
+        long countTicket = ticketService.countAllTicketOfUser(userId);
         model.addAttribute("countTicket", countTicket);
 
-        long countUpcomingEvent = eventServiceImpl.countUpcomingEvent(userId);
+        long countUpcomingEvent = eventService.countUpcomingEvent(userId);
         model.addAttribute("countUpcomingEvent", countUpcomingEvent);
 
-        long countAttendedEvent = eventServiceImpl.countAttendedEvent(userId);
+        long countAttendedEvent = eventService.countAttendedEvent(userId);
         model.addAttribute("countAttendedEvent", countAttendedEvent);
 
-        long countUpcomingTicket = ticketServiceImpl.countUpcomingTicket(userId);
+        long countUpcomingTicket = ticketService.countUpcomingTicket(userId);
         model.addAttribute("countUpcomingTicket", countUpcomingTicket);
 
-        long countUsedTicket = ticketServiceImpl.countUsedTicket(userId);
+        long countUsedTicket = ticketService.countUsedTicket(userId);
         model.addAttribute("countUsedTicket", countUsedTicket);
 
-        long countExpiredTicket = ticketServiceImpl.countExpiredTicket(userId);
+        long countExpiredTicket = ticketService.countExpiredTicket(userId);
         model.addAttribute("countExpiredTicket", countExpiredTicket);
 
 
-        List<TicketDTO> viewTicket = ticketServiceImpl.viewTicket(userId, tab);
+        List<TicketDTO> viewTicket = ticketService.viewTicket(userId, tab);
         model.addAttribute("viewTicket", viewTicket);
 
         model.addAttribute("tab", tab);
@@ -170,18 +168,18 @@ public class HomepageController {
                                       @AuthenticationPrincipal CustomUserDetails userDetails,
                                       @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
-        User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
-        model.addAttribute("currentUser", currentUser);
 
         try{
-            TicketDTO ticketDetail = ticketServiceImpl.viewDetailTicket(ticketId, currentUser.getId());
+            User currentUser = (userDetails != null)
+                    ? userService.findByUsername(userDetails.getUsername())
+                    : userService.findByUsername(oAuth2Users.getName());
+            model.addAttribute("currentUser", currentUser);
+            TicketDTO ticketDetail = ticketService.viewDetailTicket(ticketId, currentUser.getId());
 
             model.addAttribute("ticketDetail", ticketDetail);
             return "homepage/ViewDetailTicket";
         }
-        catch (EntityNotFoundException e){
+        catch (Exception e){
             return "redirect:/my-tickets";
         }
 

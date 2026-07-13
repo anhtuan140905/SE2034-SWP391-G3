@@ -9,9 +9,9 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.admin.CountEventByMonthDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.repository.SumRevenueByMonthProjection;
-import vn.edu.fpt.service.impl.EventServiceImpl;
-import vn.edu.fpt.service.impl.TicketServiceImpl;
-import vn.edu.fpt.service.impl.UserServiceImpl;
+import vn.edu.fpt.service.EventService;
+import vn.edu.fpt.service.TicketService;
+import vn.edu.fpt.service.UserService;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
 
@@ -21,16 +21,16 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final UserServiceImpl userServiceImpl;
-    private final EventServiceImpl eventServiceImpl;
-    private final TicketServiceImpl ticketServiceImpl;
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketService ticketService;
 
-    public AdminController(UserServiceImpl userServiceImpl,
-                           EventServiceImpl eventServiceImpl,
-                           TicketServiceImpl ticketServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
-        this.eventServiceImpl = eventServiceImpl;
-        this.ticketServiceImpl = ticketServiceImpl;
+    public AdminController(UserService userService,
+                           EventService eventService,
+                           TicketService ticketService) {
+        this.userService = userService;
+        this.eventService = eventService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/dashboard")
@@ -39,29 +39,29 @@ public class AdminController {
                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        List<EventSummaryDto> events = eventServiceImpl.findTop10Events();
+        List<EventSummaryDto> events = eventService.findTop10Events();
         model.addAttribute("events", events);
 
-        long allEvent = eventServiceImpl.countAllEvent();
+        long allEvent = eventService.countAllEvent();
         model.addAttribute("allEvent", allEvent);
 
-        long allUserActive = eventServiceImpl.countAllUseActive();
+        long allUserActive = eventService.countAllUseActive();
         model.addAttribute("allUserActive", allUserActive);
 
-        long allSoldTicket = ticketServiceImpl.countAllSoldTicket();
+        long allSoldTicket = ticketService.countAllSoldTicket();
         model.addAttribute("allSoldTicket", allSoldTicket);
 
-        List<CountEventByMonthDTO> allEventByMonth = eventServiceImpl.countEventByMonth();
+        List<CountEventByMonthDTO> allEventByMonth = eventService.countEventByMonth();
         model.addAttribute("allEventByMonth", allEventByMonth);
 
-        List<SumRevenueByMonthProjection> sumRevenueByMonth = eventServiceImpl.sumRevenueByMonth();
+        List<SumRevenueByMonthProjection> sumRevenueByMonth = eventService.sumRevenueByMonth();
         model.addAttribute("sumRevenueByMonth",sumRevenueByMonth);
 
-        List<EventSummaryDto> top5Events = eventServiceImpl.findTop5EventsBySoldCount();
+        List<EventSummaryDto> top5Events = eventService.findTop5EventsBySoldCount();
         model.addAttribute("top5Events", top5Events);
 
         return "admin/DashboardAdmin";

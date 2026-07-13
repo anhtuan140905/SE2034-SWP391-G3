@@ -30,7 +30,7 @@ public class TicketDTO {
     private String status;
     private String price;
     private String purchase;
-    private String seat;
+    private Integer seat;
     private String section;
     private String row;
     private String ticketCount;

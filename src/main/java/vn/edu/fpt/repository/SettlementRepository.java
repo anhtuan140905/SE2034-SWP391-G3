@@ -71,6 +71,7 @@ u.middle_name as middleNameOrganizer,
 u.first_name as firstNameOrganizer,
 se.payout_amount as payoutAmount,
 CAST(se.created_at AS datetime2) as createAt,
+CAST(se.paid_at AS datetime2) as paidAt,
 se.status as status
 from settlements se\s
 left join events e on se.event_id = e.event_id

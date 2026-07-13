@@ -23,7 +23,7 @@ public interface TicketProjection {
      String getStatus();
      String getPrice();
      String getPurchase();
-     String getSeat();
+     Integer getSeat();
      String getSection();
      String getRow();
      String getTicketCount();
