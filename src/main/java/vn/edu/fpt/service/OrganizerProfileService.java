@@ -10,6 +10,7 @@ public interface OrganizerProfileService {
     boolean existsByTaxCode(String taxCode);
     OrganizerProfileDto getOrganizerProfileByUserId(Long userId);
     void updateProfile(Long userId, OrganizerProfileDto dto);
+    boolean CanCreateEvent(Long userId);
 }
 
 

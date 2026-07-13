@@ -629,7 +629,8 @@
                                 </p>
                             </div>
                         </div>
-
+                        <div th:if="${errorMessage}" class="text-danger"
+                             style="font-size: small" th:text="${errorMessage}"></div>
                         <!-- Thông tin pháp lý -->
                         <div class="field-card mb-4">
                             <label class="field-label">

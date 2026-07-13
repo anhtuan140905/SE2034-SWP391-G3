@@ -348,7 +348,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Boolean GetOrganizerProfileByUserId(Long userId) {
+        public Boolean GetOrganizerProfileByUserId(Long userId) {
         OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId).orElse(null);
         if(organizerProfile!=null){
             return true;
@@ -448,8 +448,7 @@ public class EventServiceImpl implements EventService {
             throw new RuntimeException("Banner không được để trống");
         }
         Event event =  new Event();
-        User user = userRepository.findById(eventDTO.getOrganizerId())
-                .orElseThrow(()-> new RuntimeException("Không tìm thấy user với Id: "+eventDTO.getOrganizerId()));
+        User user = userRepository.getReferenceById(eventDTO.getOrganizerId());
         event.setOrganizer(user);
 //        Lưu Organizer Profile
         if (organizerProfileDto!=null){
