@@ -19,7 +19,7 @@ import vn.edu.fpt.security.CustomUserDetails;
 @RequestMapping("/organizer")
 @AllArgsConstructor
 public class StaffController {
-    private StaffService staffService;
+        private StaffService staffService;
     @GetMapping("/event/{id}/members")
     public String ListMember(@PathVariable Long id,
                              @RequestParam(defaultValue = "") String keyword,

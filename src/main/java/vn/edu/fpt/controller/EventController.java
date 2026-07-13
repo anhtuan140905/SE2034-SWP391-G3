@@ -17,9 +17,7 @@ import vn.edu.fpt.modelview.request.organizer.*;
 import vn.edu.fpt.modelview.response.organizer.EventCardDTO;
 import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
 import vn.edu.fpt.modelview.response.organizer.EventEditDTO;
-import vn.edu.fpt.service.AuthenticatedUser;
-import vn.edu.fpt.service.StaffService;
-import vn.edu.fpt.service.UserService;
+import vn.edu.fpt.service.*;
 import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.EventServiceImpl;
 
@@ -29,12 +27,14 @@ import java.util.List;
 @RequestMapping("/organizer")
 @AllArgsConstructor
 public class EventController {
-    private EventServiceImpl eventService;
-    private StaffService staffService;
-    private final UserService userService;
-
+    private EventService eventService;
+    private OrganizerProfileService organizerProfileService;
     @GetMapping("/create/event")
-    public String CreateEvent(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String CreateEvent(Model model, @AuthenticationPrincipal CustomUserDetails userDetails,RedirectAttributes redirectAttributes) {
+        if(!organizerProfileService.CanCreateEvent(userDetails.getUserId())){
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền tạo sự kiện.");
+            return "redirect:/organizer/list/event";
+        }
         List<EventCategory> eventCategoryList = eventService.getListEventCategory();
         List<cityDto> listCity = eventService.getListcity();
         Long userId = userDetails.getUser().getId();
@@ -58,10 +58,9 @@ public class EventController {
             BindingResult eventResult,
             @Valid @ModelAttribute("organizerProfile")
             OrganizerProfileDto organizerProfileDto,
-            BindingResult organizerResult,
+                BindingResult organizerResult,
             Model model,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            RedirectAttributes redirectAttributes) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getUser().getId();
         // kiểm tra đã có profile chưa
         boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userId);
@@ -102,7 +101,7 @@ public class EventController {
 
             return "organizer/event/CreateOrganizerEvent";
         }
-        return "redirect:/organizer/event/MyEvent";
+        return "redirect:/organizer/list/event";
     }
 
     @ResponseBody
@@ -209,6 +208,6 @@ public class EventController {
         eventDTO.setEventId(eventId);
             eventService.updateEvent(eventDTO);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật sự kiện thành công.");
-        return "organizer/event/MyEvent";
+        return "redirect:/organizer/list/event";
     }
 }
