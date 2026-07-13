@@ -13,12 +13,14 @@ import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
-import vn.edu.fpt.service.impl.CityServiceImpl;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
+import vn.edu.fpt.repository.FeaturedEventDTO;
+import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.CloudinaryService;
-import vn.edu.fpt.service.impl.UserServiceImpl;
-import vn.edu.fpt.service.impl.WardServiceImpl;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
+import vn.edu.fpt.service.impl.UserServiceImpl;
 
 import java.util.List;
 
@@ -26,63 +28,65 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class UserController {
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketService ticketService;
+    private final EventCategoryService eventCategoryService;
     private final UserServiceImpl userServiceImpl;
-    private final CityServiceImpl cityServiceImpl;
-    private final WardServiceImpl wardServiceImpl;
-    private final CloudinaryService cloudinaryService;
 
 
-
-    public UserController(UserServiceImpl userServiceImpl, CityServiceImpl cityServiceImpl, WardServiceImpl wardServiceImpl, CloudinaryService cloudinaryService ) {
+    public UserController(UserService userService, EventService eventService, TicketService ticketService, EventCategoryService eventCategoryService, UserServiceImpl userServiceImpl) {
+        this.userService = userService;
+        this.eventService = eventService;
+        this.ticketService = ticketService;
+        this.eventCategoryService = eventCategoryService;
         this.userServiceImpl = userServiceImpl;
-        this.cityServiceImpl = cityServiceImpl;
-        this.wardServiceImpl = wardServiceImpl;
-        this.cloudinaryService = cloudinaryService;
+
     }
+
     @GetMapping("/listuser")
     public String getListUserPage(Model model,
                                   @RequestParam(required = false) String keyword,
                                   @AuthenticationPrincipal CustomUserDetails userDetails,
-                                  @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
-try {
-    List<User> users;
-    if (keyword == null || keyword.trim().isEmpty()) {
-        users = userServiceImpl.getAllUser();
-    } else {
-        users = userServiceImpl.searchUser(keyword);
+                                  @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
-    }
-    model.addAttribute("users", users);
-    model.addAttribute("keyword", keyword);
+        try {
+            User currentUser = (userDetails != null)
+                    ? userService.findByUsername(userDetails.getUsername())
+                    : userService.findByUsername(oAuth2Users.getName());
+            model.addAttribute("currentUser", currentUser);
+            List<User> users;
+            if (keyword == null || keyword.trim().isEmpty()) {
+                users = userService.getAllUser();
+            } else {
+                users = userService.searchUser(keyword);
+
+            }
+            model.addAttribute("users", users);
+            model.addAttribute("keyword", keyword);
 
 
-    User currentUser = (userDetails != null)
-            ? userServiceImpl.findByUsername(userDetails.getUsername())
-            : userServiceImpl.findByUsername(oAuth2Users.getName());
-    model.addAttribute("currentUser", currentUser);
+            return "admin/user/ListUser";
+        } catch (Exception e) {
 
-    return "admin/user/ListUser";
-}
-catch (Exception e){
-    model.addAttribute("errorMessage", "Hệ thống đã gặp lỗi không mong muốn. Vui lòng thử lại sau.");
-    return "error";
-}
+            return "redirect:/admin/listuser";
+        }
     }
 
     @GetMapping("/viewdetailuser")
     public String getViewDetailUserPage(@RequestParam Long id,
                                         Model model,
                                         @AuthenticationPrincipal CustomUserDetails userDetails,
-                                        @AuthenticationPrincipal CustomOAuth2User oAuth2Users){
-        User users = userServiceImpl.findById(id);
-        model.addAttribute("users",users);
+                                        @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
+        User users = userService.findById(id);
+        model.addAttribute("users", users);
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        List<ActivityDTO> activities = userServiceImpl.getUserActivities(id);
+        List<ActivityDTO> activities = userService.getUserActivities(id);
 
         String role = users.getUserRoles().stream()
                 .findFirst()
@@ -101,16 +105,16 @@ catch (Exception e){
                                @AuthenticationPrincipal CustomUserDetails userDetails,
                                @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
         UpdateUserStatusDTO dto = new UpdateUserStatusDTO();
-        List<User> users = userServiceImpl.getAllUser();
-        User user = userServiceImpl.findById(id);
+        List<User> users = userService.getAllUser();
+        User user = userService.findById(id);
 
         model.addAttribute("UpdateUserStatusDTO", dto);
         model.addAttribute("users", users);
         model.addAttribute("user", user);
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
         RoleName roleName = user.getUserRoles().iterator().next().getRole().getRoleName();
@@ -130,80 +134,40 @@ catch (Exception e){
             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
         if (result.hasErrors()) {
-            model.addAttribute("user", userServiceImpl.findById(id));
+            model.addAttribute("user", userService.findById(id));
             model.addAttribute("dto", dto);
             return "admin/user/EditUser";
         }
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
 
-        userServiceImpl.updateUser(id, dto, currentUser.getId());
+        userService.updateUser(id, dto, currentUser.getId());
 
         return "redirect:/admin/listuser";
     }
 
-    @GetMapping("/profile")
-    public String getProfile(Model model,
-                             @AuthenticationPrincipal CustomUserDetails userDetails,
-                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
-        User user = new User();
-        if(userDetails != null) {
-            user = this.userServiceImpl.findByUsername(userDetails.getUsername());
-        } else {
-            user = this.userServiceImpl.findByUsername(oAuth2Users.getName());
-        }
-        UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setMiddleName(user.getMiddleName());
-        dto.setAvatar(user.getAvatar());
-        dto.setGender(user.getGender());
-        dto.setPhone(user.getPhone());
-        dto.setEmail(user.getEmail());
-        dto.setAvatar(user.getAvatar());
-        dto.setDob(user.getDob());
-        if(user.getAddress() != null){
-            dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
-            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
-            dto.setSpecificAddress(user.getAddress().getSpecificAddress());
-        }
-
-        model.addAttribute("cities", this.cityServiceImpl.getCityList());
-        model.addAttribute("userUpdateDTO", dto);
-        return "homepage/UpdateProfileUser";
+    @GetMapping("/")
+    public String homepage(
+            Model model){
+        long hostedEvents = this.eventService.countHostedEvents();
+        model.addAttribute("hostedEvents", hostedEvents);
+        long issuedTickets = this.ticketService.issuedTickets();
+        model.addAttribute("issuedTickets", issuedTickets);
+        long eventCategories = this.eventCategoryService.countEventCategories();
+        model.addAttribute("eventCategories", eventCategories);
+        long activatedOrganizer = this.userServiceImpl.getActivatedOrganizers().size();
+        model.addAttribute("activatedOrganizers", activatedOrganizer);
+        List<EventSummaryDto> featuredEvents = this.eventService.findTopFeaturedEvents();
+        model.addAttribute("featuredEvents", featuredEvents);
+        List<FeaturedOrganizerDto> featuredOrganizers = this.userServiceImpl.getFeaturedOrganizers();
+        model.addAttribute("featuredOrganizers", featuredOrganizers);
+        FeaturedEventDTO featuredEvent = this.eventService.findFeaturedEvent();
+        model.addAttribute("featuredEvent", featuredEvent);
+        return "homepage/Home";
     }
 
 
-    @PostMapping("/update/profile")
-    public String updateProfile(
-            Model model,
-            @Valid @ModelAttribute UpdateAttendeeProfileDTO dto,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile
-    ) {
-        if (result.hasErrors()) {
-            model.addAttribute("cities", this.cityServiceImpl.getCityList());
-            model.addAttribute("userUpdateDTO", dto);
-            return "homepage/UpdateProfileUser";
-        }
-        try {
-            if(avatarFile != null && !avatarFile.isEmpty()){
-                String imageUrl = this.cloudinaryService.uploadFile(avatarFile, "avatars");
-                dto.setAvatar(imageUrl);
-            } else {
-                dto.setAvatar(null);
-            }
-            this.userServiceImpl.handleUpdateUser(dto, result);
-        } catch (Exception e) {
-            model.addAttribute("cities", this.cityServiceImpl.getCityList());
-            model.addAttribute("errorMsg", e.getMessage());
-            model.addAttribute("userUpdateDTO", dto);
-            return "homepage/UpdateProfileUser";
-        }
-        return "redirect:/admin/profile";
-    }
 
 }

@@ -95,11 +95,6 @@
             gap:16px;
         }
 
-        .search-wrap{
-            position:relative;
-            flex:1;
-            max-width:500px;
-        }
 
         .search-wrap i{
             position:absolute;
@@ -110,19 +105,7 @@
             font-size:14px;
         }
 
-        .search-box-top{
-            width:100%;
-            background:#fff0f5;
-            border:1px solid rgba(236,72,153,0.25);
-            border-radius:10px;
-            padding:10px 15px 10px 40px;
-            color:#1e0e34;
-            outline:none;
-            font-size:14px;
-        }
 
-        .search-box-top::placeholder{
-            color:#84759b; }
 
         .topbar-right{
             margin-left:auto;
@@ -453,18 +436,13 @@
                 <div class="dropdown-menu" id="profileDropdown">
                     <ul>
                         <li>
-                            <a th:href="@{/admin/profile}">
-                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            <a th:href="@{/}">
+                                <i class="fa-solid fa-shield"></i> Trang Chủ
                             </a>
                         </li>
                         <li>
                             <a th:href="@{/admin/dashboard}">
                                 <i class="fa-solid fa-shield"></i> Kênh Quản Trị
-                            </a>
-                        </li>
-                        <li>
-                            <a th:href="@{/settings}">
-                                <i class="fa-solid fa-sliders"></i> Cài Đặt
                             </a>
                         </li>
                         <li class="divider"></li>

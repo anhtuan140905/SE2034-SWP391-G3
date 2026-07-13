@@ -58,8 +58,7 @@
             font-size: 14px;
         }
 
-        .menu a:hover,
-        .menu a.active {
+        .menu a:hover{
             background: linear-gradient(to right, #ff1b8d, #ec4899);
             color: white;
         }
@@ -89,10 +88,6 @@
         }
 
 
-        .menu-parent.parent-active {
-            background: linear-gradient(to right, #ff1b8d, #ec4899);
-            color: white;
-        }
 
         .submenu {
             list-style: none;
@@ -343,7 +338,6 @@
             gap: 20px;
         }
 
-        .full-width { grid-column: 1 / -1; }
 
         .detail-section {
             background: #ffffff;
@@ -378,7 +372,6 @@
 
         .dr-label { font-size: 13px; color: #84759b; }
         .dr-value { font-size: 14px; font-weight: 600; color: #1e0e34; text-align: right; }
-        .dr-value.mono { font-family: monospace; color: #ff1b8d; }
         .dr-value.neg { color: #f97316; }
         .dr-value.highlight { color: #ff1b8d; font-size: 15px; }
 
@@ -517,9 +510,12 @@
 
                 <div class="dropdown-menu" id="profileDropdown">
                     <ul>
-                        <li><a th:href="@{/finance/profile}"><i class="fa-regular fa-user"></i> Thông Tin Của Tôi</a></li>
+                        <li>
+                            <a th:href="@{/}">
+                            <i class="fa-solid fa-shield"></i> Trang Chủ
+                        </a>
+                        </li>
                         <li><a th:href="@{/finance/dashboard}"><i class="fa-solid fa-shield"></i> Kênh Quản Trị</a></li>
-                        <li><a th:href="@{/settings}"><i class="fa-solid fa-sliders"></i> Cài Đặt</a></li>
                         <li class="divider"></li>
                         <li>
                             <form method="post" th:action="@{/auth/logout}">

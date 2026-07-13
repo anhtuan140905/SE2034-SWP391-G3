@@ -13,12 +13,17 @@ import vn.edu.fpt.model.User;
 import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
 import vn.edu.fpt.modelview.response.finance.SettlementSummaryDTO;
+import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
+import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.EventSummaryProjection;
+import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.repository.SettlementAgingProjection;
 import vn.edu.fpt.repository.SettlementSummaryProjection;
-import vn.edu.fpt.service.impl.*;
+import vn.edu.fpt.service.*;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
+import vn.edu.fpt.service.impl.CloudinaryService;
+import vn.edu.fpt.service.impl.UserServiceImpl;
 
 
 import java.util.Collections;
@@ -28,26 +33,27 @@ import java.util.List;
 @RequestMapping("/finance")
 
 public class FinanceController {
+    private final UserService userService;
+    private final EventService eventService;
+    private final TicketService ticketService;
+    private final SettlementService settlementService;
+    private final EventCategoryService eventCategoryService;
     private final UserServiceImpl userServiceImpl;
-    private final EventServiceImpl eventServiceImpl;
-    private final TicketServiceImpl ticketServiceImpl;
-    private final CityServiceImpl cityServiceImpl;
-    private final CloudinaryService cloudinaryService;
-    private final SettlementServiceImpl settlementServiceImpl;
 
 
-    public FinanceController(UserServiceImpl userServiceImpl,
-                             EventServiceImpl eventServiceImpl,
-                             TicketServiceImpl ticketServiceImpl,
-                             CityServiceImpl cityServiceImpl,
-                             CloudinaryService cloudinaryService,
-                             SettlementServiceImpl settlementServiceImpl) {
+    public FinanceController(UserService userService,
+                             EventService eventService,
+                             TicketService ticketService,
+                             SettlementService settlementService,
+                             EventCategoryService eventCategoryService,
+                             UserServiceImpl userServiceImpl) {
+        this.userService = userService;
+        this.eventService = eventService;
+        this.ticketService = ticketService;
+        this.settlementService = settlementService;
+        this.eventCategoryService = eventCategoryService;
         this.userServiceImpl = userServiceImpl;
-        this.eventServiceImpl = eventServiceImpl;
-        this.ticketServiceImpl = ticketServiceImpl;
-        this.cityServiceImpl = cityServiceImpl;
-        this.cloudinaryService = cloudinaryService;
-        this.settlementServiceImpl = settlementServiceImpl;
+
     }
 
     @GetMapping("/dashboard")
@@ -56,30 +62,30 @@ public class FinanceController {
                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
 
-        Long totalRevenue = eventServiceImpl.sumTotalRevenue();
+        Long totalRevenue = eventService.sumTotalRevenue();
         model.addAttribute("totalRevenue", totalRevenue);
 
-        Long pendingPayoutAmount = settlementServiceImpl.sumPendingPayoutAmount();
+        Long pendingPayoutAmount = settlementService.sumPendingPayoutAmount();
         model.addAttribute("pendingPayoutAmount", pendingPayoutAmount);
 
-        long nearDueCount = settlementServiceImpl.countNearDuePendingSettlements();
+        long nearDueCount = settlementService.countNearDuePendingSettlements();
         model.addAttribute("nearDueCount", nearDueCount);
 
-        Long totalPaidAmount = settlementServiceImpl.sumPayoutAmount();
+        Long totalPaidAmount = settlementService.sumPayoutAmount();
         model.addAttribute("totalPaidAmount", totalPaidAmount);
 
-        long unsettledEventCount = settlementServiceImpl.countUnsettledEvents();
+        long unsettledEventCount = settlementService.countUnsettledEvents();
         model.addAttribute("unsettledEventCount", unsettledEventCount);
 
-        List<SettlementSummaryProjection> platformFeeByMonth = settlementServiceImpl.platformFeeByMonth();
+        List<SettlementSummaryProjection> platformFeeByMonth = settlementService.platformFeeByMonth();
         model.addAttribute("platformFeeByMonth", platformFeeByMonth);
 
-        SettlementAgingProjection settlementAging = settlementServiceImpl.getSettlementAging();
+        SettlementAgingProjection settlementAging = settlementService.getSettlementAging();
         model.addAttribute("settlementAging", settlementAging);
 
         return "finance/DashboardFinance";
@@ -96,7 +102,7 @@ public class FinanceController {
         }
 
         try {
-            settlementServiceImpl.createSettlement(dto);
+            settlementService.createSettlement(dto);
         } catch (IllegalArgumentException | IllegalStateException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
             return "redirect:/finance/createSettlement?eventId=" + dto.getEventId();
@@ -114,14 +120,14 @@ public class FinanceController {
                                           @RequestParam(required = false) Long eventId) {
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        List<SettlementSummaryProjection> listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
+        List<SettlementSummaryProjection> listEndedEvents = eventService.findEndedEventsWithSettlementStatus(tab);
         model.addAttribute("listEndedEvents", listEndedEvents);
 
-        SettlementSummaryProjection eventDetail = settlementServiceImpl.findEventDetailById(eventId);
+        SettlementSummaryProjection eventDetail = settlementService.findEventDetailById(eventId);
         model.addAttribute("eventDetail", eventDetail);
 
         SettlementDTO dto = new SettlementDTO();
@@ -139,47 +145,45 @@ public class FinanceController {
                                      @AuthenticationPrincipal CustomUserDetails userDetails,
                                      @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
                                      @RequestParam(value = "keyword", defaultValue = "") String keyword) {
-
-        User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
-        model.addAttribute("currentUser", currentUser);
-
-        long countAllSettlement = settlementServiceImpl.countAllSettlement();
-        model.addAttribute("countAllSettlement", countAllSettlement);
-
-        long countPendingSettlement = settlementServiceImpl.countPendingSettlement();
-        model.addAttribute("countPendingSettlement", countPendingSettlement);
-
-        long countCompletedSettlement = settlementServiceImpl.countCompletedSettlement();
-        model.addAttribute("countCompletedSettlement", countCompletedSettlement);
-
-        Long totalPaidAmount = settlementServiceImpl.sumPayoutAmount();
-        model.addAttribute("totalPaidAmount", totalPaidAmount);
-
-        List<SettlementSummaryDTO> listSettlements;
-
         try {
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                listSettlements = settlementServiceImpl.searchSettlement(keyword);
+            User currentUser = (userDetails != null)
+                    ? userService.findByUsername(userDetails.getUsername())
+                    : userService.findByUsername(oAuth2Users.getName());
+            model.addAttribute("currentUser", currentUser);
 
+            long countAllSettlement = settlementService.countAllSettlement();
+            model.addAttribute("countAllSettlement", countAllSettlement);
+
+            long countPendingSettlement = settlementService.countPendingSettlement();
+            model.addAttribute("countPendingSettlement", countPendingSettlement);
+
+            long countCompletedSettlement = settlementService.countCompletedSettlement();
+            model.addAttribute("countCompletedSettlement", countCompletedSettlement);
+
+            Long totalPaidAmount = settlementService.sumPayoutAmount();
+            model.addAttribute("totalPaidAmount", totalPaidAmount);
+
+            List<SettlementSummaryDTO> listSettlements;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                listSettlements = settlementService.searchSettlement(keyword);
                 if (listSettlements.isEmpty()) {
                     model.addAttribute("notFoundMessage",
                             "Không tìm thấy kết quả nào khớp với từ khóa " + keyword.trim() + ".");
                 }
             } else {
-
-                listSettlements = settlementServiceImpl.listSettlement(tab);
+                listSettlements = settlementService.listSettlement(tab);
             }
-        } catch (IllegalArgumentException ex){
-            model.addAttribute("error", ex.getMessage());
-            listSettlements = Collections.emptyList();
-        }
-        model.addAttribute("listSettlements", listSettlements);
-        model.addAttribute("tab", tab);
-        model.addAttribute("keyword", keyword);
 
-        return "finance/ListSettlement";
+            model.addAttribute("listSettlements", listSettlements);
+            model.addAttribute("tab", tab);
+            model.addAttribute("keyword", keyword);
+
+            return "finance/ListSettlement";
+
+        } catch (Exception ex) {
+
+            return "redirect:/listSettlement";
+        }
     }
 
     @GetMapping("/viewSettlementDetails")
@@ -189,14 +193,14 @@ public class FinanceController {
                                             @RequestParam Long settlementId) {
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        EventSummaryProjection eventDetail = eventServiceImpl.getEventDetail(settlementId);
+        EventSummaryProjection eventDetail = eventService.getEventDetail(settlementId);
         model.addAttribute("eventDetail", eventDetail);
 
-        SettlementSummaryProjection settlementDetail = settlementServiceImpl.getSettlementDetail(settlementId);
+        SettlementSummaryProjection settlementDetail = settlementService.getSettlementDetail(settlementId);
         model.addAttribute("settlementDetail", settlementDetail);
 
         return "finance/ViewSettlementDetails";
@@ -206,7 +210,7 @@ public class FinanceController {
     public String completedSettlement(@PathVariable Long settlementId,
                                       RedirectAttributes redirectAttributes) {
         try {
-            settlementServiceImpl.markAsCompleted(settlementId);
+            settlementService.markAsCompleted(settlementId);
             redirectAttributes.addFlashAttribute("successMessage", "Đã đánh dấu quyết toán là Đã Thanh Toán.");
         } catch (EntityNotFoundException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -223,8 +227,8 @@ public class FinanceController {
                                       @RequestParam(value = "keyword", defaultValue = "") String keyword) {
 
         User currentUser = (userDetails != null)
-                ? userServiceImpl.findByUsername(userDetails.getUsername())
-                : userServiceImpl.findByUsername(oAuth2Users.getName());
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
 
@@ -232,14 +236,14 @@ public class FinanceController {
 
         try{
             if (keyword != null && !keyword.trim().isEmpty()) {
-                listEndedEvents = eventServiceImpl.searchEndedEvents(keyword);
+                listEndedEvents = eventService.searchEndedEvents(keyword);
 
                 if (listEndedEvents.isEmpty()) {
                     model.addAttribute("notFoundMessage",
                             "Không tìm thấy kết quả nào khớp với từ khóa " + keyword.trim() + ".");
                 }
             } else {
-                listEndedEvents = eventServiceImpl.findEndedEventsWithSettlementStatus(tab);
+                listEndedEvents = eventService.findEndedEventsWithSettlementStatus(tab);
             }
         }
         catch (IllegalArgumentException ex){
@@ -252,81 +256,37 @@ public class FinanceController {
         model.addAttribute("keyword", keyword);
 
 
-        long countEndEvent = eventServiceImpl.countEndedEvent();
+        long countEndEvent = eventService.countEndedEvent();
         model.addAttribute("countEndEvent", countEndEvent);
 
-        long unsettledEventCount = eventServiceImpl.countUnsettledEvents();
+        long unsettledEventCount = eventService.countUnsettledEvents();
         model.addAttribute("unsettledEventCount", unsettledEventCount);
 
-        long settledEventCount = settlementServiceImpl.countPendingSettlement();
+        long settledEventCount = settlementService.countPendingSettlement();
         model.addAttribute("settledEventCount", settledEventCount);
 
 
         return "finance/ListEndedEvents";
     }
 
-    @GetMapping("/profile")
-    public String getProfile(Model model,
-                             @AuthenticationPrincipal CustomUserDetails userDetails,
-                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
-
-        User user = new User();
-        if (userDetails != null) {
-            user = this.userServiceImpl.findByUsername(userDetails.getUsername());
-        } else {
-            user = this.userServiceImpl.findByUsername(oAuth2Users.getName());
-        }
-        UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setMiddleName(user.getMiddleName());
-        dto.setAvatar(user.getAvatar());
-        dto.setGender(user.getGender());
-        dto.setPhone(user.getPhone());
-        dto.setEmail(user.getEmail());
-        dto.setAvatar(user.getAvatar());
-        dto.setDob(user.getDob());
-        if (user.getAddress() != null) {
-            dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
-            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
-            dto.setSpecificAddress(user.getAddress().getSpecificAddress());
-        }
-
-        model.addAttribute("cities", this.cityServiceImpl.getCityList());
-        model.addAttribute("userUpdateDTO", dto);
-        return "homepage/UpdateProfileUser";
+    @GetMapping("/")
+    public String homepage(
+            Model model){
+        long hostedEvents = this.eventService.countHostedEvents();
+        model.addAttribute("hostedEvents", hostedEvents);
+        long issuedTickets = this.ticketService.issuedTickets();
+        model.addAttribute("issuedTickets", issuedTickets);
+        long eventCategories = this.eventCategoryService.countEventCategories();
+        model.addAttribute("eventCategories", eventCategories);
+        long activatedOrganizer = this.userServiceImpl.getActivatedOrganizers().size();
+        model.addAttribute("activatedOrganizers", activatedOrganizer);
+        List<EventSummaryDto> featuredEvents = this.eventService.findTopFeaturedEvents();
+        model.addAttribute("featuredEvents", featuredEvents);
+        List<FeaturedOrganizerDto> featuredOrganizers = this.userServiceImpl.getFeaturedOrganizers();
+        model.addAttribute("featuredOrganizers", featuredOrganizers);
+        FeaturedEventDTO featuredEvent = this.eventService.findFeaturedEvent();
+        model.addAttribute("featuredEvent", featuredEvent);
+        return "homepage/Home";
     }
-
-
-    @PostMapping("/update/profile")
-    public String updateProfile(
-            Model model,
-            @Valid @ModelAttribute UpdateAttendeeProfileDTO dto,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile
-    ) {
-        if (result.hasErrors()) {
-            model.addAttribute("cities", this.cityServiceImpl.getCityList());
-            model.addAttribute("userUpdateDTO", dto);
-            return "homepage/UpdateProfileUser";
-        }
-        try {
-            if (avatarFile != null && !avatarFile.isEmpty()) {
-                String imageUrl = this.cloudinaryService.uploadFile(avatarFile, "avatars");
-                dto.setAvatar(imageUrl);
-            } else {
-                dto.setAvatar(null);
-            }
-            this.userServiceImpl.handleUpdateUser(dto, result);
-        } catch (Exception e) {
-            model.addAttribute("cities", this.cityServiceImpl.getCityList());
-            model.addAttribute("errorMsg", e.getMessage());
-            model.addAttribute("userUpdateDTO", dto);
-            return "homepage/UpdateProfileUser";
-        }
-        return "redirect:/finance/profile";
-    }
-
 
 }

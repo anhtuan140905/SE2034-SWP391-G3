@@ -191,7 +191,7 @@ public class UserServiceImpl implements UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng có ID: " + id));
     }
 
     public List<User> searchUser(String keyword) {

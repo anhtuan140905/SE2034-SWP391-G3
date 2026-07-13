@@ -127,7 +127,7 @@ AND o.status = 'PAID'
             t.ticket_id as ticketId,
             t.qr_code as qrCode,
             t.ticket_code as ticketCode,
-            t.is_checked_in as status,
+            t.is_checked_in as checkedIn,
             ord.order_id as orderId,
             ec.category_name as categoryName,
             e.title as eventName,
@@ -145,9 +145,6 @@ AND o.status = 'PAID'
             join ticket_types tt on s.ticket_type_id = tt.ticket_type_id
             join events e on tt.event_id = e.event_id
             left join event_categories ec on e.category_id = ec.category_id
-            left join addresses a on e.address_id = a.id
-            left join wards w on a.ward_id = w.id
-            left join city c on w.city_id = c.id
             where t.ticket_id = :ticketId and o.user_id = :userId
             """, nativeQuery = true)
     TicketProjection viewDetailTicket(@Param("ticketId") Long ticketID, @Param("userId") Long userId);
