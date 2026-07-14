@@ -35,17 +35,18 @@
 
             <div>
                 <h1 class="od-page-title">THÔNG TIN NGƯỜI TỔ CHỨC</h1>
-
                 <p>
-                    <i class="fa-solid fa-hashtag"></i> Organizer ID:
+                    Organizer ID:
                     <span th:text="${organizer != null ? organizer.organizerId : 'N/A'}"></span>
                 </p>
             </div>
         </div>
 
         <span class="ed-status-badge"
-              th:classappend="${organizer != null and organizer.active} ? 'status-active' : 'status-inactive'">
-            <span th:text="${organizer != null ? (organizer.active ? 'Đang hoạt động' : 'Đã khoá') : 'Đã khoá'}">
+              th:classappend="${!organizer.hasOrganizerProfile} ? 'status-no-profile' :
+                      (${organizer.active} ? 'status-active' : 'status-inactive')">
+            <span th:text="${!organizer.hasOrganizerProfile} ? 'Chưa có hồ sơ' :
+                    (${organizer.active} ? 'Đang hoạt động' : 'Đã tắt')">
             </span>
         </span>
 
@@ -57,7 +58,6 @@
         <!-- ── LEFT: Personal Info (Users Table) ── -->
         <div class="od-card">
             <div class="od-card-title">
-                <i class="fa-solid fa-database"></i>
                 <span>Thông tin cá nhân</span>
             </div>
 
@@ -129,7 +129,6 @@
         <!-- ── RIGHT: Promoter Details (Organizers Table) ── -->
         <div class="od-card">
             <div class="od-card-title">
-                <i class="fa-solid fa-store"></i>
                 <span>Thông tin nhà tổ chức</span>
             </div>
 
@@ -138,7 +137,6 @@
                 <div class="od-promoter-item">
                     <span class="od-info-label">Mã thuế</span>
                     <div class="od-info-value-row">
-                        <i class="fa-solid fa-receipt"></i>
                         <span class="od-info-value od-mono"
                               th:text="${organizer != null ? organizer.taxCode : 'TAX-US-9930219'}">TAX-US-9930219</span>
                     </div>
@@ -147,7 +145,6 @@
                 <div class="od-promoter-item">
                     <span class="od-info-label">Số điện thoại</span>
                     <div class="od-info-value-row">
-                        <i class="fa-solid fa-receipt"></i>
                         <span class="od-info-value od-mono"
                               th:text="${organizer != null ? organizer.phone : '0123456789'}">0123456789</span>
                     </div>
@@ -156,7 +153,6 @@
                 <div class="od-promoter-item">
                     <span class="od-info-label">Ngày tham gia</span>
                     <div class="od-info-value-row">
-                        <i class="fa-regular fa-calendar"></i>
                         <span class="od-info-value"
                               th:text="${organizer != null ? #temporals.format(organizer.joinedDate, 'dd MMM, yyyy') : 'May 24, 2026'}">May 24, 2026</span>
                     </div>
@@ -165,7 +161,6 @@
                 <div class="od-promoter-item">
                     <span class="od-info-label">Số sự kiện đã tổ chức</span>
                     <div class="od-info-value-row">
-                        <i class="fa-regular fa-calendar-check"></i>
                         <span class="od-info-value od-stat-value"
                               th:text="${organizer != null ? organizer.totalEventsOrganized : 0}">0</span>
                     </div>
@@ -174,7 +169,6 @@
                 <div class="od-promoter-item">
                     <span class="od-info-label">Số sự kiện bị tắt.</span>
                     <div class="od-info-value-row">
-                        <i class="fa-regular fa-calendar-xmark"></i>
                         <span class="od-info-value od-stat-value od-stat-rejected"
                               th:text="${organizer != null ? organizer.totalInactiveEvents : 0}">0</span>
                     </div>
@@ -188,7 +182,6 @@
     <div class="ed-reject-box"
          th:if="${organizer != null and organizer.active}">
         <div class="ed-reject-label">
-            <i class="fa-solid fa-envelope-open-text"></i>
             <span>Lý do khóa tài khoản.</span>
         </div>
         <textarea id="deactivateReason"
@@ -197,26 +190,27 @@
     </div>
 
     <div class="ed-action-footer">
-        <div class="ed-action-btns">
+        <form th:if="${organizer != null and organizer.hasOrganizerProfile and organizer.active}"
+              th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
+              method="post" id="deactivateForm">
+            <input type="hidden" name="reason" id="reasonInput"/>
+            <button type="button" class="btn-inactive"
+                    onclick="submitDeactivateOrganizer()">
+                Khóa tài khoản
+            </button>
+        </form>
 
-            <form th:if="${organizer != null and organizer.active}"
-                  th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
-                  method="post" id="deactivateForm">
-                <input type="hidden" name="reason" id="reasonInput"/>
-                <button type="button" class="btn-inactive"
-                        onclick="submitDeactivateOrganizer()">
-                    <i class="fa-solid fa-ban"></i> Khóa tài khoản
-                </button>
-            </form>
+        <form th:if="${organizer != null and organizer.hasOrganizerProfile and !organizer.active}"
+              th:action="@{/moderator/organizer/{id}/activate(id=${organizer.organizerId})}"
+              method="post">
+            <button type="submit" class="btn-approve">
+                Mở lại tài khoản
+            </button>
+        </form>
 
-            <form th:if="${organizer != null and !organizer.active}"
-                  th:action="@{/moderator/organizer/{id}/activate(id=${organizer.organizerId})}"
-                  method="post">
-                <button type="submit" class="btn-approve">
-                    <i class="fa-solid fa-circle-play"></i> Mở lại tài khoản
-                </button>
-            </form>
-
+        <div th:if="${organizer != null and !organizer.hasOrganizerProfile}"
+             class="oi-ended-note">
+            Tài khoản này chưa có hồ sơ Organizer, nên chưa thể thực hiện đóng/mở tài khoản.
         </div>
     </div>
 

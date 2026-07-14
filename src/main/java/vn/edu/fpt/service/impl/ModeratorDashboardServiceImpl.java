@@ -31,11 +31,13 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
         stats.setActiveEvents(eventRepository.countEventsByStatus(EventStatus.ACTIVE));
         stats.setNewEventsToday(eventRepository.countNewEventsToday());
         stats.setInactiveEvents(eventRepository.countEventsByStatus(EventStatus.INACTIVE));
+
         return stats;
     }
 
     @Override
     public List<DashboardEventDTO> getRecentEvents() {
+
         return eventRepository
                 .findTopFiveNewEventsToday(PageRequest.of(0, 5))
                 .stream()
@@ -45,6 +47,7 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
 
     @Override
     public List<DashboardEventDTO> getTodayEvents() {
+
         return eventRepository
                 .findTopFiveEventsToday(EventStatus.ACTIVE, PageRequest.of(0, 5))
                 .stream()
@@ -54,6 +57,7 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
 
     @Override
     public List<DashboardOrganizerDTO> getTop5OldestOrganizers() {
+
         return userRepository
                 .findTop5OldestOrganizers(RoleName.ROLE_ORGANIZER, PageRequest.of(0, 5))
                 .stream()
@@ -63,6 +67,7 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
 
     @Override
     public List<DashboardOrganizerDTO> getTop5NewOrganizersToday() {
+
         return userRepository
                 .findTop5NewOrganizersToday(RoleName.ROLE_ORGANIZER, PageRequest.of(0, 5))
                 .stream()
@@ -75,6 +80,7 @@ public class ModeratorDashboardServiceImpl implements ModeratorDashboardService 
         dto.setEventId(event.getEventId());
         dto.setTitle(event.getTitle());
         dto.setStartTime(event.getStartTime());
+
         return dto;
     }
 

@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 public class DashboardOrganizerDTO {
 
     private Long organizerId;
-
     private String organizerName;
-
     private LocalDateTime createdAt;
 
 }

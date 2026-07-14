@@ -26,7 +26,7 @@
                 <h1 class="ed-title" th:text="${event != null ? event.title : 'Trống'}"></h1>
 
                 <p>
-                    <i class="fa-solid fa-hashtag" style="margin-right: 4px;"></i> Event ID:
+                    Event ID:
                     <span th:text="${event != null ? event.eventId : 'N/A'}"></span>
                 </p>
             </div>
@@ -158,56 +158,47 @@
 
         </aside>
     </div>
-    <!-- end ed-body -->
-
-    <!-- Reject Boxx-->
-    <div class="ed-reject-box"
-         th:if="${event != null and event.status.name() == 'ACTIVE'}">
-        <div class="ed-reject-label">
-            <i class="fa-solid fa-envelope-open-text"></i>
-            <span>Lý do tắt sự kiện — sẽ được gửi email đến Organizer</span>
-        </div>
-        <textarea id="deactivateReason"
-                  class="ed-reject-textarea"
-                  placeholder="Nhập lý do tắt sự kiện để hệ thống gửi email thông báo đến Ban tổ chức..."></textarea>
-    </div>
 
     <div class="ed-action-footer">
-        <div class="ed-action-btns">
-
-            <!-- Nút Tắt — chỉ hiện khi ACTIVE -->
-            <form th:if="${event != null and event.status.name() == 'ACTIVE'}"
-                  th:action="@{/moderator/events/{id}/deactivate(id=${event.eventId})}"
-                  method="post" id="deactivateForm">
-                <input type="hidden" name="reason" id="reasonInput"/>
-                <button type="button" class="btn-inactive"
-                        onclick="submitDeactivate()">
-                    <i class="fa-solid fa-ban"></i> Tắt sự kiện
-                </button>
-            </form>
-
-            <!-- Nút Bật lại — chỉ hiện khi INACTIVE -->
-            <form th:if="${event != null and event.status.name() == 'INACTIVE'}"
-                  th:action="@{/moderator/events/{id}/activate(id=${event.eventId})}"
-                  method="post">
-                <button type="submit" class="btn-approve">
-                    <i class="fa-solid fa-circle-play"></i> Bật lại sự kiện
-                </button>
-            </form>
-
-            <!-- ENDED — không có hành động -->
-            <div th:if="${event != null and event.status.name() == 'ENDED'}"
-                 class="ed-ended-note">
-                <i class="fa-solid fa-flag-checkered"></i>
-                Sự kiện đã kết thúc — không thể thay đổi trạng thái
+        <form class="ed-reject-box" th:if="${event != null and event.status.name() == 'ACTIVE'}"
+              th:action="@{/moderator/events/{id}/deactivate(id=${event.eventId})}"
+              method="post"
+              onsubmit="return confirm('Bạn có chắc muốn TẮT sự kiện này không?');">
+            <div class="ed-reject-label">
+                <span>Lý do tắt sự kiện — sẽ được gửi email đến Organizer</span>
             </div>
+            <textarea name="reason"
+                      class="ed-reject-textarea"
+                      required
+                      minlength="5"
+                      oninvalid="this.setCustomValidity('Vui lòng nhập lý do tắt sự kiện (ít nhất 5 ký tự).')"
+                      oninput="this.setCustomValidity('')"
+                      placeholder="Nhập lý do tắt sự kiện"></textarea>
 
+            <button type="submit" class="btn-inactive">
+                Tắt sự kiện
+            </button>
+        </form>
+
+        <form th:if="${event != null and event.status.name() == 'INACTIVE'}"
+              th:action="@{/moderator/events/{id}/activate(id=${event.eventId})}"
+              method="post"
+              onsubmit="return confirm('Bạn có chắc muốn BẬT LẠI sự kiện này không?');">
+            <button type="submit" class="btn-activate">
+                Bật lại sự kiện
+            </button>
+        </form>
+
+        <!-- ENDED — không có hành động -->
+        <div th:if="${event != null and event.status.name() == 'ENDED'}"
+             class="ed-ended-note">
+            Sự kiện đã kết thúc — không thể thay đổi trạng thái
         </div>
     </div>
 
 </section>
 
-<script id="page-script" th:src="@{/moderator/js/event_detail.js}"></script>
+<script id="page-script"></script>
 
 </body>
 </html>

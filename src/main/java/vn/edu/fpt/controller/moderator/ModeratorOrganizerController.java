@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.modelview.request.moderator.CreateOrganizerRequest;
+import vn.edu.fpt.modelview.request.moderator.DeactivateOrganizerDTO;
 import vn.edu.fpt.modelview.response.moderator.ModeratorOrganizerListDTO;
 import vn.edu.fpt.modelview.response.moderator.OrganizerManagementStatsDTO;
 import vn.edu.fpt.service.ModeratorOrganizerInformationService;
@@ -69,6 +71,7 @@ public class ModeratorOrganizerController {
 
         model.addAttribute("organizer", moderatorOrganizerInformationService.getOrganizerInformation(id));
         model.addAttribute("backEventId", fromEvent);
+        model.addAttribute("activePage", "organizers");
 
         return "moderator/OrganizerInformation";
     }
@@ -95,5 +98,35 @@ public class ModeratorOrganizerController {
         return "moderator/OrganizerManagement";
     }
 
+    @PostMapping("/organizer/{id}/deactivate")
+    public String deactivateOrganizer(
+            @PathVariable Long id,
+            @ModelAttribute DeactivateOrganizerDTO request,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            moderatorOrganizerInformationService.deactivateOrganizer(id, request.getReason());
+            redirectAttributes.addFlashAttribute("successMessage", "Tài khoản Organizer đã được khóa thành công.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/moderator/information/" + id;
+    }
+
+    @PostMapping("/organizer/{id}/activate")
+    public String activateOrganizer(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            moderatorOrganizerInformationService.activateOrganizer(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Tài khoản Organizer đã được mở lại thành công.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/moderator/information/" + id;
+    }
 
 }

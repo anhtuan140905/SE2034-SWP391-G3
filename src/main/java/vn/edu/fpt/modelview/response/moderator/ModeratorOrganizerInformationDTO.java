@@ -8,6 +8,7 @@ import java.time.Instant;
 public class ModeratorOrganizerInformationDTO {
 
     private Long organizerId;
+    private boolean hasOrganizerProfile;
     private Boolean active;
     private String fullName;
     private String email;
