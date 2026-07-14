@@ -77,6 +77,15 @@ public class ModeratorOrganizerInformationServiceImpl implements ModeratorOrgani
 
         profile.setIsActive(true);
         userRepository.save(user);
+
+        String organizerEmail =  user.getEmail();
+        String organizerName = buildFullNameOrganizer(user);
+
+        try {
+            emailService.sendOrganizerActivationEmail(organizerEmail, organizerName);
+        } catch  (MessagingException e) {
+            log.error("Không thể gửi email mở khóa tài khoản cho organizerId={}, email={}", id, organizerEmail, e);
+        }
     }
 
     private ModeratorOrganizerInformationDTO mapToDTO(User user) {

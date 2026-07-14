@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Organizer Account Activated</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8f9fa; font-family: 'Segoe UI', Arial, sans-serif; color: #333333;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8f9fa; padding: 40px 20px;">
+    <tr>
+        <td align="center">
+            <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+                <tr>
+                    <td style="background-color: #198754; padding: 25px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 22px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px;">TÀI KHOẢN ĐÃ ĐƯỢC MỞ KHÓA</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 30px 25px;">
+                        <p style="font-size: 16px; line-height: 1.5; margin-top: 0;">Xin chào <strong><span th:text="${organizerName}">Ban tổ chức</span></strong>,</p>
+                        <p style="font-size: 15px; line-height: 1.5; color: #555555;">Chúng tôi vui mừng thông báo rằng tài khoản đối tác của bạn đã được <strong>mở khóa thành công</strong> trên hệ thống EventHub.</p>
+                        <div style="margin: 20px 0; padding: 15px; background-color: #f4faf6; border-left: 4px solid #198754; border-radius: 4px;">
+                            <p style="font-size: 14px; line-height: 1.5; color: #198754; margin: 0; font-weight: 500;">Bây giờ bạn đã có thể đăng nhập vào hệ thống để tiếp tục các hoạt động tạo và quản lý sự kiện như bình thường.</p>
+                        </div>
+                        <p style="font-size: 14px; line-height: 1.5; color: #666666;">Cảm ơn bạn đã đồng hành cùng EventHub. Nếu gặp bất kỳ sự cố nào trong quá trình đăng nhập hoặc sử dụng tài khoản, vui lòng liên hệ ngay với bộ phận hỗ trợ của chúng tôi để được trợ giúp.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 15px 25px; background-color: #f1f3f5; border-top: 1px solid #e0e0e0; text-align: center; font-size: 12px; color: #868e96;">
+                        Đây là thư điện tử tự động từ hệ thống quản trị EventHub. Vui lòng không trả lời thư này.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

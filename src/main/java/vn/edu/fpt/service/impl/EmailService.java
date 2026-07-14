@@ -95,7 +95,8 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendOrganizerDeactivateEmail(String toEmail, String organizerName, String reason) throws MessagingException {
+    @Async
+    public void sendOrganizerDeactivateEmail (String toEmail, String organizerName, String reason) throws MessagingException {
         Context context = new Context();
         context.setVariable("organizerName", organizerName);
         context.setVariable("reason", reason != null ? reason.trim() : "");
@@ -106,6 +107,21 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(toEmail);
         helper.setSubject("[EventHub] Tài khoản đối tác của bạn đã bị khóa");
+        helper.setText(htmlContent, true);
+        mailSender.send(message);
+    }
+
+    @Async
+    public void sendOrganizerActivationEmail(String toEmail, String organizerName) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("organizerName", organizerName);
+
+        String htmlContent = templateEngine.process("mail/organizer/OrganizerActivate", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(toEmail);
+        helper.setSubject("[EventHub] Tài khoản đối tác của bạn đã được mở khóa");
         helper.setText(htmlContent, true);
         mailSender.send(message);
     }
