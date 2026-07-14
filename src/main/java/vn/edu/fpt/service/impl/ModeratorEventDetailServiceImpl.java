@@ -40,9 +40,6 @@ public class ModeratorEventDetailServiceImpl implements ModeratorEventDetailServ
             throw new RuntimeException("Chỉ có thể tắt sự kiện đang hoạt động.");
         }
 
-        event.setStatus(EventStatus.INACTIVE);
-        eventRepository.save(event);
-
         String organizerEmail = event.getOrganizer().getEmail();
         String organizerName = event.getOrganizer().getFirstName() + " " + event.getOrganizer().getLastName();
         String eventTitle = event.getTitle();
