@@ -79,18 +79,33 @@ public class EmailService {
     }
 
     @Async
-    public void sendDeactivationEmail(String toEmail, String organizerName, String eventTitle, String reviewMessage) throws MessagingException {
+    public void sendDeactivationEmail(String toEmail, String organizerName, String eventTitle, String reason) throws MessagingException {
         Context context = new Context();
         context.setVariable("organizerName", organizerName);
         context.setVariable("eventTitle", eventTitle);
-        context.setVariable("reviewMessage", reviewMessage != null ? reviewMessage.trim() : "");
+        context.setVariable("reason", reason != null ? reason.trim() : "");
 
-        String htmlContent = templateEngine.process("mail/event/rejectionMail", context);
+        String htmlContent = templateEngine.process("mail/event/DeactivationMail", context);
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(toEmail);
-        helper.setSubject("EventHub — Thông báo từ chối đơn ứng tuyển sự kiện ⚠️");
+        helper.setSubject("EventHub — Thông báo đóng sự kiện ⚠️");
+        helper.setText(htmlContent, true);
+        mailSender.send(message);
+    }
+
+    public void sendOrganizerDeactivateEmail(String toEmail, String organizerName, String reason) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("organizerName", organizerName);
+        context.setVariable("reason", reason != null ? reason.trim() : "");
+
+        String htmlContent = templateEngine.process("mail/organizer/OrganizerDeactivate", context);
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(toEmail);
+        helper.setSubject("[EventHub] Tài khoản đối tác của bạn đã bị khóa");
         helper.setText(htmlContent, true);
         mailSender.send(message);
     }

@@ -42,7 +42,6 @@ public class ModeratorEventController {
         Page<ModeratorEventListDTO> events =
                 moderatorEventListService.getEvents(eventStatus, keyword, categoryId, page, size);
         model.addAttribute("events", events);
-        model.addAttribute("eventStatus", moderatorEventListService.getEventStats());
         model.addAttribute("categories", eventCategoryRepository.findAll());
         model.addAttribute("keyword", keyword);
         model.addAttribute("statusFilter", status);

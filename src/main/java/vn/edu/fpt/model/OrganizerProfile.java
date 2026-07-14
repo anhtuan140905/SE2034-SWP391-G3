@@ -61,4 +61,10 @@ public class OrganizerProfile {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    // Ghi đè hàm Getter mặc định của Lombok để xử lý an toàn dữ liệu cũ (NULL -> true)
+    public Boolean getIsActive() {
+        return this.isActive == null || this.isActive;
+    }
+
 }

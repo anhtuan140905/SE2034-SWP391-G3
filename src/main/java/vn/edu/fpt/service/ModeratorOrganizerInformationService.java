@@ -6,4 +6,7 @@ public interface ModeratorOrganizerInformationService {
 
     ModeratorOrganizerInformationDTO getOrganizerInformation(Long id);
 
+    void deactivateOrganizer(Long id, String reason);
+
+    void activateOrganizer(Long id);
 }
