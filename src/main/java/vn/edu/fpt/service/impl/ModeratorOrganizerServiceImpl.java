@@ -26,6 +26,7 @@ public class ModeratorOrganizerServiceImpl implements ModeratorOrganizerService 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoderConfig passwordEncoderConfig;
+    private final EmailService emailService;
 
     @Override
     public void createOrganizerAccount(CreateOrganizerRequest request) {
@@ -61,6 +62,21 @@ public class ModeratorOrganizerServiceImpl implements ModeratorOrganizerService 
         user.getUserRoles().add(userAttendeeRole);
 
         userRepository.save(user);
+
+        StringBuilder organizerFullName = new  StringBuilder();
+        if(request.getFirstName() != null && !request.getFirstName().isBlank()) {
+            organizerFullName.append(request.getFirstName().trim());
+        }
+        if(request.getMiddleName() != null && !request.getMiddleName().isBlank()) {
+            organizerFullName.append(request.getMiddleName().trim());
+        }
+        if(request.getLastName() != null && !request.getLastName().isBlank()) {
+            organizerFullName.append(request.getLastName().trim());
+        }
+
+        String fullName = organizerFullName.toString().trim();
+
+        emailService.sendOrganizerCredentialsEmail(request.getEmail(), fullName, request.getEmail(), request.getPassword());
 
     }
 

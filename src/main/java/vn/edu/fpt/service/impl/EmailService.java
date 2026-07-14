@@ -130,4 +130,25 @@ public class EmailService {
             log.error("Gửi email thất bại cho order {}", order.getOrderId(), e);
         }
     }
+
+    @Async
+    public void sendOrganizerCredentialsEmail(String toEmail, String fullName, String username, String password) {
+        try {
+            Context context = new Context();
+            context.setVariable("fullName", fullName);
+            context.setVariable("username", username);
+            context.setVariable("password", password);
+
+            String htmlContent = templateEngine.process("mail/auth/organizerCredentialsMail", context);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setSubject("EventHub — Thông tin tài khoản nhà tổ chức của bạn");
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            log.error("Gửi email thông tin tài khoản thất bại cho email {}", toEmail, e);
+        }
+    }
+
 }

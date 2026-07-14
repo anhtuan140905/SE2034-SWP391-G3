@@ -37,10 +37,6 @@ public class ModeratorOrganizerController {
             BindingResult bindingResult,
             Model model) {
 
-        if (request.getEmail() != null) {
-            request.setEmail(request.getEmail().trim());
-        }
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("activePage", "OrganizerManagement");
 
