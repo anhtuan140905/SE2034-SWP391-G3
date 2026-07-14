@@ -179,35 +179,44 @@
 
     </div>
 
-    <div class="ed-reject-box"
-         th:if="${organizer != null and organizer.active}">
-        <div class="ed-reject-label">
-            <span>Lý do khóa tài khoản.</span>
-        </div>
-        <textarea id="deactivateReason"
-                  class="ed-reject-textarea"
-                  placeholder="Nhập lý do khóa tài khoản."></textarea>
-    </div>
-
     <div class="ed-action-footer">
-        <form th:if="${organizer != null and organizer.hasOrganizerProfile and organizer.active}"
-              th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
-              method="post" id="deactivateForm">
-            <input type="hidden" name="reason" id="reasonInput"/>
-            <button type="button" class="btn-inactive"
-                    onclick="submitDeactivateOrganizer()">
-                Khóa tài khoản
-            </button>
-        </form>
 
+        <!-- ACTIVE + có profile: cho phép khóa -->
+        <div class="ed-reject-box"
+             th:if="${organizer != null and organizer.hasOrganizerProfile and organizer.active}">
+            <div class="ed-reject-label">
+                <span>Lý do khóa tài khoản.</span>
+            </div>
+
+            <form th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
+                  method="post"
+                  onsubmit="return confirm('Bạn có chắc muốn KHÓA tài khoản này không?');">
+
+            <textarea name="reason"
+                      class="ed-reject-textarea"
+                      required
+                      minlength="5"
+                      oninvalid="this.setCustomValidity('Vui lòng nhập lý do khóa tài khoản (ít nhất 5 ký tự).')"
+                      oninput="this.setCustomValidity('')"
+                      placeholder="Nhập lý do khóa tài khoản."></textarea>
+
+                <button type="submit" class="btn-inactive">
+                    Khóa tài khoản
+                </button>
+            </form>
+        </div>
+
+        <!-- INACTIVE + có profile: cho phép mở lại -->
         <form th:if="${organizer != null and organizer.hasOrganizerProfile and !organizer.active}"
               th:action="@{/moderator/organizer/{id}/activate(id=${organizer.organizerId})}"
-              method="post">
-            <button type="submit" class="btn-approve">
+              method="post"
+              onsubmit="return confirm('Bạn có chắc muốn MỞ LẠI tài khoản này không?');">
+            <button type="submit" class="btn-activate">
                 Mở lại tài khoản
             </button>
         </form>
 
+        <!-- Không có profile -->
         <div th:if="${organizer != null and !organizer.hasOrganizerProfile}"
              class="oi-ended-note">
             Tài khoản này chưa có hồ sơ Organizer, nên chưa thể thực hiện đóng/mở tài khoản.

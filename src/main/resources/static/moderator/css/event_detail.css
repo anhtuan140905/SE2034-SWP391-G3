@@ -429,16 +429,11 @@
     padding: 11px 28px;
     border: none; border-radius: var(--radius-sm);
     background: #1A9C5B; color: #fff;
-    font-family: var(--font-display);
+    font-family: var(--font-display), serif;
     font-size: 12px; font-weight: 700; letter-spacing: 1px;
     cursor: pointer;
     box-shadow: 0 3px 12px rgba(26, 156, 91, 0.25);
     transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
-}
-.btn-approve:hover {
-    background: #158a4e;
-    box-shadow: 0 4px 16px rgba(26, 156, 91, 0.35);
-    transform: translateY(-1px);
 }
 
 /* ---------- Responsive ---------- */
@@ -450,6 +445,4 @@
     .ed-title { font-size: 22px; }
     .ed-date-row { gap: 20px; }
     .ed-action-footer { flex-direction: column; align-items: flex-start; }
-    .ed-action-btns { width: 100%; }
-    .btn-reject, .btn-approve { flex: 1; text-align: center; }
 }
