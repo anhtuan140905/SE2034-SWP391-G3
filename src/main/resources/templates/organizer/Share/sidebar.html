@@ -50,6 +50,10 @@
             <span class="material-symbols-outlined">fact_check</span>
             <span>Check in</span>
         </a>
+        <a th:href="@{/organizer/event/detail/{id}(id=${eventId})}" class="nav-item" onclick="setTab(event,'staff')">
+            <span class="material-symbols-outlined">description</span>
+            <span>Thông Tin</span>
+        </a>
         <a th:href="@{/organizer/event/{eventId}/edit(eventId=${eventId})}" class="nav-item" onclick="setTab(event,'event-edit')">
             <span class="material-symbols-outlined">edit_calendar</span>
             <span>Chỉnh sửa sự kiện</span>
