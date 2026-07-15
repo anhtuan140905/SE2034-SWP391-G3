@@ -2,13 +2,17 @@ package vn.edu.fpt.controller.organizer;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.OrganizerDashboardService;
 import vn.edu.fpt.modelview.response.organizer.*;
+import vn.edu.fpt.service.StaffService;
+
 import java.util.List;
 
 @Controller
@@ -17,21 +21,25 @@ import java.util.List;
 public class DashBoardController {
 
     private final OrganizerDashboardService dashboardService;
-
+    private StaffService staffService;
     @GetMapping("/event/{id}/dashboard")
-    public String dashboard(@PathVariable("id") Long eventId, Model model) {
+    public String dashboard(@PathVariable("id") Long eventId, Model model,@AuthenticationPrincipal AuthenticatedUser userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_EVENT_DASHBOARD_VIEW")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         model.addAttribute("activeMenu", "dashboard");
         model.addAttribute("eventId", eventId);
 
-        // 1. Số liệu tổng hợp
+        // Số liệu tổng hợp
         DashboardStatsDTO stats = dashboardService.getDashboardStats(eventId);
         model.addAttribute("stats", stats);
 
-        // 2. Dữ liệu biểu đồ cột
+        // Dữ liệu biểu đồ cột
         List<DailyRevenueBarDTO> chartDataList = dashboardService.getDailyRevenueChartData(eventId);
         model.addAttribute("chartDataList", chartDataList);
 
-        // 3. Danh sách hạng vé
+        // 3Danh sách hạng vé
         List<TicketTypeStatsDTO> ticketStats = dashboardService.getTicketTypeStats(eventId);
         model.addAttribute("ticketStats", ticketStats);
 

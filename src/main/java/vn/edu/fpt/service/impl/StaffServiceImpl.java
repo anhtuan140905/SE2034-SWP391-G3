@@ -35,7 +35,7 @@ public class StaffServiceImpl implements StaffService {
         if(roleUser.equals(RoleName.ROLE_ORGANIZER.toString())){
             return false;
         }
-        String roleStaff = organizerMemberRepository.getReferenceById(staffId).getUserRole().getRole().toString();
+        String roleStaff = organizerMemberRepository.getReferenceById(staffId).getUserRole().getRole().getRoleName().toString();
         if(roleUser.equals(roleStaff)){
             return true;
         }
@@ -45,7 +45,7 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public void deleteStaffByStaffId(Long staffId,Long eventId,Long userId) {
         if(compareRole(userId,staffId,eventId)){
-            throw new RuntimeException("Bạn không có quyền sửa nhần viên này");
+            throw new RuntimeException("Bạn không có quyền xóa nhần viên này");
         }
         UserRole userRole = organizerMemberRepository.getReferenceById(staffId).getUserRole();
         long usageCount = organizerMemberRepository.countByUserRole_Id(userRole.getId());
