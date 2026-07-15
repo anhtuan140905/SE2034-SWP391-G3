@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Edit User</title>
+    <title>Cập Nhật Người Dùng</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
@@ -484,6 +484,8 @@
             <form method="post" enctype="multipart/form-data" th:action="@{/admin/edituser(id=${user.id})}"
                   th:object="${UpdateUserStatusDTO}">
 
+
+                <input type="hidden" name="userId" th:value="${user.id}"/>
                 <!-- Avatar -->
 
                 <div class="avatar-upload">
@@ -497,47 +499,83 @@
                 </div>
 
                 <!-- Form -->
-
-
+                <div th:if="${errorMessage != null}"
+                     style="background:#fee2e2; color:#b91c1c; padding:14px 18px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
 
                 <div class="form-grid">
 
                     <div class="form-group">
                         <label>Họ Và Tên</label>
                         <span th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></span>
-
                     </div>
 
                     <div class="form-group">
                         <label>Địa Chỉ Email</label>
                         <span th:text="${user.email}"></span>
-
                     </div>
 
                     <div class="form-group">
                         <label>Số Điện Thoại</label>
                         <span th:text="${user.phone}"></span>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phân Quyền Người Dùng</label>
-
-                        <select name="roleName" th:disabled="${user.id == currentUser.id}">
-                            <option value="ROLE_MODERATOR" th:selected = "${roleName.name() == 'ROLE_MODERATOR'}">Kiểm duyệt viên</option>
-                            <option value="ROLE_FINANCE" th:selected = "${roleName.name() == 'ROLE_FINANCE'}">Nhân viên tài chính</option>
-                            <option value="ROLE_ATTENDEE" th:selected = "${roleName.name() == 'ROLE_ATTENDEE'}">Người Dùng</option>
-
-                        </select>
                     </div>
 
                     <div class="form-group">
                         <label>Trạng Thái Hoạt Động</label>
-
-                        <select name="isActive" th:disabled="${user.id == currentUser.id}">
-                            <option value="true" th:selected = "${user.isActive == true}">Đang Hoạt Động</option>
-                            <option value="false" th:selected = "${user.isActive == false}">Ngừng Hoạt Động</option>
+                        <select name="isActive">
+                            <option value="true" th:selected="${user.isActive == true}">Đang Hoạt Động</option>
+                            <option value="false" th:selected="${user.isActive == false}">Ngừng Hoạt Động</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Các Vai Trò Hiện Tại</label>
+                        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                            <div th:each="userRole : ${user.userRoles}"
+                                 th:if="${userRole.role.roleName.name() != 'ROLE_ADMIN'}"
+                                 style="display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:10px; background:#fff0f5; border:1px solid rgba(236,72,153,0.25);">
+
+                <span th:text="${userRole.role.roleName.name() == 'ROLE_MODERATOR' ? 'Kiểm duyệt viên'
+                     : (userRole.role.roleName.name() == 'ROLE_FINANCE' ? 'Nhân Viên Tài Chính'
+                     : (userRole.role.roleName.name() == 'ROLE_ORGANIZER' ? 'Nhà Tổ Chức'
+                     : (userRole.role.roleName.name() == 'ROLE_MANAGER' ? 'Người Quản Lý Sự Kiện'
+                     : (userRole.role.roleName.name() == 'ROLE_STAFF' ? 'Nhân Viên Sự Kiện'
+                     : 'Người Dùng'))))}"
+                      style="border:none; padding:0; background:none;"></span>
+
+                                <button type="submit"
+                                        th:formaction="@{/admin/deleterole}"
+                                        formmethod="post"
+                                        name="userRoleId"
+                                        th:value="${userRole.id}"
+                                        onclick="return confirm('Bạn có chắc muốn xoá vai trò này?');"
+                                        style="border:none; background:none; color:#e11d48; cursor:pointer; font-size:13px;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thêm Vai Trò Mới</label>
+                        <div style="display:flex; gap:10px;">
+                            <select name="roleName" style="flex:1;">
+                                <option value="ROLE_MODERATOR">Kiểm duyệt viên</option>
+                                <option value="ROLE_FINANCE">Nhân viên tài chính</option>
+                                <option value="ROLE_ATTENDEE">Người Dùng</option>
+                            </select>
+                            <button type="submit"
+                                    th:formaction="@{/admin/addrole}"
+                                    formmethod="post"
+                                    name="targetUserId"
+                                    th:value="${user.id}"
+                                    class="save-btn"
+                                    style="white-space:nowrap;">
+                                <i class="fa-solid fa-plus"></i> Thêm
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -549,11 +587,9 @@
                         <label>Địa Chỉ</label>
                         <span th:if="${user.address != null}"
                               th:text="|${user.address.specificAddress}, ${user.address.ward.name}, ${user.address.ward.city.name}|">
-                        </span>
-
+        </span>
                         <span th:unless="${user.address != null}">Chưa cập nhật địa chỉ</span>
                     </div>
-
 
                 </div>
 
@@ -561,7 +597,7 @@
 
                 <div class="actions">
 
-                    <button type="submit" class="save-btn" th:disabled="${user.id == currentUser.id}">
+                    <button type="submit" class="save-btn" >
 
                         Lưu Thay Đổi
                     </button>

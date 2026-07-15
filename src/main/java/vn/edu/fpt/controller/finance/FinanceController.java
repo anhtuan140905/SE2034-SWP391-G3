@@ -124,7 +124,7 @@ public class FinanceController {
                 : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        List<SettlementSummaryProjection> listEndedEvents = eventService.findEndedEventsWithSettlementStatus(tab);
+        List<SettlementSummaryProjection> listEndedEvents = eventService.findEventsWithSettlementStatus(tab);
         model.addAttribute("listEndedEvents", listEndedEvents);
 
         SettlementSummaryProjection eventDetail = settlementService.findEventDetailById(eventId);
@@ -243,7 +243,7 @@ public class FinanceController {
                             "Không tìm thấy kết quả nào khớp với từ khóa " + keyword.trim() + ".");
                 }
             } else {
-                listEndedEvents = eventService.findEndedEventsWithSettlementStatus(tab);
+                listEndedEvents = eventService.findEventsWithSettlementStatus(tab);
             }
         }
         catch (IllegalArgumentException ex){

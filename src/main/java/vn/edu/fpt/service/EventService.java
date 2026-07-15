@@ -69,7 +69,7 @@ public interface EventService {
     long countAttendedEvent(@Param("userId") Long userId);
     EventHomeDTO getFavouriteEvent(Long eventId);
 
-    List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab);
+    List<SettlementSummaryProjection> findEventsWithSettlementStatus(String tab);
     long countEndedEvent();
     long countUnsettledEvents();
     Long sumTotalRevenue();

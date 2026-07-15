@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>List Users</title>
+    <title>Danh Sách Người Dùng</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
@@ -595,16 +595,10 @@
                             <a th:href="@{/admin/viewdetailuser(id=${user.id})}">
                                 <button class="action-btn view-btn"><i class="fa-solid fa-eye"></i></button>
                             </a>
-                            <a th:if="${user.id != currentUser.id}"
+                            <a
                                th:href="@{/admin/edituser(id=${user.id})}">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
-
-                            <i th:if="${user.id == currentUser.id}"
-                               class="fa-solid fa-pen"
-                               style="color: #ccc; cursor: not-allowed;"
-                               title="You cannot edit your own account">
-                            </i>
                         </div>
                     </td>
                 </tr>
