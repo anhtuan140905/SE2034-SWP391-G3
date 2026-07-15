@@ -1,6 +1,7 @@
 package vn.edu.fpt.modelview.request.admin;
 
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ public class UpdateUserStatusDTO {
     private String city;
     private String ward;
     private String specificAddress;
+    private Long userRoleId;
     private String roleName;
     private Boolean isActive;
 }

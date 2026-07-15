@@ -775,11 +775,11 @@ public  long countUpcomingEvent(@Param("userId") Long userId){
         return this.eventRepository.findEventsWithMinPrice(eventId);
     }
 
-public List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus(String tab){
+public List<SettlementSummaryProjection> findEventsWithSettlementStatus(String tab){
     if (!List.of("all", "pending", "completed").contains(tab)) {
         throw new IllegalArgumentException("Trạng thái lọc không hợp lệ.");
     }
-        List<SettlementSummaryProjection> list = eventRepository.findEndedEventsWithSettlementStatus();
+        List<SettlementSummaryProjection> list = eventRepository.findEventsWithSettlementStatus();
         return switch (tab == null ? "all" : tab) {
             case "pending" -> list.stream()
                     .filter(e -> e.getSettlementId() == null)

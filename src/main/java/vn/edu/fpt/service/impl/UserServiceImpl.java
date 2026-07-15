@@ -189,13 +189,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng có ID: " + id));
     }
 
     public List<User> searchUser(String keyword) {
-        return userRepository.findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(keyword, keyword, keyword);
+        return userRepository.seachUser(keyword);
     }
 
     @Override
@@ -210,29 +211,89 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void updateUser(Long id,
-                           UpdateUserStatusDTO request,
-                           Long currentUserId){
+    public void updateUserStatus(Long id, Boolean isActive, Long currentUserId){
 
         if (currentUserId.equals(id)) {
-            throw new RuntimeException("You cannot modify your own account.");
+            throw new RuntimeException("Bạn không thể tự chỉnh sửa tài khoản của chính mình.");
         }
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
 
-        Role role = roleService.getRoleByName(
-                RoleName.valueOf(request.getRoleName())
-        );
+        user.setIsActive(isActive);
+    }
 
-        UserRole userRole = userRoleRepository.findByUser_Id(id)
-                .orElseThrow(() -> new RuntimeException("UserRole not found"));
+    private static final Set<RoleName> ADMIN_MANAGEABLE_ROLES = Set.of(
+            RoleName.ROLE_ATTENDEE,
+            RoleName.ROLE_MODERATOR,
+            RoleName.ROLE_FINANCE
+    );
+
+    @Transactional
+    public void removeRoleFromUser(Long userRoleId, Long targetUserId, Long currentUserId) {
+
+        if (currentUserId.equals(targetUserId)) {
+            throw new RuntimeException("Bạn không thể tự chỉnh sửa tài khoản của chính mình.");
+        }
+
+        UserRole userRole = userRoleRepository.findById(userRoleId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò cần xoá."));
+
+        if (!userRole.getUser().getId().equals(targetUserId)) {
+            throw new RuntimeException("Vai trò này không thuộc về người dùng đang chỉnh sửa.");
+        }
+
+        RoleName roleName = userRole.getRole().getRoleName();
+        if (!ADMIN_MANAGEABLE_ROLES.contains(roleName)) {
+            throw new RuntimeException("Vai trò " + roleName + " không thể chỉnh sửa qua giao diện này.");
+        }
+
+        long remainingRoles = userRoleRepository.countByUser_Id(targetUserId);
+        if (remainingRoles <= 1) {
+            throw new RuntimeException("Người dùng phải có ít nhất 1 vai trò, không thể xoá vai trò cuối cùng.");
+
+        }
 
 
-        userRole.setRole(role);
+        userRoleRepository.delete(userRole);
 
-        
-        user.setIsActive(request.getIsActive());
+    }
+
+    @Transactional
+    public void addRoleToUser(Long targetUserId, String roleNameStr, Long currentUserId) {
+
+        if (currentUserId.equals(targetUserId)) {
+            throw new RuntimeException("Bạn không thể tự chỉnh sửa tài khoản của chính mình.");
+        }
+
+        RoleName roleName;
+        try {
+            roleName = RoleName.valueOf(roleNameStr);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Vai trò không hợp lệ.");
+        }
+
+        if (!ADMIN_MANAGEABLE_ROLES.contains(roleName)) {
+            throw new RuntimeException("Không thể gán vai trò " + roleName + " qua giao diện này.");
+        }
+
+        User user = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+
+        boolean alreadyHasThisRole = user.getUserRoles().stream()
+                .anyMatch(ur -> ur.getRole().getRoleName() == roleName);
+
+        if (alreadyHasThisRole) {
+            throw new RuntimeException("Người dùng đã có vai trò này rồi, không thể thêm trùng.");
+        }
+
+        Role role = roleService.getRoleByName(roleName);
+
+        UserRole newUserRole = new UserRole();
+        newUserRole.setUser(user);
+        newUserRole.setRole(role);
+
+        userRoleRepository.save(newUserRole);
     }
 
     @Override

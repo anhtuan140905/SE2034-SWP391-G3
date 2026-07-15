@@ -24,11 +24,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role WHERE u.email = :email")
     Optional<User> findByEmailWithUserRoles(@Param("email") String email);
 
-    List<User> findByFirstNameContainingIgnoreCaseOrMiddleNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-            String firstName,
-            String middleName,
-            String lastName
-    );
+
+@Query(value = "select*\n" +
+        "from users u\n" +
+        "where \n" +
+        "(lower(u.email) like lower(concat('%', :keyword, '%')) \n" +
+        "or lower(u.last_name) like lower(concat('%', :keyword, '%'))\n" +
+        "or lower(u.middle_name) like lower(concat('%', :keyword, '%'))\n" +
+        "or lower (u.first_name) like lower(concat('%', :keyword, '%')))"
+        ,nativeQuery = true)
+    List<User> seachUser(@Param("keyword") String keyword);
 
     @Query(value = "SELECT u.* FROM users u JOIN organizer_profiles op ON u.id = op.user_id", nativeQuery = true)
     List<User> findActiveOrganizers();

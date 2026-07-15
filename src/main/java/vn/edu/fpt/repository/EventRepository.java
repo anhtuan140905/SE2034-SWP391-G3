@@ -401,7 +401,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             
             order by e.endTime ASC
             """)
-    List<SettlementSummaryProjection> findEndedEventsWithSettlementStatus();
+    List<SettlementSummaryProjection> findEventsWithSettlementStatus();
 
 
     @Query("""

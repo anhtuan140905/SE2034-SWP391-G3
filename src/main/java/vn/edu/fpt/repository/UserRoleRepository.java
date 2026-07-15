@@ -25,4 +25,6 @@ public interface UserRoleRepository extends JpaRepository<UserRole,Long> {
     @Query("SELECT u FROM UserRole u WHERE u.user.id = :userId")
     List<UserRole> finUserByUserId(Long userId);
 
+    long countByUser_Id(Long userId);
+
 }

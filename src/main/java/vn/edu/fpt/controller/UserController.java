@@ -4,20 +4,16 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.admin.ActivityDTO;
 import vn.edu.fpt.modelview.request.admin.UpdateUserStatusDTO;
-import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
 import vn.edu.fpt.modelview.response.homepage.FeaturedOrganizerDto;
 import vn.edu.fpt.repository.FeaturedEventDTO;
 import vn.edu.fpt.service.*;
-import vn.edu.fpt.service.impl.CloudinaryService;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.impl.UserServiceImpl;
@@ -112,30 +108,31 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("user", user);
 
+        model.addAttribute("userRoles", user.getUserRoles());
+
         User currentUser = (userDetails != null)
                 ? userService.findByUsername(userDetails.getUsername())
                 : userService.findByUsername(oAuth2Users.getName());
         model.addAttribute("currentUser", currentUser);
 
-        RoleName roleName = user.getUserRoles().iterator().next().getRole().getRoleName();
-
-        model.addAttribute("roleName", roleName);
         return "admin/user/EditUser";
 
     }
 
     @PostMapping("/edituser")
     public String editUserPage(
-            @Valid @ModelAttribute("dto") UpdateUserStatusDTO dto,
+            @Valid @ModelAttribute("UpdateUserStatusDTO") UpdateUserStatusDTO dto,
             BindingResult result,
             Model model,
             @RequestParam Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
+        User user = userService.findById(id);
         if (result.hasErrors()) {
-            model.addAttribute("user", userService.findById(id));
-            model.addAttribute("dto", dto);
+            model.addAttribute("user", user);
+            model.addAttribute("UpdateUserStatusDTO", dto);
+            model.addAttribute("userRoles", user.getUserRoles());
             return "admin/user/EditUser";
         }
 
@@ -143,10 +140,60 @@ public class UserController {
                 ? userService.findByUsername(userDetails.getUsername())
                 : userService.findByUsername(oAuth2Users.getName());
 
-        userService.updateUser(id, dto, currentUser.getId());
+        try{
+            userService.updateUserStatus(id, dto.getIsActive(), currentUser.getId());
+        }
+        catch (Exception e){
+            model.addAttribute("user", user);
+            model.addAttribute("UpdateUserStatusDTO", dto);
+            model.addAttribute("userRoles", user.getUserRoles());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/user/EditUser";
+        }
 
         return "redirect:/admin/listuser";
     }
+
+    @PostMapping("/deleterole")
+    public String deleteRole(@RequestParam Long userRoleId,
+                             @RequestParam Long userId,
+                             @AuthenticationPrincipal CustomUserDetails userDetails,
+                             @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
+                             RedirectAttributes redirectAttributes) {
+
+        User currentUser = (userDetails != null)
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
+
+        try {
+            userService.removeRoleFromUser(userRoleId, userId, currentUser.getId());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/admin/edituser?id=" + userId;
+    }
+
+    @PostMapping("/addrole")
+    public String addRole(@RequestParam Long targetUserId,
+                          @RequestParam String roleName,
+                          @AuthenticationPrincipal CustomUserDetails userDetails,
+                          @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
+                          RedirectAttributes redirectAttributes) {
+
+        User currentUser = (userDetails != null)
+                ? userService.findByUsername(userDetails.getUsername())
+                : userService.findByUsername(oAuth2Users.getName());
+
+        try {
+            userService.addRoleToUser(targetUserId, roleName, currentUser.getId());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/admin/edituser?id=" + targetUserId;
+    }
+
 
     @GetMapping("/")
     public String homepage(
