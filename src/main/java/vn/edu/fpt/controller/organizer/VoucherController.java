@@ -11,6 +11,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.Voucher;
 import vn.edu.fpt.model.constant.DiscountType;
 import vn.edu.fpt.modelview.request.organizer.CreateVoucherRequest;
+import vn.edu.fpt.service.AuthenticatedUser;
+import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.VoucherService;
 import vn.edu.fpt.security.CustomUserDetails;
 
@@ -22,9 +24,13 @@ import java.util.List;
 public class VoucherController {
 
     private final VoucherService voucherService;
-
+    private final StaffService staffService;
     @GetMapping
-    public String listVoucher(@PathVariable Long eventId, Model model) {
+    public String listVoucher(@PathVariable Long eventId, Model model, @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         List<Voucher> vouchers = voucherService.getVoucherByEventId(eventId);
 
         model.addAttribute("eventId", eventId);
@@ -37,7 +43,12 @@ public class VoucherController {
     @GetMapping("/{voucherId}")
     public String voucherDetail(@PathVariable Long eventId,
                                 @PathVariable Long voucherId,
-                                Model model) {
+                                Model model,
+                                @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         Voucher voucher = voucherService.getVoucherDetail(eventId, voucherId);
 
         model.addAttribute("eventId", eventId);
@@ -48,7 +59,11 @@ public class VoucherController {
     }
 
     @GetMapping("create")
-    public String createVoucherForm(@PathVariable Long eventId, Model model) {
+    public String createVoucherForm(@PathVariable Long eventId, Model model, @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         model.addAttribute("eventId", eventId);
         model.addAttribute("discountType", DiscountType.values());
         model.addAttribute("activeMenu", "vouchers");
@@ -67,6 +82,10 @@ public class VoucherController {
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
+        if(!staffService.checkPermission(customUserDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("eventId", eventId);
             model.addAttribute("discountType", DiscountType.values());

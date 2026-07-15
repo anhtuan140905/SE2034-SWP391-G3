@@ -73,9 +73,13 @@ public class OrganizerProfileServiceImpl implements OrganizerProfileService {
 
     @Override
     public boolean CanCreateEvent(Long userId) {
-        User user = userRepository.getReferenceById(userId);
+        User user = userRepository.findByUserId(userId);
         for(UserRole ur :user.getUserRoles()){
             if (ur.getRole().getRoleName().equals(RoleName.ROLE_ORGANIZER)) {
+                OrganizerProfile organizerProfile = organizerProfileRepository.findByUserId(userId).orElse(null);
+                if (organizerProfile== null){
+                    return true;
+                }
                 if (organizerProfileRepository.getReferenceById(userId).getIsActive()){
                     return true;
                 }

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.modelview.request.organizer.MemberRequestDTO;
 import vn.edu.fpt.modelview.response.organizer.StaffDetailDto;
 import vn.edu.fpt.modelview.response.organizer.StaffResponceDTO;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.security.CustomUserDetails;
 
@@ -25,12 +26,11 @@ public class StaffController {
                              @RequestParam(defaultValue = "") String keyword,
                              @RequestParam(required = false) Long roleId,
                              @RequestParam(defaultValue = "0") int page,
-                             @AuthenticationPrincipal CustomUserDetails userDetails,
+                             @AuthenticationPrincipal AuthenticatedUser userDetails,
                              Model model) {
-//        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
-//            return "organizer/DashboardOrganizer";
-//        }
-
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"MANAGER_STAFF_MANAGE")){
+            return "organizer/Forbidden";
+        }
         Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, page);
         if (!model.containsAttribute("inviteMember")) {
             model.addAttribute("inviteMember", new MemberRequestDTO());
@@ -52,11 +52,11 @@ public class StaffController {
                                @Valid @ModelAttribute("inviteMember") MemberRequestDTO memberRequestDTO,
                                BindingResult result,
                                RedirectAttributes redirectAttributes,
-                               @AuthenticationPrincipal CustomUserDetails userDetails
+                               @AuthenticationPrincipal AuthenticatedUser userDetails
                                ){
-//        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"CAN_MANAGE_STAFF_PERMISSION")){
-//            return "organizer/DashboardOrganizer";
-//        }
+        if(!staffService.checkPermission(userDetails.getUser().getId(),id,"MANAGER_STAFF_MANAGE")){
+            return "organizer/Forbidden";
+        }
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMsg);
@@ -77,11 +77,11 @@ public class StaffController {
             @PathVariable Long eventId,
             @RequestParam Long staffId,
             @RequestParam int currentPage,
-            Model model,@AuthenticationPrincipal CustomUserDetails userDetails
+            Model model,@AuthenticationPrincipal AuthenticatedUser userDetails
             ,RedirectAttributes redirectAttributes) {
-//        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
-//            return "organizer/DashboardOrganizer";
-//        }
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            return "organizer/Forbidden";
+        }
         if(staffService.compareRole(userDetails.getUserId(),staffId,eventId)){
             redirectAttributes.addFlashAttribute("errorDelete","Bạn không có quyền sửa nhần viên này");
             return "redirect:/organizer/event/" + eventId + "/members";
@@ -105,10 +105,10 @@ public class StaffController {
                                @Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto,
                                BindingResult result,
                                RedirectAttributes redirectAttributes,
-                               @AuthenticationPrincipal CustomUserDetails userDetails ){
-//        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"CAN_MANAGE_STAFF_PERMISSION")){
-//            return "organizer/DashboardOrganizer";
-//        }
+                               @AuthenticationPrincipal AuthenticatedUser userDetails ){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            return "organizer/Forbidden";
+        }
         if (result.hasErrors()) {
             String errorMsg = result.getFieldErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessageEdit", errorMsg);
@@ -126,8 +126,11 @@ public class StaffController {
     @GetMapping("/event/{eventId}/members/delete")
     public String delete(@RequestParam Long staffId,
                          @PathVariable Long eventId,
-                         @AuthenticationPrincipal CustomUserDetails userDetails,
+                         @AuthenticationPrincipal AuthenticatedUser userDetails,
                          RedirectAttributes redirectAttributes){
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            return "organizer/Forbidden";
+        }
         try {
             staffService.deleteStaffByStaffId(staffId,eventId,userDetails.getUserId());
         }catch (RuntimeException e){

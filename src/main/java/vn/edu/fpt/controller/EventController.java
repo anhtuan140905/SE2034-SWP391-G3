@@ -29,6 +29,7 @@ import java.util.List;
 public class EventController {
     private EventService eventService;
     private OrganizerProfileService organizerProfileService;
+    private StaffService staffService;
     @GetMapping("/create/event")
     public String CreateEvent(Model model, @AuthenticationPrincipal CustomUserDetails userDetails,RedirectAttributes redirectAttributes) {
         if(!organizerProfileService.CanCreateEvent(userDetails.getUserId())){
@@ -147,9 +148,9 @@ public class EventController {
 
     @GetMapping("/event/detail/{id}")
     public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-//        if (!staffService.checkPermission(userDetails.getUser().getId(), id, "CAN_VIEW_EDIT_EVENT")) {
-//            return "organizer/DashboardOrganizer";
-//        }
+        if (!staffService.checkPermission(userDetails.getUser().getId(), id, "MANAGER_EVENT_DETAIL_VIEW")) {
+            return "organizer/Forbidden";
+        }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
         model.addAttribute("event", eventDetailDTO);
         model.addAttribute("eventId", id);
@@ -158,7 +159,10 @@ public class EventController {
     }
 
     @GetMapping("/event/{id}/publish")
-    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (!staffService.checkPermission(userDetails.getUser().getId(), id, "ORGANIZER_EVENT_PUBLIC")) {
+            return "organizer/Forbidden";
+        }
         try {
             eventService.publishEvent(id);
             redirectAttributes.addFlashAttribute("successMessage", "Đăng sự kiện thành công!");
@@ -173,9 +177,10 @@ public class EventController {
                                Model model,
                                RedirectAttributes redirectAttributes,
                                @AuthenticationPrincipal CustomUserDetails userDetails) {
-
-//        try {
-
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
         EventEditDTO eventDTO = eventService.getEventUpdateById(eventId);
         model.addAttribute("eventId", eventId);
         model.addAttribute("event", eventDTO);
@@ -183,10 +188,6 @@ public class EventController {
         model.addAttribute("citys", eventService.getListcity());
         return "organizer/event/EditOrganizerEvent";
 
-//        } catch (EventNotEditableException | RuntimeException ex) {
-//            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-//            return "redirect:/organizer/dashboard";
-//        }
     }
 
     @PostMapping("event/{eventId}/edit")
@@ -197,7 +198,10 @@ public class EventController {
             Model model,
             RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")){
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
 
         if (eventResult.hasErrors()) {
             model.addAttribute("eventCategoryList", eventService.getListEventCategory());
