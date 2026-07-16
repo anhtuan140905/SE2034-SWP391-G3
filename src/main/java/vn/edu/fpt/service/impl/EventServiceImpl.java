@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import vn.edu.fpt.common.error.TaxCodeExists;
+import vn.edu.fpt.exception.TaxCodeExists;
 import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.EventStatus;
@@ -463,6 +463,7 @@ public class EventServiceImpl implements EventService {
         organizerProfile.setCompanyName(profileDto.getCompanyName());
         organizerProfile.setLegalAddress(profileDto.getLegalAddress());
         organizerProfile.setBankAccountName(profileDto.getBankAccountName());
+        organizerProfile.setBankAccountNumber(profileDto.getBankAccountNumber());
         Bank bank =  bankRepository.getReferenceById(organizerProfileDto.getBankId());
         organizerProfile.setBank(bank);
         organizerProfile.setBankBranch(profileDto.getBankBranch());

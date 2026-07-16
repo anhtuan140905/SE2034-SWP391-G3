@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vn.edu.fpt.common.error.ProfileNotFoundException;
+import vn.edu.fpt.exception.ProfileNotFoundException;
 import vn.edu.fpt.modelview.request.organizer.OrganizerProfileDto;
 import vn.edu.fpt.security.CustomUserDetails;
 import vn.edu.fpt.service.EventService;

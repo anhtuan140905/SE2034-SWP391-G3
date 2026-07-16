@@ -10,7 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import vn.edu.fpt.common.error.TaxCodeExists;
+import vn.edu.fpt.exception.TaxCodeExists;
 import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.EventCategory;
 import vn.edu.fpt.modelview.request.organizer.*;
@@ -19,7 +19,6 @@ import vn.edu.fpt.modelview.response.organizer.EventDetailDTO;
 import vn.edu.fpt.modelview.response.organizer.EventEditDTO;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.security.CustomUserDetails;
-import vn.edu.fpt.service.impl.EventServiceImpl;
 
 import java.util.List;
 @Controller
@@ -31,7 +30,7 @@ public class EventController {
     private OrganizerProfileService organizerProfileService;
     private StaffService staffService;
     @GetMapping("/create/event")
-    public String CreateEvent(Model model, @AuthenticationPrincipal CustomUserDetails userDetails,RedirectAttributes redirectAttributes) {
+    public String CreateEvent(Model model, @AuthenticationPrincipal AuthenticatedUser userDetails,RedirectAttributes redirectAttributes) {
         if(!organizerProfileService.CanCreateEvent(userDetails.getUserId())){
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền tạo sự kiện.");
             return "redirect:/organizer/list/event";
@@ -61,7 +60,7 @@ public class EventController {
             OrganizerProfileDto organizerProfileDto,
                 BindingResult organizerResult,
             Model model,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal AuthenticatedUser userDetails) {
         Long userId = userDetails.getUser().getId();
         // kiểm tra đã có profile chưa
         boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userId);
@@ -147,7 +146,7 @@ public class EventController {
 
 
     @GetMapping("/event/detail/{id}")
-    public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+    public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal AuthenticatedUser userDetails, Model model) {
         if (!staffService.checkPermission(userDetails.getUser().getId(), id, "MANAGER_EVENT_DETAIL_VIEW")) {
             return "organizer/Forbidden";
         }
@@ -175,8 +174,7 @@ public class EventController {
     @GetMapping("event/{eventId}/edit")
     public String showEditForm(@PathVariable Long eventId,
                                Model model,
-                               RedirectAttributes redirectAttributes,
-                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+                               @AuthenticationPrincipal AuthenticatedUser userDetails) {
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")){
             model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
@@ -197,8 +195,8 @@ public class EventController {
             BindingResult eventResult,
             Model model,
             RedirectAttributes redirectAttributes,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")){
+            @AuthenticationPrincipal AuthenticatedUser userDetails) {
+        if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")) {
             model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
         }

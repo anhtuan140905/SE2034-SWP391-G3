@@ -1,7 +1,7 @@
 package vn.edu.fpt.service.impl;
 
 import org.springframework.stereotype.Service;
-import vn.edu.fpt.common.error.ProfileNotFoundException;
+import vn.edu.fpt.exception.ProfileNotFoundException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.RoleName;
 import vn.edu.fpt.modelview.request.organizer.OrganizerProfileDto;
@@ -80,7 +80,7 @@ public class OrganizerProfileServiceImpl implements OrganizerProfileService {
                 if (organizerProfile== null){
                     return true;
                 }
-                if (organizerProfileRepository.getReferenceById(userId).getIsActive()){
+                if (organizerProfile.getIsActive()){
                     return true;
                 }
             }
