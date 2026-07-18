@@ -125,30 +125,24 @@ public class UserController {
             BindingResult result,
             Model model,
             @RequestParam Long id,
+            RedirectAttributes redirectAttributes,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
 
-        User user = userService.findById(id);
         if (result.hasErrors()) {
-            model.addAttribute("user", user);
-            model.addAttribute("UpdateUserStatusDTO", dto);
-            model.addAttribute("userRoles", user.getUserRoles());
-            return "admin/user/EditUser";
+            redirectAttributes.addFlashAttribute("errorMessage", "Dữ liệu không hợp lệ.");
+            return "redirect:/admin/edituser?id=" + id;
         }
 
         User currentUser = (userDetails != null)
                 ? userService.findByUsername(userDetails.getUsername())
                 : userService.findByUsername(oAuth2Users.getName());
 
-        try{
+        try {
             userService.updateUserStatus(id, dto.getIsActive(), currentUser.getId());
-        }
-        catch (Exception e){
-            model.addAttribute("user", user);
-            model.addAttribute("UpdateUserStatusDTO", dto);
-            model.addAttribute("userRoles", user.getUserRoles());
-            model.addAttribute("errorMessage", e.getMessage());
-            return "admin/user/EditUser";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/edituser?id=" + id;
         }
 
         return "redirect:/admin/listuser";

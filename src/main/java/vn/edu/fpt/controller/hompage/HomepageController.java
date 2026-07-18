@@ -133,22 +133,22 @@ public class HomepageController {
         User user = userServiceImpl.findByUsername(email);
         Long userId = user.getId();
 
-        long countTicket = ticketService.countAllTicketOfUser(userId);
+        Long countTicket = ticketService.countAllTicketOfUser(userId);
         model.addAttribute("countTicket", countTicket);
 
-        long countUpcomingEvent = eventService.countUpcomingEvent(userId);
+        Long countUpcomingEvent = eventService.countUpcomingEvent(userId);
         model.addAttribute("countUpcomingEvent", countUpcomingEvent);
 
-        long countAttendedEvent = eventService.countAttendedEvent(userId);
+        Long countAttendedEvent = eventService.countAttendedEvent(userId);
         model.addAttribute("countAttendedEvent", countAttendedEvent);
 
-        long countUpcomingTicket = ticketService.countUpcomingTicket(userId);
+        Long countUpcomingTicket = ticketService.countUpcomingTicket(userId);
         model.addAttribute("countUpcomingTicket", countUpcomingTicket);
 
-        long countUsedTicket = ticketService.countUsedTicket(userId);
+        Long countUsedTicket = ticketService.countUsedTicket(userId);
         model.addAttribute("countUsedTicket", countUsedTicket);
 
-        long countExpiredTicket = ticketService.countExpiredTicket(userId);
+        Long countExpiredTicket = ticketService.countExpiredTicket(userId);
         model.addAttribute("countExpiredTicket", countExpiredTicket);
 
 
