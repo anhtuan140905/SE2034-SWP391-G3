@@ -141,24 +141,24 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 
-    public long countAllSoldTicket(){
+    public Long countAllSoldTicket(){
         return ticketRepository.countAllSoldTickets();
     }
 
-    public long countAllTicketOfUser(@Param("userId") Long userId){
+    public Long countAllTicketOfUser(@Param("userId") Long userId){
         return ticketRepository.countAllTicketOfUser(userId);
     }
 
-    public  long countUpcomingTicket(@Param("userId") Long userId){
+    public  Long countUpcomingTicket(@Param("userId") Long userId){
         return ticketRepository.countUpcomingTicket(userId);
     }
 
-    public  long countUsedTicket(@Param("userId") Long userId){
+    public  Long countUsedTicket(@Param("userId") Long userId){
 
         return ticketRepository.countUsedTicket(userId);
     }
 
-    public  long countExpiredTicket(@Param("userId") Long userId){
+    public  Long countExpiredTicket(@Param("userId") Long userId){
         return ticketRepository.countExpiredTicket(userId);
     }
 

@@ -52,7 +52,7 @@ public class AdminController {
         long allUserActive = eventService.countAllUseActive();
         model.addAttribute("allUserActive", allUserActive);
 
-        long allSoldTicket = ticketService.countAllSoldTicket();
+        Long allSoldTicket = ticketService.countAllSoldTicket();
         model.addAttribute("allSoldTicket", allSoldTicket);
 
         List<CountEventByMonthDTO> allEventByMonth = eventService.countEventByMonth();
