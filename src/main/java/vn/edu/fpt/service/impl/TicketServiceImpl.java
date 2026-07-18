@@ -85,10 +85,6 @@ public class TicketServiceImpl implements TicketService {
             ticket.setCheckedIn(false);
             ticket.setCheckedInAt(null);
             this.ticketRepository.save(ticket);
-
-            TicketType ticketType = seat.getTicketType();
-            ticketType.setSoldQuantity(ticketType.getSoldQuantity() + 1);
-            ticketTypeRepository.save(ticketType);
         }
     }
 
