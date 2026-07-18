@@ -46,6 +46,7 @@ public class EventDTO {
     private List<timeLineDTO> timeLine;
     @Valid
     @NotEmpty(message = "Phải có ít nhất một loại vé")
+    @Size(max = 10,message = "Chỉ được tải lên tối đa 10 loại vé")
     private List<TicketTypeRequestDTO> ticketTypes ;
     @Size(max = 10,
             message = "Chỉ được tải lên tối đa 10 ảnh")
