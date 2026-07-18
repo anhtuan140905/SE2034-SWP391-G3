@@ -555,7 +555,7 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
 //        Cấp quyền cho organizer
         List<Long> permissions =  permissionRepository.getPermissionsOfOrganizer();
-        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(user.getEmail(),5L,permissions);
+        MemberRequestDTO memberRequestDTO = new MemberRequestDTO(user.getEmail(),roleRepository.findByRoleName(RoleName.ROLE_ORGANIZER).getId(),permissions);
         staffService.assignMember(memberRequestDTO,event.getEventId());
     }
 
