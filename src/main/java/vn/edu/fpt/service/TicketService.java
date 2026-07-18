@@ -19,11 +19,11 @@ public interface TicketService {
     Ticket handleSaveTicket(Ticket ticket);
     void handleSaveTicketByOrder(Order order);
 
-    long countAllSoldTicket();
-    long countAllTicketOfUser(@Param("userId") Long userId);
-    long countUpcomingTicket(@Param("userId") Long userId);
-    long countUsedTicket(@Param("userId") Long userId);
-    long countExpiredTicket(@Param("userId") Long userId);
+    Long countAllSoldTicket();
+    Long countAllTicketOfUser(@Param("userId") Long userId);
+    Long countUpcomingTicket(@Param("userId") Long userId);
+    Long countUsedTicket(@Param("userId") Long userId);
+    Long countExpiredTicket(@Param("userId") Long userId);
 
     Ticket findById(Long orderId);
     List<TicketDTO> viewTicket (Long userId, String tab);

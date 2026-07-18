@@ -41,7 +41,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             SELECT SUM(soldQuantity)
             FROM TicketType
             """)
-    long countAllSoldTickets();
+    Long countAllSoldTickets();
 
     @Query("""
             SELECT COUNT(DISTINCT t.ticketId)
@@ -49,7 +49,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             JOIN Ticket t on ord.orderDetailId = t.orderDetail.orderDetailId
             where ord.order.user.id = :userId 
             """)
-    long countAllTicketOfUser(@Param("userId") Long userId);
+    Long countAllTicketOfUser(@Param("userId") Long userId);
 
 
     @Query("""
@@ -62,7 +62,7 @@ AND t.isCheckedIn = false
 AND o.event.endTime > CURRENT_TIMESTAMP
 AND o.status = 'PAID'
 """)
-    long countUpcomingTicket(@Param("userId") Long userId);
+    Long countUpcomingTicket(@Param("userId") Long userId);
 
 
     @Query("""
@@ -75,7 +75,7 @@ AND o.status = 'PAID'
             AND t.isCheckedIn = true
             AND o.status = 'PAID'
             """)
-    long countUsedTicket(@Param("userId") Long userId);
+    Long countUsedTicket(@Param("userId") Long userId);
 
     @Query("""
             SELECT COUNT(DISTINCT t.ticketId)
@@ -87,7 +87,7 @@ AND o.status = 'PAID'
             AND t.isCheckedIn = false
             AND o.event.endTime < CURRENT_TIMESTAMP
             """)
-    long countExpiredTicket(@Param("userId") Long userId);
+    Long countExpiredTicket(@Param("userId") Long userId);
 
 
     @Query(value = """

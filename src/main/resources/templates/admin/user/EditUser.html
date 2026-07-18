@@ -524,7 +524,7 @@
 
                     <div class="form-group">
                         <label>Trạng Thái Hoạt Động</label>
-                        <select name="isActive">
+                        <select name="isActive" >
                             <option value="true" th:selected="${user.isActive == true}">Đang Hoạt Động</option>
                             <option value="false" th:selected="${user.isActive == false}">Ngừng Hoạt Động</option>
                         </select>
@@ -534,15 +534,16 @@
                         <label>Các Vai Trò Hiện Tại</label>
                         <div style="display:flex; flex-wrap:wrap; gap:10px;">
                             <div th:each="userRole : ${user.userRoles}"
-                                 th:if="${userRole.role.roleName.name() != 'ROLE_ADMIN'}"
+
                                  style="display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:10px; background:#fff0f5; border:1px solid rgba(236,72,153,0.25);">
 
                 <span th:text="${userRole.role.roleName.name() == 'ROLE_MODERATOR' ? 'Kiểm duyệt viên'
                      : (userRole.role.roleName.name() == 'ROLE_FINANCE' ? 'Nhân Viên Tài Chính'
                      : (userRole.role.roleName.name() == 'ROLE_ORGANIZER' ? 'Nhà Tổ Chức'
                      : (userRole.role.roleName.name() == 'ROLE_MANAGER' ? 'Người Quản Lý Sự Kiện'
+                     : (userRole.role.roleName.name() == 'ROLE_ADMIN' ? 'Quản Trị Viên'
                      : (userRole.role.roleName.name() == 'ROLE_STAFF' ? 'Nhân Viên Sự Kiện'
-                     : 'Người Dùng'))))}"
+                     : 'Người Dùng')))))}"
                       style="border:none; padding:0; background:none;"></span>
 
                                 <button type="submit"
