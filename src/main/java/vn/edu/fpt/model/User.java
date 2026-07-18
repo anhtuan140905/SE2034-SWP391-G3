@@ -37,7 +37,7 @@ public class User extends BaseAuditEntity implements Serializable {
     @Column(name = "phone", length = 10)
     private String phone;
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = 10, nullable = false)
+    @Column(name = "gender", length = 10)
     private Gender gender;
     @Column(name = "dob")
     private LocalDate dob;

@@ -13,7 +13,6 @@ import vn.edu.fpt.modelview.response.homepage.VoucherValidationResult;
 import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.VoucherRepository;
 import vn.edu.fpt.service.OrderService;
-import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.VoucherService;
 import vn.edu.fpt.service.VoucherUsageService;
 
@@ -27,15 +26,12 @@ public class VoucherServiceImpl implements VoucherService {
 
     private final VoucherRepository voucherRepository;
     private final EventRepository eventRepository;
-    private final StaffService staffService;
     private final VoucherUsageService voucherUsageService;
     private final OrderService orderService;
 
     @Override
     @Transactional
     public void createVoucher(Long evenId, Long userId, CreateVoucherRequest request) {
-
-        validatePermission(userId, evenId);
 
         Event event = eventRepository.findById(evenId).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện với id: " + evenId));
 
@@ -77,7 +73,7 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     // Validate the voucher's start and end dates
-    private void validateDateRange(LocalDateTime validFrom, LocalDateTime validTo, LocalDateTime eventEndTime) {
+    private void validateDateRange(LocalDateTime validFrom, LocalDateTime validTo, LocalDateTime eventStartTime) {
         LocalDateTime now = LocalDateTime.now().minusMinutes(3);
 
         if (validFrom.isBefore(now)) {
@@ -88,8 +84,8 @@ public class VoucherServiceImpl implements VoucherService {
             throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
         }
 
-        if (validTo.isAfter(eventEndTime)) {
-            throw new IllegalArgumentException("Thời gian kết thúc voucher phải sau thời gian sự kiện kết thúc.");
+        if (validTo.isAfter(eventStartTime)) {
+            throw new IllegalArgumentException("Thời gian kết thúc voucher phải trước thời gian sự kiện bắt đầu.");
         }
     }
 
@@ -102,16 +98,8 @@ public class VoucherServiceImpl implements VoucherService {
 
     // Normalizer voucher's code to upper case
     private String normalizeCode(String code) {
+
         return code == null ? null : code.toUpperCase().trim();
-    }
-
-    // Check permissions to create vouchers
-    private void validatePermission(Long userId, Long evenId) {
-        boolean hasPermission = staffService.checkPermission(userId, evenId, "CAN_CREATE_VOUCHER");
-
-        if (!hasPermission) {
-            throw new IllegalArgumentException("Bạn không có quyền tạo voucher");
-        }
     }
 
     @Override
