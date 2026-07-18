@@ -103,6 +103,10 @@ public class StaffServiceImpl implements StaffService {
         Optional<UserRole> existing = userRoleRepository.findByUserIdAndRoleId(userId, newRoleId);
         if (existing.isPresent()) {
             member.setUserRole(existing.get());
+            long oldUsageCount = organizerMemberRepository.countByUserRole_Id(oldUserRole.getId());
+            if (oldUsageCount <= 1) {
+                userRoleRepository.delete(oldUserRole);
+            }
             return;
         }
 //        if only 1 role with 1 event -> set role
