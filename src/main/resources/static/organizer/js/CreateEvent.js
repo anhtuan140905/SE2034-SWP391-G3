@@ -630,20 +630,31 @@ function renderTiers() {
 }
 
 // ─── GỬI FORM ─────────────────────────────────────────────────────────────────
+let isSubmitting = false;
 function handleFormSubmit(e) {
     const tiersValid  = validateAllTiers();
     const agendaValid = validateAllAgenda();
     const bannerInput = document.getElementById("bannerFileInput");
     const bannerError = document.getElementById("bannerError");
     let bannerValid = true;
-
+    if (isSubmitting) {
+        e.preventDefault();
+        return false;
+    }
     if (!bannerInput?.files?.length) {
         bannerValid = false;
         bannerError.textContent = "Vui lòng chọn ảnh banner.";
     }
     renderTiers();
     renderAgenda();
-
+    isSubmitting = true;
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Đang xử lý...'; // Bạn có thể đổi chữ tùy ý
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+    }
     if (!tiersValid || !agendaValid || !bannerValid) {
         e.preventDefault();
         scrollToFirstError();

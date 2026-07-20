@@ -15,7 +15,7 @@ public class EventStatusScheduler {
         eventService.SetStatusEvent();
     }
 
-    @Scheduled(fixedRate = 1800000)
+    @Scheduled(fixedRate = 6000)
     public void onSchedule() {
         eventService.SetStatusEvent();
     }
