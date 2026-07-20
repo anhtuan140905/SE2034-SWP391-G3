@@ -79,7 +79,7 @@ public class VoucherController {
     public String createVoucher(@PathVariable Long eventId,
                                 @Valid @ModelAttribute("createVoucherRequest") CreateVoucherRequest request,
                                 BindingResult bindingResult,
-                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                @AuthenticationPrincipal AuthenticatedUser customUserDetails,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
         if(!staffService.checkPermission(customUserDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){

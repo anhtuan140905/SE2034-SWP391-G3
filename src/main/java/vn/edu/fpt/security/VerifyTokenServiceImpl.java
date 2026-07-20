@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service("VerifyTokenService")
+
 public class VerifyTokenServiceImpl implements VerifyTokenService {
     private final VerifyTokenRepository verifyTokenRepository;
     private final UserRepository userRepository;
@@ -22,6 +23,7 @@ public class VerifyTokenServiceImpl implements VerifyTokenService {
         this.verifyTokenRepository = verifyTokenRepository;
         this.userRepository = userRepository;
     }
+
 
     @Override
     public VerificationToken findByEmailAndTypeAndUsedFalse(String email, TokenType tokenType) {

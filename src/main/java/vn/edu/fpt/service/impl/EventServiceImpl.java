@@ -328,10 +328,12 @@ public class EventServiceImpl implements EventService {
                     Long organizerUserId = event.getOrganizer().getId();
                     staffService.deleteStaffByStaffId(organizerMember.getId(), event.getEventId(), organizerUserId);
                 }
-           
+
             }
           eventRepository.saveAll(eventSetStatus);
         }
+
+
 
     }
 

@@ -71,16 +71,13 @@ public class EventController {
             model.addAttribute("citys", eventService.getListcity());
             model.addAttribute("event", eventDTO);
 
-            // chỉ add organizerProfile nếu chưa có
             if (!hasOrganizerProfile) {
                 model.addAttribute("organizerProfile", organizerProfileDto);
                 model.addAttribute("banks", eventService.getListBank());
             }
             return "organizer/event/CreateOrganizerEvent";
         }
-        // tránh client sửa organizerId
         eventDTO.setOrganizerId(userId);
-        // save
         try {
             if (!hasOrganizerProfile) {
                 eventService.saveEvent(eventDTO, organizerProfileDto);
@@ -158,7 +155,7 @@ public class EventController {
     }
 
     @GetMapping("/event/{id}/publish")
-    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal AuthenticatedUser userDetails) {
         if (!staffService.checkPermission(userDetails.getUser().getId(), id, "ORGANIZER_EVENT_PUBLIC")) {
             return "organizer/Forbidden";
         }

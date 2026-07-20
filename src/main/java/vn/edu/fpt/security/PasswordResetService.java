@@ -42,7 +42,7 @@ public class PasswordResetService {
     private String generateOtp() {
         return String.format("%06d", new Random().nextInt(1_000_000));
     }
-
+    @Transactional
     public VerificationToken sendOtp(String email) throws MessagingException {
         User user = this.userRepository.findByEmail(email);
         if(user == null) {
