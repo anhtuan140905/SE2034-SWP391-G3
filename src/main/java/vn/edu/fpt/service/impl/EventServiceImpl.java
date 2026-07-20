@@ -325,7 +325,8 @@ public class EventServiceImpl implements EventService {
                         organizerProfileRepository.save(organizerProfile);
                         continue;
                     }
-                    staffService.deleteStaffByStaffId(organizerMember.getId(),event.getEventId(),organizerMember.getUserRole().getUser().getId());
+                    Long organizerUserId = event.getOrganizer().getId();
+                    staffService.deleteStaffByStaffId(organizerMember.getId(), event.getEventId(), organizerUserId);
                 }
            
             }
