@@ -146,4 +146,12 @@ public class VoucherServiceImpl implements VoucherService {
         return this.voucherRepository.findAvailableVouchersByEvent(eventId, LocalDateTime.now());
     }
 
+    @Override
+    @Transactional
+    public void updateVoucherStatus(Long eventId, Long voucherId, Boolean isActive) {
+        Voucher voucher = getVoucherDetail(eventId, voucherId);
+        voucher.setIsActive(isActive != null ? isActive : false);
+        voucherRepository.save(voucher);
+    }
+
 }

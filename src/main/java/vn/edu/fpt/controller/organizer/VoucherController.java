@@ -110,6 +110,28 @@ public class VoucherController {
         return "redirect:/organizer/event/" + eventId + "/voucher";
     }
 
+    @PostMapping("/{voucherId}/status")
+    public String updateVoucherStatus(@PathVariable Long eventId,
+                                      @PathVariable Long voucherId,
+                                      @RequestParam Boolean isActive,
+                                      @AuthenticationPrincipal AuthenticatedUser userDetails,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
+        if (!staffService.checkPermission(userDetails.getUser().getId(), eventId, "MANAGER_VOUCHER_MANAGE")) {
+            model.addAttribute("eventId", eventId);
+            return "organizer/Forbidden";
+        }
+
+        try {
+            voucherService.updateVoucherStatus(eventId, voucherId, isActive);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái voucher thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/organizer/event/" + eventId + "/voucher/" + voucherId;
+    }
+
 }
 
 
