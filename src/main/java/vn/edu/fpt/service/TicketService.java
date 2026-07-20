@@ -15,7 +15,7 @@ public interface TicketService {
     Integer countAllticketSelledOfEvent(Long eventId);
     long issuedTickets();
     @Transactional
-    void generateTicketsForOrder(Order order);
+    List<Ticket> generateTicketsForOrder(Order order);
     Ticket handleSaveTicket(Ticket ticket);
     void handleSaveTicketByOrder(Order order);
 

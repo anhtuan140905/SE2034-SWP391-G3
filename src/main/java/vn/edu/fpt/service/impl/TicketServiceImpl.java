@@ -70,22 +70,42 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void generateTicketsForOrder(Order order) {
+    public List<Ticket> generateTicketsForOrder(Order order) {
+        List<Ticket> tickets = new ArrayList<>();
+
         for (OrderDetail orderDetail : order.getOrderDetails()) {
             Seat seat = orderDetail.getSeat();
 
-            String ticketCode = "TKT-" + UUID.randomUUID().toString().toUpperCase();
-            String qrCode = "EVH-QR-" +  UUID.randomUUID().toString().toUpperCase();
+            String ticketCode =
+                    "EVH-TKT-" + UUID.randomUUID()
+                            .toString()
+                            .substring(0, 8)
+                            .toUpperCase();
 
-            Ticket ticket = new Ticket();
-            ticket.setTicketCode(ticketCode);
-            ticket.setOrderDetail(orderDetail);
-            ticket.setSeat(seat);
-            ticket.setQrCode(qrCode);
-            ticket.setCheckedIn(false);
-            ticket.setCheckedInAt(null);
-            this.ticketRepository.save(ticket);
+            // QR chứa chính ticketCode dùng để check-in
+            byte[] qrPng = QrCodeUtil.generateQrPng(ticketCode, 300);
+
+            // Upload ảnh và nhận URL
+            String qrUrl = cloudinaryService.uploadBytes(
+                    qrPng,
+                    "eventhub/tickets/qr"
+            );
+
+            Ticket ticket = Ticket.builder()
+                    .orderDetail(orderDetail)
+                    .seat(seat)
+                    .ticketCode(ticketCode)
+                    .qrCode(qrUrl)
+                    .isCheckedIn(false)
+                    .checkedInAt(null)
+                    .build();
+
+            tickets.add(ticketRepository.save(ticket));
         }
+
+        sendTicketEmail(order, tickets);
+
+        return tickets;
     }
 
     @Override
@@ -219,6 +239,45 @@ public class TicketServiceImpl implements TicketService {
         }
         long ticketBought = ticketRepository.countCompletedTicketsByUserAndEvent(userId, eventId);
         return Math.max(0, MAX_TICKETS_PER_EVENT - (int) ticketBought);
+    }
+
+    private void sendTicketEmail(Order order, List<Ticket> tickets) {
+        List<TicketEmailDTO> ticketDTOs = tickets.stream()
+                .map(ticket -> new TicketEmailDTO(
+                        ticket.getSeat()
+                                .getTicketType()
+                                .getEvent()
+                                .getTitle(),
+
+                        ticket.getSeat().getRowLabel()
+                                + ticket.getSeat().getSeatNumber(),
+
+                        ticket.getTicketCode(),
+
+                        // Đây là URL ảnh Cloudinary
+                        ticket.getQrCode()
+                ))
+                .toList();
+
+        String customerName = String.join(" ",
+                safe(order.getUser().getFirstName()),
+                safe(order.getUser().getMiddleName()),
+                safe(order.getUser().getLastName())
+        ).replaceAll("\\s+", " ").trim();
+
+        OrderEmailDTO orderDTO = new OrderEmailDTO(
+                order.getOrderId(),
+                customerName,
+                order.getUser().getEmail(),
+                order.getTotalAmount(),
+                ticketDTOs
+        );
+
+        emailService.sendTicketConfirmationEmail(orderDTO, ticketDTOs);
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
     }
 
 }
