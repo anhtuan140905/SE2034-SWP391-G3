@@ -84,9 +84,9 @@ public class VoucherServiceImpl implements VoucherService {
             throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
         }
 
-        if (validTo.isAfter(eventStartTime)) {
-            throw new IllegalArgumentException("Thời gian kết thúc voucher phải trước thời gian sự kiện bắt đầu.");
-        }
+//        if (validTo.isAfter(eventStartTime)) {
+//            throw new IllegalArgumentException("Thời gian kết thúc voucher phải trước thời gian sự kiện bắt đầu.");
+//        }
     }
 
     // Validate the voucher code for the event
