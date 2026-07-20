@@ -39,7 +39,7 @@
             <a th:href="@{/organizer/list/event}" class="nav-item "
             >
                 <span class="material-symbols-outlined">dashboard</span>
-                <span>My Event</span>
+                <span>Sự Kiện Của Tôi</span>
             </a>
         </nav>
     </aside>
@@ -62,7 +62,7 @@
                 ══════════════════════════════════════ -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                     <div>
-                            <h2 class="page-title mb-0">Event Campaign Management</h2>
+                            <h2 class="page-title mb-0">Quản Lý Sự Kiện</h2>
 <!--                        <p class="page-subtitle mb-0">List of all events and real-time ticket sales process.</p>-->
                     </div>
                     <div class="d-flex align-items-center gap-2">
@@ -86,7 +86,7 @@
                             <input type="text"
                                    name="keyword"
                                    th:value="${keyword}"
-                                   placeholder="Search event name..."
+                                   placeholder="Tìm Kiếm Tên Sự Kiện"
                                    id="searchInput"
                                    autocomplete="off"/>
                         </div>
@@ -179,7 +179,7 @@
                                 </div>
                                 <div class="occupancy-block mt-2">
                                     <div class="occupancy-label">
-                                        <span>Occupancy: <strong th:text="${ec.ticketSelled}"></strong> / <span th:text="${ec.stock}"></span> tix</span>
+                                        <span>Occupancy: <strong th:text="${ec.ticketSelled}"></strong> / <span th:text="${ec.stock}"></span> vé</span>
                                         <strong th:text="${ec.Percent + '%'}"></strong>
                                     </div>
                                     <div class="progress-track">
