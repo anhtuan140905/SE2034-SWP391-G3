@@ -25,6 +25,7 @@ public class VoucherController {
 
     private final VoucherService voucherService;
     private final StaffService staffService;
+
     @GetMapping
     public String listVoucher(@PathVariable Long eventId, Model model, @AuthenticationPrincipal AuthenticatedUser userDetails) {
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_VOUCHER_MANAGE")){

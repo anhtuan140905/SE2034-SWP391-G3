@@ -76,17 +76,17 @@ public class VoucherServiceImpl implements VoucherService {
     private void validateDateRange(LocalDateTime validFrom, LocalDateTime validTo, LocalDateTime eventStartTime) {
         LocalDateTime now = LocalDateTime.now().minusMinutes(3);
 
-        if (validFrom.isBefore(now)) {
-            throw new IllegalArgumentException("Thời gian bắt đầu phải lớn hơn hoặc bằng thời điểm hiện tại");
+        if (!validFrom.isAfter(now)) {
+            throw new IllegalArgumentException("Thời gian bắt đầu voucher phải lớn hơn hoặc bằng thời điểm hiện tại");
         }
 
         if (!validTo.isAfter(validFrom)) {
-            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu");
+            throw new IllegalArgumentException("Thời gian kết thúc voucher phải sau thời gian bắt đầu");
         }
 
-//        if (validTo.isAfter(eventStartTime)) {
-//            throw new IllegalArgumentException("Thời gian kết thúc voucher phải trước thời gian sự kiện bắt đầu.");
-//        }
+        if (!validTo.isBefore(eventStartTime)) {
+            throw new IllegalArgumentException("Thời gian kết thúc voucher phải trước thời gian sự kiện bắt đầu.");
+        }
     }
 
     // Validate the voucher code for the event
