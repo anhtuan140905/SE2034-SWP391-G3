@@ -2,9 +2,11 @@ package vn.edu.fpt.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.constant.OrderStatus;
 import vn.edu.fpt.model.TicketType;
 import vn.edu.fpt.modelview.response.organizer.*;
+import vn.edu.fpt.repository.EventRepository;
 import vn.edu.fpt.repository.OrderRepository;
 import vn.edu.fpt.repository.SettlementRepository;
 import vn.edu.fpt.repository.TicketTypeRepository;
@@ -21,17 +23,21 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrganizerDashboardServiceImpl implements OrganizerDashboardService {
 
-    private final OrderRepository orderRepository;
     private final TicketTypeRepository ticketTypeRepository;
+    private final OrderRepository orderRepository;
     private final SettlementRepository settlementRepository;
+    private final EventRepository eventRepository;
     @Override
     public DashboardStatsDTO getDashboardStats(Long eventId) {
         DashboardStatsDTO dto = new DashboardStatsDTO();
         BigDecimal totalRevenue = orderRepository.calculateGrossRevenueByEventId(eventId);
         if (totalRevenue == null) totalRevenue = BigDecimal.ZERO;
         dto.setTotalRevenue(totalRevenue);
-        Long totalTicketsSold = orderRepository.countPaidTicketsByEventId(eventId);
-        if (totalTicketsSold == null) totalTicketsSold = 0L;
+        Integer totalTicketsSold = 0 ;
+        Event event = eventRepository.findById(eventId).orElseThrow(()->new RuntimeException("Sự kiện Không Tồn Tại"));
+        for(TicketType ticketType:event.getTicketTypes()){
+            totalTicketsSold = totalTicketsSold + ticketType.getSoldQuantity();
+        }
         dto.setTotalTicketsSold(totalTicketsSold);
         BigDecimal settledAmount = BigDecimal.ZERO;
         if(settlementRepository.getPayoutAmountByEventId(eventId)!=null){

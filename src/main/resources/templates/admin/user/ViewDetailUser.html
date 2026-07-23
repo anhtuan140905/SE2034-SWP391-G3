@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -165,7 +165,6 @@
         }
 
 
-
         /* ================= MAIN ================= */
         .main {
             flex: 1;
@@ -234,6 +233,7 @@
             transition: 0.3s;
             white-space: nowrap;
         }
+
         .edit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
@@ -257,7 +257,7 @@
         .overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(255,240,245,0.9), rgba(255,240,245,0.3));
+            background: linear-gradient(to top, rgba(255, 240, 245, 0.9), rgba(255, 240, 245, 0.3));
         }
 
         .profile-content {
@@ -311,8 +311,9 @@
             background: rgba(34, 197, 94, 0.2);
             color: #22c55e;
         }
-        .badge.inactive{
-            background: rgba(255,77,77,0.2);
+
+        .badge.inactive {
+            background: rgba(255, 77, 77, 0.2);
             color: #ff4d4d;
         }
 
@@ -426,12 +427,14 @@
 
 
         .email i {
-            color: #ff2a85 ;
+            color: #ff2a85;
             font-size: 16px;
         }
 
 
-        .profile-dropdown { position: relative; }
+        .profile-dropdown {
+            position: relative;
+        }
 
         .dropdown-menu {
             display: none;
@@ -448,7 +451,9 @@
             animation: fadeIn 0.2s ease;
         }
 
-        .dropdown-menu.show { display: block; }
+        .dropdown-menu.show {
+            display: block;
+        }
 
         .dropdown-menu ul {
             list-style: none;
@@ -479,8 +484,14 @@
             color: #ff1b8d;
         }
 
-        .dropdown-logout { color: #e11d48; }
-        .dropdown-logout:hover { background: rgba(225, 29, 72, 0.07); color: #e11d48; }
+        .dropdown-logout {
+            color: #e11d48;
+        }
+
+        .dropdown-logout:hover {
+            background: rgba(225, 29, 72, 0.07);
+            color: #e11d48;
+        }
 
         .divider {
             border-top: 1px solid rgba(255, 42, 122, 0.1);
@@ -488,9 +499,16 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         /* ================= RESPONSIVE ================= */
         @media (max-width: 1100px) {
             .info-grid {
@@ -527,11 +545,11 @@
 
     <div class="logo-section">
         <div class="logo">EventHub</div>
-        <div class="portal-text"> Kênh Quản Trị </div>
+        <div class="portal-text"> Kênh Quản Trị</div>
     </div>
 
     <div class="menu">
-        <a th:href="@{/admin/dashboard}" ><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
+        <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Bảng Điều Khiển </a>
         <a th:href="@{/admin/listuser}" class="active"><i class="fa-solid fa-users"></i> Quản Lý Người Dùng </a>
 
     </div>
@@ -544,11 +562,9 @@
     <!-- TOPBAR -->
     <div class="topbar">
 
-
-
         <div class="topbar-right">
 
-            <!-- Thay thế phần .profile trong topbar -->
+
             <div class="profile-dropdown" style="position: relative;">
                 <div class="profile" onclick="toggleDropdown()" style="cursor:pointer;">
                     <img th:if="${currentUser != null and currentUser.avatar != null and !currentUser.avatar.isEmpty()}"
@@ -567,13 +583,13 @@
                 <div class="dropdown-menu" id="profileDropdown">
                     <ul>
                         <li>
-                            <a th:href="@{/admin/profile}">
-                                <i class="fa-regular fa-user"></i> Thông Tin Của Tôi
+                            <a th:href="@{/}">
+                                <i class="fa-regular fa-user"></i> Trang Chủ
                             </a>
                         </li>
                         <li>
-                            <a th:href="@{/}">
-                                <i class="fa-solid fa-shield"></i> Trang Chủ
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa-solid fa-shield"></i> Kênh Quản Trị
                             </a>
                         </li>
                         <li class="divider"></li>
@@ -633,18 +649,20 @@
                         <img th:if="${users.avatar != null and !users.avatar.isEmpty()}"
                              th:src="${users.avatar}" alt="User"/>
                         <div class="user-details">
-                            <h2 th:text="${users.lastName + ' ' + users.middleName + ' ' + users.firstName}"></h2>
+                            <h2 th:text="${(users.firstName ?: '') + ' ' + (users.middleName ?: '') + ' ' + (users.lastName ?: '')}"></h2>
                             <p class="email"><i class="fa-solid fa-envelope"></i>
                                 <span th:text="${users.email}"></span>
                             </p>
                             <p><i class="fa-solid fa-phone"></i>
-                                <span th:text="${users.phone}"></span>
+                                <span th:if="${users.phone != null}"
+                                      th:text="${users.phone}"></span>
+                                <span th:unless="${users.phone != null}">Chưa cập nhật</span>
                             </p>
                             <p><i class="fa-solid fa-location-dot"></i>
                                 <span th:if="${users.address != null}"
                                       th:text="${users.address.ward.name + ', ' + users.address.ward.city.name}">
-                                    N/A
                                 </span>
+                                <span th:unless="${users.address != null}">Chưa cập nhật</span>
                             </p>
                         </div>
                     </div>
@@ -658,21 +676,21 @@
                     <div class="info-box">
                         <h3>Thông Tin Tài Khoản </h3>
                         <div class="info-item"><span>Mã Tài Khoản </span>
-                            <p th:text="${users.id}"></p>
+                            <strong th:text="${users.id}"></strong>
                         </div>
-                        <div class="info-item"><span>Vai Trò</span>
-                            <p >
-                                <strong th:each="role, stat : ${users.userRoles}">
 
-                                    <span style="color:#1e0e34;"  th:text="${#strings.replace(role.role.roleName, 'ROLE_', '')}"></span>
-                                    <span style="color:#1e0e34;" th:if="${!stat.last}">, </span>
-
-                                </strong>
+                        <div class="info-item">
+                            <span>Vai Trò</span>
+                            <p style="display:flex; flex-wrap:wrap; gap:6px 4px;">
+        <strong th:each="role, stat : ${users.userRoles}"
+              th:text="${#strings.replace(role.role.roleName, 'ROLE_', '') + (stat.last ? '' : ',')}"
+              style="display:inline-block; white-space:nowrap; ">
+        </strong>
                             </p>
                         </div>
                         <div class="info-item"><span>Ngày Đăng Kí</span>
 
-                            <p th:text="${#temporals.format(users.createdAt, 'dd/MM/yyyy')}"></p>
+                            <strong th:text="${#temporals.format(users.createdAt, 'dd/MM/yyyy')}"></strong>
 
                         </div>
 
@@ -681,16 +699,26 @@
                     <div class="info-box">
                         <h3>Thông Tin Cá Nhân</h3>
                         <div class="info-item"><span>Họ Tên</span>
-                            <p th:text="${users.lastName + ' ' + users.middleName + ' ' + users.firstName}"></p>
+                            <strong th:text="${(users.firstName ?: '') + ' ' + (users.middleName ?: '') + ' ' + (users.lastName ?: '')}"></strong>
                         </div>
                         <div class="info-item"><span>Ngày Sinh</span>
-                            <p th:text="${#temporals.format(users.dob, 'dd/MM/yyyy')}"></p>
+                            <p>
+                              <strong th:if="${users.dob != null}"
+                                    th:text="${#temporals.format(users.dob, 'dd/MM/yyyy')}">
+                              </strong>
+
+                                <strong th:unless="${users.dob != null}">Chưa cập nhật</strong>
+                            </p>
 
                         </div>
                         <div class="info-item"><span>Giới Tính</span>
-                            <p th:text="${users.gender}"></p>
+                            <p th:switch="${users.gender != null ? users.gender.name() : null}">
+                                <strong th:case="'MALE'">Nam</strong>
+                                <strong th:case="'FEMALE'">Nữ</strong>
+                                <strong th:case="null">Chưa cập nhật</strong>
+                                <strong th:case="*" th:text="${users.gender}"></strong>
+                            </p>
                         </div>
-
 
 
                     </div>
@@ -752,14 +780,13 @@
     </div>
 
 
-
     <script>
         function toggleDropdown() {
             document.getElementById('profileDropdown').classList.toggle('show');
         }
 
 
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const dropdown = document.querySelector('.profile-dropdown');
             if (!dropdown.contains(e.target)) {
                 document.getElementById('profileDropdown').classList.remove('show');

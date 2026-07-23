@@ -704,7 +704,7 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <input type="text" class="search-box" placeholder="Tìm kiếm quyết toán, ban tổ chức..."/>
+
 
         <div class="topbar-right">
             <div class="profile-dropdown">
@@ -877,7 +877,7 @@
                 <tr th:each="settlement, settlementStat : ${listSettlements}">
                     <td><span th:text="${settlementStat.count}">N/A</span></td>
                     <td style="font-weight:600"
-                        th:text="${settlement.lastNameOrganizer + ' ' + settlement.middleNameOrganizer + ' ' + settlement.firstNameOrganizer}">
+                        th:text="${(settlement.firstNameOrganizer ?: '') + ' ' + (settlement.middleNameOrganizer ?: '') + ' ' + (settlement.lastNameOrganizer ?: '')}">
                         N/A
                     </td>
                     <td style="font-weight:600"

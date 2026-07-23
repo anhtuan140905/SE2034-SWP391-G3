@@ -114,7 +114,7 @@ public class FinanceController {
 
     @GetMapping("/createSettlement")
     public String getCreateSettlementPage(Model model,
-                                          String tab,
+                                          @RequestParam(required = false, defaultValue = "all") String tab,
                                           @AuthenticationPrincipal CustomUserDetails userDetails,
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
                                           @RequestParam(required = false) Long eventId) {

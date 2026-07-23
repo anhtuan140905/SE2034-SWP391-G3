@@ -8,6 +8,6 @@ import java.math.BigDecimal;
 @Builder
 public class DashboardStatsDTO {
     private BigDecimal totalRevenue;       // Tổng doanh thu thực tế (PAID)
-    private Long totalTicketsSold;         // Tổng số lượng vé đã bán
+    private Integer totalTicketsSold;         // Tổng số lượng vé đã bán
     private BigDecimal settledAmount;      // Số tiền kết toán tạm tính
 }

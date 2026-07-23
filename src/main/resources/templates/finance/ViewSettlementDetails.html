@@ -493,7 +493,6 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <input type="text" class="search-box" placeholder="Tìm kiếm quyết toán, ban tổ chức..."/>
 
         <div class="topbar-right">
             <div class="profile-dropdown">
@@ -536,7 +535,7 @@
         <a class="back-btn" onclick="history.back()" href="#">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"
             th:href="@{/finance/listSettlement(tab='all')}"/></svg>
-            Quay Lại Danh Sách Quyết Toán
+            Quay Lại
         </a>
 
         <!-- Page Header -->
@@ -589,7 +588,11 @@
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ban Tổ Chức</span>
-                        <span class="dr-value" th:text="${eventDetail.lastNameOrganizer + ' ' + eventDetail.middleNameOrganizer + ' ' + eventDetail.firstNameOrganizer}">N/A</span>
+                        <span class="dr-value" th:text="${(eventDetail.firstNameOrganizer ?: '') + ' ' + (eventDetail.middleNameOrganizer ?: '') + ' ' + (eventDetail.lastNameOrganizer ?: '')}">N/A</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="dr-label">Email</span>
+                        <span class="dr-value" th:text="${eventDetail.email}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ngày Kết Thúc</span>
@@ -673,7 +676,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Người Phê Duyệt</span>
-                        <span class="dr-value" th:text="${settlementDetail.lastNameFinance + ' ' + settlementDetail.middleNameFinance + ' ' + settlementDetail.firstNameFinance}">N/A</span>
+                        <span class="dr-value" th:text="${(settlementDetail.firstNameFinance ?: '') + ' ' + (settlementDetail.middleNameFinance ?: '') + ' ' + (settlementDetail.lastNameFinance ?: '')}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Trạng Thái Hiện Tại</span>
