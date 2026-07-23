@@ -53,7 +53,6 @@
                             <i class="fa-solid fa-camera text-sm"></i>
                         </button>
 
-                        <input type="file" id="avatarFileInput" name="avatarFile" form="profileForm" accept="image/*" class="d-none">
                     </div>
 
                     <h3 class="text-white font-heading font-extrabold h4 mb-1 username-text" th:text="${userUpdateDTO != null ? userUpdateDTO.lastName : 'Alex Rivera'}"></h3>
@@ -101,6 +100,8 @@
                       method="post"
                       th:object="${userUpdateDTO}"
                       enctype="multipart/form-data">
+                    <input type="file" id="avatarFileInput" name="avatarFile"  accept="image/*" class="d-none">
+
                     <div class="row g-4 text-start">
                         <div class="col-md-4">
                             <div class="profile-input-group">

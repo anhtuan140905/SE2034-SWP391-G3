@@ -6,7 +6,6 @@
 <body>
 
 <header th:fragment="header" class="mod-header">
-
     <div class="header-breadcrumb">
         <span th:text="${pageTitle != null ? pageTitle : 'TRANG QUẢN TRỊ KIỂM DUYỆT'}">TRANG QUẢN TRỊ KIỂM DUYỆT</span>
     </div>
@@ -20,7 +19,7 @@
                 <span class="header-greeting">
                     Xin Chào,
                     <strong th:if="${#authentication != null}"
-                            th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">ALICE
+                            th:text="${#authentication.principal.user.firstName + ' ' + #authentication.principal.user.lastName}">Phúc
                     </strong>
                 </span>
                 <i class="fa-solid fa-chevron-down arrow-icon"></i>
@@ -28,7 +27,12 @@
 
             <ul class="dropdown-menu">
                 <li>
-                    <a th:href="@{/moderator/profile}">
+                    <a th:href="@{/}">
+                        <i class="fa-solid fa-house"></i> Trang Chủ
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/profile}">
                         <i class="fa-regular fa-user"></i> Hồ sơ cá nhân
                     </a>
                 </li>
@@ -42,6 +46,17 @@
         </div>
 
     </div>
+
+    <script>
+        document.addEventListener('click', function(event) {
+            const checkbox = document.getElementById('dropdown-trigger');
+            const dropdown = document.querySelector('.user-dropdown');
+
+            if (checkbox && checkbox.checked && dropdown && !dropdown.contains(event.target)) {
+                checkbox.checked = false;
+            }
+        });
+    </script>
 
 </header>
 

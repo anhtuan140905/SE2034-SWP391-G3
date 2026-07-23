@@ -20,24 +20,36 @@ import java.time.LocalDate;
 public class UpdateAttendeeProfileDTO {
     @NotBlank(message = "First name không được để trống!")
     private String firstName;
+
     @NotBlank(message = "Middle name không được để trống!")
     private String middleName;
+
     @NotBlank(message = "Last name không được để trống!")
     private String lastName;
+
     @NotBlank(message = "Số điện thoại không được để trống!")
     private String phone;
+
     @NotBlank(message = "Email không được để trống!")
     @Email(message = "Email không hợp lệ")
     private String email;
+
     @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     private String password;
+
     private String confirmPassword;
+
     @NotNull(message = "Vui lòng chọn giới tính")
     private Gender gender;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
+
     private String avatar;
+
     public String city;
+
     public String ward;
+
     public String specificAddress;
 }
