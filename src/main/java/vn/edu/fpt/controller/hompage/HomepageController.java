@@ -121,6 +121,7 @@ public class HomepageController {
         }
         return "redirect:/profile";
     }
+
     @GetMapping("/my-tickets")
     public String getViewOwnTicket(Model model,
                                    Authentication authentication,

@@ -506,7 +506,7 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <input type="text" class="search-box" placeholder="Tìm kiếm sự kiện, quyết toán..."/>
+
 
         <div class="topbar-right">
             <div class="profile-dropdown">
@@ -588,7 +588,7 @@
                     <div class="form-group">
                         <label class="form-label">Tên Ban Tổ Chức</label>
                         <input class="form-control"
-                               th:value="${eventDetail.lastNameOrganizer + ' ' + eventDetail.middleNameOrganizer + ' ' + eventDetail.firstNameOrganizer}"
+                               th:value="${(eventDetail.firstNameOrganizer ?: '') + ' ' + (eventDetail.middleNameOrganizer ?: '') + ' ' + (eventDetail.lastNameOrganizer ?: '')}"
                                readonly/>
 
                     </div>

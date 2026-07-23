@@ -31,6 +31,7 @@ public class EventSummaryDto {
     private String lastNameOrganizer;
     private String middleNameOrganizer;
     private String firstNameOrganizer;
+    private String email;
 
 
     public EventSummaryDto(EventSummaryProjection projection) {

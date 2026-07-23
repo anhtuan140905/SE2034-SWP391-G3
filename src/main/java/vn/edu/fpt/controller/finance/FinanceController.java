@@ -1,16 +1,13 @@
 package vn.edu.fpt.controller.finance;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.model.User;
-import vn.edu.fpt.modelview.request.auth.UpdateAttendeeProfileDTO;
 import vn.edu.fpt.modelview.request.finance.SettlementDTO;
 import vn.edu.fpt.modelview.response.finance.SettlementSummaryDTO;
 import vn.edu.fpt.modelview.response.homepage.EventSummaryDto;
@@ -22,7 +19,6 @@ import vn.edu.fpt.repository.SettlementSummaryProjection;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.security.CustomOAuth2User;
 import vn.edu.fpt.security.CustomUserDetails;
-import vn.edu.fpt.service.impl.CloudinaryService;
 import vn.edu.fpt.service.impl.UserServiceImpl;
 
 
@@ -114,7 +110,7 @@ public class FinanceController {
 
     @GetMapping("/createSettlement")
     public String getCreateSettlementPage(Model model,
-                                          String tab,
+                                          @RequestParam(required = false, defaultValue = "all") String tab,
                                           @AuthenticationPrincipal CustomUserDetails userDetails,
                                           @AuthenticationPrincipal CustomOAuth2User oAuth2Users,
                                           @RequestParam(required = false) Long eventId) {

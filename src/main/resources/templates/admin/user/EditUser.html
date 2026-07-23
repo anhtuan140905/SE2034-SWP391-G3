@@ -509,7 +509,7 @@
 
                     <div class="form-group">
                         <label>Họ Và Tên</label>
-                        <span th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></span>
+                        <span th:text="${(user.firstName ?: '') + ' ' + (user.middleName ?: '') + ' ' + (user.lastName ?: '')}"></span>
                     </div>
 
                     <div class="form-group">
@@ -519,7 +519,9 @@
 
                     <div class="form-group">
                         <label>Số Điện Thoại</label>
-                        <span th:text="${user.phone}"></span>
+                        <span   th:if="${user.phone != null}"
+                                th:text="${user.phone}"></span>
+                        <span th:unless="${user.phone != null}">Chưa cập nhật</span>
                     </div>
 
                     <div class="form-group">
@@ -581,7 +583,9 @@
 
                     <div class="form-group">
                         <label>Ngày Sinh</label>
-                        <span th:text="${user.dob}"></span>
+                        <span   th:if="${user.dob != null}"
+                                th:text="${user.dob}"></span>
+                        <span th:unless="${user.dob != null}">Chưa cập nhật</span>
                     </div>
 
                     <div class="form-group full">

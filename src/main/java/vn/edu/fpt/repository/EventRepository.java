@@ -363,7 +363,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     @Query("""
             
-                        select
+            select
             e.eventId as eventId,
             e.title as eventName,
             e.organizer.lastName as lastNameOrganizer,
@@ -372,12 +372,12 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             e.endTime as endTime,
             se.settlementId as settlementId,
             
-            (select SUM(tt.soldQuantity)
+            (select COALESCE(SUM(tt.soldQuantity), 0)
             from TicketType tt
             where tt.event.eventId = e.eventId
             )as soldTicket,
             
-            (select SUM(o.totalAmount) 
+            (select COALESCE(SUM(o.totalAmount), 0)
             from Order o
             where o.event.eventId = e.eventId and o.status = 'PAID'
             )as revenue,
@@ -389,15 +389,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             
             
             where e.endTime <= CURRENT_TIMESTAMP 
-            group by 
-            e.eventId,
-            e.title,
-            e.organizer.lastName,
-            e.organizer.middleName,
-            e.organizer.firstName,
-            e.endTime,
-            se.status,
-            se.settlementId 
             
             order by e.endTime ASC
             """)
@@ -502,6 +493,7 @@ e.title as title,
 u.first_name as firstNameOrganizer,
 u.middle_name as middleNameOrganizer,
 u.last_name as lastNameOrganizer,
+u.email as email,
 e.end_time as endTime,
 (select sum(tt.sold_quantity)
 from ticket_types tt 
