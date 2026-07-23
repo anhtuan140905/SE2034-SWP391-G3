@@ -24,5 +24,6 @@ public interface EventSummaryProjection {
     String getLastNameOrganizer();
     String getMiddleNameOrganizer();
     String getFirstNameOrganizer();
+    String getEmail();
 
 }

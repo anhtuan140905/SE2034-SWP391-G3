@@ -117,12 +117,6 @@
             gap: 18px;
         }
 
-        .notif-btn {  position: relative;
-            background: none;
-            border: none;
-            color: #ff1b8d;
-            font-size: 20px;
-            cursor: pointer; }
 
 
         .profile {
@@ -262,6 +256,7 @@
             color: #84759b;
             text-align: left; padding: 20px;
             border-bottom: 1px solid rgba(255, 42, 122, 0.12);
+            white-space: nowrap;
         }
 
         table td {
@@ -277,6 +272,7 @@
             font-size: 13px;
             font-weight: bold;
             display: inline-block;
+            white-space: nowrap;
         }
 
 
@@ -312,9 +308,7 @@
             animation: fadeIn 0.2s ease;
         }
 
-        .dropdown-menu.show {
-            display: block;
-        }
+        .dropdown-menu.show { display: block; }
 
         .dropdown-menu ul {
             list-style: none;
@@ -394,7 +388,6 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-        <input type="text" class="search-box" placeholder="Tìm kiếm địa điểm tổ chức, người dùng..."/>
 
         <div class="topbar-right">
 
@@ -509,7 +502,7 @@
                     <th>Địa Điểm </th>
                     <th>Thời Gian Diễn Ra </th>
                     <th>Thời Gian Kết Thúc </th>
-                    <th>Số Lượng Vé Đã Bán</th>
+                    <th>Vé Đã Bán</th>
                     <th>Trạng Thái </th>
                 </tr>
                 </thead>
@@ -539,14 +532,25 @@
         <div class="table-box" style="margin-top: 30px;">
             <h2>Top 5 Sự Kiện Bán Vé Nhiều Nhất </h2>
             <table>
+                <colgroup>
+                    <col style="width: 5px;">
+                    <col style="width: 330px;">
+                    <col style="width: 200px;">
+                    <col style="width: 80px;">
+                    <col style="width: 60px;">
+                    <col style="width: 60px;">
+                    <col style="width: 100px;">
+                    <col style="width: 180px;">
+                    <col style="width: 80px;">
+                </colgroup>
                 <thead>
                 <tr>
                     <th>STT</th>
                     <th>Tên Sự Kiện</th>
                     <th>Địa Điểm </th>
                     <th>Ngày Diễn Ra </th>
-                    <th>Tổng Vé Phát Hành</th>
-                    <th>Số Lượng Vé Đã Bán</th>
+                    <th>Vé Phát Hành</th>
+                    <th>Vé Đã Bán</th>
                     <th>Tỉ Lệ Bán</th>
                     <th>Doanh Thu</th>
                     <th>Trạng Thái</th>

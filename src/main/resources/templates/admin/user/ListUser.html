@@ -248,6 +248,7 @@
             color: #9ca3af;
             border-bottom: 1px solid rgba(236, 72, 153, 0.2);
             font-size: 14px;
+            white-space: nowrap;
         }
         th {
             font-weight: 700 !important;
@@ -266,18 +267,7 @@
 
 
 
-        .email {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #000000;
-        }
 
-
-        .email i {
-            color: #ff2a85;
-            font-size: 16px;
-        }
 
         .status {
             padding: 6px 14px;
@@ -559,17 +549,16 @@
                         <div class="user">
                             <img th:if="${user.avatar != null and !user.avatar.isEmpty()}"
                                  th:src="${user.avatar}"
-                                 th:alt="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"/>
+                                 th:alt="${user.firstName + ' ' + user.middleName + ' ' + user.lastName}"/>
                             <img th:unless="${user.avatar != null and !user.avatar.isEmpty()}"
                                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                                  alt="Default Avatar"/>
-                            <strong th:text="${user.lastName + ' ' + user.middleName + ' ' + user.firstName}"></strong>
+                            <strong th:text="${(user.firstName ?: '') + ' ' + (user.middleName ?: '') + ' ' + (user.lastName ?: '')}"></strong>
                         </div>
                     </td>
 
                     <td>
-                        <div class="email">
-                            <i class="fa-solid fa-envelope"></i>
+                        <div >
                             <span th:text="${user.email}"></span>
                         </div>
                     </td>
