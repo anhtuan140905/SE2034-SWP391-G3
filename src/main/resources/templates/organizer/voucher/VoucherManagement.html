@@ -80,8 +80,8 @@
                             <td class="voucher-mono" th:text="${voucher.code}">SALE10</td>
                             <td th:text="${voucher.title}">Summer Sale</td>
                             <td>
-                                <span th:if="${voucher.isActive}" class="voucher-status-badge status-active">Active</span>
-                                <span th:unless="${voucher.isActive}" class="voucher-status-badge status-inactive">Inactive</span>
+                                <span th:if="${voucher.isActive}" class="voucher-status-badge status-active">Hoạt Động</span>
+                                <span th:unless="${voucher.isActive}" class="voucher-status-badge status-inactive">Ngừng</span>
                             </td>
                             <td>
                                 <a th:href="@{/organizer/event/{id}/voucher/{voucherId}(id=${eventId}, voucherId=${voucher.voucherId})}"

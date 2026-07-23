@@ -35,6 +35,15 @@
                 </a>
             </div>
 
+            <div th:if="${successMessage}" class="alert alert-success d-flex align-items-center gap-2 mb-3">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                <span class="material-symbols-outlined">error</span>
+                <span th:text="${errorMessage}"></span>
+            </div>
+
             <div class="glass-card mb-4">
 
                 <div class="p-4 pb-0">
@@ -56,13 +65,15 @@
                                         </div>
                                         <div class="info-row">
                                             <span class="lbl">Loại giảm giá:</span>
-                                            <span class="val" th:text="${voucher.discountType}">PERCENTAGE</span>
+                                            <span class="val" th:text="${voucher.discountType.name() == 'PERCENT' ? 'Giảm theo phần trăm'
+                                                    : 'Giảm theo số tiền trực tiếp (đ)'}">Phần trăm</span>
                                         </div>
                                         <div class="info-row">
                                             <span class="lbl">Giá trị giảm:</span>
                                             <span class="val"
                                                   th:if="${voucher.discountType.name() == 'PERCENT'}"
-                                                  th:text="${voucher.discountValue + '%'}">10%</span>
+                                                  th:text="${voucher.discountValue + '%'}">10%
+                                            </span>
                                             <span class="val"
                                                   th:if="${voucher.discountType.name() != 'PERCENT'}"
                                                   th:text="${#numbers.formatDecimal(voucher.discountValue,0,'COMMA',0,'POINT') + ' ₫'}">100.000 ₫</span>
@@ -93,7 +104,7 @@
                                         </div>
                                         <div class="info-row">
                                             <span class="lbl">Trạng thái:</span>
-                                            <span class="val" th:text="${voucher.isActive ? 'Active' : 'Inactive'}">Active</span>
+                                            <span class="val" th:text="${voucher.isActive ? 'Hoạt Động' : 'Ngừng Hoạt Động'}">Hoạt Động</span>
                                         </div>
                                     </div>
                                 </div>
@@ -121,8 +132,8 @@
                                         <label class="voucher-label">Trạng thái</label>
                                         <select class="form-select voucher-input" name="isActive"
                                                 style="max-width:220px;">
-                                            <option th:value="true" th:selected="${voucher.isActive}">Active</option>
-                                            <option th:value="false" th:selected="${!voucher.isActive}">Inactive
+                                            <option th:value="true" th:selected="${voucher.isActive}">Hoạt Động</option>
+                                            <option th:value="false" th:selected="${!voucher.isActive}">Ngừng
                                             </option>
                                         </select>
                                         <button type="submit" class="btn-primary-solid mt-3">

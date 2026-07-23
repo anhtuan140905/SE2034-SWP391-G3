@@ -17,4 +17,6 @@ public interface VoucherService {
     VoucherValidationResult validate(Long voucherId, Long eventId, Long userId, BigDecimal subtotal);
 
     List<Voucher> findAvailableVouchersByEvent(Long eventId);
+
+    void updateVoucherStatus(Long eventId, Long voucherId, Boolean isActive);
 }
