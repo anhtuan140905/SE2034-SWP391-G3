@@ -13,7 +13,7 @@
     <link rel="stylesheet" th:href="@{/homepage/css/header.css}" />
     <link rel="stylesheet" th:href="@{/homepage/css/footer.css}" />
 </head>
-<body>
+<body class="page-layout">
 
 <!-- Deep Ambient Glow Circles -->
 <div class="background-glows" id="favourite-glows">
@@ -85,7 +85,14 @@
                     <i class="fa-solid fa-location-dot"></i>
                     <div>
                         <strong th:text="${event.venueName}">TRUNG TÂM HỘI NGHỊ QUỐC GIA</strong>
-                        <p class="favorite-address" th:text="${event.description}">mô tả</p>
+                        <p class="favorite-address" th:text="${event.description}"
+                            style="display: -webkit-box;
+                                    -webkit-box-orient: vertical;
+                                    -webkit-line-clamp: 2;
+                                    line-clamp: 2;
+                                    line-height: 1.5;
+                                    overflow: hidden;
+                                    padding: 0;">mô tả</p>
                     </div>
                 </div>
 

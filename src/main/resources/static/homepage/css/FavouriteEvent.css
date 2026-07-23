@@ -811,3 +811,15 @@ h1, h2, h3, h4, h5, h6 {
         display: none; /* Ẩn khuyết vé trên mobile để tránh lỗi layout */
     }
 }
+
+.text-truncate-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+
+    line-height: 1.5;
+    height: 4.5em;
+    overflow: hidden;
+    padding: 0;
+}

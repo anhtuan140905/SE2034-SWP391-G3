@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.service.TicketService;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -27,14 +28,11 @@ public class PaymentService {
     private final SeatLockRepository seatLockRepository;
     private final TicketTypeRepository ticketTypeRepository;
     private final TicketService ticketService;
+    private final VoucherUsageRepository voucherUsageRepository;
 
-    /**
-     * Luồng user tự xác nhận thanh toán (VietQR).
-     * Có check quyền sở hữu Order vì nguồn tin cậy duy nhất ở đây là session đăng nhập.
-     * Được gọi từ CheckoutController (endpoint /checkout/{orderId}/confirm).
-     */
+
     @Transactional
-    public void confirmPayment(Long orderId, User currentUser) {
+    public boolean confirmPayment(Long orderId, User currentUser) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order không tồn tại"));
 
@@ -42,30 +40,52 @@ public class PaymentService {
             throw new IllegalArgumentException("Bạn không có quyền xác nhận order này");
         }
 
-        confirmPaymentInternal(order);
+        return confirmPaymentInternal(order);
     }
 
-    /**
-     * Luồng gateway callback (VNPay).
-     * Không check user vì tính hợp lệ đã được đảm bảo bởi chữ ký HMAC SHA512
-     * verify ở VNPayService.verifyReturn() trước khi gọi hàm này.
-     * Được gọi từ VNPayService.processReturn().
-     */
+
     @Transactional
-    public void confirmPaymentByGateway(Long orderId) {
+    public boolean confirmPaymentByGateway(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalStateException("Order không tồn tại"));
 
-        confirmPaymentInternal(order);
+        return confirmPaymentInternal(order);
     }
 
-    /**
-     * Logic core dùng chung cho cả 2 luồng: set trạng thái Payment/Order,
-     * sinh Ticket, cập nhật soldQuantity, xóa SeatLock.
-     */
-    private void confirmPaymentInternal(Order order) {
+    @Transactional
+    public void failPaymentByGateway(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalStateException("Order không tồn tại"));
+
+        // Callback thất bại đến muộn không được phép làm hỏng đơn đã thanh toán.
         if (order.getStatus() == OrderStatus.PAID) {
-            return; // chặn double-click / double callback
+            return;
+        }
+
+        Payment payment = paymentRepository.findByOrder_OrderId(orderId)
+                .orElseThrow(() -> new IllegalStateException("Order chưa có Payment"));
+
+        payment.setStatus(PaymentStatus.FAILED);
+        paymentRepository.save(payment);
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        List<Long> seatIds = order.getOrderDetails().stream()
+                .map(detail -> detail.getSeat().getSeatId())
+                .collect(Collectors.toList());
+        if (!seatIds.isEmpty()) {
+            seatLockRepository.deleteBySeatSeatIdIn(seatIds);
+        }
+    }
+
+    private boolean confirmPaymentInternal(Order order) {
+        if (order.getStatus() == OrderStatus.PAID) {
+            return true; // chặn double-click / double callback
+        }
+        if (order.getExpiresAt() != null && !order.getExpiresAt().isAfter(Instant.now())) {
+            expireOrderInternal(order);
+            return false;
         }
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new IllegalStateException("Order không ở trạng thái chờ thanh toán");
@@ -91,7 +111,13 @@ public class PaymentService {
         orderRepository.save(order);
 
         ticketService.generateTicketsForOrder(order);
-
+        if (order.getVoucher() != null) {
+            VoucherUsage voucherUsage = new VoucherUsage();
+            voucherUsage.setVoucher(order.getVoucher());
+            voucherUsage.setOrder(order);
+            voucherUsage.setUserId(order.getUser().getId());
+            voucherUsageRepository.save(voucherUsage);
+        }
         // Update sold_quantity — group theo TicketType, soldQuantity là Integer
         Map<TicketType, Integer> countByType = new HashMap<>();
         for (OrderDetail detail : order.getOrderDetails()) {
@@ -108,6 +134,22 @@ public class PaymentService {
                 .map(detail -> detail.getSeat().getSeatId())
                 .collect(Collectors.toList());
         seatLockRepository.deleteBySeatSeatIdIn(seatIds);
+        return true;
+    }
+    private void expireOrderInternal(Order order) {
+        paymentRepository.findByOrder_OrderId(order.getOrderId()).ifPresent(payment -> {
+            payment.setStatus(PaymentStatus.FAILED);
+            paymentRepository.save(payment);
+        });
+        order.setStatus(OrderStatus.EXPIRED);
+        orderRepository.save(order);
+
+        List<Long> seatIds = order.getOrderDetails().stream()
+                .map(detail -> detail.getSeat().getSeatId())
+                .collect(Collectors.toList());
+        if (!seatIds.isEmpty()) {
+            seatLockRepository.deleteBySeatSeatIdIn(seatIds);
+        }
     }
 
     public Payment findById(Long orderId) {
@@ -141,6 +183,9 @@ public class PaymentService {
 
         if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new IllegalStateException("Order không ở trạng thái chờ thanh toán");
+        }
+        if (order.getExpiresAt() != null && !order.getExpiresAt().isAfter(Instant.now())) {
+            throw new IllegalStateException("Đơn hàng đã hết thời gian thanh toán");
         }
 
         Payment payment = paymentRepository.findByOrder_OrderId(orderId)

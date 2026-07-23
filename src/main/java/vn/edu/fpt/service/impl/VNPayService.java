@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -24,7 +25,7 @@ public class VNPayService {
     @Autowired
     private VNPayConfig vnPayConfig;
 
-    public String buildPaymentUrl(String txnRef, long amountVND, String orderInfo, String ipAddress) {
+    public String buildPaymentUrl(String txnRef, long amountVND, String orderInfo, String ipAddress, Instant orderExpiresAt) {
         System.out.println("TmnCode loaded: [" + vnPayConfig.getTmnCode() + "]");
         System.out.println("HashSecret loaded: [" + vnPayConfig.getHashSecret() + "]");
         System.out.println("HashSecret length: " + vnPayConfig.getHashSecret().length());
@@ -48,7 +49,7 @@ public class VNPayService {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, 15);
-        String expireDate = formatter.format(cal.getTime());
+        String expireDate = formatter.format(Date.from(orderExpiresAt));
         params.put("vnp_ExpireDate", expireDate);
 
         StringBuilder hashData = new StringBuilder();
@@ -160,12 +161,17 @@ public class VNPayService {
             payment.setVnpTransactionNo(params.get("vnp_TransactionNo"));
             this.paymentService.save(payment);
 
-            paymentService.confirmPaymentByGateway(payment.getOrder().getOrderId());
-
+            boolean confirmed = paymentService.confirmPaymentByGateway(payment.getOrder().getOrderId());
+            if (!confirmed) {
+                return VNPayReturnResult.failed(
+                        payment.getOrder().getOrderId(),
+                        payment.getOrder().getEvent().getEventId(),
+                        "Đơn hàng đã hết thời gian thanh toán. Ghế đã được mở lại."
+                );
+            }
             return VNPayReturnResult.success(payment.getOrder().getOrderId(), payment.getOrder().getEvent().getEventId(), "Thanh toán thành công!");
         } else {
-            payment.setStatus(PaymentStatus.FAILED);
-            this.paymentService.save(payment);
+            paymentService.failPaymentByGateway(payment.getOrder().getOrderId());
 
             return VNPayReturnResult.failed(payment.getOrder().getOrderId(), payment.getOrder().getEvent().getEventId(),
                     "Thanh toán thất bại hoặc đã bị hủy. Mã lỗi: " + params.get("vnp_ResponseCode"));

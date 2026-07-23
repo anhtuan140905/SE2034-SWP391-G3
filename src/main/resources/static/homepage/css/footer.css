@@ -224,3 +224,23 @@ footer {
     0%, 100% { transform: scale(1); }
     50%       { transform: scale(1.15); }
 }
+
+html,
+body {
+    min-height: 100%;
+}
+
+body.page-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body.page-layout > main {
+    flex: 1 0 auto;
+    width: 100%;
+}
+
+body.page-layout > footer {
+    flex-shrink: 0;
+}

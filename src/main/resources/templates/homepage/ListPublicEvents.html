@@ -186,7 +186,7 @@
                         <a th:href="@{/events/detail/{id}(id=${event.id})}" th:text="${event.title}">Title</a>
                     </h5>
 
-                    <p class="text-secondary-light small pb-2" th:text="${event.description}">Description</p>
+                    <p class="text-secondary-light small mb-2 text-truncate-3" th:text="${event.description}">Description</p>
 
                     <div class="event-details-meta">
                         <div class="meta-element">

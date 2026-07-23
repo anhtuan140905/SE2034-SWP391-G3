@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.edu.fpt.modelview.response.organizer.OrderDto;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.OrderService;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.security.CustomUserDetails;
@@ -25,7 +26,7 @@ public class OrderController {
                                         @RequestParam(defaultValue = "") String keyword,
                                          @RequestParam(required = false) String status,
                                          @RequestParam(defaultValue = "0") int page,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails
+                                         @AuthenticationPrincipal AuthenticatedUser userDetails
                                         , Model model){
         if(!staffService.checkPermission(userDetails.getUser().getId(),id,"STAFF_ORDER_LIST_VIEW")){
             model.addAttribute("eventId", id);

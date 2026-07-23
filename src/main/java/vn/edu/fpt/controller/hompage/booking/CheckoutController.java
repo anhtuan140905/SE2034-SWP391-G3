@@ -6,14 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.exception.VoucherValidationException;
 import vn.edu.fpt.model.*;
 import vn.edu.fpt.model.constant.OrderStatus;
-import vn.edu.fpt.model.constant.PaymentStatus;
 import vn.edu.fpt.service.*;
 import vn.edu.fpt.service.impl.PaymentService;
 import vn.edu.fpt.service.impl.VNPayService;
@@ -29,7 +27,6 @@ public class CheckoutController {
     private final CheckoutService checkoutService;
     private final OrderService orderService;
     private final PaymentService paymentService;
-    private final TicketService ticketService;
     private final SeatLockService seatLockService;
     private final VNPayService vnPayService;
 
@@ -74,7 +71,6 @@ public class CheckoutController {
     }
 
     @PostMapping("/success/{orderId}")
-    @Transactional
     public String autoConfirmPayment(
             @PathVariable("orderId") Long orderId,
             @AuthenticationPrincipal AuthenticatedUser currentUser,
@@ -96,18 +92,14 @@ public class CheckoutController {
             return "redirect:/my-tickets";
         }
 
-        Payment payment = this.paymentService.findByOrderId(orderId);
-        if(payment == null) {
+        // Dùng chung một transaction xác nhận thanh toán để Payment, Order,
+        // Ticket, VoucherUsage, soldQuantity và SeatLock luôn nhất quán.
+        boolean confirmed = this.paymentService.confirmPayment(orderId, currentUser.getUser());
+        if (!confirmed) {
             redirectAttributes.addFlashAttribute("toastType", "danger");
-            redirectAttributes.addFlashAttribute("toastMessage", "Không tìm thấy thông tin thanh toán");
-            return "redirect:/events";
+            redirectAttributes.addFlashAttribute("toastMessage", "Đơn hàng đã hết thời gian thanh toán. Ghế đã được mở lại.");
+            return "redirect:/events/detail/" + order.getEvent().getEventId();
         }
-
-        order.setStatus(OrderStatus.PAID);
-        payment.setStatus(PaymentStatus.SUCCESS);
-        this.orderService.handleSaveOrder(order);
-        this.paymentService.handleSavePayment(payment);
-        this.ticketService.handleSaveTicketByOrder(order);
         redirectAttributes.addFlashAttribute("toastType", "success");
         redirectAttributes.addFlashAttribute("toastMessage", "Thanh toán thành công, kiểm tra vé trong phần vé của tôi và email");
         return "redirect:/my-tickets";
@@ -159,7 +151,13 @@ public class CheckoutController {
 
         try {
             Order order = this.orderService.findById(orderId);
-            paymentService.confirmPayment(orderId, userDetails.getUser());
+            boolean confirmed = paymentService.confirmPayment(orderId, userDetails.getUser());
+            if (!confirmed) {
+                redirectAttributes.addFlashAttribute("paymentStatus", "failed");
+                redirectAttributes.addFlashAttribute("paymentMessage",
+                        "Đơn hàng đã hết thời gian thanh toán. Ghế đã được mở lại.");
+                return "redirect:/events/detail/" + order.getEvent().getEventId();
+            }
             redirectAttributes.addFlashAttribute("paymentStatus", "success");
             redirectAttributes.addFlashAttribute("paymentMessage",
                     "Thanh toán thành công, kiểm tra vé trong phần vé của tôi và email");
@@ -186,7 +184,8 @@ public class CheckoutController {
                     payment.getVnpTxnRef(),
                     payment.getAmount().longValue(),
                     "Thanh toan don hang " + orderId,
-                    ipAddress
+                    ipAddress,
+                    payment.getOrder().getExpiresAt()
             );
 
             return "redirect:" + paymentUrl;
