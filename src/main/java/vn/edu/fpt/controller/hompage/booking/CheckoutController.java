@@ -40,8 +40,9 @@ public class CheckoutController {
 
         User user = currentUser.getUser();
         try {
+            Long eventId = checkoutService.resolveEventIdFromSeats(seatIds);
             Long orderId = checkoutService.proceedToPayment(seatIds, voucherId, user);
-            return "redirect:/checkout/" + orderId;
+            return "redirect:/checkout/" + orderId + "?eventId=" + eventId;
         } catch (VoucherValidationException ex) {
             Long eventId = checkoutService.resolveEventIdFromSeats(seatIds);
             return "redirect:/events/" + eventId + "/choose_seat?error=voucher&code=" + ex.getErrorCode();
@@ -128,17 +129,30 @@ public class CheckoutController {
 
     @GetMapping("/{orderId}")
     public String showCheckoutPage(@PathVariable Long orderId,
+                                   @RequestParam(value = "eventId", required = false) Long eventId,
                                    @AuthenticationPrincipal AuthenticatedUser userDetails,
-                                   Model model) {
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
         User user = new User();
         if(userDetails != null) {
             user = userDetails.getUser();
+        } else {
+            return "redirect:/login";
         }
-        Order order = orderService.getOrderForCheckout(orderId, user);
+        try {
+            Order order = orderService.getOrderForCheckout(orderId, userDetails.getUser());
+            model.addAttribute("order", order);
+            model.addAttribute("payment", order.getPayment());
+            return "homepage/Checkout"; // templates/checkout/checkout.html
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("toastType", "danger");
+            redirectAttributes.addFlashAttribute("toastMessage", ex.getMessage());
 
-        model.addAttribute("order", order);
-        model.addAttribute("payment", order.getPayment());
-        return "homepage/Checkout"; // templates/checkout/checkout.html
+            if (eventId != null) {
+                return "redirect:/events/" + eventId + "/choose_seat";
+            }
+            return "redirect:/events";
+        }
     }
 
     @PostMapping("/{orderId}/confirm")
