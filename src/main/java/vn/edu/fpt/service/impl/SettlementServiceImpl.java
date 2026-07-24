@@ -173,6 +173,7 @@ public class SettlementServiceImpl implements SettlementService {
                 eventDetail.getFirstNameOrganizer(),
                 eventDetail.getTitle(),
                 eventDetail.getTotalTickets(),
+                settlementDetail.getSettlementId(),
                 settlementDetail.getPayoutAmount(),
                 settlementDetail.getPaidAt(),
                 "Chuyển Khoản Ngân Hàng",

@@ -169,7 +169,7 @@ public class EmailService {
 
     @Async
     public void sendSettlementPaidEmail(String toEmail, String lastNameOrganizer, String middleNameOrganizer, String firstNameOrganizer, String eventTitle,
-                                        Long ticketsSold, BigDecimal netAmount,
+                                        Long ticketsSold, Long settlementId, BigDecimal netAmount,
                                         LocalDateTime paidAt, String paymentMethod, String bankName,
                                         String accountNumber, String accountHolder) {
         try {
@@ -179,6 +179,7 @@ public class EmailService {
             context.setVariable("firstNameOrganizer", firstNameOrganizer);
             context.setVariable("eventTitle", eventTitle);
             context.setVariable("ticketsSold", ticketsSold);
+            context.setVariable("settlementId", settlementId);
             context.setVariable("netAmount", netAmount);
             context.setVariable("paidAt", paidAt);
             context.setVariable("paymentMethod", paymentMethod);

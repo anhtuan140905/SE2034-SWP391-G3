@@ -52,6 +52,10 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Mã quyết toán</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${settlementId}"></td>
+                            </tr>
+                            <tr>
                                 <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Thời gian xử lý</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${#temporals.format(paidAt, 'dd/MM/yyyy HH:mm')}"></td>
                             </tr>
@@ -70,15 +74,15 @@
                             </tr>
                             <tr>
                                 <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888; width:45%;">Ngân hàng</td>
-                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${bankName}">--</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${bankName}"></td>
                             </tr>
                             <tr>
                                 <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Số tài khoản</td>
-                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountNumber}">--</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountNumber}"></td>
                             </tr>
                             <tr>
                                 <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Chủ tài khoản</td>
-                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountHolder}">--</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountHolder}"></td>
                             </tr>
                         </table>
 
