@@ -23,7 +23,7 @@ public class StaffController {
         private StaffService staffService;
     @GetMapping("/event/{id}/members")
     public String ListMember(@PathVariable Long id,
-                             @RequestParam(defaultValue = "") String keyword,
+                                 @RequestParam(defaultValue = "") String keyword,
                              @RequestParam(required = false) Long roleId,
                              @RequestParam(defaultValue = "0") int page,
                              @AuthenticationPrincipal AuthenticatedUser userDetails,

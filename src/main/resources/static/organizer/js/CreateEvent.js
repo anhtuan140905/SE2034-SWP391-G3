@@ -41,6 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         });
         renderTiers();
+          if (typeof serverTimeline !== "undefined" && serverTimeline && serverTimeline.length > 0) {
+                 state.agenda = serverTimeline.map((item) => ({
+                           id: newAgendaId(),
+                          time: item.time || "",
+                          desc: item.active || "",
+                     }));
+                  renderAgenda();
+          }
     }
 
     const form = document.getElementById("eventForm");
@@ -657,6 +665,13 @@ function handleFormSubmit(e) {
     }
     if (!tiersValid || !agendaValid || !bannerValid) {
         e.preventDefault();
+        isSubmitting = false;
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">send</span> Gửi Tạo Sự Kiện';
+            submitBtn.style.opacity = '';
+            submitBtn.style.cursor = '';
+        }
         scrollToFirstError();
         return false;
     }
@@ -687,18 +702,6 @@ function scrollToFirstError() {
     }
 }
 
-function showToast(isDraft) {
-    const t = document.getElementById("successToast");
-    if (!t) return;
-    const span = t.querySelector("span:last-child");
-    if (span) {
-        span.textContent = isDraft
-            ? " Đã lưu bản nháp thành công!"
-            : " Sự kiện đã được đăng thành công!";
-    }
-    t.classList.remove("d-none");
-    setTimeout(() => t.classList.add("d-none"), 4000);
-}
 
 // ─── HÀM TIỆN ÍCH ─────────────────────────────────────────────────────────────
 function getVal(id) {
