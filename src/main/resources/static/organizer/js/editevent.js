@@ -690,6 +690,7 @@ function renderTiers() {
 }
 
 // ─── GỬI FORM ─────────────────────────────────────────────────────────────────
+let isSubmitting = false;
 function handleFormSubmit(e) {
     const tiersValid  = validateAllTiers();
     const agendaValid = validateAllAgenda();
@@ -710,7 +711,14 @@ function handleFormSubmit(e) {
 
     renderTiers();
     renderAgenda();
-
+    isSubmitting = true;
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Đang xử lý...'; // Bạn có thể đổi chữ tùy ý
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+    }
     if (!tiersValid || !agendaValid || !bannerValid) {
         e.preventDefault();
         scrollToFirstError();
