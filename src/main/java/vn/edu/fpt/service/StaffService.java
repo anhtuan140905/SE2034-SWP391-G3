@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface StaffService {
     boolean compareRole(Long userId,Long staffId, Long eventId);
+    void AutodeleteStaffByStaffId(Long staffId,Long eventId,Long userId);
     void deleteStaffByStaffId(Long staffId,Long eventId,Long userId);
     String getRoleNameByUserId(Long userId);
     void updateStaff(Long userId,StaffDetailDto staffDetailDto,Long eventId);

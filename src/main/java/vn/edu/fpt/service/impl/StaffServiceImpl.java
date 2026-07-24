@@ -41,7 +41,16 @@ public class StaffServiceImpl implements StaffService {
         }
         return false;
     }
-
+    @Override
+    public void AutodeleteStaffByStaffId(Long staffId,Long eventId,Long userId) {
+        UserRole userRole = organizerMemberRepository.getReferenceById(staffId).getUserRole();
+        long usageCount = organizerMemberRepository.countByUserRole_Id(userRole.getId());
+        if(usageCount>1){
+            organizerMemberRepository.deleteById(staffId);
+        }else {
+            userRoleRepository.deleteById(userRole.getId());
+        }
+    }
     @Override
     public void deleteStaffByStaffId(Long staffId,Long eventId,Long userId) {
         if(compareRole(userId,staffId,eventId)){
