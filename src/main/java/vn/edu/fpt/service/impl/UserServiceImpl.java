@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.exception.ServiceValidationException;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
@@ -192,7 +193,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng có ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng có ID: " + id));
     }
 
     public List<User> searchUser(String keyword) {

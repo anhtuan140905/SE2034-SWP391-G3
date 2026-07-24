@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Thông báo thanh toán quyết toán</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f5; font-family: Arial, Helvetica, sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5; padding:24px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:8px; overflow:hidden;">
+
+                <!-- Header -->
+                <tr>
+                    <td style="background-color:#e91e63; padding:24px 32px;">
+                        <span style="color:#ffffff; font-size:20px; font-weight:bold;">EventHub</span>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td style="padding:32px;">
+                        <p style="font-size:16px; color:#333333; margin:0 0 16px 0;">
+                            Kính gửi <b th:text="${organizerName}">Nhà Tổ Chức</b>,
+                        </p>
+                        <p style="font-size:15px; color:#333333; margin:0 0 24px 0;">
+                            Khoản quyết toán cho sự kiện của bạn đã được xử lý thanh toán thành công. Chi tiết như sau:
+                        </p>
+
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
+                            <tr>
+                                <td colspan="2" style="padding:8px 0; border-bottom:1px solid #eeeeee; font-size:14px; font-weight:bold; color:#e91e63;">
+                                    Thông Tin Sự Kiện
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888; width:45%;">Tên sự kiện</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333; font-weight:bold;" th:text="${eventTitle}"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888;">Số vé đã bán</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${ticketsSold}">0</td>
+                            </tr>
+                        </table>
+
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
+                            <tr>
+                                <td colspan="2" style="padding:8px 0; border-bottom:1px solid #eeeeee; font-size:14px; font-weight:bold; color:#e91e63;">
+                                    Hồ Sơ Quyết Toán
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888;">Thời gian xử lý</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${#temporals.format(paidAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888;">Phương thức chi trả</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${paymentMethod}"></td>
+                            </tr>
+                        </table>
+
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:20px;">
+                            <tr>
+                                <td colspan="2" style="padding:8px 0; border-bottom:1px solid #eeeeee; font-size:14px; font-weight:bold; color:#e91e63;">
+                                    Thông Tin Nhận Tiền
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888; width:45%;">Ngân hàng</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${bankName}">--</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888;">Số tài khoản</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountNumber}">--</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px 0; font-size:14px; color:#888888;">Chủ tài khoản</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountHolder}">--</td>
+                            </tr>
+                        </table>
+
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fdf2f6; border-radius:6px; margin-bottom:24px;">
+                            <tr>
+                                <td style="padding:16px 20px;">
+                                    <span style="font-size:14px; color:#888888;">Số tiền chi trả ròng</span><br/>
+                                    <span style="font-size:22px; font-weight:bold; color:#e91e63;" th:text="${netAmount}">0đ</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="font-size:13px; color:#999999; margin:0;">
+                            Nếu có bất kỳ thắc mắc nào về khoản thanh toán này, vui lòng liên hệ với chúng tôi và cung cấp mã quyết toán ở trên.
+                        </p>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td style="background-color:#fafafa; padding:20px 32px; text-align:center;">
+                        <span style="font-size:12px; color:#aaaaaa;">© EventHub. Email này được gửi tự động, vui lòng không phản hồi trực tiếp.</span>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

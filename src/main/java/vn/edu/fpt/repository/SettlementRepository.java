@@ -107,7 +107,9 @@ o.bank_branch as bankBranch,
 b.name as bankName
 from settlements se
 left join users u on u.email = se.updated_by
-left join organizer_profiles o on u.id = o.user_id
+left join events e on e.event_id = se.event_id
+left join users organizer on organizer.id = e.organizer_id
+left join organizer_profiles o on organizer.id = o.user_id
 left join banks b on o.bank_id = b.id
 where se.settlement_id = :settlementId
 """, nativeQuery = true)

@@ -888,7 +888,7 @@
                         0đ
                     </td>
                     <td style="font-weight:600"
-                        th:text="${#temporals.format(settlement.createAt,'dd/MM/yyyy HH:mm')}">N/A
+                        th:text="${#temporals.format(settlement.createAt,'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}">N/A
                     </td>
                     <td style="font-weight:600"
                         th:text="${settlement.timeDisplay}"
