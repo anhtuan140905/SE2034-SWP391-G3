@@ -25,6 +25,7 @@ public interface UserService {
     public Optional<User> findByEmailWithRoles(String username);
     public User getUserById(Long id);
     public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result);
+    public UpdateAttendeeProfileDTO getProfileDTOByEmail(String email);
     public List<User> getAllUser();
     public User findById(Long id);
     public List<User> searchUser(String keyword);
