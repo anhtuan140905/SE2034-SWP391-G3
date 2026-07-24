@@ -300,20 +300,14 @@ public class EventServiceImpl implements EventService {
 
         eventRepository.save(event);
     }
-
     @Override
     @Transactional
     public void SetStatusEvent() {
-        List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.INACTIVE,LocalDateTime.now());
+        List<Event> eventSetStatus = eventRepository.findEndedEvents(EventStatus.ACTIVE,LocalDateTime.now());
         if (eventSetStatus.isEmpty()) {
             return;
         }
         for (Event event : eventSetStatus) {
-            // Đổi trạng thái sự kiện Là Kết thúc
-            if (event.getStartTime().isBefore(LocalDateTime.now()) && event.getEndTime().isAfter(LocalDateTime.now()) ){
-                event.setStatus(EventStatus.INACTIVE);
-
-            }else {
                 event.setStatus(EventStatus.ENDED);
                 // Thêm các logic khác (nếu có) vào đây...
                 processSettlement(event.getEventId());
@@ -328,14 +322,11 @@ public class EventServiceImpl implements EventService {
                     Long organizerUserId = event.getOrganizer().getId();
                     staffService.AutodeleteStaffByStaffId(organizerMember.getId(), event.getEventId(), organizerUserId);
                 }
-
-            }
-          eventRepository.saveAll(eventSetStatus);
         }
-
-
+        eventRepository.saveAll(eventSetStatus);
 
     }
+
 
     private void processSettlement(Long eventId) {
         try {

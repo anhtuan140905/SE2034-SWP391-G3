@@ -23,7 +23,8 @@ import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
-    @Query("SELECT e FROM Event e WHERE (e.status = :activeStatus AND e.endTime < :now) Or (e.startTime <= :now AND e.endTime >= :now)")
+//    @Query("SELECT e FROM Event e WHERE (e.status = :activeStatus AND e.endTime < :now) Or (e.startTime <= :now AND e.endTime >= :now)")
+    @Query("SELECT e FROM Event e WHERE (e.status = :activeStatus AND e.endTime < :now) ")
     List<Event> findEndedEvents(@Param("activeStatus") EventStatus activeStatus, @Param("now") LocalDateTime now);
 
     @Query("SELECT COUNT(e) FROM Event e WHERE e.status IN :statuses")
