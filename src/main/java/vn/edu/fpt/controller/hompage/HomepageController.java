@@ -38,6 +38,7 @@ public class HomepageController {
     private final EventService eventService;
     private final TicketService ticketService;
     private final EventCategoryServiceImpl eventCategoryService;
+    private final FavouriteEventService favouriteEventService;
 
     @GetMapping("/")
     public String homepage(
@@ -63,34 +64,32 @@ public class HomepageController {
     public String getProfile(Model model,
                              @AuthenticationPrincipal AuthenticatedUser userDetails,
                              @AuthenticationPrincipal CustomOAuth2User oAuth2Users) {
-        User user = new User();
-        if(userDetails != null) {
+        String email = (userDetails != null) ? userDetails.getUser().getEmail() : oAuth2Users.getName();
+        UpdateAttendeeProfileDTO dto = this.userService.getProfileDTOByEmail(email);
 
-            user = this.userServiceImpl.findByUsername(userDetails.getUser().getEmail());
-        } else {
-            user = this.userServiceImpl.findByUsername(oAuth2Users.getName());
-        }
-        UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setMiddleName(user.getMiddleName());
-        dto.setAvatar(user.getAvatar());
-        dto.setGender(user.getGender());
-        dto.setPhone(user.getPhone());
-        dto.setEmail(user.getEmail());
-        dto.setAvatar(user.getAvatar());
-        dto.setDob(user.getDob());
-        if(user.getAddress() != null){
-            dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
-            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
-            dto.setSpecificAddress(user.getAddress().getSpecificAddress());
-        }
+        this.populateProfileStats(model, email);
 
         model.addAttribute("cities", this.cityService.getCityList());
         model.addAttribute("userUpdateDTO", dto);
+
         return "homepage/UpdateProfileUser";
     }
 
+    private void populateProfileStats(Model model, String email) {
+        User user = this.userService.findByUsername(email);
+        if (user != null) {
+            Long ticketCount = this.ticketService.countAllTicketOfUser(user.getId());
+            Long attendedCount = this.eventService.countAttendedEvent(user.getId());
+            long favCount = 0;
+            if (this.favouriteEventService.checkUserHaveFavouriteEvent(user.getId())) {
+                favCount = this.favouriteEventService.findAllByUserId(user.getId()).size();
+            }
+            model.addAttribute("ticketCount", ticketCount);
+            model.addAttribute("attendedCount", attendedCount);
+            model.addAttribute("favCount", favCount);
+        }
+        model.addAttribute("cities", this.cityService.getCityList());
+    }
 
     @PostMapping("/attendee/update/profile")
     public String updateProfile(
@@ -103,20 +102,26 @@ public class HomepageController {
         if (result.hasErrors()) {
             model.addAttribute("cities", this.cityService.getCityList());
             model.addAttribute("userUpdateDTO", dto);
+
             return "homepage/UpdateProfileUser";
         }
         try {
             if(avatarFile != null && !avatarFile.isEmpty()){
                 String imageUrl = this.cloudinaryService.uploadFile(avatarFile, "avatars");
                 dto.setAvatar(imageUrl);
-            } else {
-                dto.setAvatar(null);
             }
             this.userServiceImpl.handleUpdateUser(dto, result);
+            if (result.hasErrors()) {
+                model.addAttribute("cities", this.cityService.getCityList());
+                model.addAttribute("userUpdateDTO", dto);
+
+                return "homepage/UpdateProfileUser";
+            }
         } catch (Exception e) {
             model.addAttribute("cities", this.cityService.getCityList());
             model.addAttribute("errorMsg", e.getMessage());
             model.addAttribute("userUpdateDTO", dto);
+
             return "homepage/UpdateProfileUser";
         }
         return "redirect:/profile";

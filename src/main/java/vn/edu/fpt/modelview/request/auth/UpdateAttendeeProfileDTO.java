@@ -18,13 +18,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateAttendeeProfileDTO {
-    @NotBlank(message = "First name không được để trống!")
+    @NotBlank(message = "Tên họ không được để trống!")
     private String firstName;
 
-    @NotBlank(message = "Middle name không được để trống!")
+    @NotBlank(message = "Tên đệm name không được để trống!")
     private String middleName;
 
-    @NotBlank(message = "Last name không được để trống!")
+    @NotBlank(message = "tên không được để trống!")
     private String lastName;
 
     @NotBlank(message = "Số điện thoại không được để trống!")
@@ -34,7 +34,8 @@ public class UpdateAttendeeProfileDTO {
     @Email(message = "Email không hợp lệ")
     private String email;
 
-    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
+    private String oldPassword;
+
     private String password;
 
     private String confirmPassword;

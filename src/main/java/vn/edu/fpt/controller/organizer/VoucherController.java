@@ -14,7 +14,6 @@ import vn.edu.fpt.modelview.request.organizer.CreateVoucherRequest;
 import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.StaffService;
 import vn.edu.fpt.service.VoucherService;
-import vn.edu.fpt.security.CustomUserDetails;
 
 import java.util.List;
 
