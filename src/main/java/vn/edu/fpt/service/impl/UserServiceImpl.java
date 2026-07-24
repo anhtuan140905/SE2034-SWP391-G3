@@ -140,31 +140,62 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
-    @Override
+    @Override 
     public void handleUpdateUser(UpdateAttendeeProfileDTO dto, BindingResult result) {
         User user = this.findByUsername(dto.getEmail());
+
         if (user == null) {
             return;
         }
-        if (dto.getPassword() != null && !dto.getPassword().isBlank() && dto.getConfirmPassword() != null && !dto.getConfirmPassword().isBlank()) {
-            if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-                result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
-            }
-            if (dto.getPassword().length() < 8) {
-                result.rejectValue("password", "error.password", "Mật khẩu phải có ít nhất 8 ký tự");
-            }
-            if (result.hasErrors()) return;
-            user.setPasswordHash((this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword())));
 
+        boolean hasPassword = dto.getPassword() != null && !dto.getPassword().isBlank();
+        boolean hasConfirmPassword = dto.getConfirmPassword() != null && !dto.getConfirmPassword().isBlank();
+        boolean hasOldPassword = dto.getOldPassword() != null && !dto.getOldPassword().isBlank();
+
+        if (hasPassword ||  hasConfirmPassword || hasOldPassword ) {
+            boolean userHasPasswordInDb = user.getPasswordHash() != null && !user.getPasswordHash().isEmpty();
+
+            if (userHasPasswordInDb) {
+                if (!hasOldPassword) {
+                    result.rejectValue("oldPassword", "error.oldPassword", "Vui long nhập mật khẩu hiện tại");
+                } else if (!this.passwordEncoderConfig.passwordEncoder().matches(dto.getOldPassword(), user.getPasswordHash())) {
+                    result.rejectValue("oldPassword", "error.oldPassword", "Mâtj khẩu hiện tại không đúng");
+                }
+            }
+
+            if (!hasPassword) {
+                result.rejectValue("password", "error.password", "Vui lòng nhập mật khẩu mới");
+            }
+
+            if (!hasConfirmPassword) {
+                result.rejectValue("confirmPassword", "error.confirmPassword", "Vui lòng nhập lại mật khâu mới");
+            }
+
+            if (hasPassword && hasConfirmPassword) {
+                if (dto.getPassword().length() < 8) {
+                    result.rejectValue("password", "error.password", "Mật khẩu mới phải nhiều hơn 8 ký tự");
+                }
+
+                if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+                    result.rejectValue("confirmPassword", "error.confirmPassword", "Không đúng với mật khẩu mới");
+                }
+            }
+
+            if (result.hasErrors()) {
+                return;
+            }
+
+            user.setPasswordHash(this.passwordEncoderConfig.passwordEncoder().encode(dto.getPassword()));
         }
+
         user.setFirstName(dto.getFirstName());
         user.setMiddleName(dto.getMiddleName());
         user.setLastName(dto.getLastName());
         user.setDob(dto.getDob());
         user.setGender(dto.getGender());
         user.setPhone(dto.getPhone());
-        if (!dto.getWard().isBlank() || !dto.getWard().isEmpty() || !dto.getWard().equals("")) {
 
+        if (dto.getWard() != null && !dto.getWard().isBlank()) {
 
             Ward ward = this.wardService.findById(Long.parseLong(dto.getWard()));
 
@@ -177,12 +208,41 @@ public class UserServiceImpl implements UserService {
                 address.setWard(ward);
                 address.setSpecificAddress(dto.getSpecificAddress());
             }
+
             user.setAddress(address);
         }
+
         if (dto.getAvatar() != null) {
             user.setAvatar(dto.getAvatar());
         }
+
         this.userRepository.save(user);
+    }
+
+    @Override
+    public UpdateAttendeeProfileDTO getProfileDTOByEmail(String email) {
+        User user = this.findByUsername(email);
+        if (user == null) {
+            return null;
+        }
+
+        UpdateAttendeeProfileDTO dto = new UpdateAttendeeProfileDTO();
+        dto.setFirstName(user.getFirstName());
+        dto.setMiddleName(user.getMiddleName());
+        dto.setLastName(user.getLastName());
+        dto.setDob(user.getDob());
+        dto.setGender(user.getGender());
+        dto.setPhone(user.getPhone());
+        dto.setAvatar(user.getAvatar());
+        dto.setEmail(user.getEmail());
+
+        if (user.getAddress() != null) {
+            dto.setCity(String.valueOf(user.getAddress().getWard().getCity().getId()));
+            dto.setWard(String.valueOf(user.getAddress().getWard().getId()));
+            dto.setSpecificAddress(user.getAddress().getSpecificAddress());
+        }
+
+        return dto;
     }
 
     public List<User> getAllUser() {
@@ -440,6 +500,5 @@ public class UserServiceImpl implements UserService {
     public String findCityNameByUserId(Long userId) {
         return this.userRepository.findCityNameByUserId(userId).orElse(null);
     }
-
 
 }

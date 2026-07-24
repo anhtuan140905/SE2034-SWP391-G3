@@ -93,7 +93,7 @@
 
         <div class="col-lg-8 col-md-7">
             <div class="glass-profile-card h-100 anim-fade-in-up" style="animation-delay: 0.15s;">
-                <h2 class="profile-heading mb-4" style="color: black !important;">Update profile</h2>
+                <h2 class="profile-heading mb-4" style="color: black !important;">Cập Nhật Thông Tin</h2>
 
                 <form id="profileForm"
                       th:action="@{/attendee/update/profile}"
@@ -101,11 +101,11 @@
                       th:object="${userUpdateDTO}"
                       enctype="multipart/form-data">
                     <input type="file" id="avatarFileInput" name="avatarFile"  accept="image/*" class="d-none">
-
+                    <input type="hidden" th:field="*{avatar}">
                     <div class="row g-4 text-start">
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="firstName" class="profile-input-label">First Name:</label>
+                                <label for="firstName" class="profile-input-label">Họ</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="firstName"
@@ -116,7 +116,7 @@
 
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="middleName" class="profile-input-label">Middle Name:</label>
+                                <label for="middleName" class="profile-input-label">Tên đệm</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="middleName"
@@ -127,7 +127,7 @@
 
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="lastName" class="profile-input-label">Last Name:</label>
+                                <label for="lastName" class="profile-input-label">Tên</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="lastName"
@@ -138,7 +138,7 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="emailInput" class="profile-input-label">Email:</label>
+                                <label for="emailInput" class="profile-input-label">Địa chỉ Email</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="emailInput"
@@ -149,7 +149,7 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="phone" class="profile-input-label">Phone:</label>
+                                <label for="phone" class="profile-input-label">Số điện thoaị</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="phone"
@@ -159,11 +159,11 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="u_gender" class="profile-input-label">Gender</label>
+                                <label for="u_gender" class="profile-input-label">Giới tính</label>
                                 <select id="u_gender" class="profile-input-control" th:field="*{gender}" onchange="handleSelect(this,'genderField')">
-                                    <option th:value="MALE">Male</option>
-                                    <option th:value="FEMALE">Female</option>
-                                    <option th:value="OTHER">Other</option>
+                                    <option th:value="MALE">Nam</option>
+                                    <option th:value="FEMALE">Nữ</option>
+                                    <option th:value="OTHER">Khác</option>
                                 </select>
                                 <span class="error-msg" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
                             </div>
@@ -171,7 +171,7 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="u_dob" class="profile-input-label">Date of Birth</label>
+                                <label for="u_dob" class="profile-input-label">Ngày sinh</label>
                                 <input type="date"
                                        id="u_dob"
                                        class="profile-input-control"
@@ -186,7 +186,7 @@
 
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="u_city" class="profile-input-label">City</label>
+                                <label for="u_city" class="profile-input-label">Tỉnh/Thành phố</label>
                                 <select id="u_city" class="profile-input-control" th:field="*{city}" onchange="handleSelect(this,'cityField')">
                                     <option value="">Chọn Tỉnh/Thành Phố</option>
                                     <option th:each="city : ${cities}"
@@ -200,7 +200,7 @@
 
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="u_ward" class="profile-input-label">Ward</label>
+                                <label for="u_ward" class="profile-input-label">Xã/Phường</label>
                                 <select id="u_ward"
                                         class="profile-input-control"
                                         th:field="*{ward}"
@@ -214,38 +214,51 @@
 
                         <div class="col-md-4">
                             <div class="profile-input-group">
-                                <label for="u_specificAddress" class="profile-input-label">Specific Address</label>
+                                <label for="u_specificAddress" class="profile-input-label">Địa chỉ cụ thể</label>
                                 <input type="text" id="u_specificAddress" class="profile-input-control" placeholder="Nhập địa chỉ cụ thể" autocomplete="email" th:field="*{specificAddress}"/>
                                 <span class="error-msg" th:if="${#fields.hasErrors('specificAddress')}" th:errors="*{specificAddress}"></span>
                             </div>
                         </div>
+
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="password" class="profile-input-label">Password</label>
+                                <label for="password" class="profile-input-label">Mật khẩu mới</label>
                                 <input type="password"
                                        id="password"
                                        class="profile-input-control"
                                        th:field="*{password}"
-                                       placeholder="Leave blank to keep current password">
+                                       placeholder="Để trống nếu không thay đổi mật khẩu mới">
                                 <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="confirmPassword" class="profile-input-label">Confirm Password</label>
+                                <label for="confirmPassword" class="profile-input-label">Xác nhận mật khẩu</label>
                                 <input type="password"
                                        id="confirmPassword"
                                        class="profile-input-control"
                                        th:field="*{confirmPassword}"
-                                       placeholder="Re-enter your new password">
+                                       placeholder="Nhập lại mật khẩu mới">
                                 <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="profile-input-group">
+                                <label for="oldPassword" class="profile-input-label">Mật khẩu hiện tại</label>
+                                <input type="password"
+                                       id="oldPassword"
+                                       class="profile-input-control"
+                                       th:field="*{oldPassword}"
+                                       placeholder="Nhập mật khẩu cũ để xác nhận đổi mật khẩu">
+                                <span class="error-msg" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}"></span>
                             </div>
                         </div>
 
                         <div class="border-top border-white/5 pt-4 mt-4 text-end">
                             <button type="submit" class="btn btn-save-changes cursor-pointer" id="btnSaveChanges">
-                                Lưu
+                                Lưu Hồ Sơ
                             </button>
                         </div>
                     </div>

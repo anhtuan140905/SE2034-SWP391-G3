@@ -1,13 +1,11 @@
 package vn.edu.fpt.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
-import vn.edu.fpt.model.OrganizerMember;
 import vn.edu.fpt.model.Role;
 import vn.edu.fpt.model.User;
 import vn.edu.fpt.model.UserRole;

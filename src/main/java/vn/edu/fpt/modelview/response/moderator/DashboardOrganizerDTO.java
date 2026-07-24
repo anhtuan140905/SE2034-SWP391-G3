@@ -2,7 +2,6 @@ package vn.edu.fpt.modelview.response.moderator;
 
 import lombok.Data;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
