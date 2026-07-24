@@ -63,15 +63,15 @@
                     <div class="bg-black/20 rounded-4 p-3 border border-white/5 my-4 text-start font-sans">
                         <div class="row text-center g-2">
                             <div class="col-4 border-end border-white/5">
-                                <span class="text-white font-extrabold font-heading d-block fs-5">0</span>
+                                <span class="text-white font-extrabold font-heading d-block fs-5" th:text="${attendedCount != null ? attendedCount : '0'}">0</span>
                                 <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Lễ hội đi</span>
                             </div>
                             <div class="col-4 border-end border-white/5">
-                                <span class="text-pink d-block font-extrabold font-heading fs-5" th:text="${favCount != null ? favCount : '3'}">0</span>
+                                <span class="text-pink d-block font-extrabold font-heading fs-5" th:text="${favCount != null ? favCount : '0'}">0</span>
                                 <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Yêu thích</span>
                             </div>
                             <div class="col-4">
-                                <span class="text-brand-orange d-block font-extrabold font-heading fs-5" th:text="${ticketCount != null ? ticketCount : '1'}">0</span>
+                                <span class="text-brand-orange d-block font-extrabold font-heading fs-5" th:text="${ticketCount != null ? ticketCount : '0'}">0</span>
                                 <span class="text-secondary-light text-[9px] font-bold uppercase tracking-wider">Vé đã mua</span>
                             </div>
                         </div>
@@ -80,10 +80,10 @@
 
                 <div class="w-100 border-top border-white/5 pt-3 mt-auto">
                     <div class="d-flex flex-column gap-2 text-start">
-                        <a th:href="@{/my-tickets}" href="/my-tickets" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5" style="border: 1px solid rgba(255,255,255,0.08);">
+                        <a th:href="@{/my-tickets}" href="/my-tickets" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5">
                             <i class="fa-solid fa-wallet text-orange me-1"></i> Quản lý thẻ vé của tôi
                         </a>
-                        <a th:href="@{/favorites}" href="/favorites" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5" style="border: 1px solid rgba(255,255,255,0.08);">
+                        <a th:href="@{/favourites}" href="/favorites" class="btn btn-outline-secondary btn-sm w-100 rounded-pill text-xs py-2 border-white/10 text-secondary-light hover:bg-white/5">
                             <i class="fa-solid fa-heart text-pink me-1"></i> Sự kiện đã ghim yêu thích
                         </a>
                     </div>
@@ -93,15 +93,16 @@
 
         <div class="col-lg-8 col-md-7">
             <div class="glass-profile-card h-100 anim-fade-in-up" style="animation-delay: 0.15s;">
-                <h2 class="profile-heading mb-4" style="color: black !important;">Cập Nhật Thông Tin</h2>
+                <h2 class="profile-heading mb-4">Cập Nhật Thông Tin</h2>
 
                 <form id="profileForm"
-                      th:action="@{/attendee/update/profile}"
+                      th:action="@{/profile}"
                       method="post"
                       th:object="${userUpdateDTO}"
                       enctype="multipart/form-data">
                     <input type="file" id="avatarFileInput" name="avatarFile"  accept="image/*" class="d-none">
                     <input type="hidden" th:field="*{avatar}">
+
                     <div class="row g-4 text-start">
                         <div class="col-md-4">
                             <div class="profile-input-group">
@@ -111,6 +112,7 @@
                                        id="firstName"
                                        th:field="*{firstName}"
                                        required>
+                                <span class="error-msg" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
                             </div>
                         </div>
 
@@ -122,6 +124,7 @@
                                        id="middleName"
                                        th:field="*{middleName}"
                                        required>
+                                <span class="error-msg" th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></span>
                             </div>
                         </div>
 
@@ -133,6 +136,7 @@
                                        id="lastName"
                                        th:field="*{lastName}"
                                        required>
+                                <span class="error-msg" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
                             </div>
                         </div>
 
@@ -149,11 +153,12 @@
 
                         <div class="col-md-6">
                             <div class="profile-input-group">
-                                <label for="phone" class="profile-input-label">Số điện thoaị</label>
+                                <label for="phone" class="profile-input-label">Số điện thoại</label>
                                 <input type="text"
                                        class="profile-input-control"
                                        id="phone"
                                        th:field="*{phone}">
+                                <span class="error-msg" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
                             </div>
                         </div>
 
@@ -178,9 +183,7 @@
                                        placeholder=" "
                                        onchange="this.setAttribute('placeholder',' ')"
                                        th:field="*{dob}"/>
-                                <span th:if="${#fields.hasErrors('*{dob}')}"
-                                      th:errors="*{dob}">
-                                </span>
+                                <span class="error-msg" th:if="${#fields.hasErrors('dob')}" th:errors="*{dob}"></span>
                             </div>
                         </div>
 
@@ -220,30 +223,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="profile-input-group">
-                                <label for="password" class="profile-input-label">Mật khẩu mới</label>
-                                <input type="password"
-                                       id="password"
-                                       class="profile-input-control"
-                                       th:field="*{password}"
-                                       placeholder="Để trống nếu không thay đổi mật khẩu mới">
-                                <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="profile-input-group">
-                                <label for="confirmPassword" class="profile-input-label">Xác nhận mật khẩu</label>
-                                <input type="password"
-                                       id="confirmPassword"
-                                       class="profile-input-control"
-                                       th:field="*{confirmPassword}"
-                                       placeholder="Nhập lại mật khẩu mới">
-                                <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
-                            </div>
-                        </div>
-
                         <div class="col-md-12">
                             <div class="profile-input-group">
                                 <label for="oldPassword" class="profile-input-label">Mật khẩu hiện tại</label>
@@ -251,8 +230,35 @@
                                        id="oldPassword"
                                        class="profile-input-control"
                                        th:field="*{oldPassword}"
+                                       autocomplete="new-password"
                                        placeholder="Nhập mật khẩu cũ để xác nhận đổi mật khẩu">
                                 <span class="error-msg" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="password" class="profile-input-label">Mật khẩu mới</label>
+                                <input type="password"
+                                       id="password"
+                                       class="profile-input-control"
+                                       th:field="*{password}"
+                                       autocomplete="new-password"
+                                       placeholder="">
+                                <span class="error-msg" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="profile-input-group">
+                                <label for="confirmPassword" class="profile-input-label">Xác nhận mật khẩu mới</label>
+                                <input type="password"
+                                       id="confirmPassword"
+                                       class="profile-input-control"
+                                       th:field="*{confirmPassword}"
+                                       autocomplete="new-password"
+                                       placeholder="Nhập lại mật khẩu mới">
+                                <span class="error-msg" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
                             </div>
                         </div>
 
