@@ -91,16 +91,19 @@ public class HomepageController {
         model.addAttribute("cities", this.cityService.getCityList());
     }
 
-    @PostMapping("/attendee/update/profile")
+    @PostMapping("/profile")
     public String updateProfile(
             Model model,
-            @Valid @ModelAttribute UpdateAttendeeProfileDTO dto,
+            @Valid @ModelAttribute("userUpdateDTO") UpdateAttendeeProfileDTO dto,
             BindingResult result,
             RedirectAttributes redirectAttributes,
-            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            @AuthenticationPrincipal AuthenticatedUser userDetails,
+            @AuthenticationPrincipal CustomOAuth2User oAuth2Users
     ) {
+        String email = (userDetails != null) ? userDetails.getUser().getEmail() : oAuth2Users.getName();
         if (result.hasErrors()) {
-            model.addAttribute("cities", this.cityService.getCityList());
+            this.populateProfileStats(model, email);
             model.addAttribute("userUpdateDTO", dto);
 
             return "homepage/UpdateProfileUser";
@@ -112,13 +115,13 @@ public class HomepageController {
             }
             this.userServiceImpl.handleUpdateUser(dto, result);
             if (result.hasErrors()) {
-                model.addAttribute("cities", this.cityService.getCityList());
+                this.populateProfileStats(model, email);
                 model.addAttribute("userUpdateDTO", dto);
 
                 return "homepage/UpdateProfileUser";
             }
         } catch (Exception e) {
-            model.addAttribute("cities", this.cityService.getCityList());
+            this.populateProfileStats(model, email);
             model.addAttribute("errorMsg", e.getMessage());
             model.addAttribute("userUpdateDTO", dto);
 

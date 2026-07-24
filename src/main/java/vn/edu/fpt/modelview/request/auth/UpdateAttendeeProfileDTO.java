@@ -3,7 +3,6 @@ package vn.edu.fpt.modelview.request.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,8 +47,10 @@ public class UpdateAttendeeProfileDTO {
 
     private String avatar;
 
+    @NotBlank(message = "Vui lòng chọn Tỉnh/Thành phố")
     public String city;
 
+    @NotBlank(message = "Vui lòng chọn Phường/Xã")
     public String ward;
 
     public String specificAddress;

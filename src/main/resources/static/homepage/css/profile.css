@@ -674,3 +674,13 @@ footer {
         height: 600px;
     }
 }
+
+/* Validation Error Styles */
+.error-msg {
+    display: block;
+    color: #ff5566 !important;
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+    font-weight: 500;
+    text-align: left;
+}
