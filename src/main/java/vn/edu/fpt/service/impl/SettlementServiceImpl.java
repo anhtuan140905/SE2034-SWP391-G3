@@ -165,13 +165,12 @@ public class SettlementServiceImpl implements SettlementService {
         SettlementSummaryProjection settlementDetail = settlementRepository.getSettlementDetail(settlementId);
         EventSummaryProjection eventDetail = eventRepository.getEventDetail(settlementId);
 
-        String organizerFullName = eventDetail.getLastNameOrganizer() + " "
-                + eventDetail.getMiddleNameOrganizer() + " "
-                + eventDetail.getFirstNameOrganizer();
 
         emailService.sendSettlementPaidEmail(
                 eventDetail.getEmail(),
-                organizerFullName,
+                eventDetail.getLastNameOrganizer(),
+                eventDetail.getMiddleNameOrganizer(),
+                eventDetail.getFirstNameOrganizer(),
                 eventDetail.getTitle(),
                 eventDetail.getTotalTickets(),
                 settlementDetail.getPayoutAmount(),

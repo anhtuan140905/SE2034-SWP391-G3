@@ -52,8 +52,8 @@ u.last_name as lastNameOrganizer,
 u.middle_name as middleNameOrganizer,
 u.first_name as firstNameOrganizer,
 se.payout_amount as payoutAmount,
-CAST(se.created_at AS datetime2) as createAt,
-CAST(se.paid_at AS datetime2) as paidAt,
+CAST(se.created_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as createAt,
+CAST(se.paid_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as paidAt,
 se.status as status
 from settlements se\s
 left join events e on se.event_id = e.event_id
@@ -71,8 +71,8 @@ u.last_name as lastNameOrganizer,
 u.middle_name as middleNameOrganizer,
 u.first_name as firstNameOrganizer,
 se.payout_amount as payoutAmount,
-CAST(se.created_at AS datetime2) as createAt,
-CAST(se.paid_at AS datetime2) as paidAt,
+CAST(se.created_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as createAt,
+CAST(se.paid_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as paidAt,
 se.status as status
 from settlements se\s
 left join events e on se.event_id = e.event_id
@@ -90,7 +90,7 @@ or lower (u.first_name) like lower(concat('%', :keyword, '%')))
 @Query(value = """
 select
 se.settlement_id as settlementId,
-CAST(se.created_at AS datetime2) as createAt,
+CAST(se.created_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as createAt,
 se.created_by as createdBy,
 u.last_name as lastNameFinance,
 u.middle_name as middleNameFinance,
@@ -99,8 +99,8 @@ se.status as status,
 se.gross_revenue as revenue,
 se.platform_fee as platformFee,
 se.payout_amount as payoutAmount,
-CAST(se.updated_at as datetime2) as updateAt,
-CAST(se.paid_at as datetime2) as paidAt,
+CAST(se.updated_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as updateAt,
+CAST(se.paid_at AT TIME ZONE 'SE Asia Standard Time' AS datetime2) as paidAt,
 o.bank_account_name as bankAccountName,
 o.bank_account_number as bankAccountNumber,
 o.bank_branch as bankBranch,

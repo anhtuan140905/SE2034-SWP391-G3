@@ -646,7 +646,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Ngày Tạo</span>
-                        <span class="dr-value" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}">N/A</span>
+                        <span class="dr-value" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}">N/A</span>
                     </div>
                     <div class="detail-row">
                         <span class="dr-label">Người Tạo</span>
@@ -700,7 +700,7 @@
                     </div>
                     <div>
                         <div class="tl-title">Quyết Toán Được Tạo</div>
-                        <div class="tl-time" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}">N/A</div>
+                        <div class="tl-time" th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}">N/A</div>
                     </div>
                 </div>
 
@@ -721,7 +721,7 @@
                             Chờ Xử Lý
                         </div>
                         <div class="tl-time" th:if="${settlementDetail.status == 'PENDING'}">
-                            Bắt đầu từ <span th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}"></span>
+                            Bắt đầu từ <span th:text="${#temporals.format(settlementDetail.createAt, 'dd/MM/yyyy HH:mm')}"></span>
                         </div>
                         <div class="tl-time" th:unless="${settlementDetail.status == 'PENDING'}">
                             Đã xử lý xong
@@ -747,7 +747,7 @@
                         </div>
                         <div class="tl-time"
                              th:if="${settlementDetail.paidAt != null}"
-                             th:text="${#temporals.format(settlementDetail.paidAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}">
+                             th:text="${#temporals.format(settlementDetail.paidAt, 'dd/MM/yyyy HH:mm')}">
                         </div>
                         <div class="tl-time" th:unless="${settlementDetail.paidAt != null}">
                             Đang chờ

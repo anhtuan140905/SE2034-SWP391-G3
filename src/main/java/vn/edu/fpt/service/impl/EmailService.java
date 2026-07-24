@@ -168,13 +168,15 @@ public class EmailService {
     }
 
     @Async
-    public void sendSettlementPaidEmail(String toEmail, String organizerName, String eventTitle,
+    public void sendSettlementPaidEmail(String toEmail, String lastNameOrganizer, String middleNameOrganizer, String firstNameOrganizer, String eventTitle,
                                         Long ticketsSold, BigDecimal netAmount,
                                         LocalDateTime paidAt, String paymentMethod, String bankName,
                                         String accountNumber, String accountHolder) {
         try {
             Context context = new Context();
-            context.setVariable("organizerName", organizerName);
+            context.setVariable("lastNameOrganizer", lastNameOrganizer);
+            context.setVariable("middleNameOrganizer", middleNameOrganizer);
+            context.setVariable("firstNameOrganizer", firstNameOrganizer);
             context.setVariable("eventTitle", eventTitle);
             context.setVariable("ticketsSold", ticketsSold);
             context.setVariable("netAmount", netAmount);

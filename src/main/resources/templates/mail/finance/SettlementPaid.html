@@ -21,7 +21,7 @@
                 <tr>
                     <td style="padding:32px;">
                         <p style="font-size:16px; color:#333333; margin:0 0 16px 0;">
-                            Kính gửi <b th:text="${organizerName}">Nhà Tổ Chức</b>,
+                            Kính gửi <b th:text="${(firstNameOrganizer ?: '') + ' ' + (middleNameOrganizer ?: '') + ' ' + (lastNameOrganizer ?: '')}">Nhà Tổ Chức</b>,
                         </p>
                         <p style="font-size:15px; color:#333333; margin:0 0 24px 0;">
                             Khoản quyết toán cho sự kiện của bạn đã được xử lý thanh toán thành công. Chi tiết như sau:
@@ -35,11 +35,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888; width:45%;">Tên sự kiện</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888; width:45%;">Tên sự kiện</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333; font-weight:bold;" th:text="${eventTitle}"></td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888;">Số vé đã bán</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888; width:45%;">Số vé đã bán</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${ticketsSold}">0</td>
                             </tr>
                         </table>
@@ -52,11 +52,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888;">Thời gian xử lý</td>
-                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${#temporals.format(paidAt, 'dd/MM/yyyy HH:mm', T(java.time.ZoneId).of('Asia/Ho_Chi_Minh'))}"></td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Thời gian xử lý</td>
+                                <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${#temporals.format(paidAt, 'dd/MM/yyyy HH:mm')}"></td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888;">Phương thức chi trả</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Phương thức chi trả</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${paymentMethod}"></td>
                             </tr>
                         </table>
@@ -69,15 +69,15 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888; width:45%;">Ngân hàng</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888; width:45%;">Ngân hàng</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${bankName}">--</td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888;">Số tài khoản</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Số tài khoản</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountNumber}">--</td>
                             </tr>
                             <tr>
-                                <td style="padding:8px 0; font-size:14px; color:#888888;">Chủ tài khoản</td>
+                                <td style="padding:8px 12px 8px 0; font-size:14px; color:#888888;">Chủ tài khoản</td>
                                 <td style="padding:8px 0; font-size:14px; color:#333333;" th:text="${accountHolder}">--</td>
                             </tr>
                         </table>
@@ -87,7 +87,7 @@
                             <tr>
                                 <td style="padding:16px 20px;">
                                     <span style="font-size:14px; color:#888888;">Số tiền chi trả ròng</span><br/>
-                                    <span style="font-size:22px; font-weight:bold; color:#e91e63;" th:text="${netAmount}">0đ</span>
+                                    <span style="font-size:22px; font-weight:bold; color:#e91e63;" th:text="${#numbers.formatInteger(netAmount != null ? netAmount:0, 1, 'POINT') + 'đ'}">0đ</span>
                                 </td>
                             </tr>
                         </table>

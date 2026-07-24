@@ -7,6 +7,7 @@ import vn.edu.fpt.repository.SettlementSummaryProjection;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -85,7 +86,7 @@ public class SettlementSummaryDTO {
 
             LocalDateTime deadline = createAt.plusHours(72);
 
-            long hours = Duration.between(LocalDateTime.now(), deadline).toHours();
+            long hours = Duration.between(LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")), deadline).toHours();
 
             if (hours < 0) {
                 timeDisplay = "Quá hạn " + (-hours) + " giờ";
