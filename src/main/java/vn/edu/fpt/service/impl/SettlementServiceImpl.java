@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
 import vn.edu.fpt.model.Settlement;
 import vn.edu.fpt.model.constant.SettlementResult;
@@ -24,6 +25,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+
 @Slf4j
 @Service("SettlementService")
 @AllArgsConstructor
@@ -32,6 +35,7 @@ public class SettlementServiceImpl implements SettlementService {
     private final SettlementRepository settlementRepository;
     private final EventRepository eventRepository;
     private final OrderRepository orderRepository;
+    private final EmailService emailService;
 
     @Transactional
     public void createSettlement(SettlementDTO dto) {
@@ -136,7 +140,12 @@ public class SettlementServiceImpl implements SettlementService {
     }
 
     public SettlementSummaryProjection getSettlementDetail(@Param("settlementId") Long settlementId){
-        return settlementRepository.getSettlementDetail(settlementId);
+        SettlementSummaryProjection settlementDetail = settlementRepository.getSettlementDetail(settlementId);
+        if (settlementDetail == null) {
+            throw new ResourceNotFoundException("Quyết toaán với ID " + settlementId + " không tồn tại.");
+        }
+        return settlementDetail;
+
     }
 
     @Transactional
@@ -150,12 +159,34 @@ public class SettlementServiceImpl implements SettlementService {
 
         settlement.setStatus(SettlementStatus.COMPLETED);
         settlement.setPaidAt(Instant.now());
-
         settlementRepository.save(settlement);
-    }
 
+
+        SettlementSummaryProjection settlementDetail = settlementRepository.getSettlementDetail(settlementId);
+        EventSummaryProjection eventDetail = eventRepository.getEventDetail(settlementId);
+
+
+        emailService.sendSettlementPaidEmail(
+                eventDetail.getEmail(),
+                eventDetail.getLastNameOrganizer(),
+                eventDetail.getMiddleNameOrganizer(),
+                eventDetail.getFirstNameOrganizer(),
+                eventDetail.getTitle(),
+                eventDetail.getTotalTickets(),
+                settlementDetail.getPayoutAmount(),
+                settlementDetail.getPaidAt(),
+                "Chuyển Khoản Ngân Hàng",
+                settlementDetail.getBankName(),
+                settlementDetail.getBankAccountNumber(),
+                settlementDetail.getBankAccountName()
+        );
+    }
     public SettlementSummaryProjection findEventDetailById(@Param("eventId") Long eventId){
-        return settlementRepository.findEventDetailById(eventId);
+        SettlementSummaryProjection eventDetail = settlementRepository.findEventDetailById(eventId);
+        if (eventDetail == null) {
+            throw new ResourceNotFoundException("Sự kiện với ID " + eventId + " không tồn tại.");
+        }
+        return eventDetail;
     }
 
     @Override

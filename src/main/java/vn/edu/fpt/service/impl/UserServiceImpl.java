@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.exception.ServiceValidationException;
 import vn.edu.fpt.configuration.PasswordEncoderConfig;
 import vn.edu.fpt.model.*;
@@ -252,7 +253,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng có ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng có ID: " + id));
     }
 
     public List<User> searchUser(String keyword) {
@@ -371,7 +372,7 @@ public class UserServiceImpl implements UserService {
             ActivityDTO profile = new ActivityDTO();
             profile.setAction("PROFILE_UPDATED");
             profile.setDescription("Cập nhật hồ sơ cá nhân");
-            profile.setTime(LocalDateTime.ofInstant(user.getUpdatedAt(), ZoneId.systemDefault()));
+            profile.setTime(LocalDateTime.ofInstant(user.getUpdatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
             profile.setReferenceId(String.valueOf(user.getId()));
             result.add(profile);
         }
@@ -386,7 +387,7 @@ public class UserServiceImpl implements UserService {
                 dto.setDescription("Đã mua vé sự kiện " + o.getEvent().getTitle());
 
                 if (o.getCreatedAt() != null) {
-                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
+                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 } else {
                     dto.setTime(null);
                 }
@@ -409,7 +410,7 @@ public class UserServiceImpl implements UserService {
                 dto.setDescription("Đã tạo sự kiện " + e.getTitle());
 
                 if (e.getCreatedAt() != null) {
-                    dto.setTime(LocalDateTime.ofInstant(e.getCreatedAt(), ZoneId.systemDefault()));
+                    dto.setTime(LocalDateTime.ofInstant(e.getCreatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 } else {
                     dto.setTime(null);
                 }
@@ -426,7 +427,7 @@ public class UserServiceImpl implements UserService {
                 dto.setDescription("Có người mua vé sự kiện " + o.getEvent().getTitle());
 
                 if (o.getCreatedAt() != null) {
-                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.systemDefault()));
+                    dto.setTime(LocalDateTime.ofInstant(o.getCreatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 } else {
                     dto.setTime(null);
                 }
@@ -453,7 +454,7 @@ public class UserServiceImpl implements UserService {
                 }
 
                 if (u.getCreatedAt() != null) {
-                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
+                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 } else {
                     dto.setTime(null);
                 }
@@ -482,7 +483,7 @@ public class UserServiceImpl implements UserService {
 
 
                 if (u.getCreatedAt() != null) {
-                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.systemDefault()));
+                    dto.setTime(LocalDateTime.ofInstant(u.getCreatedAt(), ZoneId.of("Asia/Ho_Chi_Minh")));
                 } else {
                     dto.setTime(null);
                 }

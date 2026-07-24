@@ -9,11 +9,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import vn.edu.fpt.model.Order;
-import vn.edu.fpt.model.Ticket;
 import vn.edu.fpt.modelview.response.booking.OrderEmailDTO;
 import vn.edu.fpt.modelview.response.booking.TicketEmailDTO;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -164,6 +164,37 @@ public class EmailService {
             mailSender.send(message);
         } catch (Exception e) {
             log.error("Gửi email thông tin tài khoản thất bại cho email {}", toEmail, e);
+        }
+    }
+
+    @Async
+    public void sendSettlementPaidEmail(String toEmail, String lastNameOrganizer, String middleNameOrganizer, String firstNameOrganizer, String eventTitle,
+                                        Long ticketsSold, BigDecimal netAmount,
+                                        LocalDateTime paidAt, String paymentMethod, String bankName,
+                                        String accountNumber, String accountHolder) {
+        try {
+            Context context = new Context();
+            context.setVariable("lastNameOrganizer", lastNameOrganizer);
+            context.setVariable("middleNameOrganizer", middleNameOrganizer);
+            context.setVariable("firstNameOrganizer", firstNameOrganizer);
+            context.setVariable("eventTitle", eventTitle);
+            context.setVariable("ticketsSold", ticketsSold);
+            context.setVariable("netAmount", netAmount);
+            context.setVariable("paidAt", paidAt);
+            context.setVariable("paymentMethod", paymentMethod);
+            context.setVariable("bankName", bankName);
+            context.setVariable("accountNumber", accountNumber);
+            context.setVariable("accountHolder", accountHolder);
+
+            String htmlContent = templateEngine.process("mail/finance/SettlementPaid", context);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setSubject("[EventHub] sự kiện " + eventTitle + " đã được thanh toán ");
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (Exception e) {
+            log.error("Gửi email thông báo thanh toán thất bại cho sự kiện {}", eventTitle, e);
         }
     }
 
