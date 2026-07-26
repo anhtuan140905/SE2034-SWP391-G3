@@ -77,7 +77,7 @@
                       id="filterForm">
 
                     <!-- Reset page về 1 mỗi khi filter/search thay đổi -->
-                    <input type="hidden" name="page" value="1" id="pageInput"/>
+                    <input type="hidden" name="page" th:value="${currentPage}" id="pageInput"/>
 
                     <!-- ── Search bar ───────────────────────────── -->
                     <div class="search-filter-row mb-3">
@@ -88,7 +88,8 @@
                                    th:value="${keyword}"
                                    placeholder="Tìm Kiếm Tên Sự Kiện"
                                    id="searchInput"
-                                   autocomplete="off"/>
+                                   autocomplete="off"
+                                   onkeydown="if(event.key === 'Enter') { event.preventDefault(); submitFilter(); }"/>
                         </div>
 
                     </div>
@@ -285,6 +286,11 @@
 <script>
     function submitFilter() {
         document.getElementById("pageInput").value = "1";
+        document.getElementById("filterForm").submit();
+    }
+
+    function goToPage(pageNum) {
+        document.getElementById("pageInput").value = pageNum;
         document.getElementById("filterForm").submit();
     }
 

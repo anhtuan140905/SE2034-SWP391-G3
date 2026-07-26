@@ -14,8 +14,8 @@ public class OrganizerProfileDto {
     private Long IdProfile;
     @NotBlank(message = "Mã số thuế không được để trống")
     @Pattern(
-            regexp = "^[0-9]{10}$|^[0-9]{13}$",
-            message = "Mã số thuế phải gồm 10–13 chữ số"
+            regexp = "^[0-9]{10}$",
+            message = "Mã số thuế phải gồm 10 chữ số"
     )
     private String taxCode;
 

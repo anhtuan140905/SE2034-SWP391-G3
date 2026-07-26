@@ -388,8 +388,9 @@ function renderAgenda() {
 
 /** Tính sức chứa: hàng × số ghế mỗi hàng */
 function computeTotalQty(row, cols) {
-    const r = Math.min(26, Math.max(1, parseInt(row) || 1));
-    const c = Math.min(100, Math.max(1, parseInt(cols) || 1));
+    const r = parseInt(row);
+    const c = parseInt(cols);
+    if (isNaN(r) || isNaN(c)) return 0;
     return r * c;
 }
 
@@ -427,62 +428,59 @@ function updateTierField(id, field, value) {
         if (tier.qty > tier.totalQty) {
             tier.qty = tier.totalQty;
         }
-        if (state.tierErrors[id]?.qty && tier.qty >= 1 && tier.qty <= tier.totalQty) {
+    }
+
+    // Xóa thông báo lỗi của field đang sửa (thông báo lỗi mới chỉ hiển thị khi bấm gửi form)
+    if (state.tierErrors[id]) {
+        delete state.tierErrors[id][field];
+        if (field === "rowLetter" || field === "cols") {
             delete state.tierErrors[id].qty;
         }
-        renderTiers();
-        return;
-    }
-
-    if (field === "qty") {
-        const numQty = parseInt(value) || 0;
-        if (numQty > tier.totalQty) {
-            if (!state.tierErrors[id]) state.tierErrors[id] = {};
-            state.tierErrors[id].qty = `Số lượng vé không được vượt sức chứa (${tier.totalQty}).`;
-        } else if (numQty < 1) {
-            if (!state.tierErrors[id]) state.tierErrors[id] = {};
-            state.tierErrors[id].qty = "Số lượng vé phải lớn hơn hoặc bằng 1.";
-        } else {
-            if (state.tierErrors[id]?.qty) {
-                delete state.tierErrors[id].qty;
-                if (Object.keys(state.tierErrors[id]).length === 0) {
-                    delete state.tierErrors[id];
-                }
-            }
-        }
-        renderTiers();
-        return;
-    }
-
-    if (state.tierErrors[id]?.[field]) {
-        delete state.tierErrors[id][field];
         if (Object.keys(state.tierErrors[id]).length === 0) {
             delete state.tierErrors[id];
         }
-        renderTiers();
     }
+    renderTiers();
 }
 
 function validateTier(t) {
     const errors = {};
 
-    if (!t.name || !String(t.name).trim()) {
+    const orderNum = parseInt(t.name);
+    if (!t.name || String(t.name).trim() === "") {
         errors.name = "Vui lòng nhập Display Order.";
+    } else if (isNaN(orderNum) || orderNum < 1) {
+        errors.name = "Số hiển thị phải lớn hơn hoặc bằng 1.";
     }
 
     if (!t.zoneName || !String(t.zoneName).trim()) {
         errors.zoneName = "Vui lòng nhập Tên Khu Vực.";
+    } else if (String(t.zoneName).trim().length > 100) {
+        errors.zoneName = "Tên khu vực không được vượt quá 100 ký tự.";
     }
 
-    if (t.price == null || Number(t.price) < 0) {
+    const rowNum = parseInt(t.rowLetter);
+    if (t.rowLetter == null || String(t.rowLetter).trim() === "" || isNaN(rowNum) || rowNum < 1 || rowNum > 26) {
+        errors.rowLetter = "Hàng dọc phải từ 1 đến 26.";
+    }
+
+    const colNum = parseInt(t.cols);
+    if (t.cols == null || String(t.cols).trim() === "" || isNaN(colNum) || colNum < 1 || colNum > 100) {
+        errors.cols = "Số ghế mỗi hàng phải từ 1 đến 100.";
+    }
+
+    const priceNum = Number(t.price);
+    if (t.price == null || String(t.price).trim() === "") {
+        errors.price = "Vui lòng nhập mệnh giá.";
+    } else if (isNaN(priceNum) || priceNum < 0) {
         errors.price = "Mệnh giá không được âm.";
     }
 
     const qty      = parseInt(t.qty) || 0;
-    const totalQty = parseInt(t.totalQty) || 1;
+    const totalQty = parseInt(t.totalQty) || 0;
     if (qty < 1) {
         errors.qty = "Số lượng vé phải lớn hơn hoặc bằng 1.";
-    } else if (qty > totalQty) {
+    } else if (qty > totalQty && totalQty > 0) {
         errors.qty = `Số lượng vé không được vượt sức chứa (${totalQty}).`;
     }
 
@@ -553,18 +551,18 @@ function renderTiers() {
                             Hàng Dọc (1–26)
                         </label>
                         <input
-                            class="tier-input row-select"
+                            class="tier-input row-select${errs.rowLetter ? " is-invalid-field" : ""}"
                             type="number"
-                            min="1" max="26"
                             value="${escHtml(t.rowLetter)}"
                             name="ticketTypesEdit[${idx}].seat.row"
                             placeholder="Nhập số hàng"
                             onblur ="updateTierField(
                                 '${t.id}',
                                 'rowLetter',
-                                Math.min(26, Math.max(1, parseInt(this.value) || 1))
+                                this.value
                             )" />
                         <div class="row-stepper-sub">Giới hạn 1 – 26 hàng</div>
+                        ${errDiv(errs.rowLetter)}
                     </div>
 
                     <!-- Số ghế mỗi hàng -->
@@ -575,16 +573,16 @@ function renderTiers() {
                         </label>
                         <input
                             type="number"
-                            class="tier-input"
+                            class="tier-input${errs.cols ? " is-invalid-field" : ""}"
                             name="ticketTypesEdit[${idx}].seat.seatNumber"
-                            min="1" max="100"
                             value="${escHtml(t.cols)}"
                             onblur ="updateTierField(
                                 '${t.id}',
                                 'cols',
-                                Math.min(100, Math.max(1, parseInt(this.value) || 1))
+                                this.value
                             )" />
                         <div class="row-stepper-sub">Giới hạn 1 – 100 ghế</div>
+                        ${errDiv(errs.cols)}
                     </div>
 
                     <!-- Sức chứa (tự động) -->
@@ -623,7 +621,9 @@ function renderTiers() {
 
                 <!-- Loại / Tên khu vực -->
                 <div class="col-12 col-sm-6 col-md-3">
-                    <label class="tier-field-label">Loại / Khu Vực</label>
+                    <label class="tier-field-label">
+                        Loại / Khu Vực <span style="color:#ef4444;">*</span>
+                    </label>
                     <input
                         type="text"
                         class="tier-input${errs.zoneName ? " is-invalid-field" : ""}"
@@ -644,8 +644,7 @@ function renderTiers() {
                             name="ticketTypesEdit[${idx}].price"
                             placeholder="Ví dụ: 250000"
                             value="${escHtml(t.price)}"
-                            min="0"
-                            onblur ="updateTierField('${t.id}', 'price', Math.max(0, Number(this.value) || 0))" />
+                            onblur ="updateTierField('${t.id}', 'price', this.value)" />
                         <span class="price-suffix">đ</span>
                     </div>
                     ${errDiv(errs.price)}
@@ -660,10 +659,8 @@ function renderTiers() {
                         type="number"
                         class="tier-input tier-input-mono${errs.qty ? " is-invalid-field" : ""}"
                         name="ticketTypesEdit[${idx}].stock"
-                        min="1"
-                        max="${t.totalQty}"
                         value="${escHtml(t.qty)}"
-                        onblur ="updateTierField('${t.id}', 'qty', parseInt(this.value) || 0)" />
+                        onblur ="updateTierField('${t.id}', 'qty', this.value)" />
                     ${errDiv(errs.qty)}
                     <div class="row-stepper-sub">Tối đa: ${t.totalQty} (theo sức chứa)</div>
                 </div>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import vn.edu.fpt.exception.EventTimeException;
 import vn.edu.fpt.exception.TaxCodeExists;
 import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.Event;
@@ -160,7 +161,9 @@ public class EventServiceImpl implements EventService {
     public void publishEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sự kiện với id: " + eventId));
-
+        if(event.getStartTime().isBefore(LocalDateTime.now())){
+            throw new EventTimeException("Thời Gian bắt đâu sự kiện không hợp lệ, Không thể Đăng Sự Kiện");
+        }
         if (event.getStatus() != EventStatus.PENDING) {
             throw new IllegalStateException("Chỉ có thể đăng sự kiện đang ở trạng thái PENDING. "
                     + "Trạng thái hiện tại: " + event.getStatus());

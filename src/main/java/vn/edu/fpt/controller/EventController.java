@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import vn.edu.fpt.exception.EventTimeException;
 import vn.edu.fpt.exception.TaxCodeExists;
 import vn.edu.fpt.exception.ResourceNotFoundException;
 import vn.edu.fpt.model.EventCategory;
@@ -56,49 +57,45 @@ public class EventController {
     public String saveEvent(
             @Valid @ModelAttribute("event") EventDTO eventDTO,
             BindingResult eventResult,
-            @Valid @ModelAttribute("organizerProfile")
-            OrganizerProfileDto organizerProfileDto,
-                BindingResult organizerResult,
+            @Valid @ModelAttribute("organizerProfile") OrganizerProfileDto organizerProfileDto,
+            BindingResult organizerResult,
             Model model,
             @AuthenticationPrincipal AuthenticatedUser userDetails) {
-        Long userId = userDetails.getUser().getId();
         // kiểm tra đã có profile chưa
-        boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userId);
+        boolean hasOrganizerProfile = eventService.GetOrganizerProfileByUserId(userDetails.getUser().getId());
         // validate lỗi
+        if (eventDTO.getStartTime() != null && eventDTO.getEndTime() != null) {
+            if (!eventDTO.getStartTime().isBefore(eventDTO.getEndTime())) {
+                model.addAttribute("errTime", "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.");
+                eventResult.rejectValue("endTime", "error.event", "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.");
+            }
+        }
         if (eventResult.hasErrors() || (!hasOrganizerProfile && organizerResult.hasErrors())) {
-            model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
-            model.addAttribute("eventCategoryList", eventService.getListEventCategory());
-            model.addAttribute("citys", eventService.getListcity());
-            model.addAttribute("event", eventDTO);
-
-            if (!hasOrganizerProfile) {
-                model.addAttribute("organizerProfile", organizerProfileDto);
-                model.addAttribute("banks", eventService.getListBank());
-            }
-            return "organizer/event/CreateOrganizerEvent";
+            return prepareCreateEventView(model, eventDTO, organizerProfileDto, hasOrganizerProfile);
         }
-        eventDTO.setOrganizerId(userId);
+        eventDTO.setOrganizerId(userDetails.getUser().getId());
         try {
-            if (!hasOrganizerProfile) {
-                eventService.saveEvent(eventDTO, organizerProfileDto);
-            } else {
-                eventService.saveEvent(eventDTO, null);
-            }
+            eventService.saveEvent(eventDTO, hasOrganizerProfile ? null : organizerProfileDto);
+            return "redirect:/organizer/list/event";
         } catch (TaxCodeExists e) {
-            model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
-            model.addAttribute("eventCategoryList", eventService.getListEventCategory());
-            model.addAttribute("citys", eventService.getListcity());
-            model.addAttribute("event", eventDTO);
-
-            if (!hasOrganizerProfile) {
-                model.addAttribute("organizerProfile", organizerProfileDto);
-                model.addAttribute("banks", eventService.getListBank());
-                model.addAttribute("errorMessage", "Mã số thuế đã tồn tại. Vui lòng kiểm tra lại.");
-            }
-
-            return "organizer/event/CreateOrganizerEvent";
+            model.addAttribute("errorMessage", "Mã số thuế đã tồn tại. Vui lòng kiểm tra lại.");
+            return prepareCreateEventView(model, eventDTO, organizerProfileDto, hasOrganizerProfile);
+        } catch (RuntimeException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return prepareCreateEventView(model, eventDTO, organizerProfileDto, hasOrganizerProfile);
         }
-        return "redirect:/organizer/list/event";
+    }
+
+    private String prepareCreateEventView(Model model, EventDTO eventDTO, OrganizerProfileDto organizerProfileDto, boolean hasOrganizerProfile) {
+        model.addAttribute("hasOrganizerProfile", hasOrganizerProfile);
+        model.addAttribute("eventCategoryList", eventService.getListEventCategory());
+        model.addAttribute("citys", eventService.getListcity());
+        model.addAttribute("event", eventDTO);
+        if (!hasOrganizerProfile) {
+            model.addAttribute("organizerProfile", organizerProfileDto);
+            model.addAttribute("banks", eventService.getListBank());
+        }
+        return "organizer/event/CreateOrganizerEvent";
     }
 
     @ResponseBody
@@ -145,6 +142,7 @@ public class EventController {
     @GetMapping("/event/detail/{id}")
     public String getEventDetail(@PathVariable Long id, @AuthenticationPrincipal AuthenticatedUser userDetails, Model model) {
         if (!staffService.checkPermission(userDetails.getUser().getId(), id, "MANAGER_EVENT_DETAIL_VIEW")) {
+            model.addAttribute("eventId", id);
             return "organizer/Forbidden";
         }
         EventDetailDTO eventDetailDTO = eventService.getEventDetailById(id);
@@ -155,14 +153,15 @@ public class EventController {
     }
 
     @GetMapping("/event/{id}/publish")
-    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes,@AuthenticationPrincipal AuthenticatedUser userDetails) {
+    public String publishEvent(@PathVariable("id") Long id, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthenticatedUser userDetails, Model model) {
         if (!staffService.checkPermission(userDetails.getUser().getId(), id, "ORGANIZER_EVENT_PUBLIC")) {
+            model.addAttribute("eventId", id);
             return "organizer/Forbidden";
         }
         try {
             eventService.publishEvent(id);
             redirectAttributes.addFlashAttribute("successMessage", "Đăng sự kiện thành công!");
-        } catch (IllegalStateException | ResourceNotFoundException ex) {
+        } catch (IllegalStateException | ResourceNotFoundException | EventTimeException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
         return "redirect:/organizer/list/event";
@@ -196,6 +195,13 @@ public class EventController {
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"ORGANIZER_EVENT_EDIT")) {
             model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
+        }
+
+        if (eventDTO.getStartTime() != null && eventDTO.getEndTime() != null) {
+            if (!eventDTO.getStartTime().isBefore(eventDTO.getEndTime())) {
+                model.addAttribute("errTime", "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.");
+                eventResult.rejectValue("endTime", "error.event", "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc.");
+            }
         }
 
         if (eventResult.hasErrors()) {

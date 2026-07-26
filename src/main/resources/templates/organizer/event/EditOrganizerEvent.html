@@ -162,8 +162,13 @@
                                             multiple
                                             class="d-none"
                                     />
+                                    <div id="galleryErr" class="text-danger" style="font-size: small"></div>
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('imageFiles')}"
+                                         th:errors="*{imageFiles}">
+                                    </div>
                                 </div>
-                                <div id="galleryErr"></div>
                             </div>
                             <div id="galleryGrid" class="gallery-grid mt-4 d-none"></div>
                         </div>
@@ -473,11 +478,10 @@
                                 Chưa có phân khúc vé nào được cấu hình. Nhấp "Tạo Hạng Vé" để thiết lập giá trị đầu tiên!
                             </div>
                             <div id="ticketTiersContainer"></div>
-                            <!-- ĐÃ SỬA: ticketTypes -> ticketTypesEdit -->
                             <div class="text-danger"
                                  style="font-size: small"
-                                 th:if="${#fields.hasErrors('ticketTypesEdit')}"
-                                 th:errors="*{ticketTypesEdit}">
+                                 th:if="${#fields.hasErrors('ticketTypesEdit*')}">
+                                <div th:each="err : ${#fields.errors('ticketTypesEdit*')}" th:text="${err}"></div>
                             </div>
                         </div>
                     </section>

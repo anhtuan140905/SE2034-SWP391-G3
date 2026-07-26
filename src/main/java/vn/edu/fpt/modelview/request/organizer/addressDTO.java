@@ -12,6 +12,7 @@ import jakarta.validation.constraints.*;
 @Setter
 public class addressDTO {
     @NotBlank(message = "Địa chỉ chi  tiết không được để trống")
+    @Size(max = 255,message = "Tên Địa Điểm Không Được Vượt Quá 255 Ký Tự")
     private String specieladdress;
     @Valid
     private wardDTO ward;
