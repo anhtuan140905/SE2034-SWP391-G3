@@ -17,6 +17,15 @@
 
 <section id="organizer-detail-content" th:fragment="content">
 
+    <div th:if="${successMessage != null}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage != null}" class="alert alert-danger">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
     <div class="od-header">
         <div class="od-header-left">
             <a th:if="${backEventId != null}"
@@ -52,16 +61,13 @@
 
     </div>
 
-    <!-- Top 2 cards row -->
     <div class="od-cards-row">
 
-        <!-- ── LEFT: Personal Info (Users Table) ── -->
         <div class="od-card">
             <div class="od-card-title">
                 <span>Thông tin cá nhân</span>
             </div>
 
-            <!-- Avatar + Name/Email/Company -->
             <div class="od-personal-top">
                 <div class="od-avatar-wrapper">
                     <div class="od-avatar">
@@ -100,7 +106,6 @@
                 </div>
             </div>
 
-            <!-- Address row -->
             <div class="od-address-row">
                 <div class="od-address-item">
                     <span class="od-info-label">Địa chỉ nhà</span>
@@ -126,7 +131,6 @@
             </div>
         </div>
 
-        <!-- ── RIGHT: Promoter Details (Organizers Table) ── -->
         <div class="od-card">
             <div class="od-card-title">
                 <span>Thông tin nhà tổ chức</span>
@@ -181,7 +185,6 @@
 
     <div class="ed-action-footer">
 
-        <!-- ACTIVE + có profile: cho phép khóa -->
         <div class="ed-reject-box"
              th:if="${organizer != null and organizer.hasOrganizerProfile and organizer.active}">
             <div class="ed-reject-label">
@@ -190,7 +193,7 @@
 
             <form th:action="@{/moderator/organizer/{id}/deactivate(id=${organizer.organizerId})}"
                   method="post"
-                  onsubmit="return confirm('Bạn có chắc muốn KHÓA tài khoản này không?');">
+                  onsubmit="return confirm('Bạn có muốn KHÓA tài khoản này không?');">
 
             <textarea name="reason"
                       class="ed-reject-textarea"
@@ -206,17 +209,15 @@
             </form>
         </div>
 
-        <!-- INACTIVE + có profile: cho phép mở lại -->
         <form th:if="${organizer != null and organizer.hasOrganizerProfile and !organizer.active}"
               th:action="@{/moderator/organizer/{id}/activate(id=${organizer.organizerId})}"
               method="post"
-              onsubmit="return confirm('Bạn có chắc muốn MỞ LẠI tài khoản này không?');">
+              onsubmit="return confirm('Bạn có muốn MỞ LẠI tài khoản này không?');">
             <button type="submit" class="btn-activate">
                 Mở lại tài khoản
             </button>
         </form>
 
-        <!-- Không có profile -->
         <div th:if="${organizer != null and !organizer.hasOrganizerProfile}"
              class="oi-ended-note">
             Tài khoản này chưa có hồ sơ Organizer, nên chưa thể thực hiện đóng/mở tài khoản.

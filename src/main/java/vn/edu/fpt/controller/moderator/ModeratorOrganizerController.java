@@ -102,7 +102,7 @@ public class ModeratorOrganizerController {
 
         try {
             moderatorOrganizerInformationService.deactivateOrganizer(id, request.getReason());
-            redirectAttributes.addFlashAttribute("successMessage", "Tài khoản Organizer đã được khóa thành công.");
+            redirectAttributes.addFlashAttribute("successMessage", "Tài khoản Organizer đã bị được khóa.");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

@@ -285,7 +285,7 @@
 .em-pagination {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 16px 20px;
     border-top: 2px solid var(--border-color);
     background: #FAFAFA;
@@ -356,9 +356,6 @@
     .page-title { font-size: 20px; }
 }
 
-/* ============================================================
-   CẬP NHẬT BỔ SUNG: BADGE PULSE, PAGINATION DOTS & EMPTY STATE
-   ============================================================ */
 
 .badge-pending {
     animation: pendingPulse 2s infinite ease-in-out;
