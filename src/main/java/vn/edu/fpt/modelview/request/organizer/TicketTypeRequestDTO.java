@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @Setter
 public class TicketTypeRequestDTO {
     @NotNull(message = "Không được để trống mức độ ưu tiên")
+    @Min(value = 1, message = "Số hiển thị nhỏ nhất là 1")
     private Integer displayOrder;
     @NotBlank(message = "Không được để trống tên hạng vé")
     @Size(max = 100, message = "Tên hạng vé không được vượt quá 100 ký tự")

@@ -29,6 +29,7 @@ public class StaffController {
                              @AuthenticationPrincipal AuthenticatedUser userDetails,
                              Model model) {
         if(!staffService.checkPermission(userDetails.getUser().getId(),id,"MANAGER_STAFF_MANAGE")){
+            model.addAttribute("eventId", id);
             return "organizer/Forbidden";
         }
         Page<StaffResponceDTO> staffPage = staffService.getStaffbyEventID(id, keyword, roleId, page);
@@ -52,9 +53,11 @@ public class StaffController {
                                @Valid @ModelAttribute("inviteMember") MemberRequestDTO memberRequestDTO,
                                BindingResult result,
                                RedirectAttributes redirectAttributes,
-                               @AuthenticationPrincipal AuthenticatedUser userDetails
+                               @AuthenticationPrincipal AuthenticatedUser userDetails,
+                               Model model
                                ){
         if(!staffService.checkPermission(userDetails.getUser().getId(),id,"MANAGER_STAFF_MANAGE")){
+            model.addAttribute("eventId", id);
             return "organizer/Forbidden";
         }
         if (result.hasErrors()) {
@@ -80,6 +83,7 @@ public class StaffController {
             Model model,@AuthenticationPrincipal AuthenticatedUser userDetails
             ,RedirectAttributes redirectAttributes) {
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
         }
         if(staffService.compareRole(userDetails.getUserId(),staffId,eventId)){
@@ -105,8 +109,10 @@ public class StaffController {
                                @Valid @ModelAttribute("selectedMember") StaffDetailDto staffDetailDto,
                                BindingResult result,
                                RedirectAttributes redirectAttributes,
-                               @AuthenticationPrincipal AuthenticatedUser userDetails ){
+                               @AuthenticationPrincipal AuthenticatedUser userDetails,
+                               Model model ){
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
         }
         if (result.hasErrors()) {
@@ -127,8 +133,10 @@ public class StaffController {
     public String delete(@RequestParam Long staffId,
                          @PathVariable Long eventId,
                          @AuthenticationPrincipal AuthenticatedUser userDetails,
-                         RedirectAttributes redirectAttributes){
+                         RedirectAttributes redirectAttributes,
+                         Model model){
         if(!staffService.checkPermission(userDetails.getUser().getId(),eventId,"MANAGER_STAFF_MANAGE")){
+            model.addAttribute("eventId", eventId);
             return "organizer/Forbidden";
         }
         try {

@@ -43,7 +43,7 @@
                 </p>
             </div>
         </div>
-        <button type="button" class="btn btn-cancel" onclick="handleCancel()">
+        <button type="button" class="btn btn-cancel" onclick="window.location.href='/organizer/list/event'">
             <span class="material-symbols-outlined">close</span>
             Hủy bỏ
         </button>
@@ -134,10 +134,6 @@
                             </div>
                         </div>
 
-                        <div class="text-danger"
-                             th:if="${#fields.hasErrors('banner')}"
-                             th:errors="*{banner}">
-                        </div>
                         <!-- Thư viện ảnh -->
                         <div class="field-card mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -172,8 +168,13 @@
                                             class="d-none"
 
                                     />
+                                    <div id="galleryErr" class="text-danger" style="font-size: small"></div>
+                                    <div class="text-danger"
+                                         style="font-size: small"
+                                         th:if="${#fields.hasErrors('imageFiles')}"
+                                         th:errors="*{imageFiles}">
+                                    </div>
                                 </div>
-                                <div id="galleryErr"></div>
                             </div>
                             <div id="galleryGrid" class="gallery-grid mt-4 d-none"></div>
                         </div>
@@ -283,10 +284,6 @@
                     >
                                 Ngày Diễn Ra Sự Kiện <span class="text-required">*</span>
                             </label>
-                            <p class="field-hint">
-                                Khi chỉnh sửa ngày này, lịch trình biểu diễn bên dưới sẽ tự
-                                động đồng bộ theo.
-                            </p>
                             <div style="max-width: 280px" class="mt-2">
                                 <input
                                         type="date"
@@ -421,24 +418,12 @@
                         </div>
 
                         <div class="field-card">
-                            <!-- Badge đồng bộ ngày -->
-                            <div
-                                    class="date-sync-badge mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2"
-                            >
-                                <div class="d-flex align-items-center gap-2">
-                      <span
-                              class="material-symbols-outlined"
-                              style="color: #7c3aed; font-size: 16px"
-                      >calendar_today</span
-                      >
-                                    <span>Ngày Sự Kiện:</span>
-                                    <strong id="showtimeDateBadge" class="date-badge-value"
-                                    >Chưa thiết lập</strong
-                                    >
-                                </div>
-                                <span class="date-sync-hint"
-                                >Tự động đồng bộ từ Mục 3 ở trên</span
-                                >
+                            <!-- alert error time  -->
+                            <div th:if="${errTime}"
+                                 class="alert alert-danger d-flex align-items-center mt-2"
+                                 role="alert">
+                            <span class="material-symbols-outlined me-2">error</span>
+                                <span th:text="${errTime}"></span>
                             </div>
 
                             <!-- Giờ mở cửa / kết thúc -->
@@ -485,6 +470,7 @@
                                             class="form-control field-input"
                                             value="22:30"
                                     />
+                                    <div id="endTimeClientError" class="text-danger" style="font-size: small"></div>
                                     <div class="text-danger"
                                          style="font-size: small"
                                          th:if="${#fields.hasErrors('endTime')}"
@@ -591,8 +577,8 @@
                             <div id="ticketTiersContainer"></div>
                             <div class="text-danger"
                                  style="font-size: small"
-                                 th:if="${#fields.hasErrors('ticketTypes')}"
-                                 th:errors="*{ticketTypes}">
+                                 th:if="${#fields.hasErrors('ticketTypes*')}">
+                                <div th:each="err : ${#fields.errors('ticketTypes*')}" th:text="${err}"></div>
                             </div>
                         </div>
                     </section>

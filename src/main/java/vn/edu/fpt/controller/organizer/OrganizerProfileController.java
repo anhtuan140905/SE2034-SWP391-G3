@@ -1,19 +1,19 @@
 package vn.edu.fpt.controller.organizer;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.fpt.exception.ProfileNotFoundException;
 import vn.edu.fpt.modelview.request.organizer.OrganizerProfileDto;
-import vn.edu.fpt.security.CustomUserDetails;
+import vn.edu.fpt.service.AuthenticatedUser;
 import vn.edu.fpt.service.EventService;
 import vn.edu.fpt.service.OrganizerProfileService;
 
@@ -26,7 +26,7 @@ public class OrganizerProfileController {
     private final EventService eventService;
 
     @GetMapping("/profile")
-    public String viewProfileOrganizer(Model model, @AuthenticationPrincipal CustomUserDetails userDetails,
+    public String viewProfileOrganizer(Model model, @AuthenticationPrincipal AuthenticatedUser userDetails,
                                        RedirectAttributes redirectAttributes) {
         Long userId = userDetails.getUser().getId();
         OrganizerProfileDto dto;
@@ -47,7 +47,7 @@ public class OrganizerProfileController {
             @Valid @ModelAttribute("organizerProfile") OrganizerProfileDto dto,
             BindingResult result,
             Model model,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal AuthenticatedUser userDetails,
             RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
