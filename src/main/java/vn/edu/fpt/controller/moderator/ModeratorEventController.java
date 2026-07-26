@@ -75,7 +75,7 @@ public class ModeratorEventController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/moderator/events";
+        return "redirect:/moderator/event/detail/" + id;
     }
 
     @PostMapping("/events/{id}/activate")
@@ -90,7 +90,7 @@ public class ModeratorEventController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "redirect:/moderator/events";
+        return "redirect:/moderator/event/detail/" + id;
     }
 
 }

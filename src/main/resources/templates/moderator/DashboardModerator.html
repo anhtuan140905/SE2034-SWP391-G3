@@ -48,7 +48,7 @@
         <div class="panel-section">
             <div class="panel-header">
                 <span class="panel-title">SỰ KIỆN MỚI ĐĂNG GẦN ĐÂY</span>
-                <a th:href="@{/moderator/events?status=ACTIVE}" class="view-all-link">Xem tất cả</a>
+                <a th:href="@{/moderator/events(status='ACTIVE')}" class="view-all-link">Xem tất cả</a>
             </div>
 
             <table class="minimal-table">
@@ -80,7 +80,7 @@
         <div class="panel-section">
             <div class="panel-header">
                 <span class="panel-title">SỰ KIỆN DIỄN RA HÔM NAY</span>
-                <a th:href="@{/moderator/events?status=ACTIVE}" class="view-all-link">Xem tất cả</a>
+                <a th:href="@{/moderator/events(status='ACTIVE')}" class="view-all-link">Xem tất cả</a>
             </div>
 
             <table class="minimal-table">

@@ -158,13 +158,7 @@
         </table>
 
         <div class="em-pagination">
-            <div class="pagination-info">
-                Đang hiển thị <strong th:text="${events != null ? events.numberOfElements : 0}">0</strong> trên
-                <strong th:text="${events != null ? events.size : 0}">0</strong> của
-                <strong th:text="${events != null ? events.totalElements : 0}">0</strong> kết quả
-            </div>
             <div class="pagination-controls">
-
                 <a class="page-btn page-nav"
                    th:classappend="${events == null or events.first} ? 'disabled' : ''"
                    th:href="@{/moderator/events(page=${events != null and !events.first ? events.number - 1 : 0}, keyword=${keyword}, status=${statusFilter})}">
