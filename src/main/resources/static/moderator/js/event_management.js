@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusSelect = document.getElementById('statusSelect');
     const categorySelect = document.getElementById('categorySelect');
 
+    /**
+     * Build URL with current keyword + status then navigate
+     */
     const applyFilters = () => {
         const keyword = searchInput ? searchInput.value.trim() : '';
         const status  = statusSelect ? statusSelect.value : '';
@@ -31,11 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = url.toString();
     };
 
-    if (searchInput) {
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                applyFilters();
-            }
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            applyFilters();
         });
     }
 

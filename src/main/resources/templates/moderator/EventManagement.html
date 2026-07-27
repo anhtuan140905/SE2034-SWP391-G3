@@ -8,7 +8,10 @@
       )}">
 <head>
     <title>Event Management — EventHub Moderator</title>
-    <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/event_management.css}"/>
+    <th:block id="page-css">
+        <link rel="stylesheet" th:href="@{/moderator/css/event_management.css}"/>
+        <link rel="stylesheet" th:href="@{/moderator/css/organizer_management.css}"/>
+    </th:block>
 </head>
 <body>
 
@@ -23,13 +26,16 @@
             <div class="filter-group">
                 <label class="filter-label">TÌM KIẾM SỰ KIỆN</label>
                 <form id="search-form" th:action="@{/moderator/events}" method="get" onsubmit="event.preventDefault()">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text"
-                               id="searchInput"
-                               name="keyword"
-                               placeholder="Tìm kiếm sự kiện, tên."
-                               th:value="${keyword}">
+                    <div class="om-search-row">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text"
+                                   id="searchInput"
+                                   name="keyword"
+                                   placeholder="Tìm kiếm sự kiện, tên."
+                                   th:value="${keyword}">
+                        </div>
+                        <button type="button" id="searchBtn" class="btn-search">Search</button>
                     </div>
                 </form>
             </div>
@@ -159,9 +165,10 @@
 
         <div class="em-pagination">
             <div class="pagination-controls">
+
                 <a class="page-btn page-nav"
                    th:classappend="${events == null or events.first} ? 'disabled' : ''"
-                   th:href="@{/moderator/events(page=${events != null and !events.first ? events.number - 1 : 0}, keyword=${keyword}, status=${statusFilter})}">
+                   th:href="@{/moderator/events(page=${events != null and !events.first ? events.number - 1 : 0}, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}">
                     <i class="fa-solid fa-chevron-left"></i>
                 </a>
 
@@ -172,14 +179,14 @@
                            class="page-btn"
                            th:classappend="${i == events.number} ? 'active' : ''"
                            th:text="${i + 1}"
-                           th:href="@{/moderator/events(page=${i}, keyword=${keyword}, status=${statusFilter})}">1</a>
+                           th:href="@{/moderator/events(page=${i}, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}">1</a>
                     </th:block>
 
                     <th:block th:if="${events.totalPages > 5}">
                         <a class="page-btn"
                            th:classappend="${events.number == 0} ? 'active' : ''"
                            th:text="1"
-                           th:href="@{/moderator/events(page=0, keyword=${keyword}, status=${statusFilter})}">1</a>
+                           th:href="@{/moderator/events(page=0, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}">1</a>
 
                         <span th:if="${events.number > 2}" class="page-btn dots">...</span>
 
@@ -191,7 +198,7 @@
                                class="page-btn"
                                th:classappend="${i == events.number} ? 'active' : ''"
                                th:text="${i + 1}"
-                               th:href="@{/moderator/events(page=${i}, keyword=${keyword}, status=${statusFilter})}"></a>
+                               th:href="@{/moderator/events(page=${i}, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}"></a>
                         </th:block>
 
                         <span th:if="${events.number < events.totalPages - 3}" class="page-btn dots">...</span>
@@ -199,7 +206,7 @@
                         <a class="page-btn"
                            th:classappend="${events.number == events.totalPages - 1} ? 'active' : ''"
                            th:text="${events.totalPages}"
-                           th:href="@{/moderator/events(page=${events.totalPages - 1}, keyword=${keyword}, status=${statusFilter})}"></a>
+                           th:href="@{/moderator/events(page=${events.totalPages - 1}, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}"></a>
                     </th:block>
                 </th:block>
 
@@ -209,7 +216,7 @@
 
                 <a class="page-btn page-nav"
                    th:classappend="${events == null or events.last} ? 'disabled' : ''"
-                   th:href="@{/moderator/events(page=${events != null and !events.last ? events.number + 1 : 0}, keyword=${keyword}, status=${statusFilter})}">
+                   th:href="@{/moderator/events(page=${events != null and !events.last ? events.number + 1 : 0}, keyword=${keyword}, status=${statusFilter}, categoryId=${categoryId})}">
                     <i class="fa-solid fa-chevron-right"></i>
                 </a>
             </div>
