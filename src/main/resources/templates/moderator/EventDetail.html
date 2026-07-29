@@ -8,14 +8,22 @@
       )}">
 <head>
     <title>Event Detail — EventHub Moderator</title>
-    <!--/*@thymesVar id="event" type="com.example.dto.EventDetailDTO"*/-->
     <link id="page-css" rel="stylesheet" th:href="@{/moderator/css/event_detail.css}"/>
 </head>
 <body>
 
 <section id="event-detail-content" th:fragment="content">
 
-    <!-- ── Header: Back + Title + Status badge ── -->
+    <!-- Alert Messages -->
+    <div th:if="${successMessage != null}" class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage != null}" class="alert alert-danger">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
     <div class="ed-header">
         <div class="ed-header-left">
             <a th:href="@{/moderator/events}" class="btn-back">
@@ -42,13 +50,10 @@
         </span>
     </div>
 
-    <!-- ── Main 2-col layout ── -->
     <div class="ed-body">
 
-        <!-- LEFT: Main Content -->
         <div class="ed-main">
 
-            <!-- Card 1: Cover image -->
             <div class="ed-card ed-cover-card">
                 <div class="ed-cover">
                     <img th:if="${event != null and event.thumbnailUrl != null}"
@@ -64,7 +69,6 @@
                 </div>
             </div>
 
-            <!-- Card 2: Overview + Date row -->
             <div class="ed-card ed-content-card">
                 <!-- Event Overview -->
                 <div class="ed-section">
@@ -79,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- Date / Time / Duration row -->
                 <div class="ed-date-row">
                     <div class="ed-date-item">
                         <span class="ed-date-label">Ngày tổ chức</span>
@@ -103,10 +106,7 @@
 
             </div>
         </div>
-        <!-- end ed-main -->
-        <!-- RIGHT: Sidebar -->
         <aside class="ed-sidebar">
-            <!-- Venue & Location -->
             <div class="ed-info-card">
                 <div class="ed-info-card-title">
                     <i class="fa-solid fa-location-dot"></i>
@@ -119,7 +119,6 @@
                 </p>
             </div>
 
-            <!-- Organizer -->
             <div class="ed-info-card">
                 <div class="ed-info-card-title">
                     <i class="fa-solid fa-shield-halved"></i>
@@ -163,7 +162,7 @@
         <form class="ed-reject-box" th:if="${event != null and event.status.name() == 'ACTIVE'}"
               th:action="@{/moderator/events/{id}/deactivate(id=${event.eventId})}"
               method="post"
-              onsubmit="return confirm('Bạn có chắc muốn TẮT sự kiện này không?');">
+              onsubmit="return confirm('Bạn có muốn TẮT sự kiện này không?');">
             <div class="ed-reject-label">
                 <span>Lý do tắt sự kiện — sẽ được gửi email đến Organizer</span>
             </div>
@@ -183,13 +182,12 @@
         <form th:if="${event != null and event.status.name() == 'INACTIVE'}"
               th:action="@{/moderator/events/{id}/activate(id=${event.eventId})}"
               method="post"
-              onsubmit="return confirm('Bạn có chắc muốn BẬT LẠI sự kiện này không?');">
+              onsubmit="return confirm('Bạn có muốn BẬT LẠI sự kiện này không?');">
             <button type="submit" class="btn-activate">
                 Bật lại sự kiện
             </button>
         </form>
 
-        <!-- ENDED — không có hành động -->
         <div th:if="${event != null and event.status.name() == 'ENDED'}"
              class="ed-ended-note">
             Sự kiện đã kết thúc — không thể thay đổi trạng thái

@@ -143,14 +143,7 @@
         </table>
 
         <div class="em-pagination">
-            <div class="pagination-info">
-                Đang hiển thị <strong th:text="${organizers != null ? organizers.numberOfElements : 0}">0</strong> trên
-                <strong th:text="${organizers != null ? organizers.size : 10}">10</strong> của
-                <strong th:text="${organizers != null ? organizers.totalElements : 0}">0</strong> kết quả
-            </div>
-
             <div class="pagination-controls">
-
                 <a class="page-btn page-nav"
                    th:classappend="${organizers == null or organizers.first} ? 'disabled' : ''"
                    th:href="@{/moderator/organizers(page=${organizers != null and !organizers.first ? organizers.number - 1 : 0}, keyword=${keyword}, status=${status})}">

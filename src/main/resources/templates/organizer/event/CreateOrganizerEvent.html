@@ -524,8 +524,6 @@
                                      SECTION 5: PHÂN KHÚC VÉ MỞ BÁN
                                 ======================================== -->
                     <section id="section-tickets" class="form-section">
-                        <div th:if="${errorMessage}" class="text-danger"
-                             style="font-size: small" th:text="${errorMessage}"></div>
                         <div class="section-header">
                             <span class="section-num">4</span>
                             <div>
@@ -596,8 +594,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div th:if="${errorMessage}" class="text-danger"
-                             style="font-size: small" th:text="${errorMessage}"></div>
+
                         <!-- Thông tin pháp lý -->
                         <div class="field-card mb-4">
                             <label class="field-label">
@@ -618,6 +615,8 @@
                                          th:if="${#fields.hasErrors('taxCode')}"
                                          th:errors="*{taxCode}">
                                     </div>
+                                    <div th:if="${errorMessage}" class="text-danger"
+                                         style="font-size: small" th:text="${errorMessage}"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="tier-field-label">Tên Pháp Lý Chính Thức <span class="text-required">*</span></label>
