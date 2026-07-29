@@ -370,7 +370,6 @@ function refreshSummary() {
     const count    = selectedSeats.length;
     const subtotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
 
-    // MỚI: tính discount dựa trên số server đã confirm (không tự tính lại percent ở client)
     let discount = 0;
     if (selectedVoucher && count > 0) {
         discount = Math.min(Number(selectedVoucher.confirmedDiscount) || 0, subtotal);
@@ -382,7 +381,6 @@ function refreshSummary() {
     document.getElementById('total-calc').textContent    = formatVND(total);
     document.getElementById('selected-summary-count').textContent = `${count}/${MAX_SEATS}`;
 
-    // MỚI: hiện/ẩn dòng giảm giá
     const discountRow = document.getElementById('discount-row');
     if (discountRow) {
         if (discount > 0) {
@@ -393,7 +391,6 @@ function refreshSummary() {
         }
     }
 
-    // MỚI: hiện/ẩn voucher-section theo số ghế đã chọn
     const voucherSection = document.getElementById('voucher-section');
     if (voucherSection) {
         if (count > 0) {
@@ -458,7 +455,7 @@ async function handleSubmit(eventId) {
     try {
         const formData = new URLSearchParams();
         selectedSeats.forEach(s => { formData.append('seatIds', s.seatId); });
-        formData.append('eventId', eventId); // MỚI — để server redirect lỗi đúng event, không cần suy ngược
+        formData.append('eventId', eventId);
         if (selectedVoucher) {
             formData.append('voucherId', selectedVoucher.voucherId); // MỚI
         }

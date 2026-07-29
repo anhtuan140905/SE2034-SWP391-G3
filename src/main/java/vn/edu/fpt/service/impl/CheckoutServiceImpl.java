@@ -47,39 +47,32 @@ public class CheckoutServiceImpl implements CheckoutService {
         Instant now = Instant.now();
         Instant newExpiry = now.plus(CHECKOUT_TTL_MINUTES, ChronoUnit.MINUTES);
 
-        // 1. Validate + nới lỏng cơ chế check SeatLock cho từng ghế
         List<SeatLock> locks = new ArrayList<>();
         for (Long seatId : seatIds) {
 
-            // SỬA TẠI ĐÂY: Chỉ tìm theo seatId để lấy bản ghi lock ra kiểm tra
             SeatLock lock = seatLockRepository.findBySeatSeatId(seatId)
                     .orElseThrow(() -> new IllegalStateException(
                             "Ghế số " + seatId + " chưa được giữ trên hệ thống. Vui lòng chọn lại!"));
 
-            // Kiểm tra xem lock này có phải của chính User đang bấm nút thanh toán không
             if (lock.getUser() != null && !lock.getUser().getId().equals(currentUser.getId())) {
                 throw new IllegalStateException("Ghế " + seatId + " đang thuộc quyền giữ của một người dùng khác!");
             }
 
-            // Kiểm tra xem thời hạn giữ ghế tạm thời (5 phút) đã bị quá hạn chưa
             if (lock.getExpiresAt().isBefore(now)) {
                 throw new IllegalStateException("Ghế " + seatId + " đã quá thời gian giữ tạm thời, vui lòng chọn lại.");
             }
 
-            // Đạt điều kiện -> Gia hạn thời gian giữ ghế lên 12 phút để sang trang hóa đơn điền thông tin
             lock.setExpiresAt(newExpiry);
             locks.add(lock);
         }
         seatLockRepository.saveAll(locks);
 
-        // 2. Tính tổng tiền (Giữ nguyên code cũ của bạn)
         BigDecimal subAmount = BigDecimal.ZERO;
         Event event = locks.get(0).getSeat().getTicketType().getEvent();
         for (SeatLock lock : locks) {
             subAmount = subAmount.add(lock.getSeat().getTicketType().getPrice());
         }
 
-        // 2.5 MỚI: validate voucher nếu có, tính discount
         Voucher appliedVoucher = null;
         BigDecimal discount = BigDecimal.ZERO;
 
@@ -94,7 +87,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         BigDecimal totalAmount = subAmount.subtract(discount);
 
-        // 3. Tạo Order (Giữ nguyên code cũ của bạn)
         Order order = Order.builder()
                 .user(currentUser)
                 .event(event)
@@ -106,7 +98,6 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .build();
         order = orderRepository.save(order);
 
-        // 4. Tạo OrderDetail (Giữ nguyên code cũ của bạn)
         Set<OrderDetail> details = new HashSet<>();
         for (SeatLock lock : locks) {
             Seat seat = lock.getSeat();
@@ -136,25 +127,21 @@ public class CheckoutServiceImpl implements CheckoutService {
         Instant now = Instant.now();
         Instant expiresAt = now.plus(5, java.time.temporal.ChronoUnit.MINUTES);
 
-        // 1. SỬA TẠI ĐÂY: Dùng .orElse(null) thay vì .orElseThrow(null)
         SeatLock existingLock = seatLockRepository.findBySeatSeatId(seatId).orElse(null);
 
         if (existingLock != null) {
-            // 2. SỬA TẠI ĐÂY: Thêm check existingLock.getUser() != null để tránh NullPointerException nếu dữ liệu rác
             if (existingLock.getExpiresAt().isAfter(now)
                     && existingLock.getUser() != null
                     && !existingLock.getUser().getId().equals(user.getId())) {
                 throw new IllegalStateException("Ghế này vừa có người khác giữ mất rồi!");
             }
 
-            // Nếu là của mình gia hạn, hoặc lock cũ của người khác ĐÃ HẾT HẠN -> Cập nhật thông tin mới
             existingLock.setUser(user);
             existingLock.setExpiresAt(expiresAt);
             existingLock.setLockedAt(now);
 
             seatLockRepository.save(existingLock);
         } else {
-            // CHƯA AI LOCK -> TẠO MỚI BẢN GHI LOCK
             Seat seat = seatRepository.findById(seatId)
                     .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy ghế có ID: " + seatId));
 
@@ -174,7 +161,6 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Transactional
     public void unlockSeatTemporarily(Long seatId, User user) {
-        // Khi user bỏ chọn ghế (click lại lần 2), xóa bản ghi lock này đi để người khác chọn
         seatLockRepository.deleteBySeatSeatIdAndUserId(seatId, user.getId());
     }
     @Override

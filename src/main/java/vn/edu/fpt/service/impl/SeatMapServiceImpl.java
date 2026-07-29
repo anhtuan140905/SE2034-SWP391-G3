@@ -19,11 +19,10 @@ import java.util.stream.Collectors;
 public class SeatMapServiceImpl implements SeatMapService {
     private final SeatRepository seatRepository;
 
-    @Transactional(readOnly = true) // Thêm readOnly để Hibernate không tốn tài nguyên quản lý thực thể
+    @Transactional(readOnly = true)
     @Override
     public List<TicketTypeSeatsDTO> getSeatMap(Long eventId, Long currentUserId) {
         Instant now = Instant.now();
-        // 1 câu Query duy nhất lấy sạch mọi thứ đã kết nối
         List<Seat> seats = seatRepository.findAllByEventIdWithStatus(eventId, now);
 
         if (seats.isEmpty()) return new ArrayList<>();
